@@ -1,0 +1,26 @@
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
+@import '../../../../styles/variables.scss';
+
+@include media-breakpoint-down(lg) {
+    ::ng-deep p-selectbutton {
+        .p-selectbutton.p-buttonset {
+            display: flex;
+            flex-direction: column;
+            .p-button:first-of-type {
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 0;
+            }
+            .p-button:not(:last-child) {
+                border-right: 1px solid $theme-primary-light;
+            }
+            .p-button:last-of-type {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+        }
+    }
+}

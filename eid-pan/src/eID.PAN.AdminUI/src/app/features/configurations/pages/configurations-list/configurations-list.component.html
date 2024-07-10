@@ -1,0 +1,132 @@
+<ng-container *transloco="let t">
+    <h4 class="mb-4 text-uppercase" [attr.aria-label]="t('sidebar.txtConfigurations')">
+        {{ t('sidebar.txtConfigurations') }}
+    </h4>
+
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div class="p-card p-4">
+        <h4 class="mb-4" [attr.aria-label]="t('modules.configurations.txtSMTP')">
+            {{ t('modules.configurations.txtSMTP') }}
+        </h4>
+
+        <div class="mb-4">
+            <p-button
+                (click)="addConfiguration()"
+                [label]="t('global.txtAdd')"
+                icon="pi pi-plus"
+                iconPos="right"
+                styleClass="p-button-sm"
+                [ariaLabel]="t('global.txtAdd')"></p-button>
+        </div>
+        <p-table
+            #dt
+            dataKey="id"
+            [value]="configurations"
+            [tableStyle]="{ 'min-width': '100%' }"
+            [lazy]="true"
+            (onLazyLoad)="loadConfigurations($event)"
+            [totalRecords]="totalRecords"
+            [rows]="pageSize"
+            [paginator]="true"
+            [showCurrentPageReport]="true"
+            [rowsPerPageOptions]="[5, 10]"
+            [currentPageReportTemplate]="
+                t('global.txtTablePagination', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
+            [loading]="loading"
+            loadingIcon="pi pi-spin pi-spinner">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.configurations.txtServer')">
+                        {{ t('modules.configurations.txtServer') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.configurations.txtPort')">
+                        {{ t('modules.configurations.txtPort') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.configurations.txtEncryption')">
+                        {{ t('modules.configurations.txtEncryption') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.configurations.txtUsername')">
+                        {{ t('modules.configurations.txtUsername') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.configurations.txtPassword')">
+                        {{ t('modules.configurations.txtPassword') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.configurations.txtActions')">
+                        {{ t('modules.configurations.txtActions') }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td style="width: 20rem">
+                        <p-skeleton></p-skeleton>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-configuration let-ri="rowIndex">
+                <tr [pEditableRow]="configuration">
+                    <td>
+                        <span class="d-inline-block text-break" [attr.aria-label]="configuration.server">{{
+                            configuration.server
+                        }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break" [attr.aria-label]="configuration.port">{{
+                            configuration.port
+                        }}</span>
+                    </td>
+                    <td [attr.aria-label]="securityProtocolText(configuration.securityProtocol)">
+                        {{ securityProtocolText(configuration.securityProtocol) }}
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break" [attr.aria-label]="configuration.userName">{{
+                            configuration.userName
+                        }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">&bull;&bull;&bull;&bull;&bull;&bull;</span>
+                    </td>
+                    <td style="width: 20rem">
+                        <div class="d-flex gap-2">
+                            <p-button
+                                (click)="onRowEditInit(configuration)"
+                                [label]="t('global.txtEdit')"
+                                icon="pi pi-pencil"
+                                iconPos="right"
+                                styleClass="p-button-sm p-button-success"
+                                [ariaLabel]="t('global.txtEdit')"></p-button>
+
+                            <p-button
+                                (click)="onRowDelete(configuration)"
+                                [label]="t('global.txtDelete')"
+                                icon="pi pi-trash"
+                                iconPos="right"
+                                styleClass="p-button-sm p-button-danger"
+                                [ariaLabel]="t('global.txtDelete')"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</ng-container>

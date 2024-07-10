@@ -1,0 +1,173 @@
+<section *transloco="let t">
+    <h4 class="mb-4 text-uppercase" [attr.aria-label]="t('sidebar.txtSystems')">
+        {{ t('sidebar.txtSystems') }}
+    </h4>
+
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div class="p-card p-4">
+        <div class="mb-4">
+            <p-selectButton
+                [options]="tabOptions"
+                [(ngModel)]="value"
+                [multiple]="false"
+                optionLabel="name"
+                (ngModelChange)="activeItemChange($event, dt)"
+                optionValue="value">
+                <ng-template let-item>
+                    <span class="p-button-label">{{ item.label }}</span>
+                </ng-template>
+            </p-selectButton>
+        </div>
+
+        <p-table
+            #dt
+            [value]="systems"
+            [lazy]="true"
+            (onLazyLoad)="loadNotifications($event)"
+            [totalRecords]="totalRecords"
+            [rows]="pageSize"
+            [paginator]="true"
+            [tableStyle]="{ 'min-width': '100%' }"
+            [rowHover]="true"
+            dataKey="id"
+            [showCurrentPageReport]="true"
+            [currentPageReportTemplate]="
+                t('global.txtTablePagination', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [loading]="loading"
+            loadingIcon="pi pi-spin pi-spinner">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th
+                        *ngIf="activeItem !== 'rejected'"
+                        style="width: 5rem"
+                        [attr.aria-label]="t('modules.notifications.txtExpandCollapseLabel')"></th>
+                    <th [attr.aria-label]="t('modules.notifications.txtSystem')">
+                        {{ t('modules.notifications.txtSystem') }}
+                    </th>
+                    <th *ngIf="activeItem !== 'rejected'" [attr.aria-label]="t('global.txtAction')">
+                        {{ t('global.txtAction') }}
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td style="width: 10rem">
+                        <p-skeleton></p-skeleton>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-system let-expanded="expanded">
+                <tr>
+                    <td *ngIf="activeItem !== 'rejected'">
+                        <button
+                            type="button"
+                            pButton
+                            [pRowToggler]="system"
+                            class="p-button-text p-button-rounded p-button-sm text-theme-primary-dark"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                            [title]="t('modules.notifications.txtExpandCollapseLabel')"
+                            [attr.aria-label]="t('modules.notifications.txtExpandCollapseLabel')"></button>
+                    </td>
+                    <td [attr.aria-label]="getSystemNameTranslation(system)">{{ getSystemNameTranslation(system) }}</td>
+                    <td *ngIf="activeItem !== 'rejected'" style="width: 10rem">
+                        <div class="d-flex">
+                            <p-button
+                                *ngIf="activeItem === 'approved'"
+                                (click)="doAction(system, actions.deactivate, dt)"
+                                [label]="t('modules.notifications.txtArchiveAction')"
+                                icon="pi pi-times"
+                                iconPos="right"
+                                styleClass="p-button-sm p-button-danger"
+                                [attr.aria-label]="t('modules.notifications.txtArchiveAction')"></p-button>
+
+                            <p-button
+                                *ngIf="activeItem === 'archived'"
+                                (click)="doAction(system, actions.reactivate, dt)"
+                                [label]="t('modules.notifications.txtRestoreAction')"
+                                icon="pi pi-check"
+                                iconPos="right"
+                                styleClass="p-button-sm me-3 p-button-success"
+                                [attr.aria-label]="t('modules.notifications.txtRestoreAction')"></p-button>
+
+                            <p-button
+                                *ngIf="activeItem === 'pending'"
+                                (click)="doAction(system, actions.approve, dt)"
+                                [label]="t('modules.notifications.txtApprove')"
+                                icon="pi pi-check"
+                                iconPos="right"
+                                styleClass="p-button-sm me-3 p-button-success"
+                                [attr.aria-label]="t('modules.notifications.txtApprove')"></p-button>
+                            <p-button
+                                *ngIf="activeItem === 'pending'"
+                                (click)="doAction(system, actions.reject, dt)"
+                                [label]="t('modules.notifications.txtReject')"
+                                icon="pi pi-times"
+                                iconPos="right"
+                                styleClass="p-button-sm p-button-danger"
+                                [attr.aria-label]="t('modules.notifications.txtReject')"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-notification>
+                <tr *ngIf="activeItem !== 'rejected'">
+                    <td colspan="7">
+                        <div class="d-flex">
+                            <div style="width: 5rem"></div>
+                            <table class="table table-borderless text-theme-primary-dark events-table">
+                                <thead>
+                                    <tr class="row">
+                                        <th scope="col" class="fw-bold col-3 col-xl-1">
+                                            <small
+                                                [attr.aria-label]="t('modules.notifications.txtSystemNotification')"
+                                                >{{ t('modules.notifications.txtSystemNotification') }}</small
+                                            >
+                                        </th>
+                                        <th scope="col" class="fw-bold col-9 col-xl-11">
+                                            <small
+                                                [attr.aria-label]="
+                                                    t('modules.notifications.txtNotificationDescription')
+                                                "
+                                                >{{ t('modules.notifications.txtNotificationDescription') }}</small
+                                            >
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let event of notification.events" class="row">
+                                        <td class="col-3 col-xl-1 d-flex justify-content-sm-center">
+                                            <p-checkbox
+                                                [ariaLabel]="getEventTranslation(event)"
+                                                [binary]="true"
+                                                class="d-flex"
+                                                [disabled]="true"
+                                                [ngModel]="event.isMandatory"></p-checkbox>
+                                        </td>
+                                        <td class="col-9 col-xl-11">
+                                            <small class="d-flex" [attr.aria-label]="getEventTranslation(event)">{{
+                                                getEventTranslation(event)
+                                            }}</small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</section>

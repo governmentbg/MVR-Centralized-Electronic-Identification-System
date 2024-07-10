@@ -1,0 +1,91 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM sonarscanner_base AS build
+WORKDIR /src
+
+#----
+## Arguments for setting the Sonarqube Token and the Project Key
+ARG SONAR_TOKEN="squ_fc381e5af98c6a8249273a07ed1d8f4cec473257"
+ARG SONAR_PRJ_KEY="test"
+# ARG SONAR_ORG
+ARG SONAR_HOST="http://172.17.0.2:9000"
+# ## Setting the Sonarqube Organization and Uri
+# # ENV SONAR_ORG "karlospn"
+# # ENV SONAR_HOST "https://sonarcloud.io"
+# ## Install Java, because the sonarscanner needs it.
+# RUN mkdir -p /usr/share/man/man1/
+# RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y openjdk-11-jre
+# ## Install sonarscanner
+# RUN dotnet tool install --global dotnet-sonarscanner --version 5.11.0
+# ## Install report generator
+# RUN dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.17
+# ## Install dotnet coverage tool
+# RUN dotnet tool install --global dotnet-coverage --version 17.7.0
+# ## Set the dotnet tools folder in the PATH env variable
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+
+
+## Start scanner
+RUN dotnet sonarscanner begin \
+	# /o:"$SONAR_ORG" \
+	/k:"$SONAR_PRJ_KEY" \
+	/d:sonar.host.url="$SONAR_HOST" \
+	/d:sonar.login="$SONAR_TOKEN" \ 
+	# /d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
+	# /d:sonar.coverageReportPaths="coverage/coverage.xml" \
+	# /d:sonar.cs.nunit.reportsPaths="results/SonarQube.xml"
+	/d:sonar.cs.vstest.reportsPaths="TestResults/SonarQube.xml" \
+	/d:sonar.cs.vscoveragexml.reportsPaths=coverage/coverage.xml
+
+#----
+
+COPY "eID.PAN.sln" "eID.PAN.sln"
+
+COPY ["eID.PAN.API/eID.PAN.API.csproj", "eID.PAN.API/"]
+COPY ["eID.PAN.Application/eID.PAN.Application.csproj", "eID.PAN.Application/"]
+COPY ["eID.PAN.Service/eID.PAN.Service.csproj", "eID.PAN.Service/"]
+COPY ["eID.PAN.Contracts/eID.PAN.Contracts.csproj", "eID.PAN.Contracts/"]
+COPY ["./eID.PJS.AuditLogging/eID.PJS.AuditLogging.csproj", "eID.PJS.AuditLogging/"]
+#Copy Unit tests
+COPY ["./tests/unit/eID.PAN.UnitTests/eID.PAN.UnitTests.csproj", "tests/unit/eID.PAN.UnitTests/"]
+
+RUN dotnet restore "eID.PAN.Application/eID.PAN.Application.csproj"
+COPY . .
+# WORKDIR "/src/eID.PAN.Application"
+# RUN dotnet publish "eID.PAN.Application.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet build "eID.PAN.Application/eID.PAN.Application.csproj" -c Release --no-restore
+RUN dotnet publish "eID.PAN.Application/eID.PAN.Application.csproj" -c Release --no-restore --no-build -o /app/publish /p:UseAppHost=false
+
+#----
+## Run dotnet test setting the output on the /coverage folder
+# RUN dotnet test test/WebApp.Tests/*.csproj --collect:"XPlat Code Coverage" --results-directory ./coverage
+# ## Create the code coverage file in sonarqube format using the cobertura file generated from the dotnet test command
+# RUN reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube"
+RUN dotnet tool list --tool-path /root/.dotnet/tools
+# RUN mkdir -p ./coverage
+# RUN mkdir -p ./TestResults
+# RUN dotnet test tests/unit/eID.PAN.UnitTests/eID.PAN.UnitTests.csproj --collect:"XPlat Code Coverage" --results-directory ./coverage 
+# RUN /root/.dotnet/tools/reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube"
+# # RUN reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube"
+
+# RUN dotnet test tests/unit/eID.PAN.UnitTests/eID.PAN.UnitTests.csproj --logger "trx;logfilename=SonarQube.xml" --results-directory "./TestResults"
+# RUN reportgenerator "-reports:./results/execution.trx" "-targetdir:results" "-reporttypes:SonarQube"
+# RUN dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage/coverage.xml' 
+RUN dotnet-coverage collect 'dotnet test tests/unit/eID.PAN.UnitTests/eID.PAN.UnitTests.csproj --logger "trx;logfilename=SonarQube.xml" --results-directory "./TestResults"' -f xml  -o 'coverage/coverage.xml'
+# RUN dotnet test tests/unit/eID.PAN.UnitTests/eID.PAN.UnitTests.csproj --logger "console;verbosity=normal"
+
+
+## Stop scanner
+RUN dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
+#----
+
+FROM build AS publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "eID.PAN.Application.dll"]

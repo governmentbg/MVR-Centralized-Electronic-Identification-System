@@ -1,0 +1,47 @@
+@import '../../../../styles/variables.scss';
+
+::ng-deep .empowerments-check-module {
+    .p-dropdown,
+    .p-inputtext {
+        border-color: $text-active;
+    }
+    .p-dropdown {
+        .p-dropdown-trigger {
+            color: $button-dark;
+        }
+    }
+    .p-calendar {
+        input {
+            border-right: none;
+        }
+        .p-button.p-datepicker-trigger {
+            background: $text-white;
+            color: $button-dark;
+            border-color: $text-active;
+        }
+    }
+    .p-multiselect {
+        border-color: $text-active;
+        .p-multiselect-trigger {
+            color: $button-dark;
+        }
+    }
+    .badge-empowerment {
+        border-radius: 8px;
+        background: $button-danger-hover;
+        font-size: 14px;
+        padding: 8px;
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 22px;
+        color: $text-default;
+        display: inline-block;
+    }
+    .header-divider .p-divider.p-divider-horizontal:before {
+        border-color: $theme-primary-light;
+    }
+    .epowerment-label {
+        font-weight: 400;
+    }
+}

@@ -1,0 +1,130 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'primeng/resources/primeng.css';
+@import 'variables';
+@import 'typography';
+@import 'primeNG/theme';
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: $roboto-font;
+}
+
+main {
+    background: $background-light-grey;
+}
+
+a {
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+label,
+legend {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+}
+
+@each $name, $color in $brand-colors {
+    .text-#{$name} {
+        color: $color !important;
+    }
+    .bg-#{$name} {
+        background-color: $color !important;
+    }
+}
+
+.text-active {
+    color: $text-active;
+}
+
+.text-default {
+    color: $text-default;
+}
+
+p-calendar {
+    &.p-calendar-clearable .p-calendar-clear-icon {
+        right: 4rem;
+    }
+
+    .p-calendar {
+        width: 100%;
+        table {
+            font-size: 10pt;
+            margin: -0.143rem 0;
+        }
+        table td {
+            padding: 0.2rem !important;
+        }
+
+        .p-datepicker table td > span {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .p-datepicker .p-datepicker-header {
+            padding: 0.2rem;
+        }
+
+        .p-timepicker {
+            button.p-ripple {
+                height: 1rem;
+            }
+        }
+    }
+}
+
+.validation-text {
+    position: absolute;
+    font-size: 0.75rem;
+}
+
+// Multi line truncation
+.multiline-ellipsis {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* start showing ellipsis when 2nd line is reached */
+    white-space: pre-wrap; /* let the text wrap preserving spaces */
+    word-break: break-word;
+}
+
+.empty-message-container {
+    color: $text-inactive;
+    padding: 24px 0;
+    img {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 21px;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+label,
+.p-datatable .p-datatable-thead > tr > th {
+    font-family: $roboto-condensed-medium-font;
+}
+.p-datatable .p-datatable-thead > tr > th {
+    font-weight: 500;
+}
+h5,
+h6,
+.roboto-condensed {
+    font-family: $roboto-condensed-regular-font;
+}
+
+.p-selectbutton.p-buttonset {
+    .p-button {
+        padding: 12px 32px;
+    }
+}

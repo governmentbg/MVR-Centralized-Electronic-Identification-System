@@ -1,0 +1,11 @@
+{
+    "keycloak": {
+        "keycloakUrl": "https://keycloak-dev.mvreid.local/",
+        "keycloakRealm": "master",
+        "keycloakClientId": "frontend-localhost",
+        "keycloakRedirectUri": "https://localhost:4200/",
+        "keycloakTokenKey": "kc_token",
+        "keycloakRefreshTokenKey": "kc_refreshToken",
+        "keycloakUpdateMinValidity": 120
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "/api": {
+        "target": "https://podapi-dev.mvreid.local",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/logssearch/api": {
+        "target": "https://locallogsapi-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/logssearch": ""
+        },
+        "changeOrigin": true
+    },
+    "/pjsservices/api": {
+        "target": "https://pjsservices-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/pjsservices": ""
+        },
+        "changeOrigin": true
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "/public/api": {
+        "target": "http://localhost:61003",
+        "secure": false,
+        "pathRewrite": {
+            "^/public": ""
+        }
+    },
+    "/api": {
+        "target": "http://localhost:60003",
+        "secure": false
+    },
+    "/logssearch/api": {
+        "target": "https://locallogsapi-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/logssearch": ""
+        }
+    },
+    "/pjsservices/api": {
+        "target": "https://pjsservices-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/pjsservices": ""
+        }
+    }
+}
