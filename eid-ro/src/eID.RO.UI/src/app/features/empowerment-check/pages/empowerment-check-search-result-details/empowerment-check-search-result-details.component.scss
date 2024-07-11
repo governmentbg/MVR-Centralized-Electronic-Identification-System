@@ -1,0 +1,32 @@
+@import '../../../../styles/variables.scss';
+.result-details-container {
+    h4,
+    p {
+        color: $text-default;
+    }
+
+    .subtitle {
+        color: $text-active;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem;
+    }
+    ::ng-deep .p-card .p-card-body .p-card-content {
+        padding: 0;
+    }
+
+    .dates-container {
+        background-color: $background-light-grey;
+        padding: 0.5rem 2rem;
+        border-radius: 0.188rem;
+    }
+
+    .empowerment {
+        color: $text-default;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.5rem;
+    }
+}

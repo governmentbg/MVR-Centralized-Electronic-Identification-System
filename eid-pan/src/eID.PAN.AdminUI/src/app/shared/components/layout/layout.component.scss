@@ -1,0 +1,16 @@
+@import '../../../styles/variables.scss';
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
+
+@include media-breakpoint-up(sm) {
+    main {
+        width: calc(100% - $sidebar-width);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    main {
+        width: 100%;
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "/signing/api": {
+        "target": "http://localhost:60011",
+        "secure": false,
+        "pathRewrite": {
+            "^/signing": ""
+        }
+    },
+    "/api": {
+        "target": "http://localhost:60007",
+        "secure": false
+    }
+}

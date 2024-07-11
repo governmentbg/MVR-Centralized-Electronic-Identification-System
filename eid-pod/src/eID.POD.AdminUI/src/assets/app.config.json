@@ -1,0 +1,21 @@
+{
+    "journals": {
+        "folders": ["/app/logs/eid-pod/audit"],
+        "fileExtensionFilter": "*.audit"
+    },
+    "integrity": {
+        "systemId": "pod",
+        "poolingRequestInterval": 5000,
+        "poolingTimeout": 600000,
+        "downloadBytesFileSize": 500000
+    },
+    "keycloak": {
+        "keycloakUrl": "https://keycloak-dev.mvreid.local/",
+        "keycloakRealm": "master",
+        "keycloakClientId": "frontend-localhost",
+        "keycloakRedirectUri": "https://localhost:4200/",
+        "keycloakTokenKey": "kc_token",
+        "keycloakRefreshTokenKey": "kc_refreshToken",
+        "keycloakUpdateMinValidity": 120
+    }
+}

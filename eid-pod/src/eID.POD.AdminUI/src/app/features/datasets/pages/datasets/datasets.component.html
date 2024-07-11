@@ -1,0 +1,124 @@
+<section *transloco="let t" class="h-100 datasets-container">
+    <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [ngClass]="isConfirm ? 'confirmation-header' : 'deletion-header'"></p-confirmDialog>
+    <div class="row mb-4">
+        <div class="col-9 d-flex">
+            <h3 class="text-uppercase">
+                {{ t('modules.datasets.txtMainTitle') }}
+            </h3>
+        </div>
+
+        <div class="col-3 d-flex justify-content-end align-items-end">
+            <p-button
+                [label]="t('modules.datasets.txtAdd')"
+                type="submit"
+                [disabled]="isLoading"
+                styleClass="p-button-sm p-button-success"
+                icon="pi pi-plus"
+                iconPos="left"
+                [routerLink]="['/datasets/form']"></p-button>
+        </div>
+    </div>
+    <p-card>
+        <p-table
+            [value]="datasets"
+            [tableStyle]="{ 'min-width': '100%' }"
+            dataKey="id"
+            [loading]="isLoading"
+            loadingIcon="pi pi-spin pi-spinner"
+            [rowSelectable]="false">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 8rem" class="text-nowrap">
+                        {{ t('modules.datasets.txtDesignation') }}
+                    </th>
+                    <th style="max-width: 6rem" class="text-nowrap">
+                        {{ t('modules.datasets.txtURL') }}
+                    </th>
+                    <th style="width: 8rem" class="text-nowrap">
+                        {{ t('modules.datasets.txtRepeatability') }}
+                    </th>
+                    <th style="width: 6rem" class="text-wrap">
+                        {{ t('modules.datasets.txtAutomaticPublishing') }}
+                    </th>
+                    <th style="width: 6rem" class="text-wrap">
+                        {{ t('modules.datasets.txtLastExecuted') }}
+                    </th>
+                    <th style="width: 18rem" class="text-nowrap"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-dataset>
+                <tr>
+                    <td style="width: 8rem" [attr.aria-label]="dataset.datasetName">
+                        <span class="multiline-ellipsis">{{ dataset.datasetName }}</span>
+                    </td>
+                    <td style="max-width: 6rem" [attr.aria-label]="dataset.dataSource" [title]="dataset.dataSource">
+                        <span class="multiline-ellipsis">{{ dataset.dataSource }}</span>
+                    </td>
+                    <td style="width: 8rem" [attr.aria-label]="dataset.cronPeriod">
+                        <span class="multiline-ellipsis">{{ computeCronPeriod(dataset.cronPeriod) }}</span>
+                    </td>
+                    <td style="width: 8rem" [attr.aria-label]="dataset.isActive">
+                        <span
+                            class="multiline-ellipsis"
+                            [ngClass]="dataset.isActive ? 'text-button-confirm' : 'text-button-reject'"
+                            >{{ computeIsActive(dataset.isActive) }}</span
+                        >
+                    </td>
+                    <td style="width: 8rem" [attr.aria-label]="dataset.lastRun">
+                        <span class="multiline-ellipsis">{{ formatDate(dataset.lastRun) }}</span>
+                    </td>
+                    <td style="width: 18rem">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <p-button
+                                [title]="t('modules.datasets.txtPreview')"
+                                styleClass="p-button-sm p-button-rounded p-button-text"
+                                (click)="navigateToEdit(dataset)">
+                                <i class="material-icons-outlined">&#xe3c9;</i>
+                            </p-button>
+                            <p-button
+                                [title]="t('modules.datasets.txtDelete')"
+                                styleClass="p-button-sm p-button-rounded p-button-text text-text-error"
+                                (click)="deleteDatasetConfirmation(dataset)">
+                                <i class="material-icons-outlined">&#xe872;</i>
+                            </p-button>
+                            <p-divider class="header-divider" type="solid" layout="vertical"></p-divider>
+                            <p-button
+                                styleClass="p-button-outlined text-text-active p-button-sm"
+                                (click)="uploadDatasetConfirmation(dataset)">
+                                <span class="d-none d-xl-inline-block">{{
+                                    t('modules.datasets.txtManualPublishing')
+                                }}</span>
+                            </p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7">{{ t('modules.datasets.txtNothingFound') }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</section>

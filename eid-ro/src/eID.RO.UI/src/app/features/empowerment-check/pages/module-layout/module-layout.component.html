@@ -1,0 +1,14 @@
+<div class="d-flex flex-column h-100 w-100 empowerments-check-module">
+    <header>
+        <app-empowerment-check-navbar></app-empowerment-check-navbar>
+    </header>
+    <div class="flex-grow-1">
+        <div class="d-flex flex-column flex-sm-row h-100 bg-white-smoke">
+            <app-empowerment-check-sidebar></app-empowerment-check-sidebar>
+            <main class="h-100 flex-grow-1 p-4 overflow-hidden">
+                <router-outlet></router-outlet>
+            </main>
+        </div>
+    </div>
+    <app-empowerment-check-footer></app-empowerment-check-footer>
+</div>

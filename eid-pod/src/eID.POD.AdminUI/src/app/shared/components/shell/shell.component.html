@@ -1,0 +1,23 @@
+<div class="d-flex flex-column h-100 w-100" *transloco="let t">
+    <nav class="p-4 container nav-container d-flex">
+        <div class="flex-shrink-0 me-4">
+            <img class="w-100" alt="" src="assets/images/gerb-logo.png" />
+        </div>
+        <div class="my-2">
+            <h2 class="text-uppercase lh-base mb-0">{{ t('navbar.title') }}</h2>
+            <p class="text-uppercase text-cyan-cobalt-blue lh-base mb-0">
+                {{ t('navbar.subtitle') }}
+            </p>
+        </div>
+
+        <div class="ms-auto">
+            <app-language-selector></app-language-selector>
+        </div>
+    </nav>
+    <main class="flex-grow-1 border-top">
+        <div class="container h-100">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+    <app-footer></app-footer>
+</div>

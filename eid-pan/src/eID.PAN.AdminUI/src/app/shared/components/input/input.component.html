@@ -1,0 +1,10 @@
+<label [for]="id" class="form-label" *ngIf="label">{{ label }}</label>
+<input
+    class="form-control form-control-lg"
+    [id]="id"
+    [type]="inputType"
+    [(ngModel)]="value"
+    (ngModelChange)="onValueChange($event)"
+    [placeholder]="placeholder"
+    [disabled]="isDisabled"
+    (blur)="onTouch($event)" />

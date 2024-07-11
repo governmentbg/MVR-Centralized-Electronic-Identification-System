@@ -1,0 +1,99 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'primeng/resources/primeng.css';
+@import 'variables';
+@import 'typography';
+@import 'primeNG/theme';
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: $app-font;
+}
+
+main {
+    background: $background-light-grey;
+}
+
+a {
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+label,
+.form-label {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    color: $text-light;
+    &.disabled {
+        color: $text-inactive;
+    }
+}
+
+.validation-text {
+    font-size: 12px;
+    margin-top: 0.5rem;
+    line-height: 1;
+    min-height: 1rem;
+}
+
+@each $name, $color in $brand-colors {
+    .text-#{$name} {
+        color: $color !important;
+    }
+    .bg-#{$name} {
+        background-color: $color !important;
+    }
+}
+
+.app-button-small {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 22px;
+}
+
+// Classes with theme colors
+.active-confirm {
+    color: $button-confirm;
+}
+
+.reject {
+    color: $button-reject;
+}
+
+.text-light {
+    color: $text-light;
+}
+
+.light-grey-bg {
+    background: $background-light-grey;
+}
+
+.danger {
+    color: $button-danger;
+}
+
+.link-style {
+    text-decoration: underline;
+    color: $text-active;
+}
+
+// Multi line truncation
+.multiline-ellipsis {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* start showing ellipsis when 2nd line is reached */
+    white-space: pre-wrap; /* let the text wrap preserving spaces */
+    word-break: break-word;
+}
+
+.text-active {
+    color: $text-active;
+}

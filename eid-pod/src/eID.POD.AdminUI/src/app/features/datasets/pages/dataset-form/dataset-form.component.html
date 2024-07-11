@@ -1,0 +1,124 @@
+<section class="container h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }" class="confirmation-header"></p-confirmDialog>
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <h4 class="mb-4">
+        <ng-template [ngIf]="isEditMode">{{ t('modules.datasets.txtChange') }}</ng-template>
+        <ng-template [ngIf]="!isEditMode">{{ t('modules.datasets.txtAddNew') }}</ng-template>
+    </h4>
+    <div class="row">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-md-9 col-lg-8">
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <label for="datasetName" class="form-label"
+                        >{{ t('modules.datasets.txtDesignation') }} <span class="text-danger">*</span></label
+                    >
+                    <input
+                        pInputText
+                        id="datasetName"
+                        type="text"
+                        class="w-100"
+                        formControlName="datasetName"
+                        [placeholder]="t('modules.datasets.txtDesignation')" />
+                    <div class="text-danger validation-text">
+                        <span
+                            *ngIf="
+                                form.controls.datasetName.invalid &&
+                                (form.controls.datasetName.dirty || form.controls.datasetName.touched)
+                            ">
+                            {{
+                                t('validations.txtPleaseEnterField', {
+                                    field: t('modules.datasets.txtDesignation')
+                                })
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <label for="dataSource" class="form-label"
+                        >{{ t('modules.datasets.txtURL') }} <span class="text-danger">*</span></label
+                    >
+                    <input
+                        pInputText
+                        id="dataSource"
+                        type="text"
+                        class="w-100"
+                        formControlName="dataSource"
+                        [placeholder]="t('modules.datasets.txtEnterUrl')" />
+                    <div class="text-danger validation-text">
+                        <span
+                            *ngIf="
+                                form.controls.dataSource.errors?.['required'] &&
+                                (form.controls.dataSource.dirty || form.controls.dataSource.touched)
+                            ">
+                            {{
+                                t('validations.txtPleaseEnterField', {
+                                    field: t('modules.datasets.txtURL')
+                                })
+                            }}
+                        </span>
+                        <span
+                            *ngIf="form.controls.dataSource.errors?.['urlError'] &&
+                                   (form.controls.dataSource.dirty || form.controls.dataSource.touched)
+                                   ">
+                            {{ t('validations.txtURLError') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <label for="cronPeriod" class="form-label"
+                        >{{ t('modules.datasets.txtRepeatability') }} <span class="text-danger">*</span></label
+                    >
+                    <p-dropdown
+                        formControlName="cronPeriod"
+                        [options]="cronPeriodTypes"
+                        optionLabel="name"
+                        optionValue="id"
+                        styleClass="w-100"
+                        inputId="cronPeriod"
+                        [placeholder]="t('global.txtDropdownPlaceholder')">
+                    </p-dropdown>
+                    <div class="text-danger validation-text">
+                        <span
+                            *ngIf="
+                                form.controls.cronPeriod.errors?.['required'] &&
+                                (form.controls.cronPeriod.dirty || form.controls.cronPeriod.touched)
+                            ">
+                            {{
+                                t('validations.txtPleaseEnterField', {
+                                    field: t('modules.datasets.txtRepeatability')
+                                })
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <p-checkbox
+                        formControlName="isActive"
+                        inputId="isActive"
+                        ariaLabel="isActive"
+                        [binary]="true"
+                        [label]="t('modules.datasets.txtAutomaticPublicationOfTheData')"></p-checkbox>
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                </div>
+            </div>
+            <div class="d-flex gap-4 mt-4">
+                <p-button
+                    [label]="t('global.txtCancel')"
+                    styleClass="p-button p-button-danger"
+                    [routerLink]="['/datasets']"></p-button>
+
+                <p-button
+                    [label]="isEditMode ? t('modules.datasets.txtChange') : t('modules.datasets.txtAdd')"
+                    type="submit"
+                    [disabled]="isLoading"
+                    styleClass="p-button p-button-primary"></p-button>
+            </div>
+        </form>
+    </div>
+</section>

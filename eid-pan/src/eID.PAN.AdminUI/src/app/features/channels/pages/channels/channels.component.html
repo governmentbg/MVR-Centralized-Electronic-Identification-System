@@ -1,0 +1,142 @@
+<section *transloco="let t">
+    <h4 class="mb-4 text-uppercase" [attr.aria-label]="t('modules.channels.txtChannelsTitle')">
+        {{ t('modules.channels.txtChannelsTitle') }}
+    </h4>
+
+    <p-toast key="toast" position="bottom-right"></p-toast>
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div class="p-card p-4">
+        <div class="mb-4">
+            <p-selectButton
+                [options]="tabOptions"
+                [(ngModel)]="value"
+                [multiple]="false"
+                optionLabel="name"
+                optionValue="value"
+                (ngModelChange)="activeItemChange($event)">
+                <ng-template let-item>
+                    <span class="p-button-label">{{ item.label }}</span>
+                </ng-template>
+            </p-selectButton>
+        </div>
+
+        <p-table
+            #dt
+            [value]="channels"
+            [rows]="10"
+            [paginator]="false"
+            [tableStyle]="{ 'min-width': '100%' }"
+            [(selection)]="selectedChannels"
+            [rowHover]="true"
+            dataKey="name"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            loadingIcon="pi pi-spin pi-spinner">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.channels.txtChannel')">
+                        {{ t('modules.channels.txtChannel') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.channels.txtDescription')">
+                        {{ t('modules.channels.txtDescription') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.channels.txtCallbackUrl')">
+                        {{ t('modules.channels.txtCallbackUrl') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.channels.txtInfoUrl')">
+                        {{ t('modules.channels.txtInfoUrl') }}
+                    </th>
+                    <th class="text-nowrap" [attr.aria-label]="t('modules.channels.txtPrice')">
+                        {{ t('modules.channels.txtPrice') }}
+                    </th>
+                    <th class="text-nowrap" *ngIf="activeItem !== 'rejected'" [attr.aria-label]="t('global.txtAction')">
+                        {{ t('global.txtAction') }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td style="width: 10rem" *ngIf="activeItem !== 'rejected'">
+                        <p-skeleton></p-skeleton>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-channel>
+                <tr>
+                    <td>
+                        <span class="text-break" [attr.aria-label]="getChannelNameTranslation(channel)">{{
+                            getChannelNameTranslation(channel)
+                        }}</span>
+                    </td>
+                    <td>
+                        <span class="text-break" [attr.aria-label]="getChannelDescriptionTranslation(channel)">{{
+                            getChannelDescriptionTranslation(channel)
+                        }}</span>
+                    </td>
+                    <td>
+                        <span class="text-break" [attr.aria-label]="channel.callbackUrl">{{
+                            channel.callbackUrl
+                        }}</span>
+                    </td>
+                    <td>
+                        <span class="text-break" [attr.aria-label]="channel.infoUrl">{{ channel.infoUrl }}</span>
+                    </td>
+                    <td [attr.aria-label]="channel.price">{{ channel.price }}</td>
+                    <td style="width: 10rem" *ngIf="activeItem !== 'rejected'">
+                        <div class="d-flex">
+                            <p-button
+                                *ngIf="activeItem === 'approved'"
+                                (click)="doAction(channel, actions.deactivate)"
+                                [label]="t('modules.channels.txtArchiveAction')"
+                                icon="pi pi-times"
+                                iconPos="right"
+                                styleClass="p-button-sm p-button-danger"
+                                [ariaLabel]="t('modules.channels.txtArchiveAction')"></p-button>
+
+                            <p-button
+                                *ngIf="activeItem === 'archived'"
+                                (click)="doAction(channel, actions.reactivate)"
+                                [label]="t('modules.channels.txtRestoreAction')"
+                                icon="pi pi-check"
+                                iconPos="right"
+                                styleClass="p-button-sm me-3 p-button-success"
+                                [ariaLabel]="t('modules.channels.txtRestoreAction')"></p-button>
+
+                            <p-button
+                                *ngIf="activeItem === 'pending'"
+                                (click)="doAction(channel, actions.approve)"
+                                [label]="t('modules.channels.txtApprove')"
+                                icon="pi pi-check"
+                                iconPos="right"
+                                styleClass="p-button-sm me-3 p-button-success"
+                                [ariaLabel]="t('modules.channels.txtApprove')"></p-button>
+                            <p-button
+                                *ngIf="activeItem === 'pending'"
+                                (click)="doAction(channel, actions.reject)"
+                                [label]="t('modules.channels.txtReject')"
+                                icon="pi pi-times"
+                                iconPos="right"
+                                styleClass="p-button-sm p-button-danger"
+                                [ariaLabel]="t('modules.channels.txtReject')"></p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</section>

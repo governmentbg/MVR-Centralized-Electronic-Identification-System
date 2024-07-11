@@ -1,0 +1,141 @@
+<section *transloco="let t" class="h-100">
+    <h4
+        class="mb-4 text-uppercase"
+        [attr.aria-label]="
+            action === 'edit'
+                ? t('modules.configurations.txtEditConfiguration')
+                : t('modules.configurations.txtAddConfiguration')
+        ">
+        {{
+            action === 'edit'
+                ? t('modules.configurations.txtEditConfiguration')
+                : t('modules.configurations.txtAddConfiguration')
+        }}
+    </h4>
+
+    <p-toast key="toast" position="bottom-right"></p-toast>
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div class="p-card p-4">
+        <div class="row">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-md-8 col-lg-3">
+                <div class="d-flex flex-column mb-3">
+                    <label for="host" class="form-label">{{ t('modules.configurations.txtServer') }} *</label>
+                    <input pInputText id="host" type="text" formControlName="server" />
+                    <div
+                        [attr.aria.role-description]="t('ariaLabels.txtValidationMessage')"
+                        *ngIf="
+                            form.controls.server.invalid && (form.controls.server.dirty || form.controls.server.touched)
+                        "
+                        class="text-danger">
+                        {{ t('validations.txtPleaseEnterField', { field: t('modules.configurations.txtServer') }) }}
+                    </div>
+                </div>
+                <div class="d-flex flex-column mb-3">
+                    <label for="port" class="form-label" [attr.aria-label]="t('modules.configurations.txtPort')"
+                        >{{ t('modules.configurations.txtPort') }} *</label
+                    >
+                    <p-inputNumber
+                        inputId="port"
+                        [useGrouping]="false"
+                        [min]="1"
+                        [max]="65535"
+                        formControlName="port"
+                        styleClass="w-100"></p-inputNumber>
+                    <div
+                        [attr.aria.role-description]="t('ariaLabels.txtValidationMessage')"
+                        *ngIf="form.controls.port.invalid && (form.controls.port.dirty || form.controls.port.touched)"
+                        class="text-danger">
+                        {{ t('validations.txtPleaseEnterField', { field: t('modules.configurations.txtPort') }) }}
+                    </div>
+                </div>
+                <div class="flex flex-wrap mb-3">
+                    <fieldset>
+                        <legend [attr.aria-label]="t('modules.configurations.txtEncryption')">
+                            {{ t('modules.configurations.txtEncryption') }}
+                        </legend>
+                        <div class="mb-3">
+                            <p-radioButton
+                                [value]="securityProtocol.SSL"
+                                formControlName="securityProtocol"
+                                inputId="ssl"
+                                ariaLabel="SSL"></p-radioButton>
+                            <label for="ssl" class="ms-2" ariaLabel="SSL" aria-label="SSL">SSL</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <p-radioButton
+                                [value]="securityProtocol.TLS"
+                                formControlName="securityProtocol"
+                                inputId="tls"
+                                ariaLabel="TLS"></p-radioButton>
+                            <label for="tls" class="ms-2" aria-label="TLS">TLS</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="d-flex flex-column mb-3">
+                    <label for="username" class="form-label" [attr.aria-label]="t('modules.configurations.txtUsername')"
+                        >{{ t('modules.configurations.txtUsername') }} *</label
+                    >
+                    <input pInputText id="username" type="text" formControlName="userName" />
+                    <div
+                        [attr.aria.role-description]="t('ariaLabels.txtValidationMessage')"
+                        *ngIf="
+                            form.controls.userName.errors?.['required'] &&
+                            (form.controls.userName.dirty || form.controls.userName.touched)
+                        "
+                        class="text-danger"
+                        [attr.aria.label]="
+                            t('validations.txtPleaseEnterField', { field: t('modules.configurations.txtUsername') })
+                        ">
+                        {{ t('validations.txtPleaseEnterField', { field: t('modules.configurations.txtUsername') }) }}
+                    </div>
+                    <div
+                        [attr.aria.role-description]="t('ariaLabels.txtValidationMessage')"
+                        *ngIf="
+                            form.controls.userName.errors?.['maxlength'] &&
+                            (form.controls.userName.dirty || form.controls.userName.touched)
+                        "
+                        class="text-danger"
+                        [attr.aria.label]="t('validations.txtExceedingMaximumLength', { length: 50 })">
+                        {{ t('validations.txtExceedingMaximumLength', { length: 50 }) }}
+                    </div>
+                </div>
+                <div class="d-flex flex-column mb-5">
+                    <label for="password" class="form-label" [attr.aria-label]="t('modules.configurations.txtPassword')"
+                        >{{ t('modules.configurations.txtPassword') }}
+                        <ng-container *ngIf="action === 'add'">*</ng-container>
+                    </label>
+                    <input pInputText id="password" type="password" formControlName="password" />
+                    <div
+                        [attr.aria.role-description]="t('ariaLabels.txtValidationMessage')"
+                        *ngIf="
+                            form.controls.password.invalid &&
+                            (form.controls.password.dirty || form.controls.password.touched)
+                        "
+                        class="text-danger"
+                        [attr.aria.label]="
+                            t('validations.txtPleaseEnterField', { field: t('modules.configurations.txtPassword') })
+                        ">
+                        {{ t('validations.txtPleaseEnterField', { field: t('modules.configurations.txtPassword') }) }}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <p-button
+                        (click)="cancel()"
+                        [label]="t('global.txtCancel')"
+                        [disabled]="requestInProgress"
+                        styleClass="p-button p-button-danger"
+                        [ariaLabel]="t('global.txtCancel')"></p-button>
+
+                    <p-button
+                        [label]="t('global.txtSave')"
+                        type="submit"
+                        [disabled]="requestInProgress"
+                        styleClass="p-button me-3 p-button-primary"
+                        [ariaLabel]="t('global.txtSave')"></p-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

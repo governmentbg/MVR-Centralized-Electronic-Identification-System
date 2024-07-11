@@ -1,0 +1,306 @@
+<section class="container h-100 empowerment-check-section" *transloco="let t">
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-4 text-uppercase">
+                {{ t('empowermentCheckModule.txtEmpowermentReferenceTitle') }}
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-md-9 col-lg-8">
+            <div class="row">
+                <div class="col">
+                    <h6 class="text-text-default mb-4">
+                        {{ t('empowermentCheckModule.txtEmpowerer') }}
+                    </h6>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <label for="onBehalfOf" class="form-label">{{
+                        t('empowermentCheckModule.txtStatementFrom')
+                    }}</label>
+                    <p-dropdown
+                        formControlName="onBehalfOf"
+                        [options]="authorizerTypes"
+                        optionLabel="name"
+                        optionValue="id"
+                        [placeholder]="t('empowermentCheckModule.txtOnBehalfOfDropdownPlaceholder')"
+                        styleClass="w-100"
+                        (onChange)="onBehalfOfChange()"
+                        inputId="onBehalfOf"
+                        [showClear]="true"></p-dropdown>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <label for="authorizerUidType" class="form-label">
+                        {{ t('empowermentCheckModule.txtIdentifier') }}
+                    </label>
+                    <p-dropdown
+                        formControlName="authorizerUidType"
+                        [options]="identifierTypes"
+                        optionLabel="name"
+                        optionValue="id"
+                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                        styleClass="w-100"
+                        inputId="authorizerUidType"
+                        (onChange)="onAuthorizerUidTypeChange($event.value)">
+                    </p-dropdown>
+                </div>
+                <div class="col-lg-5">
+                    <label for="authorizerUid" class="form-label"
+                        >{{ t('empowermentCheckModule.txtEGN') }} <span class="text-danger">*</span></label
+                    >
+                    <input
+                        digitOnly
+                        pInputText
+                        id="authorizerUid"
+                        type="text"
+                        class="w-100"
+                        formControlName="authorizerUid" />
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="form.controls.authorizerUid.errors?.['required'] &&
+                                    (form.controls.authorizerUid.dirty || form.controls.authorizerUid.touched)
+                                "
+                            >{{ computeTranslation('txtPleaseEnterField', 'authorizerUidType') }}</span
+                        >
+                        <span
+                            class="d-block"
+                            *ngIf="form.controls.authorizerUid.errors?.['pattern'] &&
+                            (form.controls.authorizerUid.dirty || form.controls.authorizerUid.touched)">
+                            {{ computeTranslation('txtInvalidField', 'authorizerUidType') }}
+                        </span>
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.authorizerUid.errors?.['required']
+                                && !form.controls.authorizerUid.errors?.['pattern']
+                                && !form.controls.authorizerUid.errors?.['PinError']
+                                && !form.controls.authorizerUid.errors?.['EgnError'])
+                                && form.controls.authorizerUid.errors?.['EgnAdultError']">
+                            {{ t('empowermentCheckModule.txtEGNAdultError') }}</span
+                        >
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.authorizerUid.errors?.['required']
+                                && !form.controls.authorizerUid.errors?.['pattern']
+                                && !form.controls.authorizerUid.errors?.['PinError'])
+                                && form.controls.authorizerUid.errors?.['EgnError']
+                                ">
+                            {{ t('empowermentCheckModule.txtEGNInvalid') }}</span
+                        >
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.authorizerUid.errors?.['required']
+                                && !form.controls.authorizerUid.errors?.['pattern'])
+                                && form.controls.authorizerUid.errors?.['PinError']">
+                            {{ t('empowermentCheckModule.txtLNCHInvalid') }}</span
+                        >
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.authorizerUid.errors?.['required']
+                            && !form.controls.authorizerUid.errors?.['pattern'])
+                            && form.controls.authorizerUid.errors?.['bulstatError']">
+                            {{
+                                t('validations.txtInvalidField', {
+                                    field: t('empowermentCheckModule.txtBulstat')
+                                })
+                            }}</span
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h6 class="text-text-default mb-4">
+                        {{ t('empowermentCheckModule.txtEmpoweredPerson') }}
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <label for="empoweredUidType" class="form-label">
+                        {{ t('empowermentCheckModule.txtIdentifier') }}
+                    </label>
+                    <p-dropdown
+                        formControlName="empoweredUidType"
+                        [options]="identifierTypesWIthoutBulstat"
+                        optionLabel="name"
+                        optionValue="id"
+                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                        styleClass="w-100"
+                        inputId="empoweredUidType"
+                        (onChange)="onEmpoweredUidTypeChange($event.value)">
+                    </p-dropdown>
+                </div>
+                <div class="col-lg-5">
+                    <label for="empoweredUid" class="form-label"
+                        >{{ t('empowermentCheckModule.txtProxyPersonalNumber') }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input
+                        pInputText
+                        digitOnly
+                        id="empoweredUid"
+                        formControlName="empoweredUid"
+                        type="text"
+                        autocomplete="off"
+                        class="w-100" />
+
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="form.controls.empoweredUid.errors?.['required'] &&
+                                (form.controls.empoweredUid.dirty || form.controls.empoweredUid.touched)
+                            "
+                            >{{ computeTranslation('txtPleaseEnterField', 'empoweredUidType') }}</span
+                        >
+                        <span
+                            class="d-block"
+                            *ngIf="form.controls.empoweredUid.errors?.['pattern'] &&
+                            (form.controls.empoweredUid.dirty || form.controls.empoweredUid.touched)">
+                            {{ computeTranslation('txtInvalidField', 'empoweredUidType') }}
+                        </span>
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.empoweredUid.errors?.['required']
+                            && !form.controls.empoweredUid.errors?.['pattern']
+                            && !form.controls.empoweredUid.errors?.['PinError']
+                            && !form.controls.empoweredUid.errors?.['EgnError'])
+                            && form.controls.empoweredUid.errors?.['EgnAdultError']">
+                            {{ t('empowermentCheckModule.txtEGNAdultError') }}</span
+                        >
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.empoweredUid.errors?.['required']
+                            && !form.controls.empoweredUid.errors?.['pattern']
+                            && !form.controls.empoweredUid.errors?.['PinError'])
+                            && form.controls.empoweredUid.errors?.['EgnError']
+                            ">
+                            {{ t('empowermentCheckModule.txtEGNInvalid') }}</span
+                        >
+                        <span
+                            class="d-inline-block"
+                            *ngIf="(!form.controls.empoweredUid.errors?.['required']
+                            && !form.controls.empoweredUid.errors?.['pattern'])
+                            && form.controls.empoweredUid.errors?.['PinError']">
+                            {{ t('empowermentCheckModule.txtLNCHInvalid') }}</span
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h6 class="text-text-default mb-4">
+                        {{ t('empowermentCheckModule.txtEmpowerment') }}
+                    </h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <label for="service" class="form-label"
+                        >{{ t('empowermentCheckModule.txtService') }} <span class="text-danger">*</span></label
+                    >
+                    <p-dropdown
+                        [options]="services"
+                        formControlName="service"
+                        optionLabel="name"
+                        [filter]="true"
+                        (onChange)="enableVolume()"
+                        styleClass="w-100"
+                        filterBy="name"
+                        inputId="service"
+                        dataKey="serviceNumber"
+                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="48">
+                        <ng-template pTemplate="dropdownicon">
+                            <i
+                                *ngIf="servicesLoading"
+                                class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                style="font-size: 1rem"></i>
+                            <i
+                                *ngIf="!servicesLoading"
+                                class="pi pi-chevron-down p-dropdown-trigger"
+                                style="font-size: 1rem"></i>
+                        </ng-template>
+                    </p-dropdown>
+
+                    <div class="text-danger validation-text">
+                        <span
+                            *ngIf="
+                                submitted &&
+                                form.controls.service.invalid &&
+                                (form.controls.service.dirty || form.controls.service.touched)
+                            ">
+                            {{
+                                t('validations.txtPleaseEnterField', {
+                                    field: t('empowermentCheckModule.txtService')
+                                })
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <label for="volumeOfRepresentation" class="form-label">{{
+                        t('empowermentCheckModule.txtVolume')
+                    }}</label>
+                    <p-multiSelect
+                        [options]="volume"
+                        formControlName="volumeOfRepresentation"
+                        optionLabel="name"
+                        [placeholder]="t('empowermentCheckModule.txtDropdownPlaceholder')"
+                        inputId="volumeOfRepresentation"
+                        styleClass="w-100"></p-multiSelect>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <label class="w-100" for="statusOn"
+                        >{{ t('empowermentCheckModule.txtDateReference') }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <p-calendar
+                        styleClass="w-100"
+                        formControlName="statusOn"
+                        inputId="statusOn"
+                        label="statusOn"
+                        name="statusOn"
+                        [showIcon]="true"
+                        dateFormat="yy-mm-dd"
+                        [showClear]="true"
+                        iconAriaLabel="calendar"
+                        [placeholder]="t('empowermentCheckModule.txtDropdownPlaceholder')">
+                    </p-calendar>
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="
+                                form.controls.statusOn.errors?.['required'] &&
+                                (form.controls.statusOn.dirty
+                                || form.controls.statusOn.touched)
+                            "
+                            >{{
+                                t('empowermentCheckModule.validationForm.txtPleaseEnterField', {
+                                    field: t('empowermentCheckModule.txtDateReference')
+                                })
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <p-button
+                    [label]="t('empowermentCheckModule.txtCreateReference')"
+                    type="submit"
+                    [disabled]="requestInProgress"
+                    styleClass="p-button me-3 p-button-primary"></p-button>
+            </div>
+        </form>
+    </div>
+</section>

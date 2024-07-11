@@ -1,0 +1,8 @@
+netsh interface ipv4 show excludedportrange protocol=tcp
+
+net stop winnat
+
+netsh int ipv4 add excludedportrange protocol=tcp startport=60003 numberofports=1
+netsh int ipv4 add excludedportrange protocol=tcp startport=60004 numberofports=1
+
+net start winnat

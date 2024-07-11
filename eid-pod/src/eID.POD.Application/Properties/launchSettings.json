@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "eID.POD.Application": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:60016"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "publishAllPorts": true
+    }
+  }
+}
