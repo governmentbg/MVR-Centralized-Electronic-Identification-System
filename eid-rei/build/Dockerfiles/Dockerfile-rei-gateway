@@ -1,0 +1,33 @@
+FROM alpine:edge
+
+LABEL authors="Strahil vitkov <strahil.vitkov@bul-si.bg>"
+
+RUN apk --no-cache add bash openjdk17 curl ttf-dejavu
+#openjdk17-jre
+
+RUN set -x \
+    && addgroup rei \
+    && adduser -S -G rei -h /home/rei -s /bin/false rei \
+    && mkdir -p /home/rei/logs \
+    && mkdir -p /home/rei/logs/rei-gateway \
+    && mkdir -p /home/rei/logs/audit/unsigned \
+    && chown -R rei:rei /home/rei
+
+COPY  api-gateway/target/rei-gateway.jar /home/rei/
+#COPY infra/dev/certs/server_cacerts /usr/lib/jvm/java-17-openjdk/lib/security/cacerts
+COPY ext-conf/application-gateway.yaml /home/rei/config/application-gateway.yaml
+
+WORKDIR /home/rei
+ENV PATH /home/rei:$PATH
+
+# The actions below are in Jenkinsfile
+#RUN ["mvnw", "clean"]
+#RUN ["mvnw", "test"]
+#RUN ["mvnw", "package", "-DskipTests"]
+
+EXPOSE 8090
+
+ENTRYPOINT ["/usr/bin/java"]
+
+ENV SPRING_PROFILES_ACTIVE=logging-dev,logging-test,logging-audit,rabbitmq,keycloak
+CMD ["-jar", "-ea", "--add-opens", "java.base/java.time=ALL-UNNAMED", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-Dspring.config.additional-location=file:/home/rei/config/application-gateway.yaml", "rei-gateway.jar"]

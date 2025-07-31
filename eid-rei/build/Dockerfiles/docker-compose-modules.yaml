@@ -1,0 +1,42 @@
+version: "3.4"
+services:
+  rei-gateway:
+    container_name: mvr-rei-gateway
+    image: mvr-rei-gateway:latest
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-rei-gateway
+    restart: always
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/rei/logs/rei-gateway"
+      - "../../logs:/home/rei/logs/audit"
+      - "../../logs:/home/rei/logs/audit/unsigned"
+    ports:
+      - "8090:8090"
+  rei-backend:
+    container_name: mvr-rei-backend
+    image: mvr-rei-backend:latest
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-rei-backend
+    restart: always
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/rei/logs/rei-backend"
+      - "../../logs:/home/rei/logs/audit"
+      - "../../logs:/home/rei/logs/audit/unsigned"
+    ports:
+      - "8091:8091"
