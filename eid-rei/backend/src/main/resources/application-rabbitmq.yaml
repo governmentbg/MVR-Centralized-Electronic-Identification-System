@@ -1,0 +1,16 @@
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        concurrency: 3
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+
+custom:
+  rabbitmq:
+    queue-prefix: rei.rpcqueue.
+    management:
+      port:
+    listener:
+      dispatcher: bg.bulsi.backend.rabbitmq.ListenerDispatcher

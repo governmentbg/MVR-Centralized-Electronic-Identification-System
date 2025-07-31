@@ -1,0 +1,34 @@
+openapi: 3.0.1
+info:
+  title: eID - REI HTTP API
+  description: Регистър на Електронните Идентификатори (РЕИ)
+  version: v1
+paths: {}
+components:
+  schemas:
+    Eidentity:
+      type: object
+      $ref: './components/eidentity/eidentity_v1.yaml#/schemas/Eidentity'
+    ProblemDetails:
+      type: object
+      $ref: './components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+    ValidationProblemDetails:
+      type: object
+      $ref: './components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+    CitizenData:
+      type: object
+      $ref: './components/eidentity/citizen_data_v1.yaml#/schemas/CitizenData'
+    ConfigurationResult:
+      type: object
+      $ref: './components/common/configuration_v1.yaml#/schemas/ConfigurationResult'
+    UpdateConfigurationRequest:
+      type: object
+      $ref: './components/common/configuration_v1.yaml#/schemas/UpdateConfigurationRequest'
+    EidentityRequest:
+      $ref: './components/eidentity/eidentity_request_v1.yaml#/schemas/EidentityRequest'
+    UpdateCitizenIdentifier:
+      $ref: './components/eidentity/update_citizen_identifier_v1.yaml#/schemas/UpdateCitizenIdentifier'
+    FindEidentitiesRequest:
+      $ref: './components/eidentity/find_eidentity_list_v1.yaml#/schemas/FindEidentitiesRequest'
+    HttpResponse:
+      $ref: 'components/common/http_response_v1.yaml#/schemas/HttpResponse'

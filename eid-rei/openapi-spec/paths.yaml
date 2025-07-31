@@ -1,0 +1,23 @@
+---
+openapi: 3.0.1
+info:
+  title: eID - REI HTTP API
+  description: Регистър на Електронните Идентификатори (РЕИ)
+  version: v1
+paths:
+  "/api/v1/eidentity":
+    $ref: './paths_v1/eidentity/eidentity.yaml#/methods'
+  "/api/v1/eidentity/internal":
+    $ref: './paths_v1/eidentity/get_eidentity_number_and_type_internal.yaml#/methods'
+  "/api/v1/eidentity/{id}":
+    $ref: './paths_v1/eidentity/eidentity_id.yaml#/methods'
+  "/api/v1/eidentity/{id}/internal":
+    $ref: './paths_v1/eidentity/get_eidentity_id_internal.yaml#/methods'
+  "/api/v1/eidentity/list":
+    $ref: './paths_v1/eidentity/eidentity_request_list.yaml#/methods'
+  "/api/v1/eidentity/{id}/status":
+    $ref: './paths_v1/eidentity/eidentity_id_status.yaml#/methods'
+  "/api/v1/configuration/{key}":
+    $ref: './paths_v1/configuration/configuration.yaml#/methods'
+  "/api/v1/eidentity/update-citizen-identifier":
+    $ref: 'paths_v1/eidentity/update_citizen_identifier.yaml#/methods'

@@ -1,0 +1,28 @@
+{
+    "journals": {
+        "folders": ["/app/logs/eid-rei/audit"],
+        "fileExtensionFilter": "*.audit"
+    },
+    "integrity": {
+        "systemId": "rei",
+        "poolingRequestInterval": 5000,
+        "poolingTimeout": 600000,
+        "downloadBytesFileSize": 500000
+    },
+    "systemProcesses": {
+        "prometheus": "http://monitoring.mvreid.local:9090",
+        "grafana": "http://monitoring.mvreid.local:3000",
+        "ddosSystem1": "https://10.253.254.140",
+        "ddosSystem2": "https://10.253.254.140"
+    },
+    "oauth": {
+        "clientId": "eid_mvr_auth_client",
+        "issuer": "https://keycloak-dev.mvreid.local/realms/eid_internal",
+        "redirectUri": "https://localhost:4200/",
+        "responseType": "code",
+        "requireHttps": true,
+        "scope": "openid profile email offline_access",
+        "useSilentRefresh": true,
+        "timeoutFactor": 0.75
+    }
+}

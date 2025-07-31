@@ -1,0 +1,12 @@
+schemas:
+  UpdateCitizenIdentifier:
+    type: object
+    properties:
+      oldCitizenIdentifierNumber:
+        type: string
+      oldCitizenIdentifierType:
+        $ref: './citizen_identifier_type_v1.yaml#/schemas/IdentifierType'
+      newCitizenIdentifierNumber:
+        type: string
+      newCitizenIdentifierType:
+        $ref: './citizen_identifier_type_v1.yaml#/schemas/IdentifierType'

@@ -1,0 +1,27 @@
+server:
+  port: 8091
+  ssl:
+    enabled: false
+    trust-store:
+    trust-store-password:
+    trust-store-type: PKCS12
+logging:
+  secret-key:
+spring:
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+  rabbitmq:
+    listener:
+      simple:
+        concurrency: 3
+    host:
+    username:
+    password:
+custom:
+  rabbitmq:
+    queue-prefix: rei.rpcqueue.
+    management:
+      port:

@@ -1,0 +1,24 @@
+server:
+  port: ${REI_GW_SERVER_PORT}
+  ssl:
+    enabled: false
+    trust-store: ${REI_GW_TRUST_STORE}
+    trust-store-password: ${REI_GW_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
+spring:
+  profiles:
+    active: ${REI_GW_SPRING_ACTIVE_PROFILES}
+logging:
+  secret-key: ${REI_GW_AUDIT_LOGGING_SECRET_KEY}
+  module-id: rei-gateway
+  system-id: rei
+  file-name-pattern-audit: ${REI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${REI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${REI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${REI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${REI_GW_LOG_FILE_NAME}
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /docs
+    enabled: ${REI_SWAGGER_ENABLED}
