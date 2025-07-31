@@ -133,14 +133,6 @@ public class Startup
            {
                httpClient.BaseAddress = new Uri(applicationUrls.KeycloakHostUrl);
            })
-            // TODO: Must be removed at some point
-            .ConfigurePrimaryHttpMessageHandler((s) =>
-            {
-                return new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                };
-            })
            .AddPolicyHandler((serviceProvider, request) =>
            {
                var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();

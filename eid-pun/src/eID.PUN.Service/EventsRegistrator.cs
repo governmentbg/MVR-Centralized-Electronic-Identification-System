@@ -29,14 +29,24 @@ public class EventsRegistrator : IEventsRegistrator
 
         try
         {
+            var statusesWeWontRetry = new System.Net.HttpStatusCode[] {
+                System.Net.HttpStatusCode.BadRequest,
+                System.Net.HttpStatusCode.NotFound,
+                System.Net.HttpStatusCode.Unauthorized,
+                System.Net.HttpStatusCode.Forbidden
+            };
             var policy = Policy<HttpResponseMessage>
                             .Handle<Exception>()
-                            .OrResult(httpResponse => !httpResponse.IsSuccessStatusCode && httpResponse.StatusCode != System.Net.HttpStatusCode.BadRequest)
+                            .OrResult(httpResponse => !httpResponse.IsSuccessStatusCode
+                                            && !statusesWeWontRetry.Contains(httpResponse.StatusCode))
                             .WaitAndRetryForeverAsync(
                             _ => TimeSpan.FromSeconds(60),
                             (exception, timespan) =>
                             {
-                                _logger.LogInformation("Failed event registration. Next attempt will be at {NextAttemptTime}", DateTime.UtcNow.Add(timespan));
+                                _logger.LogWarning(
+                                    exception.Exception,
+                                    "Failed event registration. StatusCode: ({StatusCode}) {Result}. Next attempt will be at {NextAttemptTime}",
+                                    exception.Result?.StatusCode, exception.Result?.ToString(), DateTime.UtcNow.Add(timespan));
                             });
 
             var response = await policy.ExecuteAsync(() => _httpClient.PostAsync(

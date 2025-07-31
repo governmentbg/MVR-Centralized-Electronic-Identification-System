@@ -43,13 +43,11 @@ public class CarriersService : BaseService
         var carrier = new Carrier
         {
             Id = Guid.NewGuid(),
-            ModifiedBy = message.ModifiedBy,
             ModifiedOn = DateTime.UtcNow,
             SerialNumber = message.SerialNumber,
             Type = message.Type,
             CertificateId = message.CertificateId,
-            EId = message.EId,
-            UserId = message.UserId
+            EId = message.EId
         };
 
         await _context.Carriers.AddAsync(carrier);
@@ -70,7 +68,7 @@ public class CarriersService : BaseService
         return Ok(carrier.Id);
     }
 
-    public async Task<ServiceResult<IEnumerable<CarrierResult>>> GetByAsync(GetCarriersBy message)
+    public async Task<ServiceResult<IEnumerable<CarrierResult>>> GetByFilterAsync(GetCarriersByFilter message)
     {
         if (message is null)
         {
@@ -78,7 +76,7 @@ public class CarriersService : BaseService
         }
 
         // Validation
-        var validator = new GetCarriersByValidator();
+        var validator = new GetCarriersByFilterValidator();
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
@@ -98,6 +96,10 @@ public class CarriersService : BaseService
         if (message.CertificateId != Guid.Empty)
         {
             query = query.Where(c => c.CertificateId == message.CertificateId);
+        }
+        if (!string.IsNullOrWhiteSpace(message.Type))
+        {
+            query = query.Where(d => d.Type == message.Type);
         }
         var result = await query.ToListAsync();
 

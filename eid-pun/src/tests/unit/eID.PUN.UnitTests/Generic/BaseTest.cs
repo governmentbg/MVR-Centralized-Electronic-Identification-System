@@ -17,10 +17,22 @@ public abstract class BaseTest
             .Options
         );
 
-    protected static void CheckServiceResult(ServiceResult serviceResult, HttpStatusCode statusCode)
+    protected static void CheckServiceResult(ServiceResult serviceResult, HttpStatusCode statusCode, string? message = null)
     {
-        Assert.That(serviceResult, Is.Not.Null);
-        Assert.That(serviceResult.StatusCode, Is.EqualTo(statusCode));
+        Assert.That(serviceResult, Is.Not.Null, message);
+        if (statusCode < HttpStatusCode.BadRequest)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(serviceResult.Error, Is.Null);
+                Assert.That(serviceResult.Errors, Is.Null);
+            });
+        }
+        else
+        {
+            Assert.That(serviceResult.Error != null || serviceResult.Errors != null, Is.True);
+        }
+        Assert.That(serviceResult.StatusCode, Is.EqualTo(statusCode), message);
     }
 
     protected static void CheckServiceResult<T>(ServiceResult<T> serviceResult, HttpStatusCode statusCode)

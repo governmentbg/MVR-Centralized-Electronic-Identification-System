@@ -35,7 +35,13 @@ public class NotificationsService : BaseService
         }
 
         var isSuccessfullySend = await _notificationSender.SendAsync(message);
-        _logger.LogInformation("Sending notifications completed successfully");
+        if (!isSuccessfullySend)
+        {
+            _logger.LogWarning("Sending notifications completed with errors");
+        } else
+        {
+            _logger.LogInformation("Sending notifications completed successfully");
+        }
 
         return Ok(isSuccessfullySend);
     }

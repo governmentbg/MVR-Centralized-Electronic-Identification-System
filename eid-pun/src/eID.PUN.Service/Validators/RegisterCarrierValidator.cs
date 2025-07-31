@@ -12,6 +12,5 @@ public class RegisterCarrierValidator : AbstractValidator<RegisterCarrier>
         RuleFor(r => r.Type).NotEmpty().MaximumLength(100);
         RuleFor(r => r.CertificateId).NotEmpty();
         RuleFor(r => r.EId).NotEmpty();
-        RuleFor(r => r.UserId).NotEmpty();
     }
 }
