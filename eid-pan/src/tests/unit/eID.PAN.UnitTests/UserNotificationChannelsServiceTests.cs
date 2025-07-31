@@ -4,11 +4,13 @@ using eID.PAN.Service;
 using eID.PAN.Service.Database;
 using eID.PAN.Service.Entities;
 using eID.PAN.UnitTests.Generic;
+using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Moq;
 using NUnit.Framework;
 
 namespace eID.PAN.UnitTests;
@@ -20,6 +22,7 @@ public class UserNotificationChannelsServiceTests : BaseTest
     private IDistributedCache _cache;
     private ApplicationDbContext _dbContext;
     private UserNotificationChannelsService _sut;
+    private Mock<IPublishEndpoint> _publishEndpoint;
 
     [SetUp]
     public void Init()
@@ -28,9 +31,10 @@ public class UserNotificationChannelsServiceTests : BaseTest
 
         var opts = Options.Create(new MemoryDistributedCacheOptions());
         _cache = new MemoryDistributedCache(opts);
+        _publishEndpoint = new Mock<IPublishEndpoint>();
 
         _dbContext = GetTestDbContext();
-        _sut = new UserNotificationChannelsService(_logger, _cache, _dbContext);
+        _sut = new UserNotificationChannelsService(_logger, _cache, _dbContext, _publishEndpoint.Object);
     }
 
     [TearDown]
@@ -116,21 +120,19 @@ public class UserNotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var registeredSystemId = Guid.NewGuid();
-        _dbContext.RegisteredSystems.Add(new RegisteredSystem { Id = registeredSystemId, IsApproved = true });
         var notificationChannels = new List<NotificationChannelApproved>
         {
             new NotificationChannelApproved { Id = Guid.NewGuid(), IsBuiltIn = true, Name = "Channel1", CallbackUrl = "", Description = "", InfoUrl = "" },
             new NotificationChannelApproved { Id = Guid.NewGuid(), IsBuiltIn = true, Name = "Channel2", CallbackUrl = "", Description = "", InfoUrl = "" },
             new NotificationChannelApproved { Id = Guid.NewGuid(), IsBuiltIn = true, Name = "Channel3", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = registeredSystemId, Name = "Channel4", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = registeredSystemId, Name = "Channel5", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "Channel 6", CallbackUrl = "", Description = "", InfoUrl = "" }, // This should be skipped because system isn't approved
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "7", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "8", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "9", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "10", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "11", CallbackUrl = "", Description = "", InfoUrl = "" },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = Guid.NewGuid(), Name = "12", CallbackUrl = "", Description = "", InfoUrl = "" }
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "SystemName", Name = "Channel4", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "SystemName", Name = "Channel5", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "Name", Name = "7", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "Name", Name = "8", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "Name", Name = "9", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "Name", Name = "10", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "Name", Name = "11", CallbackUrl = "", Description = "", InfoUrl = "" },
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = "Name", Name = "12", CallbackUrl = "", Description = "", InfoUrl = "" }
         };
         _dbContext.NotificationChannels.AddRange(notificationChannels);
         _dbContext.SaveChanges();
@@ -153,7 +155,6 @@ public class UserNotificationChannelsServiceTests : BaseTest
         Assert.That(result.PageIndex, Is.EqualTo(2));
         Assert.That(result.TotalItems, Is.EqualTo(5));
         Assert.That(result.Data, Is.EquivalentTo(notificationChannels
-            .Where(nc => nc.IsBuiltIn || nc.SystemId == registeredSystemId)
             .Where(rs => rs.Name.Contains(filter.ChannelName))
             .Skip(3)));
     }

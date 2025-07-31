@@ -26,6 +26,17 @@ internal class VerifyUidsLawfulAgeValidator : AbstractValidator<VerifyUidsLawful
             .ForEach(r => r.SetValidator(new UserIdentifierWithoutLawfulAgeValidator()));
     }
 }
+internal class VerifyUidsRegistrationStatusValidator : AbstractValidator<VerifyUidsRegistrationStatus>
+{
+    public VerifyUidsRegistrationStatusValidator()
+    {
+        RuleFor(r => r.CorrelationId).NotEmpty();
+        RuleFor(r => r.Uids)
+            .NotEmpty()
+            .ForEach(r => r.SetValidator(new UserIdentifierWithNameWithoutLawfulAgeValidator()));
+
+    }
+}
 internal class UserIdentifierWithoutLawfulAgeValidator : AbstractValidator<UserIdentifier>
 {
     public UserIdentifierWithoutLawfulAgeValidator()

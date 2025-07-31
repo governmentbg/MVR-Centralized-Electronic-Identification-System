@@ -2,7 +2,7 @@
 
 public enum SmtpSecurityProtocol
 {
-    Auto = -1,
+    None = -1,
     SSL = 0,
     TLS = 1
 }

@@ -17,8 +17,10 @@ public class NotificationChannelsController : BaseV1Controller
     /// Create instance of <see cref="NotificationChannelsController"/>
     /// </summary>
     /// <param name="logger"></param>
+    /// <param name="configuration"></param>
     /// <param name="auditLogger"></param>
-    public NotificationChannelsController(IConfiguration configuration, ILogger<NotificationChannelsController> logger, AuditLogger auditLogger) : base(configuration, logger, auditLogger)
+    public NotificationChannelsController(ILogger<NotificationChannelsController> logger, IConfiguration configuration, AuditLogger auditLogger)
+        : base(logger, configuration, auditLogger)
     {
     }
 
@@ -62,8 +64,6 @@ public class NotificationChannelsController : BaseV1Controller
                     request.ChannelName
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetUserNotificationChannelsByFilter);
-
         return Result(serviceResult);
     }
 
@@ -71,7 +71,6 @@ public class NotificationChannelsController : BaseV1Controller
     /// Get user selected notification channels
     /// </summary>
     /// <param name="client"></param>
-    /// <param name="configuration"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="pageSize"></param>
     /// <param name="pageIndex"></param>
@@ -80,7 +79,6 @@ public class NotificationChannelsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IPaginatedData<Guid>))]
     public async Task<IActionResult> GetSelectedAsync(
         [FromServices] IRequestClient<GetUserNotificationChannels> client,
-        [FromServices] IConfiguration configuration,
         CancellationToken cancellationToken,
         [FromQuery] int pageSize = 1000,
         [FromQuery] int pageIndex = 1)
@@ -106,8 +104,6 @@ public class NotificationChannelsController : BaseV1Controller
                     UserId = GetUserId()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetUserNotificationChannels, GetUserId());
-
         return Result(serviceResult);
     }
 
@@ -115,7 +111,6 @@ public class NotificationChannelsController : BaseV1Controller
     /// Register selection of user notification channels
     /// </summary>
     /// <param name="client"></param>
-    /// <param name="configuration"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="ids"></param>
     /// <returns></returns>
@@ -123,18 +118,21 @@ public class NotificationChannelsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> RegisterSelectedAsync(
         [FromServices] IRequestClient<RegisterUserNotificationChannels> client,
-        [FromServices] IConfiguration configuration,
-        CancellationToken cancellationToken,
-        [FromBody] HashSet<Guid> ids)
+        [FromBody] HashSet<Guid> ids,
+        CancellationToken cancellationToken)
     {
         var request = new RegisterUserNotificationChannelsRequest
         {
             Ids = ids
         };
 
+        var logEventCode = LogEventCode.REGISTER_USER_NOTIFICATION_CHANNELS;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("UserId", GetUserId()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -147,11 +145,8 @@ public class NotificationChannelsController : BaseV1Controller
                     ModifiedBy = GetUserId()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RegisterUserNotificationChannels, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
-
 
     /// <summary>
     /// Add new notification channel in Pending table. Name must be unique against approved channels.
@@ -161,42 +156,47 @@ public class NotificationChannelsController : BaseV1Controller
     /// <param name="cancellationToken"></param>
     /// <response code="200">Returns the Id of the created notification channel.</response>
     /// <returns></returns>
-    [HttpPost(Name = nameof(RegisterNotificationChannelAsync))]
+    [HttpPost(Name = nameof(RegisterAsync))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> RegisterNotificationChannelAsync(
+    public async Task<IActionResult> RegisterAsync(
         [FromServices] IRequestClient<RegisterNotificationChannel> client,
         [FromBody] RegisterNotificationChannelRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.REGISTER_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("UserId", GetUserId()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
-        // TODO:
-        // Once we have authentication
-        // we should verify if SystemId can/should be taken from the token
-        // instead of being fed through the request
+
+        if (GetSystemName() == UNKNOWN_SYSTEM)
+        {
+            AddAuditLog(logEventCode, LogEventLifecycle.FAIL, payload: eventPayload);
+            return Unauthorized();
+        }
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
                 new
                 {
                     CorrelationId = RequestId,
                     ModifiedBy = GetUserId(),
-                    request.SystemId,
+                    SystemName = GetSystemName(),
                     request.Name,
                     request.Description,
                     request.CallbackUrl,
-                    request.Price,
+                    Price = 0,
+                    request.Email,
                     request.InfoUrl,
                     request.Translations
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RegisterNotificationChannel);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
-
 
     /// <summary>
     /// Update existing approved notification channel. 
@@ -205,7 +205,7 @@ public class NotificationChannelsController : BaseV1Controller
     /// <param name="client"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="id"></param>
-    /// <param name="request"></param>
+    /// <param name="payload"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -214,19 +214,37 @@ public class NotificationChannelsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> ModifyAsync(
         [FromServices] IRequestClient<ModifyNotificationChannel> client,
-        CancellationToken cancellationToken,
-        [FromRoute] string id,
-        [FromBody] RegisterNotificationChannelRequest request)
+        [FromRoute] Guid id,
+        [FromBody] NotificationChannelPayload payload,
+        CancellationToken cancellationToken)
     {
+        var request = new ModifyNotificationChannelRequest
+        {
+            Id = id,
+            Name = payload.Name,
+            InfoUrl = payload.InfoUrl,
+            Description = payload.Description,
+            CallbackUrl = payload.CallbackUrl,
+            Email = payload.Email,
+            Translations = payload.Translations
+        };
+
+        var logEventCode = LogEventCode.MODIFY_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("NotificationChannelId", request.Id),
+            ("UserId", GetUserId()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
-        // TODO:
-        // Once we have authentication
-        // we should verify that the call is authorized
-        // meaning - requesting system is actually parenting the channel
+        if (GetSystemName() == UNKNOWN_SYSTEM)
+        {
+            AddAuditLog(logEventCode, LogEventLifecycle.FAIL, payload: eventPayload);
+            return Unauthorized();
+        }
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
                 new
@@ -234,17 +252,16 @@ public class NotificationChannelsController : BaseV1Controller
                     Id = id,
                     CorrelationId = RequestId,
                     ModifiedBy = GetUserId(),
-                    request.SystemId,
+                    SystemName = GetSystemName(),
                     request.Name,
                     request.Description,
                     request.CallbackUrl,
-                    request.Price,
+                    Price = 0,
+                    request.Email,
                     request.InfoUrl,
                     request.Translations
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ModifyNotificationChannel);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 }

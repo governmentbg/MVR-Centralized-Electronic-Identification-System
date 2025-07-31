@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <appender name="AUDIT_LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <rollingPolicy class="bg.bulsi.mvr.audit_logger.MoveWithoutRenameRollingPolicy">
+            <fileNamePattern>${fileNamePatternAudit}</fileNamePattern>
+            <archiveDirectory>${fileNamePatternAuditUnsigned}</archiveDirectory>
+            <maxFileSize>${maxFileSizeAudit}</maxFileSize>
+            <maxHistory>${maxHistoryAudit}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="logging-audit">
+        <logger name="AUDIT_LOGGER" level="INFO">
+            <appender-ref ref="AUDIT_LOGGER"/>
+        </logger>
+    </springProfile>
+</included>

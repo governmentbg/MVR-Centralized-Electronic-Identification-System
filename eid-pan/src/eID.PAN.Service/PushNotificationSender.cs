@@ -11,16 +11,11 @@ public class PushNotificationSender : IPushNotificationSender
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
-    public virtual async Task<bool> SendPushNotificationAsync(Guid userId, IReadOnlyList<string> tokens, string localizedMessageBody)
+    public virtual async Task<bool> SendPushNotificationAsync(Guid userId, string token, string localizedMessageBody)
     {
-        if (tokens is null)
+        if (string.IsNullOrWhiteSpace(token))
         {
-            throw new ArgumentNullException(nameof(tokens));
-        }
-
-        if (!tokens.Any())
-        {
-            throw new ArgumentException($"'{nameof(tokens)}' cannot be empty.", nameof(tokens));
+            throw new ArgumentException($"'{nameof(token)}' cannot be null or whitespace.", nameof(token));
         }
 
         if (string.IsNullOrEmpty(localizedMessageBody))
@@ -30,7 +25,7 @@ public class PushNotificationSender : IPushNotificationSender
 
         var notification = new MulticastMessage()
         {
-            Tokens = tokens,
+            Tokens = new List<string> { token },
             Notification = new Notification
             {
                 //Title = "TBD",
@@ -41,7 +36,8 @@ public class PushNotificationSender : IPushNotificationSender
                 Notification = new AndroidNotification
                 {
                     DefaultSound = true,
-                    DefaultVibrateTimings = true
+                    DefaultVibrateTimings = true,
+                    Title = "eID"
                 }
             },
             Apns = new ApnsConfig
@@ -61,7 +57,7 @@ public class PushNotificationSender : IPushNotificationSender
             }
         };
 
-        _logger.LogInformation("Sending push notifications to {NumberOfTokens} devices for user {UserId}", tokens.Count, userId);
+        _logger.LogInformation("Sending push notifications to device for user {UserId}", userId);
         var retryPolicy = Policy
             .Handle<FirebaseMessagingException>(ex =>
                 MessagingErrorCode.Unavailable == ex.MessagingErrorCode
@@ -73,7 +69,7 @@ public class PushNotificationSender : IPushNotificationSender
                 });
         try
         {
-            var response = await retryPolicy.ExecuteAsync(() => FirebaseMessaging.DefaultInstance.SendMulticastAsync(notification));
+            var response = await retryPolicy.ExecuteAsync(() => FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(notification));
             if (response.FailureCount > 0)
             {
                 _logger.LogInformation("Failed sending notifications to {FailedCount} devices.", response.FailureCount);
@@ -104,5 +100,5 @@ public class PushNotificationSender : IPushNotificationSender
 
 public interface IPushNotificationSender
 {
-    Task<bool> SendPushNotificationAsync(Guid userId, IReadOnlyList<string> tokens, string localizedMessageBody);
+    Task<bool> SendPushNotificationAsync(Guid userId, string token, string localizedMessageBody);
 }

@@ -1,0 +1,34 @@
+schemas:
+  DiscountDoubleCurrencyResponseDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      startDate:
+        type: string
+        format: date
+      ageFrom:
+        type: integer
+      ageUntil:
+        type: integer
+      primaryDiscountAmount:
+        type: number
+        format: double
+      primaryDiscountAmountCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      secondaryDiscountAmount:
+        type: number
+        format: double
+      secondaryDiscountAmountCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      disability:
+        type: boolean
+      onlineService:
+        type: boolean
+      eidManagerId:
+        type: string
+        format: uuid
+      providedServiceId:
+        type: string
+        format: uuid

@@ -10,11 +10,11 @@ public interface AddEmpowermentStatement : CorrelatedBy<Guid>
     string Name { get; }
     string Uid { get; }
     IdentifierType UidType { get; }
-    IEnumerable<UserIdentifierWithName> AuthorizerUids { get; }
+    IEnumerable<AuthorizerIdentifier> AuthorizerUids { get; }
     IEnumerable<UserIdentifier> EmpoweredUids { get; }
     TypeOfEmpowerment TypeOfEmpowerment { get; }
-    string SupplierId { get; }
-    string SupplierName { get; }
+    string ProviderId { get; }
+    string ProviderName { get; }
     int ServiceId { get; }
     string ServiceName { get; }
     string IssuerPosition { get; }
@@ -22,4 +22,5 @@ public interface AddEmpowermentStatement : CorrelatedBy<Guid>
     DateTime StartDate { get; }
     DateTime? ExpiryDate { get; }
     string CreatedBy { get; }
+    bool AllowSelfEmpowerment { get; }
 }

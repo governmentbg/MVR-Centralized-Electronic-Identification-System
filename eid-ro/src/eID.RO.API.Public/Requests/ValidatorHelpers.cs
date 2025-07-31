@@ -108,7 +108,7 @@ internal static class ValidatorHelpers
         //If EIK has length of 10, we have to validate it as EGN
         if (eik.Length == 10)
         {
-            return EgnFormatIsValid(eik);
+            return UidFormatIsValid(eik);
         }
 
         //If EIK has length different of 10, then we only accept length of 9 or 13

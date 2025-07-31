@@ -1,0 +1,13 @@
+schemas:
+  Eidentity:
+    allOf:
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+            description: EIdentity ID
+          active:
+            type: boolean
+            description: Eidentity status
+      - $ref: './citizen_data_v1.yaml#/schemas/CitizenData'

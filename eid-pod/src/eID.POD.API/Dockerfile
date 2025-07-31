@@ -4,7 +4,6 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-ARG EID_NPM_REPO_URL
 ARG EID_NUGET_REPO_URL
 
 COPY "./eID.POD.sln" "eID.POD.sln"
@@ -29,4 +28,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "eID.POD.API.dll"]
+ENTRYPOINT ["sh", "-c", "update-ca-certificates && exec dotnet eID.POD.API.dll"]

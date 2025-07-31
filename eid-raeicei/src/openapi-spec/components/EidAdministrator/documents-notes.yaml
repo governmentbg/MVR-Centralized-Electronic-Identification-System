@@ -1,0 +1,13 @@
+schemas:
+  DocumentNoteDTO:
+    type: object
+    properties:
+     attachments:
+       type: array
+       items:
+         $ref: '../common/document_response.yaml#/schemas/DocumentResponseDTO'
+     notes:
+       type: array
+       items:
+         $ref: '../common/note_response.yaml#/schemas/NoteResponseDTO'
+

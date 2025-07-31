@@ -25,7 +25,14 @@ public class ObtainKeycloakTokenHandler : DelegatingHandler
             throw new InvalidOperationException("Unable to obtain Keycloak token");
         }
 
-        request.Headers.Add("Authorization", $"Bearer {keycloakToken}");
+        if (request.Headers.Contains(Microsoft.Net.Http.Headers.HeaderNames.Authorization))
+        {
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", keycloakToken);
+        }
+        else
+        {
+            request.Headers.Add(Microsoft.Net.Http.Headers.HeaderNames.Authorization, $"Bearer {keycloakToken}");
+        }
 
         return await base.SendAsync(request, cancellationToken);
     }

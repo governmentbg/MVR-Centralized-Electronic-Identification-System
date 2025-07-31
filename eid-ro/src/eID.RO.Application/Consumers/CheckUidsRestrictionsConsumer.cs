@@ -1,4 +1,5 @@
 ﻿using eID.RO.Contracts.Commands;
+using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Events;
 using eID.RO.Service.Interfaces;
 using MassTransit;
@@ -7,7 +8,8 @@ namespace eID.RO.Application.Consumers;
 
 public class CheckUidsRestrictionsConsumer : BaseConsumer,
     IConsumer<CheckUidsRestrictions>,
-    IConsumer<VerifyUidsLawfulAge>
+    IConsumer<VerifyUidsLawfulAge>,
+    IConsumer<VerifyUidsRegistrationStatus>
 {
     private readonly IVerificationService _verificationService;
     public CheckUidsRestrictionsConsumer(
@@ -27,7 +29,7 @@ public class CheckUidsRestrictionsConsumer : BaseConsumer,
             return;
         }
 
-        if (serviceResult?.Result != null && serviceResult.Result.Successfull)
+        if (serviceResult?.Result != null && serviceResult.Result.Successful)
         {
             await context.RespondAsync<NoRestrictedUidsDetected>(new
             {
@@ -81,6 +83,49 @@ public class CheckUidsRestrictionsConsumer : BaseConsumer,
             }
         }
     }
+    public async Task Consume(ConsumeContext<VerifyUidsRegistrationStatus> context)
+    {
+        var serviceResult = await _verificationService.VerifyUidsRegistrationStatusAsync(context.Message);
+
+        if (serviceResult?.Result != null && serviceResult.Result)
+        {
+            await context.RespondAsync<RegistrationStatusAllAvailable>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId
+            });
+            return;
+        }
+        var noDataStatuses = new[] {
+                System.Net.HttpStatusCode.InternalServerError // Communication error or malformed response
+            };
+        if (noDataStatuses.Any(status => status == serviceResult?.StatusCode))
+        {
+            await context.RespondAsync<RegistrationStatusInfoNotAvailable>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId
+            });
+            return;
+        }
+
+        await context.RespondAsync<InvalidRegistrationStatusDetected>(new
+        {
+            context.Message.CorrelationId,
+            context.Message.EmpowermentId,
+            DenialReason = MapKeyToDenialReason(serviceResult?.Errors?.FirstOrDefault().Key ?? string.Empty)
+        });
+    }
+    private EmpowermentsDenialReason MapKeyToDenialReason(string key) => key switch
+    {
+        "ConnectionFailure" => EmpowermentsDenialReason.RegistrationStatusUnavailable,
+        "InactiveProfile" => EmpowermentsDenialReason.InactiveProfile,
+        "NoBaseProfile" => EmpowermentsDenialReason.NoBaseProfile,
+        "NamesMismatch" => EmpowermentsDenialReason.NameMismatch,
+        "NoRegistration" => EmpowermentsDenialReason.NoRegistration,
+        _ => EmpowermentsDenialReason.InvalidUidRegistrationStatusDetected
+    };
+
     public class CheckAuthorizersForRestrictionsConsumerDefinition : ConsumerDefinition<CheckUidsRestrictionsConsumer>
     {
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<CheckUidsRestrictionsConsumer> consumerConfigurator)

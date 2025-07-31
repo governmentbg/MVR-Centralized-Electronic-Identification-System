@@ -18,4 +18,7 @@ public static class ValidatableRequestExtensions
 
     public static ValidationResult GetValidationResult(this IValidatableRequest request)
         => request.GetValidator().Validate(new ValidationContext<IValidatableRequest>(request));
+
+    public static IEnumerable<KeyValuePair<string, string>> GetValidationErrorList(this ValidationResult result)
+        => result.Errors.Select(e => new KeyValuePair<string, string>(e.PropertyName, e.ErrorMessage));
 }

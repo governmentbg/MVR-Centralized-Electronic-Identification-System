@@ -6,6 +6,7 @@ public interface UserIdentifier
 {
     string Uid { get; }
     IdentifierType UidType { get; }
+    string Name { get; set; }
 }
 
 [Serializable]
@@ -13,18 +14,16 @@ public class UserIdentifierData : UserIdentifier
 {
     public string Uid { get; set; } = string.Empty;
     public IdentifierType UidType { get; set; }
+    public string Name { get; set; } = string.Empty;
 }
 
-public interface UserIdentifierWithName
+public interface AuthorizerIdentifier : UserIdentifier
 {
-    string Uid { get; }
-    IdentifierType UidType { get; }
-    string Name { get; set; }
     bool IsIssuer { get; }
 }
 
 [Serializable]
-public class UserIdentifierWithNameData : UserIdentifierWithName
+public class AuthorizerIdentifierData : AuthorizerIdentifier
 {
     public string Uid { get; set; } = string.Empty;
     public IdentifierType UidType { get; set; }

@@ -1,7 +1,8 @@
-﻿using eID.PJS.AuditLogging;
+﻿using eID.PAN.API.Authorization;
 using eID.PAN.API.Requests;
 using eID.PAN.Contracts;
 using eID.PAN.Contracts.Commands;
+using eID.PJS.AuditLogging;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +10,8 @@ namespace eID.PAN.API.Controllers;
 
 public class CommunicationsController : BaseV1Controller
 {
-    public CommunicationsController(IConfiguration configuration, ILogger<CommunicationsController> logger, AuditLogger auditLogger) 
-        : base(configuration, logger, auditLogger)
+    public CommunicationsController(ILogger<CommunicationsController> logger, IConfiguration configuration, AuditLogger auditLogger)
+        : base(logger, configuration, auditLogger)
     {
     }
 
@@ -28,9 +29,12 @@ public class CommunicationsController : BaseV1Controller
         [FromBody] SendEmailRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.SEND_EMAIL;
+        var eventPayload = BeginAuditLog(logEventCode, request, request.UserId.ToString());
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, request.UserId.ToString());
         }
 
         await publishEndpoint.Publish<SendEmail>(new
@@ -40,7 +44,7 @@ public class CommunicationsController : BaseV1Controller
             request.Translations
         }, cancellationToken);
 
-        AddAuditLog(LogEventCode.SendEmail, request.UserId.ToString());
+        AddAuditLog(logEventCode, LogEventLifecycle.SUCCESS, request.UserId.ToString(), eventPayload);
 
         return Accepted();
     }
@@ -52,6 +56,7 @@ public class CommunicationsController : BaseV1Controller
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+    [RoleAuthorization(allowM2M: true)]
     [HttpPost("direct-emails/send")]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> SendDirectEmailAsync(
@@ -59,9 +64,12 @@ public class CommunicationsController : BaseV1Controller
         [FromBody] SendDirectEmailRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.SEND_DIRECT_EMAIL;
+        var eventPayload = BeginAuditLog(logEventCode, request);
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         //TODO: Think about adding sender information in command for log purposes
@@ -74,7 +82,7 @@ public class CommunicationsController : BaseV1Controller
             request.EmailAddress
         }, cancellationToken);
 
-        AddAuditLog(LogEventCode.SendDirectEmail, GetUserId());
+        AddAuditLog(logEventCode, LogEventLifecycle.SUCCESS, payload: eventPayload);
 
         return Accepted();
     }
@@ -93,9 +101,12 @@ public class CommunicationsController : BaseV1Controller
         [FromBody] SendSmsRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.SEND_SMS;
+        var eventPayload = BeginAuditLog(logEventCode, request, request.UserId.ToString());
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, request.UserId.ToString());
         }
 
         await publishEndpoint.Publish<SendSms>(new
@@ -105,7 +116,7 @@ public class CommunicationsController : BaseV1Controller
             request.Translations
         }, cancellationToken);
 
-        AddAuditLog(LogEventCode.SendSms, request.UserId.ToString());
+        AddAuditLog(logEventCode, LogEventLifecycle.SUCCESS, request.UserId.ToString(), eventPayload);
 
         return Accepted();
     }
@@ -124,9 +135,12 @@ public class CommunicationsController : BaseV1Controller
         [FromBody] SendPushNotificationRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.SEND_PUSH_NOTIFICATION;
+        var eventPayload = BeginAuditLog(logEventCode, request, request.UserId.ToString());
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, request.UserId.ToString());
         }
 
         await publishEndpoint.Publish<SendPushNotification>(new
@@ -136,7 +150,7 @@ public class CommunicationsController : BaseV1Controller
             request.Translations
         }, cancellationToken);
 
-        AddAuditLog(LogEventCode.SendPushNotification, request.UserId.ToString());
+        AddAuditLog(logEventCode, LogEventLifecycle.SUCCESS, request.UserId.ToString(), eventPayload);
 
         return Accepted();
     }

@@ -1,0 +1,56 @@
+server:
+  port: ${RAEICEI_BE_SERVER_PORT}
+  ssl:
+    enabled: false
+    trust-store: ${RAEICEI_BE_TRUST_STORE}
+    trust-store-password: ${RAEICEI_BE_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
+    
+    key-alias: mvreid.local
+    key-store: ${RAEICEI_BE_KEY_STORE}
+    key-store-password: ${RAEICEI_BE_KEY_STORE_PASSWORD}
+spring:
+  profiles:
+    active: ${RAEICEI_BE_SPRING_ACTIVE_PROFILES}
+    group:
+      test: h2-unit-test,postgres,logging-dev
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  secret-key: ${RAEICEI_BE_AUDIT_LOGGING_SECRET_KEY}
+  encryption-key:
+  module-id: raeicei-backend
+  system-id: raeicei
+  file-name-pattern-audit: ${RAEICEI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${RAEICEI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${RAEICEI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${RAEICEI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${RAEICEI_BE_LOG_FILE_NAME}
+
+#  level:
+#    root: DEBUG
+springdoc:
+  swagger-ui:
+    enabled: ${RAEICEI_SWAGGER_ENABLED}
+exchange-rates:
+  bgn-to-eur: 0.511292
+  eur-to-bgn: 1.95583
+latitude:
+  min-latitude: 41.14
+  max-latitude: 44.12
+longitude:
+  min-longitude: 22.21
+  max-longitude: 28.36
+mvr-uuid:
+  aei: 9030e0ed-af59-444e-89e2-1ccda572c372
+  cei: d37d5b36-a020-4b8f-8b9d-c3513f6bbe8b
+  
+mvr:
+  pan_client:
+    enabled: true
+    base_url: http://panapi-dev.mvreid.local
+    register_system: false
+    client_registration_id: eid-raeicei-m2m

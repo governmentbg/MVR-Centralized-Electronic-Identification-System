@@ -1,0 +1,28 @@
+<ul class="list-unstyled d-flex m-0" *transloco="let t">
+    <li>
+        <button
+            class="btn btn-link text-decoration-none"
+            [ngClass]="{ 'opacity-75': activeLanguage() === 'bg' }"
+            (click)="changeLanguage('en')"
+            role="button"
+            [attr.aria-roledescription]="t('ariaLabels.txtLanguageSwitcher')">
+            <span class="language-flag align-middle en" [attr.aria-label]="t('ariaLabels.txtFlag')"></span>
+            <span class="d-inline-block align-middle ms-1" [attr.aria-label]="t('ariaLabels.txtEnglishLanguage')"
+                >EN</span
+            >
+        </button>
+    </li>
+    <li>
+        <button
+            class="btn btn-link text-decoration-none"
+            [ngClass]="{ 'opacity-75': activeLanguage() === 'en' }"
+            (click)="changeLanguage('bg')"
+            role="button"
+            [attr.aria-roledescription]="t('ariaLabels.txtLanguageSwitcher')">
+            <span class="d-inline-block align-middle" [attr.aria-label]="t('ariaLabels.txtBulgarianLanguage')">БГ</span>
+            <span
+                class="language-flag align-middle bg ms-1"
+                [attr.aria-label]="t('ariaLabels.txtBulgarianLanguage')"></span>
+        </button>
+    </li>
+</ul>

@@ -1,0 +1,13 @@
+schemas:
+  RegionDTO:
+    type: object
+    properties:
+      code:
+        type: string
+      descriptions:
+        type: object
+        additionalProperties:
+          type: string
+        example:
+          en: ODMVR - Blagoevgrad
+          bg: ОДМВР - Благоевград

@@ -5,6 +5,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG EID_NUGET_REPO_URL
+ARG EID_NUGET_ORG
 WORKDIR /src
 
 COPY "./eID.PAN.sln" "eID.PAN.sln"
@@ -30,4 +31,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "eID.PAN.API.dll"]
+ENTRYPOINT ["sh", "-c", "update-ca-certificates && exec dotnet eID.PAN.API.dll"]

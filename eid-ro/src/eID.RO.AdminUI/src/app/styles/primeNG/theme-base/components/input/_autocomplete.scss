@@ -5,6 +5,10 @@
         right: nth($inputPadding, 2);
     }
 
+    &.p-disabled {
+        @include disabled-input();
+    }
+
     &.p-autocomplete-dd {
         .p-autocomplete-loader {
             right: nth($inputPadding, 2) + $buttonIconOnlyWidth;

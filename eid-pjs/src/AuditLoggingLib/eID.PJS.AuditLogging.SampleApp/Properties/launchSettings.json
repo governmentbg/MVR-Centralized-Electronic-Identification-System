@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "eID.PJS.AuditLogging.SampleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "eid-sample-app"
+    }
+  }
+}

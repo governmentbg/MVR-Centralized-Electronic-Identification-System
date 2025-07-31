@@ -7,6 +7,10 @@ public class GetEmpowermentsToMeByFilterRequest : IValidatableRequest
 {
     public virtual IValidator GetValidator() => new GetEmpowermentsToMeByFilterRequestValidator();
     /// <summary>
+    /// Empowerment number. Template: РОx/dd.mm.yyyy. x is a integer, dd.mm.yyyy the date of action.
+    /// </summary>
+    public string? Number { get; set; }
+    /// <summary>
     /// Empowerment Status filter
     /// </summary>
     public EmpowermentsToMeFilterStatus? Status { get; set; }
@@ -15,9 +19,9 @@ public class GetEmpowermentsToMeByFilterRequest : IValidatableRequest
     /// </summary>
     public string? Authorizer { get; set; }
     /// <summary>
-    /// Empowerment Supplier name
+    /// Empowerment provider name
     /// </summary>
-    public string? SupplierName { get; set; }
+    public string? ProviderName { get; set; }
     /// <summary>
     /// Empowerment Service name or Service code - contains
     /// </summary>
@@ -30,6 +34,14 @@ public class GetEmpowermentsToMeByFilterRequest : IValidatableRequest
     /// Filter to show only never expiring empowerments
     /// </summary>
     public bool? ShowOnlyNoExpiryDate { get; set; }
+    /// <summary>
+    /// Filter on behalf of. Optional
+    /// </summary>
+    public OnBehalfOf? OnBehalfOf { get; set; }
+    /// <summary>
+    /// If OnBehalfOf is LegalEntity, Eik filtering is allowed.
+    /// </summary>
+    public string? Eik { get; set; }
     /// <summary>
     /// Sort column
     /// </summary>
@@ -61,6 +73,10 @@ public class GetEmpowermentsToMeByFilterRequestValidator : AbstractValidator<Get
         When(r => r.ShowOnlyNoExpiryDate.HasValue && r.ShowOnlyNoExpiryDate.Value == true, () =>
         {
             RuleFor(r => r.ValidToDate).Equals(null);
+        });
+        When(r => r.OnBehalfOf.HasValue, () =>
+        {
+            RuleFor(r => r.OnBehalfOf).NotNull().IsInEnum();
         });
     }
 }

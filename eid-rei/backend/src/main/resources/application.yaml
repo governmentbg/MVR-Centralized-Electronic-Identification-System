@@ -1,0 +1,31 @@
+server:
+  port: ${REI_BE_SERVER_PORT}
+  ssl:
+    enabled: false
+    trust-store: ${REI_BE_TRUST_STORE}
+    trust-store-password: ${REI_BE_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
+spring:
+  profiles:
+    active: ${REI_BE_SPRING_ACTIVE_PROFILES}
+    group:
+      test: h2-unit-test,postgres,keycloak,logging-dev,rabbitmq
+logging:
+  secret-key: ${REI_BE_AUDIT_LOGGING_SECRET_KEY}
+  module-id: rei-backend
+  system-id: rei
+  file-name-pattern-audit: ${REI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${REI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${REI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${REI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${REI_BE_LOG_FILE_NAME}
+#  level:
+#    root: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+springdoc:
+  swagger-ui:
+    enabled: ${REI_SWAGGER_ENABLED}

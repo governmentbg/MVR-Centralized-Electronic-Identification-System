@@ -1,0 +1,103 @@
+methods:
+  put:
+    tags:
+      - EidAdministrator
+    summary: Updates eidAdministrator by id
+    operationId: updateEidAdministrator
+    parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      description: ''
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: "../../components/EidAdministrator/eid_administrator.yaml#/schemas/EidAdministratorDTO"
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "../../components/EidAdministrator/eid_administrator.yaml#/schemas/EidAdministratorDTO"
+      '204':
+        description: No Content
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+  get:
+    tags:
+      - EidAdministrator
+    summary: Get Eid Administrator by id
+    operationId: getEidAdministrator
+    parameters:
+      - name: id
+        in: path
+        description: 'Eid Administrator ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "../../components/EidAdministrator/eid_administrator.yaml#/schemas/EidAdministratorDTO"
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

@@ -1,0 +1,218 @@
+<section *transloco="let t" class="h-100 d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-uppercase">
+            {{ t("modules.journalLogs.txtJournal") }}
+        </h4>
+        <p-button
+            (click)="navigateToSearchLogFilesForm()"
+            icon="pi pi-search"
+            iconPos="right"
+            [label]="t('modules.journalLogs.txtSearchLogFilesInJournal')"
+            styleClass="p-button-sm"
+        ></p-button>
+    </div>
+    <div class="p-card p-4 flex-grow-1 d-flex flex-column">
+        <form [formGroup]="form" (ngSubmit)="refreshFiles()">
+            <div class="row mb-4">
+                <div class="col-3">
+                    <label class="w-100" for="fromDate">
+                        {{ t("modules.journalLogs.txtStartDate") }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <p-calendar
+                        styleClass="w-100"
+                        formControlName="fromDate"
+                        inputId="fromDate"
+                        label="fromDate"
+                        ariaLabelledBy="fromDate"
+                        name="fromDate"
+                        [showIcon]="true"
+                        [showTime]="true"
+                        dateFormat="yy-mm-dd"
+                        iconAriaLabel="calendar"
+                        [placeholder]="
+                            t('modules.journalLogs.txtStartDatePlaceholder')
+                        "
+                        (onSelect)="validateToDate()"
+                        appendTo="body"
+                        [baseZIndex]="1045"
+                    >
+                    </p-calendar>
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="
+                            form.controls.fromDate.errors?.['required'] &&
+                            (form.controls.fromDate.dirty
+                            || form.controls.fromDate.touched)
+                        "
+                            >{{
+                                t(
+                                    "modules.journalLogs.validationForm.txtPleaseChoose",
+                                    {
+                                        field: t(
+                                            "modules.journalLogs.txtStartDate"
+                                        )
+                                    }
+                                )
+                            }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label class="w-100" for="toDate">
+                        {{ t("modules.journalLogs.txtEndDate") }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <p-calendar
+                        styleClass="w-100"
+                        formControlName="toDate"
+                        inputId="toDate"
+                        label="toDate"
+                        ariaLabelledBy="toDate"
+                        name="toDate"
+                        [showIcon]="true"
+                        [showTime]="true"
+                        dateFormat="yy-mm-dd"
+                        iconAriaLabel="calendar"
+                        [placeholder]="
+                            t('modules.journalLogs.txtEndDatePlaceholder')
+                        "
+                        appendTo="body"
+                        [baseZIndex]="1045"
+                    >
+                    </p-calendar>
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="
+                            form.controls.toDate.errors?.['required'] &&
+                            (form.controls.toDate.dirty
+                            || form.controls.toDate.touched)
+                        "
+                            >{{
+                                t(
+                                    "modules.journalLogs.validationForm.txtPleaseChoose",
+                                    {
+                                        field: t(
+                                            "modules.journalLogs.txtEndDate"
+                                        )
+                                    }
+                                )
+                            }}
+                        </span>
+                        <span
+                            *ngIf=" form.controls.toDate.errors?.['dateMoreThanValid'] &&
+                                    (form.controls.toDate.dirty || form.controls.toDate.touched)
+                                    "
+                        >
+                            {{
+                                t(
+                                    "modules.journalLogs.validationForm.txtLaterThenStartDate"
+                                )
+                            }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-2 d-flex align-items-center">
+                    <p-button
+                        type="submit"
+                        icon="pi pi-search"
+                        iconPos="right"
+                        [label]="t('modules.journalLogs.txtSearch')"
+                        [disabled]="loading"
+                        styleClass="p-button p-button-primary"
+                    ></p-button>
+                </div>
+            </div>
+        </form>
+        <div class="journal-container">
+            <p-table
+                #dt
+                [value]="files"
+                [paginator]="false"
+                [tableStyle]="{ 'min-width': '100%' }"
+                [rowHover]="true"
+                dataKey="name"
+                [loading]="loading"
+                loadingIcon="pi pi-spin pi-spinner"
+                selectionMode="single"
+                (onRowSelect)="openFileDetails($event)"
+                [columns]="cols"
+                [scrollable]="true"
+                scrollHeight="flex"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="80"
+            >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th
+                            *ngFor="let col of columns"
+                            [ngStyle]="{
+                                width: col.field === 'createdOn' ? ' 12rem' : ''
+                            }"
+                            class="text-nowrap"
+                        >
+                            {{ col.header }}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template
+                    pTemplate="body"
+                    let-rowData
+                    let-rowIndex="rowIndex"
+                    let-columns="columns"
+                >
+                    <tr style="height: 80px" [pSelectableRow]="rowData">
+                        <td
+                            *ngFor="let col of columns"
+                            [ngSwitch]="col.field"
+                            [ngStyle]="{
+                                width: col.field === 'createdOn' ? ' 12rem' : ''
+                            }"
+                        >
+                            <span
+                                class="text-break"
+                                *ngSwitchCase="'sourceFile'"
+                                >{{ rowData[col.field] }}</span
+                            >
+                            <span
+                                class="text-break"
+                                *ngSwitchCase="'createdOn'"
+                                >{{ rowData[col.field] | translocoDate : { timeStyle: 'medium' } }}</span
+                            >
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="7">
+                            <span
+                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey"
+                            >
+                                <img
+                                    src="/assets/images/noresults.png"
+                                    alt="no-results-logo"
+                                />
+                                <span class="text-text-light">
+                                    {{ t("global.txtNoRecordsFound") }}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <p-toast key="toast" position="bottom-right"></p-toast>
+</section>

@@ -2,10 +2,10 @@
 
 public enum LogEventCode
 {
-    None = 0,
-    CreateDataset = 1,
-    GetAllDatasets = 2,
-    UpdateDataset = 3,
-    DeleteDataset = 4,
-    ManualUploadDataset = 5
+    NONE = 0,
+    CREATE_DATASET = 1,
+    UPDATE_DATASET = 3,
+    DELETE_DATASET = 4,
+    MANUAL_UPLOAD_DATASET = 5,
+    GET_ALL_DATASETS = 6
 }

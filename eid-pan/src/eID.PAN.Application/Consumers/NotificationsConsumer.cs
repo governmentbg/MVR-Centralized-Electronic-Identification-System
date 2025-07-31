@@ -15,7 +15,8 @@ public class NotificationsConsumer : BaseConsumer,
     IConsumer<RestoreSystem>,
     IConsumer<SendNotification>,
     IConsumer<GetRegisteredSystemsRejected>,
-    IConsumer<GetSystemsByFilter>
+    IConsumer<GetSystemsByFilter>,
+    IConsumer<SendChannelActivatedNotification>
 {
     private readonly NotificationsService _notificationsService;
 
@@ -78,5 +79,10 @@ public class NotificationsConsumer : BaseConsumer,
     public async Task Consume(ConsumeContext<GetSystemsByFilter> context)
     {
         await ExecuteMethodAsync(context, () => _notificationsService.GetSystemsByFilterAsync(context.Message));
+    }
+
+    public async Task Consume(ConsumeContext<SendChannelActivatedNotification> context)
+    {
+        await ExecuteMethodWithoutResponseAsync(context, () => _notificationsService.SendChannelActivatedNotificationAsync(context.Message));
     }
 }

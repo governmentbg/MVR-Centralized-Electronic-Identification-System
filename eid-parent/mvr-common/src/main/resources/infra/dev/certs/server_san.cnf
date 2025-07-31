@@ -1,0 +1,28 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = req_ext
+
+[req_distinguished_name]
+CN = mvreid.local
+
+[req_ext]
+subjectAltName = @alt_names
+basicConstraints=critical,CA:TRUE
+keyUsage=critical, keyCertSign, digitalSignature, keyAgreement
+
+[alt_names]
+DNS.1 = mvreid-mq.local
+DNS.2 = mvreid-db.local
+DNS.3 = mvreid-redis.local
+DNS.4 = mvreid-keycloak.local
+DNS.5 = mvreid-mq.test
+DNS.6 = mvreid-db.test
+DNS.7 = mvreid-redis.test
+DNS.8 = mvreid-keycloak.test
+DNS.9 = localhost
+IP.1 = 10.10.0.108
+IP.2 = 10.10.0.85
+IP.3 = 10.10.0.83
+IP.4 = 10.10.0.87
+IP.5 = 127.0.0.1
+IP.6 = ::1

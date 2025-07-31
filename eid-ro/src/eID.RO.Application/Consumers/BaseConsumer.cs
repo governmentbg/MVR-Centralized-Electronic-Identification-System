@@ -23,13 +23,18 @@ namespace eID.RO.Application.Consumers
                 try
                 {
                     ServiceResult<TResult> result = await action();
-
-                    await context.RespondAsync(result);
+                    if (context.RequestId != null && context.ResponseAddress != null)
+                    {
+                        await context.RespondAsync(result);
+                    }
                 }
                 catch (Exception ex)
                 {
                     Logger.LogError(ex, $"Exception occurred when execute '{nameof(ExecuteMethodAsync)}'");
-                    await context.RespondAsync(new ServiceResult<TResult> { StatusCode = HttpStatusCode.InternalServerError, Error = "Unhandled exception" });
+                    if (context.RequestId != null && context.ResponseAddress != null)
+                    {
+                        await context.RespondAsync(new ServiceResult<TResult> { StatusCode = HttpStatusCode.InternalServerError, Error = "Unhandled exception" });
+                    }
                 }
             }
         }

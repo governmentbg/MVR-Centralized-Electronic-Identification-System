@@ -61,18 +61,22 @@ public class GetEmpowermentsByDeauValidator : AbstractValidator<GetEmpowermentsB
         });
         RuleFor(r => r.EmpoweredUidType).NotEmpty().IsInEnum();
 
-        RuleFor(x => x.ServiceId).NotEmpty();
         When(x => x.VolumeOfRepresentation != null, () =>
         {
             RuleForEach(x => x.VolumeOfRepresentation).NotEmpty();
         });
 
-        RuleFor(x => x.SupplierId).NotEmpty();
+        RuleFor(x => x.ProviderId).NotEmpty();
         RuleFor(x => x.RequesterUid).NotEmpty().Must(x => ValidatorHelpers.UidFormatIsValid(x));
 
         RuleFor(x => x.StatusOn).NotEmpty();
 
         RuleFor(r => r.PageIndex).GreaterThanOrEqualTo(1);
         RuleFor(r => r.PageSize).GreaterThanOrEqualTo(1).LessThanOrEqualTo(50);
+        RuleFor(r => r.SortBy).IsInEnum();
+        When(r => r.SortBy.HasValue, () =>
+        {
+            RuleFor(r => r.SortDirection).IsInEnum();
+        });
     }
 }

@@ -1,22 +1,28 @@
-﻿using eID.PJS.AuditLogging;
+﻿using eID.PAN.API.Authorization;
 using eID.PAN.API.Requests;
 using eID.PAN.Contracts;
 using eID.PAN.Contracts.Commands;
 using eID.PAN.Contracts.Enums;
 using eID.PAN.Contracts.Results;
+using eID.PJS.AuditLogging;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eID.PAN.API.Controllers;
 
+/// <summary>
+/// Implement <see cref="NotificationsController"/>
+/// </summary>
 public class NotificationsController : BaseV1Controller
 {
     /// <summary>
-    /// Crate an instance of <see cref="NotificationsController"/>
+    /// Create an instance of <see cref="NotificationsController"/>
     /// </summary>
     /// <param name="logger"></param>
+    /// <param name="configuration"></param>
     /// <param name="auditLogger"></param>
-    public NotificationsController(IConfiguration configuration, ILogger<NotificationsController> logger, AuditLogger auditLogger) : base(configuration, logger, auditLogger)
+    public NotificationsController(ILogger<NotificationsController> logger, IConfiguration configuration, AuditLogger auditLogger)
+        : base(logger, configuration, auditLogger)
     {
     }
 
@@ -28,6 +34,7 @@ public class NotificationsController : BaseV1Controller
     /// <param name="cancellationToken"></param>
     /// <response code="200">Returns id of the newly registered or updated system</response>
     /// <returns></returns>
+    [RoleAuthorization(allowM2M: true)]
     [HttpPost("systems", Name = nameof(RegisterOrUpdateSystemAsync))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -36,9 +43,12 @@ public class NotificationsController : BaseV1Controller
         [FromBody] RegisterSystemRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.REGISTER_SYSTEM;
+        var eventPayload = BeginAuditLog(logEventCode, request);
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -46,14 +56,12 @@ public class NotificationsController : BaseV1Controller
             {
                 CorrelationId = RequestId,
                 SystemName = GetSystemName(),
-                ModifiedBy = GetUserId(),
+                ModifiedBy = GetUid(),
                 Translations = (IEnumerable<RegisteredSystemTranslation>)request.Translations,
                 Events = (IEnumerable<SystemEvent>)request.Events
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RegisterSystem);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -68,7 +76,7 @@ public class NotificationsController : BaseV1Controller
     /// <returns></returns>
     [HttpGet("systems/registered")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IPaginatedData<RegisteredSystemResult>))]
-    public async Task<IActionResult> GetAsync(
+    public async Task<IActionResult> GetNotificationsByFilterAsync(
         [FromServices] IRequestClient<GetNotificationsByFilter> client,
         CancellationToken cancellationToken,
         [FromQuery] int pageSize = 10,
@@ -100,8 +108,6 @@ public class NotificationsController : BaseV1Controller
                     request.IncludeDeleted
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetNotificationsByFilter);
-
         return Result(serviceResult);
     }
 
@@ -118,8 +124,8 @@ public class NotificationsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IPaginatedData<RegisteredSystemResult>))]
     public async Task<IActionResult> GetRegisteredSystemByStateAsync(
         [FromServices] IRequestClient<GetSystemsByFilter> client,
-        CancellationToken cancellationToken,
         [FromRoute] RegisteredSystemState state,
+        CancellationToken cancellationToken,
         [FromQuery] int pageSize = 10,
         [FromQuery] int pageIndex = 1)
     {
@@ -145,11 +151,8 @@ public class NotificationsController : BaseV1Controller
                     request.RegisteredSystemState
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetSystemsByFilter);
-
         return Result(serviceResult);
     }
-
 
     /// <summary>
     /// Get all Rejected systems
@@ -187,8 +190,6 @@ public class NotificationsController : BaseV1Controller
                     request.PageIndex
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetRegisteredSystemsRejected);
-
         return Result(serviceResult);
     }
 
@@ -224,8 +225,6 @@ public class NotificationsController : BaseV1Controller
                     request.Id
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetSystemById);
-
         return Result(serviceResult);
     }
 
@@ -234,7 +233,7 @@ public class NotificationsController : BaseV1Controller
     /// </summary>
     /// <param name="client"></param>
     /// <param name="id"></param>
-    /// <param name="request"></param>
+    /// <param name="payload"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPatch("{id}")]
@@ -244,12 +243,22 @@ public class NotificationsController : BaseV1Controller
     public async Task<IActionResult> ModifyEventAsync(
         [FromServices] IRequestClient<ModifyEvent> client,
         [FromRoute] Guid id,
-        [FromBody] EventModificationRequest request,
+        [FromBody] EventModificationPayload payload,
         CancellationToken cancellationToken)
     {
+        var request = new EventModificationRequest
+        {
+            Id = id,
+            IsDeleted = payload.IsDeleted
+        };
+
+        var logEventCode = LogEventCode.MODIFY_EVENT;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("EventId", request.Id));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -257,13 +266,11 @@ public class NotificationsController : BaseV1Controller
             {
                 CorrelationId = RequestId,
                 Id = id,
-                ModifiedBy = GetUserId(),
+                ModifiedBy = GetUid(),
                 request.IsDeleted
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ModifyEvent);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -271,6 +278,7 @@ public class NotificationsController : BaseV1Controller
     /// </summary>
     /// <param name="client"></param>
     /// <param name="id"></param>
+    /// <param name="requestPayload"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>Id of rejected system entity</returns>
     [HttpPut("systems/{id}/reject")]
@@ -280,16 +288,22 @@ public class NotificationsController : BaseV1Controller
     public async Task<IActionResult> RejectSystemAsync(
         [FromServices] IRequestClient<RejectSystem> client,
         [FromRoute] Guid id,
+        [FromBody] RejectSystemRequestPayload requestPayload,
         CancellationToken cancellationToken)
     {
         var request = new RejectSystemRequest
         {
-            SystemId = id
+            SystemId = id,
+            Reason = requestPayload.Reason,
         };
+
+        var logEventCode = LogEventCode.REJECT_SYSTEM;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            (nameof(request.SystemId), request.SystemId));
 
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -297,12 +311,11 @@ public class NotificationsController : BaseV1Controller
             {
                 CorrelationId = RequestId,
                 request.SystemId,
-                UserId = GetUserId()
+                UserId = GetUid(),
+                request.Reason
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RejectSystem);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -327,9 +340,13 @@ public class NotificationsController : BaseV1Controller
             SystemId = id
         };
 
+        var logEventCode = LogEventCode.APPROVE_SYSTEM;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            (nameof(request.SystemId), request.SystemId));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -337,12 +354,10 @@ public class NotificationsController : BaseV1Controller
             {
                 CorrelationId = RequestId,
                 request.SystemId,
-                UserId = GetUserId()
+                UserId = GetUid()
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ApproveSystem);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -367,9 +382,13 @@ public class NotificationsController : BaseV1Controller
             SystemId = id
         };
 
+        var logEventCode = LogEventCode.ARCHIVE_SYSTEM;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            (nameof(request.SystemId), request.SystemId));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -377,12 +396,10 @@ public class NotificationsController : BaseV1Controller
             {
                 CorrelationId = RequestId,
                 request.SystemId,
-                UserId = GetUserId()
+                UserId = GetUid()
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ArchiveSystem);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -406,9 +423,13 @@ public class NotificationsController : BaseV1Controller
             SystemId = id
         };
 
+        var logEventCode = LogEventCode.RESTORE_SYSTEM;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            (nameof(request.SystemId), request.SystemId));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -416,12 +437,10 @@ public class NotificationsController : BaseV1Controller
             {
                 CorrelationId = RequestId,
                 request.SystemId,
-                UserId = GetUserId()
+                UserId = GetUid()
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RestoreSystem);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -430,7 +449,6 @@ public class NotificationsController : BaseV1Controller
     /// <param name="client"></param>
     /// <param name="input"></param>
     /// <param name="cancellationToken"></param>
-    /// <param name="testSystemName"></param>
     /// <returns>Whether or not the system managed to queue the notification for sending</returns>
     [HttpPost("send")]
     [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(bool))]
@@ -450,10 +468,18 @@ public class NotificationsController : BaseV1Controller
             UidType = input.UidType,
             SystemName = GetSystemName()
         };
-        
+
+        var logEventCode = LogEventCode.SEND_NOTIFICATION;
+        var eventPayload = BeginAuditLog(logEventCode, request, request.EId.ToString(),
+            (nameof(request.UserId), request.UserId ?? Guid.Empty),
+            (AuditLoggingKeys.TargetUid, request.Uid),
+            (AuditLoggingKeys.TargetUidType, request.UidType.ToString()),
+            ("TargetEidentityId", request.EId),
+            (nameof(request.EventCode), request.EventCode));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -469,8 +495,6 @@ public class NotificationsController : BaseV1Controller
                 request.UidType
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.SendNotification);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 }

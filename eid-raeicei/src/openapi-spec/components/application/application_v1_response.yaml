@@ -1,0 +1,57 @@
+schemas:
+  ApplicationResponseDTO:
+    properties:
+      id:
+        type: string
+        format: uuid
+      applicationNumber:
+        $ref: './application_number.yaml#/schemas/ApplicationNumberDTO'
+      status:
+        $ref: './application_status_v1.yaml#/schemas/ApplicationStatus'
+      createDate:
+        type: string
+        format: date-time
+      employees:
+        type: array
+        items:
+          $ref: '../common/employee.yaml#/schemas/EmployeeDTO'
+      eidManagerFrontOffices:
+        type: array
+        items:
+          $ref: '../EidAdministrator/eid_manager_front_office.yaml#/schemas/EidManagerFrontOfficeDTO'
+      authorizedPersons:
+        type: array
+        items:
+          $ref: '../common/contact.yaml#/schemas/ContactDTO'
+      applicant:
+        $ref: '../common/contact.yaml#/schemas/ContactDTO'
+      applicationType:
+        $ref: '../EidAdministrator/application_type_v1.yaml#/schemas/ApplicationType'
+      attachments:
+        type: array
+        items:
+          $ref: '../common/document_response.yaml#/schemas/DocumentResponseDTO'
+      notes:
+        type: array
+        items:
+          $ref: '../common/note_response.yaml#/schemas/NoteResponseDTO'
+      homePage:
+        type: string
+      companyName:
+        type: string
+      companyNameLatin:
+        type: string
+      eikNumber:
+        type: string
+      address:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      description:
+        type: string
+      logoUrl:
+        type: string
+      referenceNumber:
+        type: string

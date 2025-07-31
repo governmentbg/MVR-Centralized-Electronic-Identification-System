@@ -1,0 +1,31 @@
+schemas:
+  CitizenData:
+    type: object
+    required:
+      - firstName
+      - citizenIdentifierNumber
+      - citizenIdentifierType
+    properties:
+      firstName:
+        type: string
+        description: First Name
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.FIRST_NAME_CANNOT_BE_BLANK) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.FIRST_OR_SECOND_NAME_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.FIRST_NAME_NOT_VALID)'
+      secondName:
+        type: string
+        description: Second Name
+        x-field-extra-annotation: '
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.FIRST_OR_SECOND_NAME_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.SECOND_NAME_NOT_VALID)'
+      lastName:
+        type: string
+        description: Last Name
+        x-field-extra-annotation: '
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.LAST_NAME_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.LAST_NAME_NOT_VALID)'
+      citizenIdentifierNumber:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_CANNOT_BE_NULL) 
+        @jakarta.validation.constraints.Size(min = 10, max = 10, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_LENGTH_NOT_VALID) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.CITIZEN_IDENTIFIER_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_NOT_VALID) '
+        description: Citizen Number
+      citizenIdentifierType:
+        $ref: './citizen_identifier_type_v1.yaml#/schemas/IdentifierType'

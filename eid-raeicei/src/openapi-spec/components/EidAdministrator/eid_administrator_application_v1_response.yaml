@@ -1,0 +1,12 @@
+schemas:
+  EidAdministratorApplicationResponseDTO:
+    allOf:
+      - $ref: '../application/application_v1_response.yaml#/schemas/ApplicationResponseDTO'
+    type: object
+    properties:
+      devices:
+        type: array
+        items:
+          $ref: '../EidAdministrator/device.yaml#/schemas/DeviceDTO'
+      downloadUrl:
+        type: string

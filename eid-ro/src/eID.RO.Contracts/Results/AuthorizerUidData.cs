@@ -28,7 +28,7 @@ public class AuthorizerUidDataEqualityComparer : IEqualityComparer<IAuthorizerUi
         if (x is null || y is null)
             return false;
 
-        return x.Uid == y.Uid && x.UidType == y.UidType && x.Name == y.Name;
+        return x.Uid == y.Uid && x.UidType == y.UidType && x.Name.Equals(y.Name, StringComparison.OrdinalIgnoreCase);
     }
 
     public int GetHashCode([DisallowNull] IAuthorizerUidData obj)

@@ -117,6 +117,12 @@ _HTTP Verb:_ `PUT`
 По тоя начин нямаме задължение данните които се изискват от `API` да са 1:1 с `Entity`.
 
 # Настройване на локална среда
+## Настройка на Git hook-ове
+За да активираш автоматичното управление на версиите, изпълни следната команда от **основната директория на проекта**:  
+```bash  
+./setup-hooks.sh
+```
+
 ## Visual Studio 2022
 Visual Studio 2022 from [https://my.visualstudio.com](https://my.visualstudio.com).  
 
@@ -162,3 +168,11 @@ _По избор_ [Another Redis Desktop Manager](https://github.com/qishibo/Ano
 ## Създаване на база за нуждите на Quartz.NET
 1. Създай нова база с име `quartznet`
 2. Изпълни съдържанието на скрипта `\src\eID.RO.Application\Migrations\quartznet_main_database_tables_tables_postgres.sql` в нея
+
+## Добавяне на шрифтове към контейнер
+```
+sudo apt install ttf-mscorefonts-installer
+sudo fc-cache -f
+```
+Проверка за наличност на Arial
+`fc-match Arial`

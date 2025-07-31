@@ -31,7 +31,7 @@ namespace eID.RO.Application.Consumers
 
         public async Task Consume(ConsumeContext<TimestampEmpowermentXml> context)
         {
-            var xmlTimestampingResult = await _empowermentsService.TimestampEmpowermentXmlAsync(context.Message.EmpowermentId);
+            var xmlTimestampingResult = await _empowermentsService.TimestampEmpowermentXmlAsync(context.Message.CorrelationId, context.Message.EmpowermentId);
             if (xmlTimestampingResult is null)
             {
                 Logger.LogInformation("Null {MethodName} response for Empowerment {EmpowermentId}.", nameof(EmpowermentsService.TimestampEmpowermentXmlAsync), context.Message.EmpowermentId);
@@ -86,7 +86,7 @@ namespace eID.RO.Application.Consumers
         }
         public async Task Consume(ConsumeContext<TimestampEmpowermentWithdrawal> context)
         {
-            var withdrawalTimestampingResult = await _empowermentsService.TimestampEmpowermentWithdrawalAsync(context.Message.EmpowermentId, context.Message.EmpowermentWithdrawalId);
+            var withdrawalTimestampingResult = await _empowermentsService.TimestampEmpowermentWithdrawalAsync(context.Message.CorrelationId, context.Message.EmpowermentId, context.Message.EmpowermentWithdrawalId);
             if (withdrawalTimestampingResult is null)
             {
                 Logger.LogInformation("Null {MethodName} response for Empowerment {EmpowermentId} Withdrawal {WithdrawalId}.", nameof(EmpowermentsService.TimestampEmpowermentWithdrawalAsync), context.Message.EmpowermentId, context.Message.EmpowermentWithdrawalId);

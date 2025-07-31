@@ -1,0 +1,303 @@
+<div *transloco="let t">
+    <div class="row">
+        <div class="col">
+            <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+            <h4 *ngIf="!showWithdrawalMode && !showDisagreementMode">
+                {{ getHeaderText() }}
+            </h4>
+        </div>
+    </div>
+    <p-divider class="header-divider" type="solid"></p-divider>
+    <div class="row">
+        <div class="col-xl-8" *ngIf="empowerment">
+            <div class="row">
+                <div class="col">
+                    <h6>{{ t('modules.authorizationRegister.tableFilter.details.txtDetails') }}:</h6>
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationRegister.tableFilter.txtNumber') }}</label>
+                </div>
+                <div class="col empowerment">{{ empowerment.number }}</div>
+            </div>
+
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationRegister.tableFilter.filterLabels.status') }}</label>
+                </div>
+                <div class="col empowerment">
+                    <ng-container [ngSwitch]="empowerment.status">
+                        <span *ngSwitchCase="'Active'" class="d-flex align-items-center">
+                            <span *ngIf="ifDateIsExpired(empowerment.expiryDate); else elseBlock" class="text-break">
+                                <i class="material-icons-outlined me-3">&#xe644;</i>
+                                {{ computedStatus('Expired') }}
+                            </span>
+                            <ng-template #elseBlock class="d-flex align-items-center">
+                                <span *ngIf="ifUpcoming(); else innerElseBlock" class="text-break">
+                                    <span class="text-break text-active d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xf603;</i>
+                                        <span style="width: 7rem">
+                                            {{ computedStatus('Signed') }}
+                                        </span>
+                                    </span>
+                                    <div>
+                                        {{ t('empowermentCheckModule.detailsPage.txtEffectiveOn') }}:
+                                        {{ empowermentStartDate }}
+                                    </div>
+                                </span>
+                                <ng-template #innerElseBlock class="d-flex align-items-center">
+                                    <span class="active-confirm d-flex me-3">
+                                        <i class="material-icons-outlined align-self-center">&#xe877;</i>
+                                    </span>
+                                    <span class="d-flex flex-column">
+                                        <span class="d-flex active-confirm">
+                                            {{ computedStatus(empowerment.status) }}
+                                        </span>
+                                        <span class="d-flex">
+                                            {{ empowerment.expiryDate ? (empowerment.expiryDate | translocoDate) : '' }}
+                                        </span>
+                                    </span>
+                                </ng-template>
+                            </ng-template>
+                        </span>
+                        <span *ngSwitchCase="'DisagreementDeclared'">
+                            <span class="text-break reject d-flex align-items-center">
+                                <i class="material-icons-outlined me-3">&#xe14b;</i>
+                                <span>
+                                    {{ computedStatus(empowerment.status) }}
+                                </span>
+                            </span>
+                            <p
+                                *ngIf="
+                                    empowerment.empowermentDisagreements &&
+                                    empowerment.empowermentDisagreements.length > 0
+                                ">
+                                {{ t('modules.authorizationStatement.statementForm.txtReason') }}:
+                                {{ empowerment.empowermentDisagreements[0].reason }}
+                            </p>
+                        </span>
+                        <span *ngSwitchCase="'Withdrawn'">
+                            <span class="text-break reject d-flex align-items-center">
+                                <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                <span>
+                                    {{ computedStatus(empowerment.status) }}
+                                </span>
+                            </span>
+                            <p
+                                *ngIf="
+                                    empowerment.empowermentWithdrawals && empowerment.empowermentWithdrawals.length > 0
+                                ">
+                                {{ t('modules.authorizationStatement.statementForm.txtReason') }}:
+                                {{ empowerment.empowermentWithdrawals[0].reason }}
+                            </p>
+                        </span>
+                        <span
+                            *ngSwitchCase="'CollectingAuthorizerSignatures'"
+                            class="text-break danger d-flex align-items-center">
+                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                            <span>
+                                {{ computedStatus('AwaitingSignature') }}
+                            </span>
+                        </span>
+                        <span *ngSwitchCase="'Created'" class="text-break danger d-flex align-items-center">
+                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                            <span>
+                                {{ computedStatus(empowerment.status) }}
+                            </span>
+                        </span>
+                        <span *ngSwitchCase="'Denied'" class="text-break reject d-flex align-items-center">
+                            <i class="material-icons-outlined me-3">&#xe5cd;</i>
+                            <span>
+                                {{ computedStatus(empowerment.status) }}
+                            </span>
+                        </span>
+                        <span *ngSwitchCase="'Unconfirmed'" class="text-break danger d-flex align-items-center">
+                            <i class="material-icons-outlined me-3">&#xe001;</i>
+                            <span>
+                                {{ computedStatus(empowerment.status) }}
+                            </span>
+                        </span>
+                        <span *ngSwitchDefault>
+                            {{ computedStatus('Created') }}
+                        </span>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="row p-3 ps-0" *ngIf="empowerment.denialReason !== EmpowermentsDenialReason.None">
+                <div class="col-3">
+                    <label>{{ t('empowermentCheckModule.detailsPage.txtDenialReasonLabel') }}</label>
+                </div>
+                <div class="col empowerment">
+                    <span class="reject">{{
+                        t('empowermentCheckModule.detailsPage.txtDenialReasons.' + empowerment.denialReason)
+                    }}</span>
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationRegister.tableFilter.txtFromTheNameOf') }}</label>
+                </div>
+                <div class="col" *ngIf="empowerment.onBehalfOf">
+                    {{ t('modules.authorizationRegister.tableFilter.applicants.' + empowerment.onBehalfOf) }}
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('empowermentCheckModule.detailsPage.txtStartDate') }}:</label>
+                </div>
+                <div class="col">
+                    {{ empowerment.startDate | translocoDate : { timeStyle: 'medium' } }}
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('empowermentCheckModule.detailsPage.txtEndDate') }}:</label>
+                </div>
+                <div class="col">
+                    {{ empowermentExpiryDate }}
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label [ngSwitch]="empowerment.onBehalfOf">
+                        <span *ngSwitchCase="onBehalfOf.Individual">{{
+                            t('modules.authorizationRegister.tableFilter.details.txtAuthorizerPersonalNumber')
+                        }}</span>
+                        <span *ngSwitchCase="onBehalfOf.LegalEntity">{{
+                            t('modules.authorizationRegister.tableFilter.details.txtBulstat')
+                        }}</span>
+                    </label>
+                </div>
+                <div class="col empowerment">{{ empowerment.uid }}</div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>
+                        {{ t('modules.authorizationRegister.tableFilter.details.txtLegalEntryName') }}
+                    </label>
+                </div>
+                <div class="col empowerment">{{ empowerment.name }}</div>
+            </div>
+            <div class="row p-3 ps-0" *ngIf="empowerment.onBehalfOf === onBehalfOf.Individual">
+                <div class="col-3">
+                    <label>
+                        {{ t('empowermentCheckModule.detailsPage.txtSignedOn') }}
+                    </label>
+                </div>
+                <div class="col empowerment">{{ getSignedDateByUid(empowerment.uid) }}</div>
+            </div>
+            <div class="row p-3 ps-0" *ngIf="empowerment.onBehalfOf === onBehalfOf.LegalEntity">
+                <div class="col-3">
+                    <label>
+                        {{ t('modules.authorizationStatement.statementForm.txtLegalRepresentatives') }}
+                    </label>
+                </div>
+                <div class="col empowerment">
+                    <p
+                        *ngFor="let authorizer of empowerment.authorizerUids; let last = last"
+                        [ngClass]="{ 'mb-0': last }">
+                        {{ t('modules.authorizationStatement.statementForm.' + authorizer.uidType) }}:
+                        {{ authorizer.uid }} - {{ authorizer.name }} <br />
+                        {{ t('empowermentCheckModule.detailsPage.txtSignedOn') }}:
+                        {{ getSignedDateByUid(authorizer.uid) }}
+                    </p>
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>
+                        {{ t('modules.authorizationRegister.tableFilter.details.txtEmpoweredPersons') }}
+                    </label>
+                </div>
+                <div class="col empowerment">
+                    <p
+                        *ngFor="let empoweredUid of empowerment.empoweredUids; let last = last"
+                        [ngClass]="{ 'mb-0': last }">
+                        {{ t('modules.authorizationStatement.statementForm.' + empoweredUid.uidType) }}:
+                        {{ empoweredUid.uid }} - {{ empoweredUid.name }}
+                    </p>
+                </div>
+            </div>
+            <div class="row p-3 ps-0" *ngIf="empowerment.empoweredUids && empowerment.empoweredUids.length > 1">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationStatement.statementForm.txtTypeOfEmpowerment') }}</label>
+                </div>
+                <div class="col empowerment">
+                    <span class="badge bg-button-danger-hover text-text-default badge-empowerment mb-2">
+                        <i class="material-icons-outlined me-2">&#xe000;</i>
+                        {{ t('modules.authorizationRegister.tableFilter.details.txtTogether') }}
+                    </span>
+                    <div>{{ t('modules.authorizationRegister.tableFilter.details.txtTogetherAdditionalText') }}!</div>
+                </div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationRegister.tableFilter.txtProvider') }}</label>
+                </div>
+                <div class="col empowerment">{{ empowerment.providerName }}</div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationRegister.tableFilter.txtService') }}</label>
+                </div>
+                <div class="col empowerment">{{ empowerment.serviceId + ' - ' + empowerment.serviceName }}</div>
+            </div>
+            <div class="row p-3 ps-0">
+                <div class="col-3">
+                    <label>{{ t('modules.authorizationRegister.tableFilter.details.txtVolume') }}</label>
+                </div>
+                <div class="col empowerment">
+                    <p
+                        *ngFor="let volumeOfRepresentation of empowerment.volumeOfRepresentation; let last = last"
+                        [ngClass]="{ 'mb-0': last }">
+                        {{ volumeOfRepresentation.name }}
+                    </p>
+                </div>
+            </div>
+            <div class="row mb-4" *ngIf="showWithdrawalMode">
+                <div class="col-md-5">
+                    <div *ngIf="!shouldShowWithdrawalReasonForm()">
+                        <h6>{{ t('modules.authorizationStatement.statementForm.txtReason') }}</h6>
+                        <p>{{ empowerment.empowermentWithdrawals[0].reason }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="dates-container">
+                <div class="row p-2 ps-0">
+                    <div class="col p-1">
+                        <h6>{{ t('empowermentCheckModule.detailsPage.txtEmpowermentHistory') }}:</h6>
+                    </div>
+                </div>
+                <div *ngFor="let statusItem of getHistoryItems(empowerment)">
+                    <div
+                        class="row p-2 ps-0"
+                        *ngIf="statusItem.status !== empowermentStatementStatus.CollectingAuthorizerSignatures">
+                        <div class="col-4 p-1">
+                            <ng-container *ngIf="statusItem.status; else statusItemStatusTranslation">
+                                <label>{{ statusTranslation(statusItem.status) }}:</label>
+                            </ng-container>
+                            <ng-template #statusItemStatusTranslation>
+                                <label>{{ statusItem.statusTranslation }}:</label>
+                            </ng-template>
+                        </div>
+                        <div class="col p-1" [innerHTML]="statusItem.value"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-divider class="header-divider" type="solid"></p-divider>
+    <div class="col">
+        <button
+            pButton
+            type="button"
+            [label]="t('global.txtClose')"
+            [attr.aria-label]="t('global.txtClose')"
+            (click)="hidePreview()"></button>
+    </div>
+</div>

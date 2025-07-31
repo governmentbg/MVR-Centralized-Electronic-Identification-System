@@ -1,4 +1,5 @@
 ﻿using eID.RO.Service.Entities;
+using eID.RO.Service.Extensions;
 using eID.RO.Service.Jobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -19,6 +20,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<StatusHistoryRecord> EmpowermentStatusHistory { get; set; }
     public virtual DbSet<ScheduledJobSetting> ScheduledJobSettings { get; set; }
     public virtual DbSet<EmpowermentTimestamp> EmpowermentTimestamps { get; set; }
+    public virtual DbSet<NumberRegister> NumbersRegister { get; set; }
 
     public ApplicationDbContext()
     {
@@ -32,6 +34,7 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.UseEncryption();
 
         CreateEmpowermentStatements(modelBuilder);
         CreateAuthorizedUids(modelBuilder);
@@ -44,6 +47,7 @@ public class ApplicationDbContext : DbContext
         CreateEmpowermentStatusHistory(modelBuilder);
         CreateScheduledJobSettingsConfiguration(modelBuilder);
         CreateEmpowermentTimestamps(modelBuilder);
+        CreateNumberRegisters(modelBuilder);
     }
 
     private static void CreateEmpowermentStatements(ModelBuilder modelBuilder)
@@ -52,7 +56,8 @@ public class ApplicationDbContext : DbContext
         {
             entity.ToTable("EmpowermentStatements").HasKey(f => f.Id);
 
-            entity.Property(f => f.Uid).IsRequired().HasMaxLength(13);
+            entity.Property(f => f.Number).IsRequired().HasMaxLength(32); // РО2147483648/10.11.2024 (24)
+            entity.Property(f => f.Uid).IsRequired();
             entity.HasIndex(f => f.Uid);
             entity.Property(f => f.UidType).IsRequired();
             entity.Property(f => f.Name).IsRequired();
@@ -70,8 +75,8 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(f => f.EmpowermentStatementId)
                 .HasPrincipalKey(f => f.Id);
 
-            entity.Property(f => f.SupplierId).IsRequired();
-            entity.Property(f => f.SupplierName).IsRequired();
+            entity.Property(f => f.ProviderId).IsRequired();
+            entity.Property(f => f.ProviderName).IsRequired();
             entity.Property(f => f.ServiceId).IsRequired();
             entity.Property(f => f.ServiceName).IsRequired();
             entity.Property(f => f.VolumeOfRepresentation).IsRequired().HasColumnType("jsonb");
@@ -111,7 +116,7 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("EmpowermentStatements.AuthorizerUids")
                 .HasKey(f => f.Id);
 
-            entity.Property(f => f.Uid).IsRequired().HasMaxLength(13);
+            entity.Property(f => f.Uid).IsRequired();
             entity.HasIndex(f => f.Uid);
             entity.Property(f => f.UidType).IsRequired();
 
@@ -125,9 +130,10 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("EmpowermentStatements.EmpoweredUids")
                 .HasKey(f => f.Id);
 
-            entity.Property(f => f.Uid).IsRequired().HasMaxLength(13);
+            entity.Property(f => f.Uid).IsRequired();
             entity.HasIndex(f => f.Uid);
             entity.Property(f => f.UidType).IsRequired();
+            entity.Property(f => f.Name).HasMaxLength(200).IsRequired();
         });
     }
 
@@ -150,7 +156,7 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(f => f.StartDateTime).IsRequired();
             entity.Property(f => f.ActiveDateTime).IsRequired(false);
-            entity.Property(f => f.IssuerUid).IsRequired().HasMaxLength(64);
+            entity.Property(f => f.IssuerUid).IsRequired();
             entity.Property(f => f.IssuerUidType).IsRequired();
             entity.Property(f => f.Reason).IsRequired().HasMaxLength(256);
             entity.Property(f => f.Status).IsRequired();
@@ -176,7 +182,7 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("EmpowermentStatements.Disagreements").HasKey(f => f.Id);
 
             entity.Property(f => f.ActiveDateTime).IsRequired();
-            entity.Property(f => f.IssuerUid).IsRequired().HasMaxLength(64);
+            entity.Property(f => f.IssuerUid).IsRequired();
             entity.Property(f => f.IssuerUidType).IsRequired();
             entity.Property(f => f.Reason).IsRequired().HasMaxLength(256);
             entity.Property(f => f.TimestampData);
@@ -190,7 +196,7 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("EmpowermentStatements.Signatures").HasKey(f => f.Id);
 
             entity.Property(f => f.DateTime).IsRequired();
-            entity.Property(f => f.SignerUid).IsRequired().HasMaxLength(64);
+            entity.Property(f => f.SignerUid).IsRequired();
             entity.Property(f => f.SignerUidType).IsRequired();
             entity.Property(f => f.Signature).IsRequired();
             entity.HasIndex(f => new { f.EmpowermentStatementId, f.SignerUid }).IsUnique();
@@ -233,6 +239,26 @@ public class ApplicationDbContext : DbContext
             entity.Property(f => f.DateTime).IsRequired();
             entity.Property(f => f.Data).IsRequired();
             entity.HasIndex(f => new { f.EmpowermentStatementId }).IsUnique();
+        });
+    }
+
+
+    private void CreateNumberRegisters(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<NumberRegister>(entity =>
+        {
+            entity.ToTable(NumberRegister.TableName).HasKey(f => f.Id);
+
+            entity.Property(f => f.Id).IsRequired().HasMaxLength(10);
+            entity.Property(f => f.Current).IsRequired();
+            entity.Property(f => f.LastChange).IsRequired();
+
+            entity.HasData(new NumberRegister
+            {
+                Id = NumberRegister.EmpowermentNumberId,
+                Current = 0,
+                LastChange = DateOnly.FromDateTime(DateTime.Now)
+            });
         });
     }
 

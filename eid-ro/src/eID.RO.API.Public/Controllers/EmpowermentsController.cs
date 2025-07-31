@@ -1,4 +1,9 @@
-﻿using eID.PJS.AuditLogging;
+﻿using System.Net.Mime;
+using System.Text;
+using eID.PJS.AuditLogging;
+using eID.RO.API.Public.Exports;
+using eID.RO.API.Public.Extensions;
+using eID.RO.API.Public.Options;
 using eID.RO.API.Public.Requests;
 using eID.RO.Contracts;
 using eID.RO.Contracts.Commands;
@@ -6,20 +11,34 @@ using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace eID.RO.API.Public.Controllers;
 
 //[ApiExplorerSettings(IgnoreApi = true)] // Uncomment when create SDK
 public class EmpowermentsController : BaseV1Controller
 {
+    private ApiOptions _apiOptions;
+    private HttpClient _httpClient;
+
     /// <summary>
     /// Crate an instance of <see cref="EmpowermentsController"/>
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="logger"></param>
     /// <param name="auditLogger"></param>
-    public EmpowermentsController(IConfiguration configuration, ILogger<EmpowermentsController> logger, AuditLogger auditLogger) : base(configuration, logger, auditLogger)
+    /// <param name="apiOptions"></param>    
+    public EmpowermentsController(
+        IConfiguration configuration,
+        ILogger<EmpowermentsController> logger,
+        AuditLogger auditLogger,
+        IOptions<ApiOptions> apiOptions,
+        IHttpClientFactory httpClientFactory) : base(configuration, logger, auditLogger)
     {
+        _apiOptions = (apiOptions ?? throw new ArgumentNullException(nameof(apiOptions))).Value;
+        _httpClient = httpClientFactory.CreateClient("Signing");
     }
 
     /// <summary>
@@ -41,22 +60,73 @@ public class EmpowermentsController : BaseV1Controller
             throw new ArgumentNullException(nameof(request));
         }
 
-        var userId = GetUserId();
-        var uid = GetUid();//Check identifier, when real data is supplied
-        var uidType = GetUidType();
-        var fullName = GetUserFullName();//Check identifier, when real data is supplied
+        var logEventCode = LogEventCode.CREATE_EMPOWERMENT;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, request },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+            { nameof(request.ProviderName), request.ProviderName },
+            { nameof(request.ServiceName), request.ServiceName }
+        };
 
-        request.Uid = request.OnBehalfOf == OnBehalfOf.LegalEntity ? request.Uid : uid;
-        request.UidType = request.OnBehalfOf == OnBehalfOf.LegalEntity ? IdentifierType.NotSpecified : uidType;
-        request.Name = request.OnBehalfOf == OnBehalfOf.LegalEntity ? request.Name : fullName;
-        request.AuthorizerUids.Insert(0, new UserIdentifierWithNameData { Uid = uid, UidType = uidType, Name = fullName, IsIssuer = true });
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId: targetUserId, payload: eventPayload); // Audit log for the creator
+
+        request.Uid = request.OnBehalfOf == OnBehalfOf.LegalEntity ? request.Uid : loggedUserUid;
+        request.UidType = request.OnBehalfOf == OnBehalfOf.LegalEntity ? IdentifierType.NotSpecified : loggedUserUidType;
+        request.Name = request.OnBehalfOf == OnBehalfOf.LegalEntity ? request.Name : loggedUserName;
+        request.AuthorizerUids.Insert(0, new AuthorizerIdentifierData { Uid = loggedUserUid, UidType = loggedUserUidType, Name = loggedUserName, IsIssuer = true });
         foreach (var item in request.AuthorizerUids)
         {
             item.Name = System.Text.RegularExpressions.Regex.Replace(item.Name, @"\s+", " ").Trim();
         }
-        if (!request.IsValid())
+        foreach (var item in request.EmpoweredUids)
         {
-            return BadRequest(request);
+            item.Name = System.Text.RegularExpressions.Regex.Replace(item.Name, @"\s+", " ").Trim();
+        }
+        foreach (UserIdentifierData empowered in request.EmpoweredUids)
+        {
+            var currentPayload = new SortedDictionary<string, object>(eventPayload)
+            {
+                [AuditLoggingKeys.TargetUid] = empowered.Uid,
+                [AuditLoggingKeys.TargetUidType] = empowered.UidType.ToString(),
+                [AuditLoggingKeys.TargetName] = empowered.Name
+            };
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId: targetUserId, payload: currentPayload);
+        }
+
+        var validator = new AddEmpowermentStatementRequestValidator(_apiOptions.AllowSelfEmpowerment);
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            var err = validationResult.GetValidationErrorList();
+            eventPayload.Add("Reason", string.Join(",", err));
+            eventPayload.Add("ResponseStatusCode", System.Net.HttpStatusCode.BadRequest);
+            foreach (UserIdentifierData empowered in request.EmpoweredUids)
+            {
+                var currentPayload = new SortedDictionary<string, object>(eventPayload)
+                {
+                    [AuditLoggingKeys.TargetUid] = empowered.Uid,
+                    [AuditLoggingKeys.TargetUidType] = empowered.UidType.ToString(),
+                    [AuditLoggingKeys.TargetName] = empowered.Name
+                };
+                AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, targetUserId: targetUserId, payload: currentPayload);
+            }
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, targetUserId: targetUserId, payload: eventPayload); // Audit log for the creator
+
+            return BadRequest(validationResult);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -71,20 +141,41 @@ public class EmpowermentsController : BaseV1Controller
                     request.AuthorizerUids,
                     request.EmpoweredUids,
                     request.TypeOfEmpowerment,
-                    request.SupplierId,
-                    request.SupplierName,
+                    request.ProviderId,
+                    request.ProviderName,
                     request.ServiceId,
                     request.ServiceName,
                     request.IssuerPosition,
                     request.VolumeOfRepresentation,
                     request.StartDate,
                     request.ExpiryDate,
-                    CreatedBy = userId,
+                    CreatedBy = targetUserId,
+                    _apiOptions.AllowSelfEmpowerment
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.CreateEmpowerment, userId);
+        return Result(serviceResult, (errorMessage, suffix, statusCode) =>
+        {
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                eventPayload.Add("Reason", errorMessage);
+            }
+            if (statusCode is not null)
+            {
+                eventPayload.Add("ResponseStatusCode", statusCode);
+            }
 
-        return Result(serviceResult);
+            foreach (UserIdentifierData empowered in request.EmpoweredUids)
+            {
+                var currentPayload = new SortedDictionary<string, object>(eventPayload)
+                {
+                    [AuditLoggingKeys.TargetUid] = empowered.Uid,
+                    [AuditLoggingKeys.TargetUidType] = empowered.UidType.ToString(),
+                    [AuditLoggingKeys.TargetName] = empowered.Name
+                };
+                AddAuditLog(logEventCode, suffix: suffix, targetUserId: targetUserId, payload: currentPayload);
+            }
+            AddAuditLog(logEventCode, suffix: suffix, targetUserId: targetUserId, payload: eventPayload); // Audit log for the creator
+        });
     }
 
     /// <summary>
@@ -101,35 +192,53 @@ public class EmpowermentsController : BaseV1Controller
         CancellationToken cancellationToken,
         [FromQuery] GetEmpowermentsToMeByFilterRequest request)
     {
+        var logEventCode = LogEventCode.GET_EMPOWERMENTS_TO_ME_BY_FILTER;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, request },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+        };
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId: targetUserId, payload: eventPayload);
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, targetUserId);
         }
-
-        var egn = GetUid();//Check identifier, when real data is supplied
 
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<IPaginatedData<EmpowermentStatementResult>>>(
                 new
                 {
                     CorrelationId = RequestId,
+                    request.Number,
                     request.Status,
                     request.Authorizer,
-                    request.SupplierName,
+                    request.ProviderName,
                     request.ServiceName,
                     request.ValidToDate,
                     request.ShowOnlyNoExpiryDate,
                     request.SortBy,
                     request.SortDirection,
-                    Uid = egn,
-                    UidType = GetUidType(),
+                    Uid = loggedUserUid,
+                    UidType = loggedUserUidType,
+                    request.OnBehalfOf,
+                    request.Eik,
                     request.PageIndex,
                     request.PageSize
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetEmpowermentsToMeByFilter, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload, targetUserId);
     }
 
     /// <summary>
@@ -151,25 +260,45 @@ public class EmpowermentsController : BaseV1Controller
         [FromBody] SignEmpowermentPayload payload,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.SIGN_EMPOWERMENT;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, payload },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+            { "EmpowermentId", empowermentId }
+        };
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId, payload: eventPayload);
         payload ??= new SignEmpowermentPayload();
         if (!payload.IsValid())
         {
-            return BadRequest(payload);
+            return BadRequestWithAuditLog(payload, logEventCode, eventPayload, targetUserId);
         }
         var request = new SignEmpowermentRequest
         {
-            Name = GetUserFullName(),
-            Uid = GetUid(),
-            UidType = GetUidType(),
+            Name = loggedUserName,
+            Uid = loggedUserUid,
+            UidType = loggedUserUidType,
             EmpowermentId = empowermentId
         };
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, targetUserId);
         }
 
         var serviceResult = await GetResponseAsync(() =>
-            client.GetResponse<ServiceResult>(
+            client.GetResponse<ServiceResult<string>>(
                 new
                 {
                     CorrelationId = RequestId,
@@ -181,12 +310,7 @@ public class EmpowermentsController : BaseV1Controller
                     payload.SignatureProvider,
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.SignEmpowerment, GetUserId(), payload: new SortedDictionary<string, object>
-            {
-                { "EmpowermentId", request.EmpowermentId },
-                { "RequestUid", request.Uid }
-            });
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload, targetUserId);
     }
 
     /// <summary>
@@ -233,20 +357,39 @@ public class EmpowermentsController : BaseV1Controller
         GetEmpowermentsFromMeByFilterRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.GET_EMPOWERMENTS_FROM_ME_BY_FILTER;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, request },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+        };
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId, payload: eventPayload);
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, targetUserId);
         }
 
-        var egn = GetUid();//Check identifier, when real data is supplied
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<IPaginatedData<EmpowermentStatementFromMeResult>>>(
                 new
                 {
                     CorrelationId = RequestId,
+                    request.Number,
                     request.Status,
                     request.Authorizer,
-                    request.SupplierName,
+                    request.ProviderName,
                     request.ServiceName,
                     request.ValidToDate,
                     request.ShowOnlyNoExpiryDate,
@@ -254,15 +397,14 @@ public class EmpowermentsController : BaseV1Controller
                     request.SortDirection,
                     request.EmpoweredUids,
                     request.OnBehalfOf,
-                    Uid = egn,
-                    UidType = GetUidType(),
+                    Uid = loggedUserUid,
+                    UidType = loggedUserUidType,
+                    request.Eik,
                     request.PageIndex,
                     request.PageSize
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetEmpowermentsFromMeByFilter, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload, targetUserId);
     }
 
     /// <summary>
@@ -283,8 +425,6 @@ public class EmpowermentsController : BaseV1Controller
                 {
                     CorrelationId = RequestId,
                 }, cancellationToken));
-
-        AddAuditLog(LogEventCode.GetEmpowermentWithdrawReasons);
 
         return Result(serviceResult);
     }
@@ -316,14 +456,33 @@ public class EmpowermentsController : BaseV1Controller
             Reason = payload.Reason,
             Name = GetUserFullName()
         };
+        var logEventCode = LogEventCode.WITHDRAW_EMPOWERMENT;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, request },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+        };
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId, payload: eventPayload);
 
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, targetUserId);
         }
 
         var serviceResult = await GetResponseAsync(() =>
-            client.GetResponse<ServiceResult>(
+            client.GetResponse<ServiceResult<string>>(
                 new
                 {
                     CorrelationId = RequestId,
@@ -334,12 +493,7 @@ public class EmpowermentsController : BaseV1Controller
                     request.Name
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.WithdrawEmpowerment, GetUserId(), payload: new SortedDictionary<string, object>
-            {
-                { "EmpowermentId", request.EmpowermentId },
-                { "RequestUid", request.Uid }
-            });
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult.AsPlainServiceResult(), logEventCode, eventPayload, targetUserId);
     }
 
     /// <summary>
@@ -360,8 +514,6 @@ public class EmpowermentsController : BaseV1Controller
                 {
                     CorrelationId = RequestId,
                 }, cancellationToken));
-
-        AddAuditLog(LogEventCode.GetEmpowermentDisagreementReasons);
 
         return Result(serviceResult);
     }
@@ -390,31 +542,46 @@ public class EmpowermentsController : BaseV1Controller
             Uid = GetUid(),
             UidType = GetUidType(),
             EmpowermentId = empowermentId,
-            Reason = payload.Reason
+            Reason = payload.Reason,
+            Name = GetUserFullName()
         };
-
+        var logEventCode = LogEventCode.DISAGREE_EMPOWERMENT;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, request },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+        };
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, targetUserId, payload: eventPayload);
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, targetUserId);
         }
 
         var serviceResult = await GetResponseAsync(() =>
-            client.GetResponse<ServiceResult>(
+            client.GetResponse<ServiceResult<string>>(
                 new
                 {
                     CorrelationId = RequestId,
                     request.Uid,
                     request.UidType,
                     request.EmpowermentId,
-                    request.Reason
+                    request.Reason,
+                    request.Name,
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.DisagreeEmpowerment, GetUserId(), payload: new SortedDictionary<string, object>
-            {
-                { "EmpowermentId", request.EmpowermentId },
-                { "RequestUid", request.Uid }
-            });
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult.AsPlainServiceResult(), logEventCode, eventPayload, targetUserId);
     }
 
     /// <summary>
@@ -433,9 +600,29 @@ public class EmpowermentsController : BaseV1Controller
         GetEmpowermentsByEikFilterRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.GET_EMPOWERMENTS_BY_EIK;
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, request },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+            { nameof(request.Eik), request.Eik },
+        };
+        var targetUserId = GetUserId();
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, payload: eventPayload, targetUserId: targetUserId);
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload, targetUserId);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -444,11 +631,11 @@ public class EmpowermentsController : BaseV1Controller
                 {
                     CorrelationId = RequestId,
                     request.Eik,
-                    IssuerUid = GetUid(),
-                    IssuerUidType = GetUidType(),
-                    IssuerName = GetUserFullName(),
+                    IssuerUid = loggedUserUid,
+                    IssuerUidType = loggedUserUidType,
+                    IssuerName = loggedUserName,
                     request.Status,
-                    request.SupplierName,
+                    request.ProviderName,
                     request.ServiceName,
                     request.ValidToDate,
                     request.ShowOnlyNoExpiryDate,
@@ -459,8 +646,191 @@ public class EmpowermentsController : BaseV1Controller
                     request.SortDirection
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetEmpowermentsByEik, GetUserId());
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload, targetUserId);
+    }
 
-        return Result(serviceResult);
+    [HttpGet("{empowermentId}/document/to", Name = nameof(GetEmpowermentDocumentToMeAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetEmpowermentDocumentToMeAsync(
+        [FromServices] IRequestClient<GetEmpowermentById> client,
+        [FromRoute] Guid empowermentId,
+        [FromQuery] LanguageType language,
+        CancellationToken cancellationToken)
+    {
+        var logEventCode = LogEventCode.GET_EMPOWERMENT_DOCUMENT_TO_ME;
+
+        return await GetEmpowermentDocumentIntAsync(client, empowermentId, logEventCode, true, language, cancellationToken);
+    }
+
+    [HttpGet("{empowermentId}/document/from", Name = nameof(GetEmpowermentDocumentFromMeAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetEmpowermentDocumentFromMeAsync(
+        [FromServices] IRequestClient<GetEmpowermentById> client,
+        [FromRoute] Guid empowermentId,
+        [FromQuery] LanguageType language,
+        CancellationToken cancellationToken)
+    {
+        var logEventCode = LogEventCode.GET_EMPOWERMENT_DOCUMENT_FROM_ME;
+
+        return await GetEmpowermentDocumentIntAsync(client, empowermentId, logEventCode, false, language, cancellationToken);
+    }
+
+    private async Task<IActionResult> GetEmpowermentDocumentIntAsync(
+        IRequestClient<GetEmpowermentById> client,
+        Guid empowermentId,
+        LogEventCode logEventCode,
+        bool isToMe,
+        LanguageType language,
+        CancellationToken cancellationToken)
+    {
+        var loggedUserUid = GetUid();
+        var loggedUserUidType = GetUidType();
+        var loggedUserName = GetUserFullName();
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { "EmpowermentId", empowermentId },
+            { AuditLoggingKeys.RequesterUid, loggedUserUid },
+            { AuditLoggingKeys.RequesterUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.RequesterName, loggedUserName },
+            { AuditLoggingKeys.TargetUid, loggedUserUid },
+            { AuditLoggingKeys.TargetUidType, loggedUserUidType.ToString() },
+            { AuditLoggingKeys.TargetName, loggedUserName },
+        };
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.REQUEST, payload: eventPayload);
+
+        if (empowermentId == Guid.Empty)
+        {
+            var msd = new ModelStateDictionary();
+            msd.AddModelError("EmpowermentId", "EmpowermentId is required");
+            eventPayload.Add("Reason", "EmpowermentId is required");
+            eventPayload.Add("ResponseStatusCode", System.Net.HttpStatusCode.BadRequest);
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload);
+            return ValidationProblem(msd);
+        }
+
+        var serviceResult = await GetResponseAsync(() =>
+            client.GetResponse<ServiceResult<EmpowermentStatementWithSignaturesResult>>(
+                new
+                {
+                    CorrelationId = RequestId,
+                    EmpowermentId = empowermentId
+                }, cancellationToken));
+
+        if (serviceResult.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            return Result(serviceResult, (errorMessage, suffix, statusCode) =>
+            {
+                if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    eventPayload.Add("Reason", errorMessage);
+                }
+                if (statusCode is not null)
+                {
+                    eventPayload.Add("ResponseStatusCode", statusCode);
+                }
+                AddAuditLog(logEventCode, suffix: suffix, payload: eventPayload);
+            });
+        }
+        var empowerment = serviceResult.Result;
+        empowerment?.CalculateStatusOn(DateTime.Now);
+
+        var isUserValid = false;
+        var isStatusValid = false;
+        if (empowerment != null)
+        {
+            if (isToMe) // To Me
+            {
+                isUserValid = empowerment.EmpoweredUids.Any(au => au.Uid == loggedUserUid && au.UidType == loggedUserUidType);
+
+                var invalidStates = new HashSet<EmpowermentStatementStatus>
+                {
+                    EmpowermentStatementStatus.Created,
+                    EmpowermentStatementStatus.CollectingAuthorizerSignatures,
+                    EmpowermentStatementStatus.Denied,
+                };
+
+                isStatusValid = !invalidStates.Contains(empowerment.Status);
+            }
+            else // For me
+            {
+                isUserValid = empowerment.AuthorizerUids.Any(au => au.Uid == loggedUserUid && au.UidType == loggedUserUidType);
+                isStatusValid = true;
+            }
+        }
+
+        if (empowerment is null || !isUserValid || !isStatusValid)
+        {
+            Logger.LogError("Empowerment {EmpowermentId} was null.", empowermentId);
+            eventPayload.Add("Reason", $"Empowerment {empowermentId} is null.");
+            eventPayload.Add("ResponseStatusCode", System.Net.HttpStatusCode.NotFound);
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload);
+            return NotFound();
+        }
+
+        var pdfBytes = PdfBulder.CreateEmpowermentDocument(language, empowerment);
+
+        foreach (var currentUser in empowerment.AuthorizerUids.Union(empowerment.EmpoweredUids).ToHashSet(new UidResultComparer())) // Distinct list of all authorizers and empowered people data
+        {
+            var currentPayload = new SortedDictionary<string, object>(eventPayload)
+            {
+                [AuditLoggingKeys.TargetUid] = currentUser.Uid,
+                [AuditLoggingKeys.TargetUidType] = currentUser.UidType.ToString(),
+                [AuditLoggingKeys.TargetName] = currentUser.Name,
+                [nameof(empowerment.ProviderName)] = empowerment?.ProviderName ?? "Unable to obtain ProviderName"
+            };
+            AddAuditLog(logEventCode, targetUserId: empowerment?.CreatedBy, suffix: LogEventLifecycle.SUCCESS, payload: currentPayload);
+        }
+
+        var requestBody = new
+        {
+            Contents = new[]
+            {
+                new
+                {
+                    MediaType = MediaTypeNames.Application.Pdf,
+                    Data = Convert.ToBase64String(pdfBytes),
+                    FileName = $"{empowermentId}.pdf",
+                    SignatureType = "PADES_BASELINE_B"
+                    }
+                }
+        };
+
+        SetRequestIdDefaultHeader(_httpClient);
+        var response = await _httpClient.PostAsync(
+            "/api/v1/borica/sign",
+            new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, MediaTypeNames.Application.Json),
+            cancellationToken);
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        HttpContext.Response.RegisterForDispose(response);
+
+        var result = Newtonsoft.Json.Linq.JObject.Parse(body);
+        if (result is null || result.Value<string>("responseCode") != "COMPLETED")
+        {
+            Logger.LogDebug("Borica sign raw response: {RawResponse}", body);
+            Logger.LogWarning("Borica signing request wasn't completed.");
+            return StatusCode((int)System.Net.HttpStatusCode.BadGateway, "Malformed response.");
+        }
+        var signature = result["data"]["signatures"][0].Value<string>("signature");
+
+        if (string.IsNullOrWhiteSpace(signature))
+        {
+            Logger.LogError("Signature is missing when tried to get empowerment {EmpowermentId} document.", empowermentId);
+            return StatusCode((int)System.Net.HttpStatusCode.BadGateway, "Missing signature.");
+        }
+
+        byte[] byteArray = Array.Empty<byte>();
+        if (!string.IsNullOrEmpty(signature))
+        {
+            byteArray = Convert.FromBase64String(signature);
+        }
+
+        return new FileStreamResult(new MemoryStream(byteArray), MediaTypeNames.Application.Pdf)
+        {
+            FileDownloadName = $"{empowermentId}"
+        };
     }
 }

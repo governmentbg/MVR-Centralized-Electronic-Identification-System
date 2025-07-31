@@ -9,6 +9,7 @@ ARG EID_NUGET_REPO_URL
 
 COPY "./eID.RO.sln" "eID.RO.sln"
 
+COPY ["./eID.RO.API/eID.RO.API.csproj", "eID.RO.API/"]
 COPY ["./eID.RO.API.Public/eID.RO.API.Public.csproj", "eID.RO.API.Public/"]
 COPY ["./eID.RO.Application/eID.RO.Application.csproj", "eID.RO.Application/"]
 COPY ["./eID.RO.Service/eID.RO.Service.csproj", "eID.RO.Service/"]
@@ -27,6 +28,11 @@ RUN dotnet publish "eID.RO.API.Public.csproj" -c Release -o /app/publish /p:UseA
 FROM build AS publish
 
 FROM base AS final
+# Install fonts
+RUN sed -i'.bak' 's/$/ contrib/' /etc/apt/sources.list
+RUN apt-get update; apt-get install -y ttf-mscorefonts-installer fontconfig
+RUN fc-cache -f; fc-match Arial
+
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "eID.RO.API.Public.dll"]
+ENTRYPOINT ["sh", "-c", "update-ca-certificates && exec dotnet eID.RO.API.Public.dll"]

@@ -1,0 +1,36 @@
+{
+	"index_patterns": [
+		"eid-hash*"
+	],
+	"template": {
+		"aliases": {
+			"hashes": {}
+		},
+		"settings": {
+			"number_of_shards": 2,
+			"number_of_replicas": 1
+		},
+		"mappings": {
+			"properties": {
+				"systemId": {
+					"type": "keyword"
+				},
+				"checksum": {
+					"type": "keyword"
+				},
+				"sourceFile": {
+					"type": "keyword"
+				},
+				"sourcePath": {
+					"type": "keyword"
+				},
+				"dateCreated": {
+					"type": "date"
+				},
+				"events": {
+					"type": "text"
+				}
+			}
+		}
+	}
+}

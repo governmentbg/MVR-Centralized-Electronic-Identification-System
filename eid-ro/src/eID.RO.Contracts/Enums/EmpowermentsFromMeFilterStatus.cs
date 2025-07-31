@@ -8,7 +8,7 @@ public enum EmpowermentsFromMeFilterStatus
     Active = 3,
     Denied = 4,
     DisagreementDeclared = 5,
-    CollectingWithdrawalSignatures = 6,
+    //CollectingWithdrawalSignatures = 6,
     Withdrawn = 7,
     Expired = 8,
     Unconfirmed = 9

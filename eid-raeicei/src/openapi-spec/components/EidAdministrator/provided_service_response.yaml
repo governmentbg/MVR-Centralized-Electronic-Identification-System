@@ -1,0 +1,17 @@
+schemas:
+  ProvidedServiceResponseDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      nameLatin:
+        type: string
+      applicationType:
+        type: string
+      serviceType:
+        $ref: '../common/service_type.yaml#/schemas/ServiceType'
+      isActive:
+        type: boolean

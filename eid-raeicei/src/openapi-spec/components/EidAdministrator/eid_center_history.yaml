@@ -1,0 +1,21 @@
+schemas:
+  EidCenterHistoryDTO:
+    type: object
+    properties:
+     id:
+      type: string
+      format: uuid
+     name:
+      type: string
+     nameLatin:
+      type: string
+     eikNumber:
+      type: string
+     homePage:
+       type: string
+     logoUrl:
+       type: string
+     serviceType:
+       $ref: '../common/service_type.yaml#/schemas/ServiceType'
+     managerStatus:
+       $ref: './eid_manager_status.yaml#/schemas/EidManagerStatus'

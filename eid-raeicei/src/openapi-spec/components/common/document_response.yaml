@@ -1,0 +1,21 @@
+schemas:
+  DocumentResponseDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      fileName:
+        type: string
+      content:
+        type: string
+        format: byte
+      documentType:
+        $ref: './document_type_v1.yaml#/schemas/DocumentTypeResponseDTO'
+      filePath:
+        type: string
+      isOutgoing:
+        type: boolean
+      createDate:
+        type: string
+        format: date-time

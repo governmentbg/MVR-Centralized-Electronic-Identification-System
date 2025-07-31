@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 import { LayoutComponent } from './shared/components/layout/layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { RoleType } from './core/enums/auth.enum';
+import { PageUnauthorizedComponent } from './shared/components/page-unauthorized/page-unauthorized.component';
 
 const routes: Routes = [
     {
@@ -18,20 +20,34 @@ const routes: Routes = [
             {
                 path: 'channels',
                 loadChildren: () => import('./features/channels/channels.module').then(m => m.ChannelsModule),
+                data: { roles: [RoleType.DCIS_APP_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR] },
             },
             {
                 path: 'configurations',
                 loadChildren: () =>
                     import('./features/configurations/configurations.module').then(m => m.ConfigurationsModule),
+                data: { roles: [RoleType.DCIS_APP_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR] },
             },
             {
                 path: 'notifications',
                 loadChildren: () =>
                     import('./features/notifications/notifications.module').then(m => m.NotificationsModule),
+                data: { roles: [RoleType.DCIS_APP_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR] },
             },
             {
                 path: 'logs-viewer',
                 loadChildren: () => import('@eid/ngx-eid-logs-viewer').then(m => m.NgxEidLogsViewerModule),
+                data: { roles: [RoleType.DCIS_APP_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR] },
+            },
+            {
+                path: 'system-processes',
+                loadChildren: () =>
+                    import('./features/system-processes/system-processes.module').then(m => m.SystemProcessesModule),
+                data: { roles: [RoleType.DCIS_APP_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR] },
+            },
+            {
+                path: 'unauthorized',
+                component: PageUnauthorizedComponent,
             },
         ],
     },

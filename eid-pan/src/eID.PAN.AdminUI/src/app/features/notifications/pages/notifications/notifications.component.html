@@ -3,7 +3,62 @@
         {{ t('sidebar.txtSystems') }}
     </h4>
 
-    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <p-confirmDialog [style]="{ width: '50vw', maxWidth: '700px' }" [blockScroll]="false"></p-confirmDialog>
+    <p-dialog
+        [blockScroll]="false"
+        [header]="t('global.txtConfirmation')"
+        [(visible)]="rejectDialogVisible"
+        [modal]="true"
+        [draggable]="false"
+        [style]="{ width: '50vw', maxWidth: '700px' }">
+        <p>
+            {{ t('modules.notifications.txtRejectConfirm') }}
+        </p>
+        <form [formGroup]="rejectForm" (ngSubmit)="onRejectFormSubmit()">
+            <div>
+                <label for="reason" class="form-label"
+                    >{{ t('modules.channels.txtReason') }} <span class="text-danger">*</span></label
+                >
+                <textarea
+                    id="reason"
+                    rows="5"
+                    cols="30"
+                    pInputTextarea
+                    formControlName="reason"
+                    maxlength="1024"
+                    class="w-100"></textarea>
+                <div class="text-danger validation-text">
+                    <span
+                        *ngIf="
+                            rejectForm.controls.reason.invalid &&
+                            (rejectForm.controls.reason.dirty || rejectForm.controls.reason.touched)
+                        ">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('modules.channels.txtReason')
+                            })
+                        }}
+                    </span>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-4">
+                <p-button
+                    [icon]="'pi pi-times'"
+                    iconPos="left"
+                    [loading]="loading"
+                    [label]="t('primeng.reject')"
+                    (onClick)="toggleRejectFormVisibility()"
+                    styleClass="p-button p-button-danger me-2"></p-button>
+                <p-button
+                    [icon]="'pi pi-check'"
+                    iconPos="left"
+                    [loading]="loading"
+                    [label]="t('primeng.accept')"
+                    type="submit"
+                    styleClass="p-button p-button-primary"></p-button>
+            </div>
+        </form>
+    </p-dialog>
     <div class="p-card p-4">
         <div class="mb-4">
             <p-selectButton
@@ -47,24 +102,39 @@
                         *ngIf="activeItem !== 'rejected'"
                         style="width: 5rem"
                         [attr.aria-label]="t('modules.notifications.txtExpandCollapseLabel')"></th>
+                    <th [attr.aria-label]="modifiedOnColumnLabel">
+                        {{ modifiedOnColumnLabel }}
+                    </th>
                     <th [attr.aria-label]="t('modules.notifications.txtSystem')">
                         {{ t('modules.notifications.txtSystem') }}
                     </th>
                     <th *ngIf="activeItem !== 'rejected'" [attr.aria-label]="t('global.txtAction')">
                         {{ t('global.txtAction') }}
                     </th>
+                    <th
+                        class="text-nowrap"
+                        *ngIf="activeItem === 'rejected'"
+                        [attr.aria-label]="t('modules.channels.txtReason')">
+                        {{ t('modules.channels.txtReason') }}
+                    </th>
                 </tr>
             </ng-template>
 
             <ng-template pTemplate="loadingbody">
                 <tr>
-                    <td>
+                    <td *ngIf="activeItem !== 'rejected'">
                         <p-skeleton></p-skeleton>
                     </td>
                     <td>
                         <p-skeleton></p-skeleton>
                     </td>
-                    <td style="width: 10rem">
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td style="width: 10rem" *ngIf="activeItem !== 'rejected'">
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td *ngIf="activeItem === 'rejected'">
                         <p-skeleton></p-skeleton>
                     </td>
                 </tr>
@@ -80,6 +150,14 @@
                             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                             [title]="t('modules.notifications.txtExpandCollapseLabel')"
                             [attr.aria-label]="t('modules.notifications.txtExpandCollapseLabel')"></button>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="activeItem !== 'rejected'; else elseBlock">
+                            {{ system.modifiedOn | translocoDate : { timeStyle: 'medium' } }}
+                        </ng-container>
+                        <ng-template #elseBlock>
+                            {{ system.rejectedOn | translocoDate : { timeStyle: 'medium' } }}
+                        </ng-template>
                     </td>
                     <td [attr.aria-label]="getSystemNameTranslation(system)">{{ getSystemNameTranslation(system) }}</td>
                     <td *ngIf="activeItem !== 'rejected'" style="width: 10rem">
@@ -119,6 +197,9 @@
                                 styleClass="p-button-sm p-button-danger"
                                 [attr.aria-label]="t('modules.notifications.txtReject')"></p-button>
                         </div>
+                    </td>
+                    <td *ngIf="activeItem === 'rejected'">
+                        {{ system.reason }}
                     </td>
                 </tr>
             </ng-template>

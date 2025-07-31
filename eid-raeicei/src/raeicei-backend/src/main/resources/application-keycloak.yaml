@@ -1,0 +1,18 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          eid-raeicei-m2m:
+            client-id:
+            client-secret:
+            authorization-grant-type: client_credentials
+            provider: keycloak
+        provider:
+          keycloak:
+            issuer-uri: https://${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}
+            token-uri: https://${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: https://${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}

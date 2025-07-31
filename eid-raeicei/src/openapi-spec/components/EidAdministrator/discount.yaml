@@ -1,0 +1,24 @@
+schemas:
+  DiscountDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      startDate:
+        type: string
+        format: date
+      ageFrom:
+        type: integer
+      ageUntil:
+        type: integer
+      discount:
+        type: number
+        format: double
+      disability:
+        type: boolean
+      onlineService:
+        type: boolean
+      providedServiceId:
+        type: string
+        format: uuid

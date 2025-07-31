@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>TechnoLogica.RegiX.Adapters.Common</RootNamespace>
+    <AssemblyName>RegiX.Adapters.Common</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Dimitar Mitev</Authors>
+    <Company>TechnoLogica</Company>
+    <Description>Common objects/functionality shared between RegiX's Adapters</Description>
+    <Version Condition=" '$(Major)$(Minor)$(Patch)' == '' ">1.0.0.0</Version>
+    <Version Condition=" '$(Major)$(Minor)$(Patch)' != '' ">$(Major).$(Minor).$(Patch).0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastMember.Signed" Version="1.5.0" />
+    <PackageReference Include="RegiX.Common" Version="1.0.47" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.8.0" />
+  </ItemGroup>
+
+</Project>

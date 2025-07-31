@@ -1,0 +1,12 @@
+# # AuthorizerIdentifierData
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**uid** | **string** |  | [optional]
+**uid_type** | [**\RoSdk\Model\IdentifierType**](IdentifierType.md) |  | [optional]
+**name** | **string** |  | [optional]
+**is_issuer** | **bool** |  | [optional]
+
+[[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

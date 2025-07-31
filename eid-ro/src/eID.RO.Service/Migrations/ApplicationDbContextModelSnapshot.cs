@@ -19,7 +19,7 @@ namespace eID.RO.Service.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.18")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -40,8 +40,7 @@ namespace eID.RO.Service.Migrations
 
                     b.Property<string>("Uid")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UidType")
                         .HasColumnType("integer");
@@ -64,10 +63,14 @@ namespace eID.RO.Service.Migrations
                     b.Property<Guid>("EmpowermentStatementId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<string>("Uid")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UidType")
                         .HasColumnType("integer");
@@ -95,8 +98,7 @@ namespace eID.RO.Service.Migrations
 
                     b.Property<string>("IssuerUid")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<int>("IssuerUidType")
                         .HasColumnType("integer");
@@ -150,8 +152,7 @@ namespace eID.RO.Service.Migrations
 
                     b.Property<string>("SignerUid")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<int>("SignerUidType")
                         .HasColumnType("integer");
@@ -194,8 +195,21 @@ namespace eID.RO.Service.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
                     b.Property<int>("OnBehalfOf")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ProviderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("integer");
@@ -210,18 +224,9 @@ namespace eID.RO.Service.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SupplierId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SupplierName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Uid")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UidType")
                         .HasColumnType("integer");
@@ -279,8 +284,7 @@ namespace eID.RO.Service.Migrations
 
                     b.Property<string>("IssuerUid")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<int>("IssuerUidType")
                         .HasColumnType("integer");
@@ -320,6 +324,31 @@ namespace eID.RO.Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmpowermentStatements.WithdrawalReasons", (string)null);
+                });
+
+            modelBuilder.Entity("eID.RO.Service.Entities.NumberRegister", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<int>("Current")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("LastChange")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmpowermentStatements.NumbersRegister", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "EMPSTAT",
+                            Current = 0,
+                            LastChange = new DateOnly(2024, 10, 23)
+                        });
                 });
 
             modelBuilder.Entity("eID.RO.Service.Entities.ScheduledJobSetting", b =>

@@ -6,7 +6,7 @@ public class DeleteSmtpConfigurationRequest : IValidatableRequest
 {
     public virtual IValidator GetValidator() => new DeleteSmtpConfigurationRequestValidator();
 
-    public string? Id { get; set; }
+    public Guid Id { get; set; }
 }
 
 

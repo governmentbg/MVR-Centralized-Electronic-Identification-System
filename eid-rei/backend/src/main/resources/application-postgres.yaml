@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_BASE_URL}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000 #maximum number of milliseconds that a client will wait for a connection
+      minimum-idle: 3 #minimum number of idle connections maintained by HikariCP in a connection pool
+      maximum-pool-size: 10 #maximum pool size
+      idle-timeout: 15000 #maximum idle time for connection
+      max-lifetime: 1000 # maximum lifetime in milliseconds of a connection in the pool after it is closed.
+      auto-commit: true #default auto-commit behavior.
+  jpa:
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: false #2nd step to run db/schema.sql, db/data.sql scripts
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            create-database-schemas: true
+      hibernate:
+        default_schema: "rei"
+        show_sql: ${HIBERNATE_SHOW_SQL}
+        format_sql: ${HIBERNATE_SHOW_SQL}
+        dialect: org.hibernate.dialect.PostgreSQLDialect #net.optionfactory.hj.postgres.PostgreSQL95DialectWithJsonb
+        hbm2dll:
+          create_namespaces: true
+    hibernate:
+      ddl-auto: update #none, validate, update, create, create-drop
+    generate-ddl: true
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  h2:
+    console:
+      enabled: false
+  sql:
+    init:
+      encoding: UTF-8
+      mode: always
+#      schema-locations: 'classpath:db/schema.sql'
+#      data-locations: 'classpath:db/data.sql'
+      continue-on-error: true
+  liquibase:
+    # enable it at the second stage of the project
+    # when the schema and tables plus initial data are almost clear
+    # to enable you should disable defer-datasource-initialization and set ddl-auto: validate
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+    default-schema: rei
+    liquibase-schema: rei

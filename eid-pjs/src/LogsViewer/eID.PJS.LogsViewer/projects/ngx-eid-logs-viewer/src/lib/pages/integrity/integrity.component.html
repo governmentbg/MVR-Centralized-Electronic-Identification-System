@@ -1,0 +1,656 @@
+<section *transloco="let t" class="h-100" class="integrity">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div class="row mb-4">
+        <div class="col-9 d-flex">
+            <h2 class="text-uppercase">
+                {{ t("modules.integrity.txtIntegrity") }}
+            </h2>
+        </div>
+
+        <div class="col-3 d-flex justify-content-end align-items-end">
+            <p-button
+                [label]="t('modules.integrity.txtRefresh')"
+                type="submit"
+                [disabled]="isLoading"
+                styleClass="p-button-sm p-button-success"
+                (click)="refresh()"
+                icon="pi pi-refresh"
+                iconPos="left"
+            ></p-button>
+        </div>
+    </div>
+
+    <div class="d-flex-card p-card">
+        <div class="row mb-4">
+            <div class="col-9 d-flex">
+                <p-selectButton
+                    [options]="tabOptions"
+                    [(ngModel)]="value"
+                    [multiple]="false"
+                    optionLabel="name"
+                    optionValue="value"
+                    (ngModelChange)="activeItemChange($event)"
+                >
+                    <ng-template let-item>
+                        <span class="p-button-label">{{ item.label }}</span>
+                    </ng-template>
+                </p-selectButton>
+            </div>
+        </div>
+
+        <!-- dates fields show only for subSystem -->
+        <form
+            [formGroup]="form"
+            (ngSubmit)="checkIntegrityConfirmationPopup()"
+            class="mb-4 calendar-section p-3 d-flex justify-content-end"
+            *ngIf="isSubSystem"
+        >
+            <div class="me-3">
+                <p-calendar
+                    styleClass="w-100"
+                    formControlName="fromDate"
+                    inputId="fromDate"
+                    label="fromDate"
+                    ariaLabelledBy="fromDate"
+                    name="fromDate"
+                    [showIcon]="true"
+                    dateFormat="yy-mm-dd"
+                    iconAriaLabel="calendar"
+                    [placeholder]="
+                        t('modules.integrity.txtStartDatePlaceholder')
+                    "
+                    (onSelect)="validateToDate()"
+                    appendTo="body"
+                    [baseZIndex]="1045"
+                >
+                </p-calendar>
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="
+                        form.controls.fromDate.errors?.['required'] &&
+                        form.controls.fromDate.dirty &&
+                        (form.controls.toDate.errors?.['required'] &&
+                        form.controls.toDate.dirty )
+                    "
+                        >{{
+                            t(
+                                "modules.integrity.validationForm.txtPleaseChoose",
+                                {
+                                    field: t("modules.integrity.txtStartDate")
+                                }
+                            )
+                        }}
+                    </span>
+                    <span
+                        *ngIf="
+                        (form.controls.fromDate.errors?.['dateNotMoreThanThreeMonths'] &&
+                        form.controls.fromDate.dirty) ||
+                        (form.controls.toDate.errors?.['dateNotMoreThanThreeMonths'] &&
+                        form.controls.toDate.dirty )
+                    "
+                    >
+                        {{
+                            t(
+                                "modules.integrity.validationForm.txtNotMoreThanThreeMonths"
+                            )
+                        }}
+                    </span>
+                    <span
+                        *ngIf="
+                        (form.controls.fromDate.errors?.['dateIsBeforeOtherDate'] &&
+                        form.controls.fromDate.dirty) ||
+                        (form.controls.toDate.errors?.['dateIsBeforeOtherDate'] &&
+                        form.controls.toDate.dirty  )
+                    "
+                    >
+                        {{
+                            t(
+                                "modules.integrity.validationForm.txtNotLaterThenEndDate"
+                            )
+                        }}
+                    </span>
+                </div>
+            </div>
+            <div class="me-3">
+                <p-calendar
+                    styleClass="w-100"
+                    formControlName="toDate"
+                    inputId="toDate"
+                    label="toDate"
+                    ariaLabelledBy="toDate"
+                    name="toDate"
+                    [showIcon]="true"
+                    dateFormat="yy-mm-dd"
+                    iconAriaLabel="calendar"
+                    [placeholder]="t('modules.integrity.txtEndDatePlaceholder')"
+                    [minDate]="toDateMinValue()"
+                    (onSelect)="validateFromDate()"
+                    appendTo="body"
+                    [baseZIndex]="1045"
+                >
+                </p-calendar>
+            </div>
+            <div class="d-flex flex-column">
+                <p-button
+                    [label]="t('modules.integrity.txtCheckIntegrity')"
+                    type="submit"
+                    [disabled]="isLoading || isProcessing"
+                    styleClass="p-button-md p-button-primary"
+                ></p-button>
+            </div>
+        </form>
+        <!-- end of dates -->
+
+        <!-- Blue box -->
+        <div
+            class="integrity-information-container bg-theme-primary-light p-3 mb-4"
+            *ngIf="(isProcessing || isLastStateUnknown) && !isLoading"
+        >
+            <div class="title">
+                <i class="material-icons-outlined me-3"> &#xe88e; </i>
+
+                {{ isProcessing ? t("modules.integrity.txtCheckIntegrityProcessing") : t("modules.integrity.txtCheckIntegrityLastStateUnknown") }}
+            </div>
+        </div>
+        <!-- End Blue box -->
+
+        <!-- System information -->
+        <div
+            class="integrity-information-container p-3 mb-4"
+            [ngClass]="isSystemSuccess ? 'bg-confirm-green' : 'bg-failure-red'"
+            *ngIf="verificationStatus && !isSubSystem && !isLoading"
+        >
+            <div class="row">
+                <div class="col-12">
+                    <div class="title mb-3">
+                        <i
+                            class="material-icons-outlined me-3"
+                            *ngIf="isSystemSuccess"
+                        >
+                            &#xe88e;
+                        </i>
+                        <i
+                            class="material-icons-outlined me-3"
+                            *ngIf="!isSystemSuccess"
+                        >
+                            &#xf083;
+                        </i>
+                        {{ t("modules.integrity.txtSystemJournalsIntegrity") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 col-xl-3 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtLastLaunched") }}:
+                    </div>
+                    <div class="sub-title-black">
+                        {{
+                            formatFullDate(
+                                verificationStatus.lastProcessingStart
+                            )
+                        }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-2 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtPeriod") }}
+                        :
+                    </div>
+                    <div
+                        class="sub-title-black"
+                        *ngIf="
+                            verificationStatus &&
+                            verificationStatus.serviceConfiguration &&
+                            verificationStatus.serviceConfiguration.verifyPeriod
+                        "
+                    >
+                        {{
+                            t(
+                                "modules.integrity.periods." +
+                                    verificationStatus.serviceConfiguration
+                                        .verifyPeriod
+                            )
+                        }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4 mb-2 mb-md-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtIntegrityStatus") }}
+                        :
+                    </div>
+                    <div
+                        class="sub-title-black text-text-success"
+                        *ngIf="isSystemSuccess"
+                    >
+                        {{
+                            t(
+                                "modules.integrity.txtDataIntegrityIsNotCompromised"
+                            )
+                        }}
+                    </div>
+                    <div
+                        class="sub-title-black text-text-error"
+                        *ngIf="!isSystemSuccess"
+                    >
+                        {{
+                            t("modules.integrity.txtDataIntegrityIsCompromised")
+                        }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3 d-flex">
+                    <p-button
+                        (click)="
+                            getResultFileForDownload(
+                                verificationStatus.lastState?.resultLogFile
+                            )
+                        "
+                        icon="pi pi-download"
+                        [label]="t('modules.integrity.txtDownload')"
+                        styleClass="p-button p-button-primary"
+                        class="ms-0 ms-xl-auto"
+                    >
+                    </p-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- System's subsystems sections -->
+        <div
+            *ngIf="
+                !isSubSystem &&
+                verificationStatus &&
+                verificationStatus.lastState &&
+                !isLoading
+            "
+        >
+            <p-table
+                *ngIf="systems && systems.length > 0"
+                #dt
+                [value]="systems"
+                [tableStyle]="{ 'min-width': '100%' }"
+                dataKey="systemId"
+                loadingIcon="pi pi-spin pi-spinner"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th
+                            style="width: 3rem"
+                            [attr.aria-label]="
+                                t('modules.integrity.txtExpandCollapseLabel')
+                            "
+                        ></th>
+                        <th
+                            [attr.aria-label]="
+                                t('modules.integrity.txtSubSystemId')
+                            "
+                        >
+                            {{ t("modules.integrity.txtSubSystemId") }}
+                        </th>
+                        <th
+                            [attr.aria-label]="
+                                t('modules.integrity.txtSubSystemName')
+                            "
+                        >
+                            {{ t("modules.integrity.txtSubSystemName") }}
+                        </th>
+                        <th
+                            [attr.aria-label]="
+                                t('modules.integrity.txtIntegrityStatus')
+                            "
+                            style="text-align: center"
+                        >
+                            {{ t("modules.integrity.txtIntegrityStatus") }}
+                        </th>
+                        <th
+                            [attr.aria-label]="t('global.txtAction')"
+                            style="width: 11rem"
+                        >
+                            {{ t("global.txtAction") }}
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td style="width: 11rem">
+                            <p-skeleton></p-skeleton>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template
+                    pTemplate="body"
+                    let-system
+                    let-expanded="expanded"
+                >
+                    <tr>
+                        <td style="width: 3rem">
+                            <button
+                                *ngIf="!system.isValid && system.files"
+                                type="button"
+                                pButton
+                                [pRowToggler]="system"
+                                class="p-button-text p-button-rounded p-button-sm text-theme-primary-dark"
+                                [icon]="
+                                    expanded
+                                        ? 'pi pi-chevron-down'
+                                        : 'pi pi-chevron-right'
+                                "
+                                [title]="
+                                    t(
+                                        'modules.integrity.txtExpandCollapseLabel'
+                                    )
+                                "
+                                [attr.aria-label]="
+                                    t(
+                                        'modules.integrity.txtExpandCollapseLabel'
+                                    )
+                                "
+                            ></button>
+                        </td>
+                        <td
+                            [attr.aria-label]="system.systemId"
+                            style="width: 11rem"
+                        >
+                            {{ system.systemId }}
+                        </td>
+                        <td
+                            [attr.aria-label]="system.indexName"
+                            style="width: 11rem"
+                        >
+                            {{ system.indexName }}
+                        </td>
+                        <td
+                            style="text-align: center; width: 11rem"
+                            class="roboto-condensed"
+                        >
+                            <span
+                                *ngIf="system.isValid; else elseBlock"
+                                class="text-break text-button-confirm"
+                                [attr.aria-label]="
+                                    t('modules.integrity.txtNotCompromised')
+                                "
+                            >
+                                <i
+                                    class="material-icons-outlined align-self-center"
+                                    >&#xe877;</i
+                                >
+                                {{ t("modules.integrity.txtNotCompromised") }}
+                            </span>
+                            <ng-template #elseBlock>
+                                <span
+                                    class="d-flex align-items-center flex-column"
+                                >
+                                    <span
+                                        class="d-flex text-button-reject"
+                                        [attr.aria-label]="
+                                            t(
+                                                'modules.integrity.txtCompromised'
+                                            )
+                                        "
+                                    >
+                                        <i class="material-icons-outlined me-3">
+                                            &#xf083;
+                                        </i>
+                                        {{
+                                            t(
+                                                "modules.integrity.txtCompromised"
+                                            )
+                                        }}
+                                    </span>
+                                    <mark
+                                        class="d-flex"
+                                        *ngIf="!system.isValid && !system.files"
+                                        [attr.aria-label]="
+                                            t(
+                                                'modules.integrity.txtUnableToVisualize'
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            t(
+                                                "modules.integrity.txtUnableToVisualize"
+                                            )
+                                        }}
+                                    </mark>
+                                </span>
+                            </ng-template>
+                        </td>
+                        <td style="width: 11rem">
+                            <p-button
+                                *ngIf="!system.isValid"
+                                (click)="
+                                    getResultFileForDownload(
+                                        system.resultLogFile
+                                    )
+                                "
+                                icon="pi pi-download"
+                                [label]="t('modules.integrity.txtDownload')"
+                                styleClass="p-button-outlined p-button-sm"
+                                class="ms-0 ms-md-auto"
+                            >
+                            </p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-system>
+                    <tr>
+                        <td colspan="5">
+                            <div *ngIf="!system.isValid && system.files">
+                                <lib-json-formatter
+                                    [files]="system.files"
+                                ></lib-json-formatter>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <!-- End of System's subsystems sections -->
+        <!-- End of System information -->
+
+        <!-- Selected Subsystem information -->
+        <div
+            class="integrity-information-container p-3 mb-4"
+            [ngClass]="
+                isSubSystemSuccess ? 'bg-confirm-green' : 'bg-failure-red'
+            "
+            *ngIf="isSubSystem && !isLoading"
+        >
+            <div class="row">
+                <div class="col-12">
+                    <div class="title mb-3">
+                        <i
+                            class="material-icons-outlined me-3"
+                            *ngIf="isSubSystemSuccess"
+                        >
+                            &#xe88e;
+                        </i>
+                        <i
+                            class="material-icons-outlined me-3"
+                            *ngIf="!isSubSystemSuccess"
+                        >
+                            &#xf083;
+                        </i>
+                        {{
+                            t("modules.integrity.txtSubSystemJournalsIntegrity")
+                        }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12 col-md-6 col-xl-3 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtLastLaunched") }}:
+                    </div>
+                    <div class="sub-title-black">
+                        {{ subSystemLastProcessingStart }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-2 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtPeriod") }}
+                        :
+                    </div>
+                    <div class="sub-title-black">
+                        {{ subSystemVerifyPeriod }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4 mb-2 mb-md-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtIntegrityStatus") }} :
+                    </div>
+                    <div
+                        class="sub-title-black text-text-success"
+                        *ngIf="isSubSystemSuccess"
+                    >
+                        {{
+                            t(
+                                "modules.integrity.txtDataIntegrityIsNotCompromised"
+                            )
+                        }}
+                    </div>
+                    <div
+                        class="sub-title-black text-text-error"
+                        *ngIf="!isSubSystemSuccess"
+                    >
+                        {{
+                            t("modules.integrity.txtDataIntegrityIsCompromised")
+                        }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3" *ngIf="isSubSystem && selectedSubSystem">
+                <div class="col-12 col-md-6 col-xl-3 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtSystemIdentifier") }}
+                        :
+                    </div>
+                    <div class="sub-title-black">
+                        {{ selectedSubSystem.systemId }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-2 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtIndexName") }}:
+                    </div>
+                    <div class="sub-title-black">
+                        {{ selectedSubSystem.indexName }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4 mb-2 mb-md-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtLocalLogsLocation") }}:
+                    </div>
+                    <div class="sub-title-black">
+                        {{ selectedSubSystem.localLogsLocation }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3 d-flex">
+                    <p-button
+                        (click)="
+                            getResultFileForDownload(
+                                selectedSubSystem.resultLogFile
+                            )
+                        "
+                        icon="pi pi-download"
+                        [label]="t('modules.integrity.txtDownload')"
+                        styleClass="p-button p-button-primary"
+                        class="ms-0 ms-xl-auto"
+                    >
+                    </p-button>
+                </div>
+            </div>
+            <div class="row " *ngIf="isSubSystem && selectedSubSystem">
+                <div class="col-12 col-md-6 col-xl-3 mb-2 mb-xl-0"
+                     *ngIf="selectedSubSystem.datesWithoutLogs.length > 0">
+                    <div class="sub-title-blue">
+                        {{t("modules.integrity.txtDaysThatDoesntHaveLogFile")}}:
+                    </div>
+                    <div class="sub-title-black">
+                        <div *ngIf="selectedSubSystem.datesWithoutLogs.length <= 3; else elseBlock">
+                            <span *ngFor="let date of selectedSubSystem.datesWithoutLogs; last as isLast">
+                                {{ date| translocoDate }}<span *ngIf="!isLast">, </span>
+                            </span>
+                        </div>
+                        <ng-template #elseBlock>
+                            <div>
+                                <span>{{selectedSubSystem.datesWithoutLogs.length}} {{ t("modules.integrity.txtDaysWithoutLogs") }}:</span>
+                                <p-button styleClass="p-button-link p-0 p-button-primary ms-3"
+                                          (click)="toggleDatesWithoutLogs()">
+                                    <span class="me-1">{{ areDatesWithoutLogsVisible ? t("modules.integrity.txtHide") : t("modules.integrity.txtShow") }}</span>
+                                    <span [ngClass]="areDatesWithoutLogsVisible
+                                        ? 'pi pi-chevron-up'
+                                        : 'pi pi-chevron-down'"></span>
+                                </p-button>
+                            </div>
+                            <p-virtualScroller
+                                *ngIf="areDatesWithoutLogsVisible"
+                                [value]="selectedSubSystem.datesWithoutLogs"
+                                class="border-1 surface-border border-round"
+                                [style]="{'width': '100%'}"
+                                scrollHeight="160px"
+                                [itemSize]="40">
+                                <ng-template pTemplate="item" let-item>
+                                    <div class="flex align-items-center p-2 h-full">
+                                        {{ item | translocoDate }}
+                                    </div>
+                                </ng-template>
+                            </p-virtualScroller>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3 mb-2 mb-xl-0">
+                    <div class="sub-title-blue">
+                        {{ t("modules.integrity.txtNoLogsDateBefore") }}:
+                    </div>
+                    <div class="sub-title-black">
+                        {{ selectedSubSystem.dateOfOldestAvailableRecord | translocoDate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End of Selected Subsystem information -->
+        <!-- Subsystem's files -->
+        <div
+            *ngIf="
+                isSubSystem &&
+                selectedSubSystem &&
+                !selectedSubSystem.isValid &&
+                !isLoading
+            "
+        >
+            <lib-json-formatter
+                *ngIf="selectedSubSystem && selectedSubSystem.files"
+                [files]="selectedSubSystem.files"
+            ></lib-json-formatter>
+            <p-divider class="header-divider" type="solid"></p-divider>
+        </div>
+        <!-- End of Subsystem's files -->
+        <!-- End of Sub system information -->
+        <div *ngIf="isLoading" class="text-center">
+            <label *ngIf="delayedLoadingText" class="fade-in d-block mb-4">
+                {{ t("modules.integrity.txtLoadingPleaseWait") }}
+            </label>
+            <p-progressSpinner
+                strokeWidth="2"
+                fill="var(--surface-100)"
+                animationDuration=".5s"
+            ></p-progressSpinner>
+        </div>
+    </div>
+    <p-toast key="toast" position="bottom-right"></p-toast>
+</section>

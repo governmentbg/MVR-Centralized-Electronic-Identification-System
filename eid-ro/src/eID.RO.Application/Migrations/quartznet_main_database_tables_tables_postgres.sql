@@ -26,6 +26,7 @@ CREATE TABLE qrtz_job_details
     job_data BYTEA NULL,
     PRIMARY KEY (sched_name,job_name,job_group)
 );
+ALTER TABLE qrtz_job_details OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_triggers
   (
@@ -49,6 +50,7 @@ CREATE TABLE qrtz_triggers
     FOREIGN KEY (sched_name,job_name,job_group) 
 		REFERENCES qrtz_job_details(sched_name,job_name,job_group) 
 );
+ALTER TABLE qrtz_triggers OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_simple_triggers
   (
@@ -62,6 +64,7 @@ CREATE TABLE qrtz_simple_triggers
     FOREIGN KEY (sched_name,trigger_name,trigger_group) 
 		REFERENCES qrtz_triggers(sched_name,trigger_name,trigger_group) ON DELETE CASCADE
 );
+ALTER TABLE qrtz_simple_triggers OWNER TO pg_database_owner;
 
 CREATE TABLE QRTZ_SIMPROP_TRIGGERS 
   (
@@ -84,6 +87,7 @@ CREATE TABLE QRTZ_SIMPROP_TRIGGERS
     FOREIGN KEY (sched_name,trigger_name,trigger_group) 
 		REFERENCES qrtz_triggers(sched_name,trigger_name,trigger_group) ON DELETE CASCADE
 );
+ALTER TABLE QRTZ_SIMPROP_TRIGGERS OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_cron_triggers
   (
@@ -96,6 +100,7 @@ CREATE TABLE qrtz_cron_triggers
     FOREIGN KEY (sched_name,trigger_name,trigger_group) 
 		REFERENCES qrtz_triggers(sched_name,trigger_name,trigger_group) ON DELETE CASCADE
 );
+ALTER TABLE qrtz_cron_triggers OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_blob_triggers
   (
@@ -107,6 +112,7 @@ CREATE TABLE qrtz_blob_triggers
     FOREIGN KEY (sched_name,trigger_name,trigger_group) 
 		REFERENCES qrtz_triggers(sched_name,trigger_name,trigger_group) ON DELETE CASCADE
 );
+ALTER TABLE qrtz_blob_triggers OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_calendars
   (
@@ -115,6 +121,7 @@ CREATE TABLE qrtz_calendars
     calendar BYTEA NOT NULL,
     PRIMARY KEY (sched_name,calendar_name)
 );
+ALTER TABLE qrtz_calendars OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_paused_trigger_grps
   (
@@ -122,6 +129,7 @@ CREATE TABLE qrtz_paused_trigger_grps
     trigger_group TEXT NOT NULL, 
     PRIMARY KEY (sched_name,trigger_group)
 );
+ALTER TABLE qrtz_paused_trigger_grps OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_fired_triggers 
   (
@@ -140,6 +148,7 @@ CREATE TABLE qrtz_fired_triggers
     requests_recovery BOOL NULL,
     PRIMARY KEY (sched_name,entry_id)
 );
+ALTER TABLE qrtz_fired_triggers OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_scheduler_state 
   (
@@ -149,6 +158,7 @@ CREATE TABLE qrtz_scheduler_state
     checkin_interval BIGINT NOT NULL,
     PRIMARY KEY (sched_name,instance_name)
 );
+ALTER TABLE qrtz_scheduler_state OWNER TO pg_database_owner;
 
 CREATE TABLE qrtz_locks
   (
@@ -156,6 +166,7 @@ CREATE TABLE qrtz_locks
     lock_name  TEXT NOT NULL, 
     PRIMARY KEY (sched_name,lock_name)
 );
+ALTER TABLE qrtz_locks OWNER TO pg_database_owner;
 
 create index idx_qrtz_j_req_recovery on qrtz_job_details(requests_recovery);
 create index idx_qrtz_t_next_fire_time on qrtz_triggers(next_fire_time);

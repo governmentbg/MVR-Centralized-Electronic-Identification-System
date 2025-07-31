@@ -32,6 +32,8 @@ public class Startup
         services.AddOptions<RabbitMqTransportOptions>().BindConfiguration(nameof(RabbitMqTransportOptions));
         services.AddOptions<RedisOptions>().BindConfiguration(nameof(RedisOptions));
         services.AddOptions<OpenDataSettings>().BindConfiguration(nameof(OpenDataSettings));
+        services.AddOptions<ApplicationUrls>().BindConfiguration(nameof(ApplicationUrls));
+        services.AddOptions<KeycloakOptions>().BindConfiguration(nameof(KeycloakOptions));
 
         // HealthCheck
         services.Configure<HealthCheckPublisherOptions>(options =>
@@ -119,15 +121,6 @@ public class Startup
                     Configuration.GetConnectionString("DefaultConnection"))
                 );
 
-        services
-            .AddHttpClient(ApplicationPolicyRegistry.HttpClientWithRetryPolicy)
-            .AddPolicyHandler((serviceProvider, request) =>
-            {
-                var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
-                return ApplicationPolicyRegistry.GetRetryPolicy(logger);
-            }).
-            UseHttpClientMetrics();
-
         //Quartz.NET
         services.Configure<QuartzOptions>(Configuration.GetSection("Quartz"));
 
@@ -137,20 +130,6 @@ public class Startup
             options.Scheduling.IgnoreDuplicates = true; // default: false
             options.Scheduling.OverWriteExistingData = true; // default: true
         });
-
-        services
-           .AddHttpClient("OpenData", httpClient =>
-           {
-               var openDataSettings = Configuration.GetSection(nameof(OpenDataSettings)).Get<OpenDataSettings>();
-               openDataSettings.Validate();
-               httpClient.BaseAddress = new Uri(openDataSettings.OpenDataUrl);
-           })
-           .AddPolicyHandler((serviceProvider, request) =>
-           {
-               var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
-               return ApplicationPolicyRegistry.GetRetryPolicy(logger);
-           })
-           .UseHttpClientMetrics();
 
         services.AddQuartz(q =>
         {
@@ -171,8 +150,51 @@ public class Startup
             options.WaitForJobsToComplete = true;
         });
 
+        //Http clients with Polly
+        var applicationUrls = Configuration.GetSection(nameof(ApplicationUrls)).Get<ApplicationUrls>();
+        applicationUrls.Validate();
+
+        services
+          .AddHttpClient("EidOpenData")
+          .AddHttpMessageHandler<ObtainKeycloakTokenHandler>()
+          .AddPolicyHandler((serviceProvider, request) =>
+          {
+              var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
+              return ApplicationPolicyRegistry.GetRetryPolicy(logger);
+          }).
+          UseHttpClientMetrics();
+
+        services
+            .AddHttpClient(KeycloakCaller.HTTPClientName, httpClient =>
+            {
+                httpClient.BaseAddress = new Uri(applicationUrls.KeycloakHostUrl);
+            })
+            .AddPolicyHandler((serviceProvider, request) =>
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
+                return ApplicationPolicyRegistry.GetRetryPolicy(logger);
+            }).
+            UseHttpClientMetrics();
+
+        services
+          .AddHttpClient("OpenData", httpClient =>
+          {
+              var openDataSettings = Configuration.GetSection(nameof(OpenDataSettings)).Get<OpenDataSettings>();
+              openDataSettings.Validate();
+              httpClient.BaseAddress = new Uri(openDataSettings.OpenDataUrl);
+          })
+          .AddPolicyHandler((serviceProvider, request) =>
+          {
+              var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
+              return ApplicationPolicyRegistry.GetRetryPolicy(logger);
+          })
+          .UseHttpClientMetrics();
+
+
         services.AddScoped<JobScheduler>();
         services.AddScoped<DatasetsService>();
+        services.AddScoped<IKeycloakCaller, KeycloakCaller>();
+        services.AddScoped<ObtainKeycloakTokenHandler>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

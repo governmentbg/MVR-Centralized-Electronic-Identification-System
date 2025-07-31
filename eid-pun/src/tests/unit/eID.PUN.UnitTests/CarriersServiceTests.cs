@@ -20,12 +20,10 @@ public class CarriersServiceTests : BaseTest
     private CarriersService _sut;
     private Mock<IPublishEndpoint> _publishEndpoint;
 
-    private const string _testUserName = "Test User";
     private const string _testSerialNumber1 = "123-123";
     private const string _testSerialNumber2 = "test-serial-123";
     private Guid _testEId1 = Guid.NewGuid();
     private Guid _testEId2 = Guid.NewGuid();
-    private Guid _testUserId = Guid.NewGuid();
 
     [SetUp]
     public void Init()
@@ -58,7 +56,6 @@ public class CarriersServiceTests : BaseTest
         var type = "BgIdCard";
         var certId = Guid.NewGuid();
         var eId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
         var registerCarrier = CreateInterface<RegisterCarrier>(new
         {
             CorrelationId = Guid.NewGuid(),
@@ -66,8 +63,6 @@ public class CarriersServiceTests : BaseTest
             Type = type,
             CertificateId = certId,
             EId = eId,
-            UserId = userId,
-            ModifiedBy = _testUserName
         });
 
         // Act
@@ -86,8 +81,6 @@ public class CarriersServiceTests : BaseTest
             Assert.That(dbRecord?.Type, Is.EqualTo(type));
             Assert.That(dbRecord?.CertificateId, Is.EqualTo(certId));
             Assert.That(dbRecord?.EId, Is.EqualTo(eId));
-            Assert.That(dbRecord?.UserId, Is.EqualTo(userId));
-            Assert.That(dbRecord?.ModifiedBy, Is.EqualTo(_testUserName));
         });
         _publishEndpoint.Verify(pe =>
             pe.Publish<NotifyEIds>(It.IsAny<object>(), It.IsAny<CancellationToken>()),
@@ -97,27 +90,23 @@ public class CarriersServiceTests : BaseTest
 
     #region GetCarriers
     [Test]
-    public void GetByAsync_CalledWithNullMessage_ThrowsArgumentNullException()
+    public void GetByFilterAsync_CalledWithNullMessage_ThrowsArgumentNullException()
     {
         // Arrange
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentNullException>(() => _sut.GetByAsync(null));
+        Assert.ThrowsAsync<ArgumentNullException>(() => _sut.GetByFilterAsync(null));
     }
 
     [Test]
-    public async Task GetByAsync_CalledWithEmptyFilter_ReturnsBadRequestAsync()
+    [TestCaseSource(nameof(GetCarriersByFilterInvalidDataTestCases))]
+    public async Task GetByFilterAsync_WhenCallWithInvalidData_ShouldReturnBadRequestAsync(GetCarriersByFilter message, string caseName)
     {
         // Arrange
-        var getCarriersByFilter = CreateInterface<GetCarriersBy>(new
-        {
-            CorrelationId = Guid.NewGuid()
-        });
-
         // Act
-        var result = await _sut.GetByAsync(getCarriersByFilter);
+        var result = await _sut.GetByFilterAsync(message);
 
-        // Assert
-        CheckServiceResult(result, HttpStatusCode.BadRequest);
+        //Assert
+        CheckServiceResult(result, HttpStatusCode.BadRequest, caseName);
     }
 
     [Test]
@@ -126,7 +115,7 @@ public class CarriersServiceTests : BaseTest
         // Arrange
         await SeedTestCarriersAsync();
 
-        var getCarriersByFilter = CreateInterface<GetCarriersBy>(new
+        var getCarriersByFilter = CreateInterface<GetCarriersByFilter>(new
         {
             CorrelationId = Guid.NewGuid(),
             SerialNumber = "fake-sn",
@@ -134,7 +123,7 @@ public class CarriersServiceTests : BaseTest
         });
 
         // Act
-        var serviceResult = await _sut.GetByAsync(getCarriersByFilter);
+        var serviceResult = await _sut.GetByFilterAsync(getCarriersByFilter);
 
         // Assert
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
@@ -148,19 +137,19 @@ public class CarriersServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetByAsync_CalledWithExistingSerialNumber_ShouldReturnOkAsync()
+    public async Task GetByFilterAsync_CalledWithExistingSerialNumber_ShouldReturnOkAsync()
     {
         // Arrange
         await SeedTestCarriersAsync();
 
-        var getCarriersByFilter = CreateInterface<GetCarriersBy>(new
+        var getCarriersByFilter = CreateInterface<GetCarriersByFilter>(new
         {
             CorrelationId = Guid.NewGuid(),
             SerialNumber = _testSerialNumber1
         });
 
         // Act
-        var serviceResult = await _sut.GetByAsync(getCarriersByFilter);
+        var serviceResult = await _sut.GetByFilterAsync(getCarriersByFilter);
 
         // Assert
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
@@ -175,19 +164,19 @@ public class CarriersServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetByAsync_CalledWithExistingEId_ShouldReturnOkAsync()
+    public async Task GetByFilterAsync_CalledWithExistingEId_ShouldReturnOkAsync()
     {
         // Arrange
         await SeedTestCarriersAsync();
 
-        var getCarriersByFilter = CreateInterface<GetCarriersBy>(new
+        var getCarriersByFilter = CreateInterface<GetCarriersByFilter>(new
         {
             CorrelationId = Guid.NewGuid(),
             EId = _testEId2
         });
 
         // Act
-        var serviceResult = await _sut.GetByAsync(getCarriersByFilter);
+        var serviceResult = await _sut.GetByFilterAsync(getCarriersByFilter);
 
         // Assert
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
@@ -202,12 +191,12 @@ public class CarriersServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetByAsync_CalledWithExistingSerialNumberAndEId_ShouldReturnOkAsync()
+    public async Task GetByFilterAsync_CalledWithExistingSerialNumberAndEId_ShouldReturnOkAsync()
     {
         // Arrange
         await SeedTestCarriersAsync();
 
-        var getCarriersByFilter = CreateInterface<GetCarriersBy>(new
+        var getCarriersByFilter = CreateInterface<GetCarriersByFilter>(new
         {
             CorrelationId = Guid.NewGuid(),
             SerialNumber = _testSerialNumber1,
@@ -215,7 +204,37 @@ public class CarriersServiceTests : BaseTest
         });
 
         // Act
-        var serviceResult = await _sut.GetByAsync(getCarriersByFilter);
+        var serviceResult = await _sut.GetByFilterAsync(getCarriersByFilter);
+
+        // Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+        var result = serviceResult.Result;
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count(), Is.EqualTo(1));
+        Assert.That(result.Select(c => c.SerialNumber), Is.All.EqualTo(_testSerialNumber1));
+        Assert.That(result.Select(c => c.EId), Is.All.EqualTo(_testEId2));
+        _publishEndpoint.Verify(pe =>
+            pe.Publish<NotifyEIds>(It.IsAny<object>(), It.IsAny<CancellationToken>()),
+            Times.Once()
+        );
+    }
+
+    [Test]
+    public async Task GetByFilterAsync_CalledWithExistingSerialNumberAndType_ShouldReturnOkAsync()
+    {
+        // Arrange
+        await SeedTestCarriersAsync();
+
+        var getCarriersByFilter = CreateInterface<GetCarriersByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            SerialNumber = _testSerialNumber1,
+            EId = _testEId2,
+            Type = "MobileApp"
+        });
+
+        // Act
+        var serviceResult = await _sut.GetByFilterAsync(getCarriersByFilter);
 
         // Assert
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
@@ -242,8 +261,6 @@ public class CarriersServiceTests : BaseTest
                 Type = "BgIdCard",
                 CertificateId = Guid.NewGuid(),
                 EId = _testEId1,
-                UserId = _testUserId,
-                ModifiedBy = _testUserName,
             },
             new Carrier
             {
@@ -252,8 +269,6 @@ public class CarriersServiceTests : BaseTest
                 Type = "MobileApp",
                 CertificateId = Guid.NewGuid(),
                 EId = _testEId2,
-                UserId = _testUserId,
-                ModifiedBy = _testUserName,
             },
             new Carrier
             {
@@ -262,12 +277,62 @@ public class CarriersServiceTests : BaseTest
                 Type = "BgIdCard",
                 CertificateId = Guid.NewGuid(),
                 EId = _testEId2,
-                UserId = _testUserId,
-                ModifiedBy = _testUserName,
             },
         };
 
         await _dbContext.Carriers.AddRangeAsync(dbCarriers);
         await _dbContext.SaveChangesAsync();
     }
+
+    private static readonly object[] GetCarriersByFilterInvalidDataTestCases =
+    {
+        new object[]
+        {
+            CreateInterface<GetCarriersByFilter>(new
+            {
+                //CorrelationId = Guid.NewGuid(),
+                SerialNumber = "123-123",
+                EId = Guid.NewGuid(),
+                CertificateId = Guid.NewGuid(),
+                Type = "Type",
+            }),
+            "No CorrelationId"
+        },
+        new object[]
+        {
+            CreateInterface<GetCarriersByFilter>(new
+            {
+                CorrelationId = Guid.Empty,
+                SerialNumber = "123-123",
+                EId = Guid.NewGuid(),
+                CertificateId = Guid.NewGuid(),
+                Type = "Type",
+            }),
+            "Empty CorrelationId"
+        },
+        new object[]
+        {
+            CreateInterface<GetCarriersByFilter>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                //SerialNumber = "123-123",
+                //EId = Guid.NewGuid(),
+                //CertificateId = Guid.NewGuid(),
+                //Type = "Type",
+            }),
+            "No Type"
+        },
+        new object[]
+        {
+            CreateInterface<GetCarriersByFilter>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                //SerialNumber = "123-123",
+                //EId = Guid.NewGuid(),
+                //CertificateId = Guid.NewGuid(),
+                Type = string.Empty,
+            }),
+            "Empty Type"
+        }
+    };
 }

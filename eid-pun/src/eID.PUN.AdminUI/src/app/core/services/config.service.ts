@@ -1,19 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IAppConfig } from '../interfaces/IAppConfig';
-
 @Injectable({
     providedIn: 'root',
 })
 export class AppConfigService {
     private http: HttpClient;
-
     constructor(http: HttpClient) {
         this.http = http;
         this.config = Object.assign({}, this.defaults);
     }
-
     private defaults: IAppConfig = {
+        systemProcesses: {
+            grafana: '',
+            prometheus: '',
+            keycloak_internal: '',
+            keycloak_external: '',
+        },
         journals: {
             folders: [''],
             fileExtensionFilter: '',
@@ -24,19 +27,18 @@ export class AppConfigService {
             poolingTimeout: 0,
             downloadBytesFileSize: 0,
         },
-        keycloak: {
-            keycloakUrl: '',
-            keycloakClientId: '',
-            keycloakRealm: '',
-            keycloakRedirectUri: '',
-            keycloakRefreshTokenKey: '',
-            keycloakTokenKey: '',
-            keycloakUpdateMinValidity: 0,
+        oauth: {
+            issuer: '',
+            clientId: '',
+            redirectUri: '',
+            requireHttps: true,
+            responseType: '',
+            scope: '',
+            useSilentRefresh: true,
+            timeoutFactor: 0.75,
         },
     };
-
     config: IAppConfig;
-
     loadAppConfig() {
         return new Promise<IAppConfig>(resolve => {
             return this.http.get<IAppConfig>('/assets/app.config.json').subscribe({

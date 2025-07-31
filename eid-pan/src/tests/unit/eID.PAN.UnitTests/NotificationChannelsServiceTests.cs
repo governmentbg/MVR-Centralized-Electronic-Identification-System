@@ -1,10 +1,13 @@
 ﻿using System.Net;
+using eID.PAN.Contracts;
 using eID.PAN.Contracts.Commands;
 using eID.PAN.Contracts.Events;
+using eID.PAN.Contracts.Results;
 using eID.PAN.Service;
 using eID.PAN.Service.Database;
 using eID.PAN.Service.Entities;
 using eID.PAN.UnitTests.Generic;
+using FluentAssertions;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
@@ -24,6 +27,7 @@ public class NotificationChannelsServiceTests : BaseTest
     private IDistributedCache _cache;
     private ApplicationDbContext _dbContext;
     private Mock<IPublishEndpoint> _publishEndpoint;
+    private Mock<IHttpCallbackSender> _httpCallbackSender;
     private NotificationChannelsService _sut;
 
 
@@ -39,7 +43,14 @@ public class NotificationChannelsServiceTests : BaseTest
 
         _dbContext = GetTestDbContext();
         _publishEndpoint = new Mock<IPublishEndpoint>();
-        _sut = new NotificationChannelsService(_logger, _cache, _dbContext, _publishEndpoint.Object);
+        _httpCallbackSender = new Mock<IHttpCallbackSender>();
+        _httpCallbackSender
+            .Setup(x => x.TestHttpCallbackAsync(It.Is<string>(url => url == "http://success.com")))
+            .ReturnsAsync(() => new TestHttpCallbackResultDTO { IsSuccess = true, StatusCode = HttpStatusCode.OK });
+        _httpCallbackSender
+            .Setup(x => x.TestHttpCallbackAsync(It.Is<string>(url => url == "http://unreachable.com")))
+            .ReturnsAsync(() => new TestHttpCallbackResultDTO { IsSuccess = false, StatusCode = null, Response = "Network unreachable." });
+        _sut = new NotificationChannelsService(_logger, _cache, _dbContext, _publishEndpoint.Object, _httpCallbackSender.Object);
     }
 
     [TearDown]
@@ -69,7 +80,7 @@ public class NotificationChannelsServiceTests : BaseTest
     [Test]
     public async Task GetAllChannels_WithPendingAndApprovedData_ReturnsNotEmptyResultForPendingAndApprovedRecordsAsync()
     {
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var translationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -86,16 +97,16 @@ public class NotificationChannelsServiceTests : BaseTest
         // Arrange
         var pendingNotificationChannels = new List<NotificationChannelPending>
         {
-            new NotificationChannelPending { Id = Guid.NewGuid(), SystemId = systemId, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelPending { Id = Guid.NewGuid(), SystemName = systemName, Name = "TestCh1", ModifiedOn = DateTime.UtcNow, Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ translationBg , translationEn} },
-            new NotificationChannelPending { Id = Guid.NewGuid(), SystemId = systemId, Name = "TestCh2", Description = "Test Channel 2", Price = 10, CallbackUrl="www.aaa.com/callback", InfoUrl="www.aaa.com",
+            new NotificationChannelPending { Id = Guid.NewGuid(), SystemName = systemName, Name = "TestCh2", ModifiedOn = DateTime.UtcNow, Description = "Test Channel 2", Price = 10, CallbackUrl="www.aaa.com/callback", InfoUrl="www.aaa.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ translationBg , translationEn} }
         };
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = systemName, Name = "AppCh1", ModifiedOn = DateTime.UtcNow, Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ translationBg , translationEn} },
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = systemId, Name = "AppCh2", Description = "Approved Channel 2", Price = 11, CallbackUrl="www.aaa.com/callback", InfoUrl="www.aaa.com",
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = systemName, Name = "AppCh2", ModifiedOn = DateTime.UtcNow,Description = "Approved Channel 2", Price = 11, CallbackUrl="www.aaa.com/callback", InfoUrl="www.aaa.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ translationBg , translationEn} }
         };
 
@@ -141,12 +152,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannel = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = Guid.NewGuid(),
+            SystemName = "NewSystem",
             Name = "Channel 1",
             Description = "Descr for Ch 1",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -181,12 +192,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannel = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = Guid.NewGuid(),
+            SystemName = "NewSystem",
             //Name = "",
             Description = "Descr for Ch 1",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -212,12 +223,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannel = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = Guid.NewGuid(),
+            SystemName = "NewSystem",
             Name = "Channel 1",
             Description = "Descr for Ch 1",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationEn }
@@ -234,7 +245,7 @@ public class NotificationChannelsServiceTests : BaseTest
     public async Task RegisterChannelAsync_AddTwoChannelsWithSameNameAndSameSystemId_OneChannelIsAddedAsync()
     {
         // Arrange
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var translationBg = CreateInterface<Contracts.Commands.NotificationChannelTranslation>(new
         {
             Language = "bg",
@@ -250,12 +261,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannel = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "Channel 1",
             Description = "Descr for Ch 1",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -263,12 +274,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannelWithTheSameName = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "channel 1",
             Description = "Description",
             ModifiedBy = "TestUser2",
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -300,8 +311,8 @@ public class NotificationChannelsServiceTests : BaseTest
     public async Task RegisterChannelAsync_AddChannelWithSameNameAndDifferentSystemId_ShouldReturnConflictAsync()
     {
         // Arrange
-        var systemId = Guid.NewGuid();
-        var system2Id = Guid.NewGuid();
+        var systemName = "SystemName";
+        var system2Name = "SystemName2";
         var translationBg = CreateInterface<Contracts.Commands.NotificationChannelTranslation>(new
         {
             Language = "bg",
@@ -317,12 +328,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannel = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "Channel 1",
             Description = "Descr for Ch 1",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -330,12 +341,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var registerNotificationChannelWithTheSameName = CreateInterface<RegisterNotificationChannel>(new
         {
-            SystemId = system2Id,
+            SystemName = system2Name,
             Name = "channel 1",
             Description = "Description",
             ModifiedBy = "TestUser2",
             CallbackUrl = "www.ch1.com/asdf",
-            Price = 1.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com/about-us",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -369,7 +380,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -385,7 +396,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
 
@@ -408,12 +419,12 @@ public class NotificationChannelsServiceTests : BaseTest
         var modifyChannel = CreateInterface<ModifyNotificationChannel>(new
         {
             Id = id,
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "channel 1",
             Description = "Description",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/test",
-            Price = 0m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -441,7 +452,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -457,12 +468,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
         var pendingNotificationChannels = new List<NotificationChannelPending>
         {
-            new NotificationChannelPending { Id = Guid.NewGuid(), SystemId = systemId, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelPending { Id = Guid.NewGuid(), SystemName = systemName, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
         };
 
@@ -486,12 +497,12 @@ public class NotificationChannelsServiceTests : BaseTest
         var modifyChannel = CreateInterface<ModifyNotificationChannel>(new
         {
             Id = id,
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "TestCh1",
             Description = "Description",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/test-new",
-            Price = 12.5m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -519,7 +530,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -535,7 +546,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
 
@@ -558,12 +569,12 @@ public class NotificationChannelsServiceTests : BaseTest
         var modifyChannel = CreateInterface<ModifyNotificationChannel>(new
         {
             Id = Guid.NewGuid(),
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "channel 1",
             Description = "Description",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.ch1.com/test",
-            Price = 0m,
+            Email = "aa@bb.cc",
             InfoUrl = "www.ch1.com",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -581,7 +592,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -597,7 +608,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
 
@@ -620,12 +631,12 @@ public class NotificationChannelsServiceTests : BaseTest
         var modifyChannel = CreateInterface<ModifyNotificationChannel>(new
         {
             Id = Guid.NewGuid(),
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "",
             Description = "Description",
             ModifiedBy = _testUserName,
             CallbackUrl = "",
-            Price = 0m,
+            Email = "",
             InfoUrl = "",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg, translationEn }
@@ -643,7 +654,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -659,7 +670,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
 
@@ -676,12 +687,12 @@ public class NotificationChannelsServiceTests : BaseTest
         var modifyChannel = CreateInterface<ModifyNotificationChannel>(new
         {
             Id = Guid.NewGuid(),
-            SystemId = systemId,
+            SystemName = systemName,
             Name = "Test",
             Description = "Description",
             ModifiedBy = _testUserName,
             CallbackUrl = "www.test",
-            Price = 0m,
+            Email = "aa@bb",
             InfoUrl = "www.test",
             Translations = new List<Contracts.Commands.NotificationChannelTranslation>
             { translationBg }
@@ -709,7 +720,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -725,7 +736,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var pendingNotificationChannels = new List<NotificationChannelPending>
         {
-            new NotificationChannelPending { Id = id, SystemId = systemId, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelPending { Id = id, SystemName = systemName, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
         };
 
@@ -760,7 +771,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -776,12 +787,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var approvedNotificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = Guid.NewGuid(), SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
         var pendingNotificationChannels = new List<NotificationChannelPending>
         {
-            new NotificationChannelPending { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelPending { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
         };
 
@@ -838,6 +849,18 @@ public class NotificationChannelsServiceTests : BaseTest
     }
 
     [Test]
+    [TestCaseSource(nameof(RejectChannelInvalidDataTestCases))]
+    public async Task RejectChannelAsync_WhenCallWithInvalidData_ShouldReturnBadRequestAsync(RejectNotificationChannel message, string caseName)
+    {
+        // Arrange
+        // Act
+        var result = await _sut.RejectChannelAsync(message);
+
+        //Assert
+        CheckServiceResult(result, HttpStatusCode.BadRequest, caseName);
+    }
+
+    [Test]
     public async Task RejectChannelAsync_WithValidData_ShouldMoveToRejectedAsync()
     {
         // Arrange
@@ -855,20 +878,53 @@ public class NotificationChannelsServiceTests : BaseTest
             Description = "Test Description"
         };
 
-        var pendingNotificationChannels = new List<NotificationChannelPending>
+        var pending = new NotificationChannelPending
         {
-            new NotificationChannelPending { Id = id, SystemId = Guid.NewGuid(), Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
-                    Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
+            Id = id,
+            SystemName = "SystemName",
+            Name = "TestCh1",
+            Description = "Test Channel 1",
+            Price = 0,
+            CallbackUrl = "www.test.com/callback",
+            InfoUrl = "www.test.com",
+            Translations = new List<Service.Entities.NotificationChannelTranslation> { ncTranslationBg, ncTranslationEn }
         };
 
+        var pendingNotificationChannels = new List<NotificationChannelPending>
+        {
+            pending
+        };
+
+        // Add channel as pending
         _dbContext.NotificationChannelsPending.AddRange(pendingNotificationChannels);
         _dbContext.SaveChanges();
 
         var rejectChannel = CreateInterface<RejectNotificationChannel>(new
         {
+            CorrelationId = Guid.NewGuid(),
             Id = id,
-            ModifiedBy = _testUserName
+            ModifiedBy = _testUserName,
+            Reason = "Reason"
         });
+
+        // Prepare rejected result
+        var rejectedResult = new NotificationChannelRejected
+        {
+            ModifiedBy = rejectChannel.ModifiedBy,
+            Reason = rejectChannel.Reason,
+
+            CallbackUrl = pending.CallbackUrl,
+            InfoUrl = pending.InfoUrl,
+            Description = pending.Description,
+            Email = pending.Email,
+            IsBuiltIn = pending.IsBuiltIn,
+            ModifiedOn = pending.ModifiedOn,
+            Name = pending.Name,
+            Price = pending.Price,
+            SystemName = pending.SystemName,
+            Translations = pending.Translations,
+            UserNotificationChannels = pending.UserNotificationChannels
+        };
 
         // Act
         var serviceResult = await _sut.RejectChannelAsync(rejectChannel);
@@ -878,14 +934,21 @@ public class NotificationChannelsServiceTests : BaseTest
         var result = serviceResult.Result;
         Assert.That(result, Is.Not.Empty);
         Assert.That(result, Is.InstanceOf(typeof(Guid)));
+        rejectedResult.Id = result;
 
         var getServiceResult = await _sut.GetAllChannelsAsync();
         CheckServiceResult(getServiceResult, HttpStatusCode.OK);
         var getResult = getServiceResult.Result;
         Assert.That(getResult, Is.Not.Null);
-        Assert.That(getResult.Rejected.Count(), Is.EqualTo(1));
-        Assert.That(getResult.Approved.Count(), Is.EqualTo(0));
-        Assert.That(getResult.Pending.Count(), Is.EqualTo(0));//removed from pending
+        Assert.Multiple(() =>
+        {
+            Assert.That(getResult.Rejected.Count(), Is.EqualTo(1));
+            Assert.That(getResult.Approved.Count(), Is.EqualTo(0));
+            Assert.That(getResult.Pending.Count(), Is.EqualTo(0)); //removed from pending
+        });
+        rejectedResult.ModifiedOn = getResult.Rejected.First().ModifiedOn; // Set right time of execution
+
+        rejectedResult.Should().BeEquivalentTo(getResult.Rejected.First());
     }
 
     [Test]
@@ -893,7 +956,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -909,7 +972,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var notificationChannels = new List<NotificationChannelApproved>
         {
-            new NotificationChannelApproved { Id = id, SystemId = systemId, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelApproved { Id = id, SystemName = systemName, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
         };
 
@@ -961,7 +1024,7 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var notificationChannels = new List<NotificationChannelArchive>
         {
-            new NotificationChannelArchive { Id = id, SystemId = Guid.NewGuid(), Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelArchive { Id = id, SystemName = "SystemName", Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
         };
 
@@ -996,7 +1059,7 @@ public class NotificationChannelsServiceTests : BaseTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var systemId = Guid.NewGuid();
+        var systemName = "SystemName";
         var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
         {
             Language = "bg",
@@ -1012,12 +1075,12 @@ public class NotificationChannelsServiceTests : BaseTest
 
         var archivedNotificationChannels = new List<NotificationChannelArchive>
         {
-            new NotificationChannelArchive { Id = id, SystemId = systemId, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelArchive { Id = id, SystemName = systemName, Name = "AppCh1", Description = "Approved Channel 1", Price = 5.5m, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg , ncTranslationEn} }
         };
         var pendingNotificationChannels = new List<NotificationChannelPending>
         {
-            new NotificationChannelPending { Id = Guid.NewGuid(), SystemId = systemId, Name = "AppCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
+            new NotificationChannelPending { Id = Guid.NewGuid(), SystemName = systemName, Name = "AppCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="www.test.com/callback", InfoUrl="www.test.com",
                     Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
         };
 
@@ -1048,4 +1111,160 @@ public class NotificationChannelsServiceTests : BaseTest
         Assert.That(getResult.Pending.Count(), Is.EqualTo(1));
     }
     #endregion
+
+    [Test]
+    public async Task TestChannelAsync_WithValidData_ShouldSucceedButReportTheIssueAsync()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var systemName = "SystemName";
+        var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
+        {
+            Language = "bg",
+            Name = "Тест",
+            Description = "Тестово Описание"
+        };
+        var ncTranslationEn = new Service.Entities.NotificationChannelTranslation()
+        {
+            Language = "en",
+            Name = "Test",
+            Description = "Test Description"
+        };
+
+        var pendingNotificationChannels = new List<NotificationChannelPending>
+        {
+            new NotificationChannelPending { Id = id, SystemName = systemName, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="http://unreachable.com", InfoUrl="www.test.com",
+                    Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
+        };
+
+        _dbContext.NotificationChannelsPending.AddRange(pendingNotificationChannels);
+        _dbContext.SaveChanges();
+
+        var testChannel = CreateInterface<TestNotificationChannel>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Id = id
+        });
+
+        // Act
+        var serviceResult = await _sut.TestChannelAsync(testChannel);
+
+        // Assert
+        Assert.That(serviceResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = serviceResult.Result;
+        Assert.That(result.StatusCode, Is.Null);
+        Assert.That(result.Response, Is.Not.Empty);
+    }
+    [Test]
+    public async Task TestChannelAsync_WithValidData_ShouldSucceedAsync()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var systemName = "SystemName";
+        var ncTranslationBg = new Service.Entities.NotificationChannelTranslation()
+        {
+            Language = "bg",
+            Name = "Тест",
+            Description = "Тестово Описание"
+        };
+        var ncTranslationEn = new Service.Entities.NotificationChannelTranslation()
+        {
+            Language = "en",
+            Name = "Test",
+            Description = "Test Description"
+        };
+
+        var pendingNotificationChannels = new List<NotificationChannelPending>
+        {
+            new NotificationChannelPending { Id = id, SystemName = systemName, Name = "TestCh1", Description = "Test Channel 1", Price = 0, CallbackUrl="http://success.com", InfoUrl="www.test.com",
+                    Translations = new List<Service.Entities.NotificationChannelTranslation>{ ncTranslationBg, ncTranslationEn } },
+        };
+
+        _dbContext.NotificationChannelsPending.AddRange(pendingNotificationChannels);
+        _dbContext.SaveChanges();
+
+        var testChannel = CreateInterface<TestNotificationChannel>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Id = id
+        });
+
+        // Act
+        var serviceResult = await _sut.TestChannelAsync(testChannel);
+
+        // Assert
+        Assert.That(serviceResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var result = serviceResult.Result;
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    private static readonly object[] RejectChannelInvalidDataTestCases =
+    {
+        new object[]
+        {
+            CreateInterface<RejectNotificationChannel>(new
+            {
+                //CorrelationId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                ModifiedBy = Guid.NewGuid().ToString(),
+                Reason = Guid.NewGuid().ToString(),
+            }),
+            "No CorrelationId"
+        },
+        new object[]
+        {
+            CreateInterface<RejectNotificationChannel>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                //Id = Guid.NewGuid(),
+                ModifiedBy = Guid.NewGuid().ToString(),
+                Reason = Guid.NewGuid().ToString(),
+            }),
+            "No Id"
+        },
+        new object[]
+        {
+            CreateInterface<RejectNotificationChannel>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                //ModifiedBy = Guid.NewGuid().ToString(),
+                Reason = Guid.NewGuid().ToString(),
+            }),
+            "No ModifiedBy"
+        },
+        new object[]
+        {
+            CreateInterface<RejectNotificationChannel>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                ModifiedBy = Guid.NewGuid().ToString(),
+                //Reason = Guid.NewGuid().ToString(),
+            }),
+            "No Reason"
+        },
+        new object[]
+        {
+            CreateInterface<RejectNotificationChannel>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                ModifiedBy = Guid.NewGuid().ToString(),
+                Reason = "           ",
+            }),
+            "Reason is empty string"
+        },
+        new object[]
+        {
+            CreateInterface<RejectNotificationChannel>(new
+            {
+                CorrelationId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                ModifiedBy = Guid.NewGuid().ToString(),
+                Reason = new string(Enumerable.Repeat('a', FieldLength.NotificationChannel.RejectReason + 1).ToArray()),
+            }),
+            "Reason is longer than expected"
+        },
+    };
 }

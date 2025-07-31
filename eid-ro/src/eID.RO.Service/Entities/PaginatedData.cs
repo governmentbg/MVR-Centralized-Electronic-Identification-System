@@ -49,5 +49,10 @@ namespace eID.RO.Service.Entities
 
             return new PaginatedData<T>(pageIndex, totalItems, data);
         }
+
+        public static IPaginatedData<T> CreateEmpty(int pageIndex)
+        {
+            return new PaginatedData<T>(pageIndex, 0, null);
+        }
     }
 }

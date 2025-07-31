@@ -54,7 +54,7 @@ namespace eID.PAN.Application.Consumers
             }
         }
 
-        public async Task ExecuteMethodAsync<TCmd>(ConsumeContext<TCmd> context, Func<Task> action)
+        public async Task ExecuteMethodWithoutResponseAsync<TCmd>(ConsumeContext<TCmd> context, Func<Task> action)
            where TCmd : class, CorrelatedBy<Guid>
         {
             using (Logger.BeginScope("{CorrelationId}", context.Message.CorrelationId))
@@ -66,7 +66,7 @@ namespace eID.PAN.Application.Consumers
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, $"Exception occurred when execute '{nameof(ExecuteMethodAsync)}'");
+                    Logger.LogError(ex, $"Exception occurred when execute '{nameof(ExecuteMethodWithoutResponseAsync)}'");
                 }
             }
         }

@@ -1,0 +1,4 @@
+<ForeignIdentityInfoRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://egov.bg/RegiX/MVR/RCH/ForeignIdentityInfoRequest">
+	<IdentifierType>EGN</IdentifierType>
+	<Identifier>1000006058</Identifier>
+</ForeignIdentityInfoRequest>

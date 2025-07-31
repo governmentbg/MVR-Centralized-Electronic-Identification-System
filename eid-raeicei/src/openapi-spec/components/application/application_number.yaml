@@ -1,0 +1,8 @@
+schemas:
+  ApplicationNumberDTO:
+    type: object
+    properties:
+      id:
+        type: string
+      applicationType:
+        $ref: '../EidAdministrator/application_type_v1.yaml#/schemas/ApplicationType'

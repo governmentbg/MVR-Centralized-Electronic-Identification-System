@@ -15,6 +15,7 @@ import {
     TRANSLOCO_DATE_TRANSFORMER,
     TranslocoLocaleModule,
 } from '@ngneat/transloco-locale';
+import { forkJoin, map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
@@ -37,7 +38,7 @@ export class CustomDateTransformer extends DefaultDateTransformer {
 
         switch (options.timeStyle) {
             case 'medium':
-                return date.toISOString().split('.')[0];
+                return date.toISOString().split('.')[0].replace('T', ', ');
             default:
                 return date.toISOString().split('T')[0];
         }

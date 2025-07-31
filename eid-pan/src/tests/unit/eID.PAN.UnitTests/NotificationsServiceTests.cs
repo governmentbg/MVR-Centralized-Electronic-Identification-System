@@ -57,6 +57,7 @@ public class NotificationsServiceTests : BaseTest
         var mockMpozeiCaller = new Mock<IMpozeiCaller>();
         mockMpozeiCaller.Setup(x => x.FetchUserProfileAsync(It.IsAny<string>(), It.IsAny<IdentifierType>())).ReturnsAsync(() => new MpozeiUserProfile { EidentityId = Guid.NewGuid().ToString() });
         mockMpozeiCaller.Setup(x => x.FetchUserProfileAsync(It.IsAny<Guid>())).ReturnsAsync(() => new MpozeiUserProfile { EidentityId = Guid.NewGuid().ToString() });
+        mockMpozeiCaller.Setup(x => x.FetchUserProfileByCitizenProfileIdAsync(It.IsAny<Guid>())).ReturnsAsync(() => new MpozeiUserProfile { EidentityId = Guid.NewGuid().ToString() });
         // TODO: Add _configuration.GetValue<int>("NotificationContentMaxLength") = 100
         mockConfiguration.SetupGet(m => m[It.Is<string>(s => s == "NotificationContentMaxLength")]).Returns("100");
 
@@ -597,17 +598,6 @@ public class NotificationsServiceTests : BaseTest
         var result = await _sut.SendAsync(message);
 
         // Assert
-        var errorMessage = string.Format("{0} validation failed. {1}", nameof(SendNotification),
-            BuildMultilineLogMessage(new string[]
-            {
-                "'System Name' must not be empty.",
-                "The length of 'System Name' must be at least 2 characters. You entered 0 characters.",
-                "'Event Code' must not be empty.",
-                "The length of 'Event Code' must be at least 2 characters. You entered 0 characters.",
-                "At least one of UserId, Uid or EId is required",
-                "'Translations' must not be empty."
-            }));
-        _mocklogger.VerifyLogging(errorMessage, LogLevel.Information, Times.Once());
         CheckServiceResult(result, HttpStatusCode.BadRequest);
     }
 
@@ -1095,7 +1085,10 @@ public class NotificationsServiceTests : BaseTest
         // Arrange		
         var rejectSystem = CreateInterface<RejectSystem>(new
         {
+            CorrelationId = Guid.NewGuid(),
             SystemId = Guid.NewGuid(),
+            UserId = Guid.NewGuid().ToString(),
+            Reason = Guid.NewGuid().ToString(),
         });
 
         //Act
@@ -1115,7 +1108,10 @@ public class NotificationsServiceTests : BaseTest
 
         var rejectSystem = CreateInterface<RejectSystem>(new
         {
-            SystemId = testId1
+            CorrelationId = Guid.NewGuid(),
+            SystemId = testId1,
+            UserId = Guid.NewGuid().ToString(),
+            Reason = Guid.NewGuid().ToString(),
         });
 
         var getSystemById = CreateInterface<GetSystemById>(new

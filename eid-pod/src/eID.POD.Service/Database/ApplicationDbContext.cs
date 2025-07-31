@@ -34,6 +34,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(f => f.CronPeriod).HasMaxLength(100).IsRequired();
             entity.Property(f => f.DataSource).IsRequired();
             entity.Property(f => f.DatasetUri).IsRequired(false);
+            entity.Property(f => f.Description).IsRequired(false).HasMaxLength(5000);
         });
     }
 

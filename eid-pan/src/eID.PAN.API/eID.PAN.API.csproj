@@ -12,26 +12,30 @@
     <ItemGroup>
       <Compile Remove="logs\**" />
       <Compile Remove="log\**" />
+      <Compile Remove="Responses\**" />
       <Content Remove="logs\**" />
       <Content Remove="log\**" />
+      <Content Remove="Responses\**" />
       <EmbeddedResource Remove="logs\**" />
       <EmbeddedResource Remove="log\**" />
+      <EmbeddedResource Remove="Responses\**" />
       <None Remove="logs\**" />
       <None Remove="log\**" />
+      <None Remove="Responses\**" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.4.0" />
-        <PackageReference Include="eID.PJS.AuditLogging" Version="1.0.10" />
-        <PackageReference Include="FluentValidation" Version="11.5.1" />
+        <PackageReference Include="eID.PJS.AuditLogging" Version="1.0.14" />
+        <PackageReference Include="FluentValidation" Version="11.11.0" />
         <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
-        <PackageReference Include="MassTransit.Analyzers" Version="8.0.14">
+        <PackageReference Include="MassTransit.Analyzers" Version="8.4.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MassTransit.Newtonsoft" Version="8.0.13" />
-        <PackageReference Include="MassTransit.Prometheus" Version="8.0.13" />
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.13" />
+        <PackageReference Include="MassTransit.Newtonsoft" Version="8.4.1" />
+        <PackageReference Include="MassTransit.Prometheus" Version="8.1.3" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.16" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -39,14 +43,9 @@
         <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="6.0.2" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
         <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="9.0.0" />
         <PackageReference Include="Serilog.Sinks.Http" Version="8.0.0" />
         <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Responses\" />
     </ItemGroup>
 
     <ItemGroup>

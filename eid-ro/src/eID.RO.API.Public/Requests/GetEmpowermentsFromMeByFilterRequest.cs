@@ -1,5 +1,4 @@
-﻿using eID.RO.Contracts.Commands;
-using eID.RO.Contracts.Enums;
+﻿using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
 using FluentValidation;
 
@@ -9,6 +8,10 @@ public class GetEmpowermentsFromMeByFilterRequest : IValidatableRequest
 {
     public virtual IValidator GetValidator() => new GetEmpowermentsFromMeByFilterRequestValidator();
     /// <summary>
+    /// Empowerment number. Template: РОx/dd.mm.yyyy. x is a integer, dd.mm.yyyy the date of action.
+    /// </summary>
+    public string? Number { get; set; }
+    /// <summary>
     /// Empowerment Status filter
     /// </summary>
     public EmpowermentsFromMeFilterStatus? Status { get; set; }
@@ -17,9 +20,9 @@ public class GetEmpowermentsFromMeByFilterRequest : IValidatableRequest
     /// </summary>
     public string? Authorizer { get; set; }
     /// <summary>
-    /// Empowerment Supplier name
+    /// Empowerment provider name
     /// </summary>
-    public string? SupplierName { get; set; }
+    public string? ProviderName { get; set; }
     /// <summary>
     /// Empowerment Service name or Service code - contains
     /// </summary>
@@ -35,7 +38,7 @@ public class GetEmpowermentsFromMeByFilterRequest : IValidatableRequest
     /// <summary>
     /// Filter to show only never expiring empowerments
     /// </summary>
-    public List<UserIdentifierData>? EmpoweredUids { get; set; }
+    public List<UidAndUidTypeData>? EmpoweredUids { get; set; }
     /// <summary>
     /// Sort column
     /// </summary>
@@ -44,7 +47,14 @@ public class GetEmpowermentsFromMeByFilterRequest : IValidatableRequest
     /// Sort direction
     /// </summary>
     public SortDirection? SortDirection { get; set; }
+    /// <summary>
+    /// Filter on behalf of. Optional
+    /// </summary>
     public OnBehalfOf? OnBehalfOf { get; set; }
+    /// <summary>
+    /// If OnBehalfOf is LegalEntity, Eik filtering is allowed.
+    /// </summary>
+    public string? Eik { get; set; }
     public int PageSize { get; set; } = 10;
     public int PageIndex { get; set; } = 1;
 }
@@ -76,7 +86,7 @@ public class GetEmpowermentsFromMeByFilterRequestValidator : AbstractValidator<G
         {
             RuleFor(r => r.EmpoweredUids)
                 .NotEmpty()
-                .ForEach(r => r.SetValidator(new UserIdentifierValidator()));
+                .ForEach(r => r.SetValidator(new UidAndTypeValidator()));
         });
     }
 }

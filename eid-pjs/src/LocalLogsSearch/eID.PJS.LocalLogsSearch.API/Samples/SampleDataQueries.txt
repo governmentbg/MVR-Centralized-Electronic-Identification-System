@@ -1,0 +1,71 @@
+﻿{
+    "folders": [
+        "..\\logs.all"
+    ],
+    "fileExtensionFilter": "*.log",
+    "fileDateRangeFilter": {
+        "fromDate": "2023-01-12T10:39:55.170Z",
+        "toDate": "2024-01-12T10:39:55.170Z"
+    },
+    "dataQuery": {
+        "type": "logical",
+        "operator": "and",
+        "nodes": [{
+                "type": "compare",
+                "operator": "Equal",
+                "field": "systemId",
+                "value": "eid-mpozei"
+            }
+        ]
+    }
+}
+-------------------------------------------------------------------
+
+{
+	"type": "compare",
+	"operator": "Equal",
+	"field": "systemId",
+	"value": "eid-mpozei"
+}
+
+-------------------------------------------------------------------
+
+{
+	"type": "logical",
+	"operator": "and",
+	"nodes": [
+		{
+			"type": "compare",
+			"operator": "GreaterThan",
+			"field": "eventDate",
+			"value": "2023-07-10T00:00:00"
+		},
+		{
+			"type": "compare",
+			"operator": "LessThan",
+			"field": "eventDate",
+			"value": "2023-07-21T00:00:00"
+		}
+	]
+}
+
+-------------------------------------------------------------------
+
+{
+	"type": "logical",
+	"operator": "and",
+	"nodes": [
+		{
+			"type": "compare",
+			"operator": "GreaterThanOrEqual",
+			"field": "eventPayload.FieldDate",
+			"value": "2023-05-01T00:00:00"
+		},
+		{
+			"type": "compare",
+			"operator": "LessThanOrEqual",
+			"field": "eventPayload.FieldDate",
+			"value": "2023-05-30T00:00:00"
+		}
+	]
+}

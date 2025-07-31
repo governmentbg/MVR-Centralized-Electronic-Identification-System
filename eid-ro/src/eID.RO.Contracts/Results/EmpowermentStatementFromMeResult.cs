@@ -4,3 +4,5 @@ public interface EmpowermentStatementFromMeResult : EmpowermentStatementResult
 {
     IEnumerable<EmpowermentSignatureResult> EmpowermentSignatures { get; }
 }
+
+public interface EmpowermentStatementWithSignaturesResult : EmpowermentStatementFromMeResult { }

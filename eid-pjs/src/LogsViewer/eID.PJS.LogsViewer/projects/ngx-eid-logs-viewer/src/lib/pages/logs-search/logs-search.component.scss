@@ -1,0 +1,21 @@
+@import '../../styles/variables.scss';
+
+.log-file-search-container {
+    .information {
+        background-color: $theme-primary-light;
+        border-radius: 0.5rem;
+        color: $text-active;
+        font-family: Roboto;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        letter-spacing: 0rem;
+        text-align: left;
+        .title {
+            font-weight: 700;
+        }
+        .text-container {
+            font-weight: 400;
+            margin-left: 2.3rem;
+        }
+    }
+}

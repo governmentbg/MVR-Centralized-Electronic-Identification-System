@@ -38,6 +38,7 @@ public class NotificationsSender : INotificationsSender
         }
 
         var allNotifactionsSendSuccessfully = true;
+        var allResults = new List<bool>();
         foreach (var eId in message.EIds)
         {
             var notification = new SendNotificationRequest
@@ -53,9 +54,21 @@ public class NotificationsSender : INotificationsSender
             {
                 allNotifactionsSendSuccessfully = false;
             }
+            allResults.Add(sendResult);
         }
-
-        _logger.LogInformation("All notifications has been send successfully.");
+        if (allResults.Any(success => !success))
+        {
+            _logger.LogInformation(
+                "Out of {TotalCount} notifications {SuccessfulCount} were sent successfully and {FailedCount} failed.",
+                    allResults.Count,
+                    allResults.Count(success => success),
+                    allResults.Count(success => !success)
+                );
+        }
+        else
+        {
+            _logger.LogInformation("All notifications has been send successfully.");
+        }
         return allNotifactionsSendSuccessfully;
     }
 
@@ -64,7 +77,7 @@ public class NotificationsSender : INotificationsSender
         var sendNotificationUrl = "/api/v1/notifications/send";
         var httpSendNotificationBody = BuildSendNotificationHttpBody(notification);
 
-        _logger.LogInformation("Attempting to send notification...");
+        _logger.LogInformation("Attempting to send notification to {EId}", notification.EId);
 
         try
         {
@@ -72,7 +85,9 @@ public class NotificationsSender : INotificationsSender
                 System.Net.HttpStatusCode.BadRequest,
                 System.Net.HttpStatusCode.Conflict,
                 System.Net.HttpStatusCode.InternalServerError,
-                System.Net.HttpStatusCode.NotFound
+                System.Net.HttpStatusCode.NotFound,
+                System.Net.HttpStatusCode.Unauthorized,
+                System.Net.HttpStatusCode.Forbidden
             };
             var policy = Policy<HttpResponseMessage>
                             .Handle<Exception>()
@@ -83,28 +98,32 @@ public class NotificationsSender : INotificationsSender
                             _ => TimeSpan.FromSeconds(60),
                             (exception, timespan) =>
                             {
-                                _logger.LogInformation("Failed sending notification. Next attempt will be at {NextAttemptTime}", DateTime.UtcNow.Add(timespan));
+                                _logger.LogWarning(
+                                    exception.Exception,
+                                    "Failed event registration. StatusCode: ({StatusCode}) {Result}. Next attempt will be at {NextAttemptTime}",
+                                    exception.Result?.StatusCode, exception.Result?.ToString(), DateTime.UtcNow.Add(timespan));
                             });
 
             var response = await policy.ExecuteAsync(() => _httpClient.PostAsync(
-                $"{sendNotificationUrl}?testSystemName=PUN", // TODO: Remove query parameter once we have S2S auth
+                $"{sendNotificationUrl}",
                 new StringContent(JsonConvert.SerializeObject(httpSendNotificationBody), Encoding.UTF8, "application/json")
             ));
 
             if (!response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation("Send notification failed response: {Response}", responseBody);
+                _logger.LogWarning("Send notification to {EId} failed response: {Response}", notification.EId, responseBody);
                 return false;
             }
             response.EnsureSuccessStatusCode();
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error occurred when trying to send notification. Request: POST {Url}, Body {Body}", sendNotificationUrl, httpSendNotificationBody);
+            _logger.LogWarning(ex, "Error occurred when trying to send notification to {EId}. Request: POST {Url}, Body {Body}", notification.EId, sendNotificationUrl, httpSendNotificationBody);
             return false;
         }
 
+        _logger.LogInformation("Sent notification to {EId}", notification.EId);
         return true;
     }
 

@@ -11,6 +11,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SkeletonModule } from 'primeng/skeleton';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TranslocoLocaleModule } from '@ngneat/transloco-locale';
 
 @NgModule({
     declarations: [NotificationsComponent],
@@ -27,6 +30,9 @@ import { SkeletonModule } from 'primeng/skeleton';
         SelectButtonModule,
         CheckboxModule,
         SkeletonModule,
+        DialogModule,
+        InputTextareaModule,
+        TranslocoLocaleModule,
     ],
 })
 export class NotificationsModule {}

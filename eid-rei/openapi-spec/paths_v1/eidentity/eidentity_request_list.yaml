@@ -1,0 +1,109 @@
+methods:
+  post:
+    tags:
+      - EIdentity
+    summary: Get Multiple EIdentities by Number And Type
+    operationId: getEidentitiesByNumberAndType
+    requestBody:
+      description: ''
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/eidentity/find_eidentity_list_v1.yaml#/schemas/FindEidentitiesRequest'
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                $ref: '../../components/eidentity/eidentity_v1.yaml#/schemas/Eidentity'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Time Out
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+  put:
+    tags:
+      - EIdentity
+    summary: Update EIdentity
+    operationId: updateEidentity
+    parameters:
+      - name: id
+        in: path
+        description: 'Eidentity ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      description: ''
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            "$ref": "../../components/eidentity/citizen_data_v1.yaml#/schemas/CitizenData"
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/eidentity/eidentity_v1.yaml#/schemas/Eidentity'
+
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Time Out
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

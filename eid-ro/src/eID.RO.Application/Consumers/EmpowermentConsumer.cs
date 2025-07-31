@@ -18,7 +18,9 @@ public class EmpowermentConsumer : BaseConsumer,
     IConsumer<DenyEmpowermentByDeau>,
     IConsumer<ApproveEmpowermentByDeau>,
     IConsumer<SignEmpowerment>,
-    IConsumer<GetEmpowermentsByEik>
+    IConsumer<GetEmpowermentsByEik>,
+    IConsumer<GetEmpowermentsByFilter>,
+    IConsumer<GetEmpowermentById>
 {
     private readonly EmpowermentsService _empowermentsService;
 
@@ -41,7 +43,7 @@ public class EmpowermentConsumer : BaseConsumer,
 
     public async Task Consume(ConsumeContext<ChangeEmpowermentStatus> context)
     {
-        await ExecuteMethodWithoutResponseAsync(context, () => _empowermentsService.ChangeEmpowermentStatusAsync(context.Message));
+        await ExecuteMethodAsync(context, () => _empowermentsService.ChangeEmpowermentStatusAsync(context.Message));
     }
 
     public async Task Consume(ConsumeContext<GetEmpowermentsFromMeByFilter> context)
@@ -97,5 +99,13 @@ public class EmpowermentConsumer : BaseConsumer,
     public async Task Consume(ConsumeContext<GetEmpowermentsByEik> context)
     {
         await ExecuteMethodAsync(context, () => _empowermentsService.GetEmpowermentsByEikAsync(context.Message));
+    }
+    public async Task Consume(ConsumeContext<GetEmpowermentsByFilter> context)
+    {
+        await ExecuteMethodAsync(context, () => _empowermentsService.GetEmpowermentsByFilterAsync(context.Message));
+    }
+    public async Task Consume(ConsumeContext<GetEmpowermentById> context)
+    {
+        await ExecuteMethodAsync(context, () => _empowermentsService.GetEmpowermentStatementByIdAsync(context.Message));
     }
 }

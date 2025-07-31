@@ -29,8 +29,9 @@ public class GetServicesByFilterRequest : IValidatableRequest
     /// Set to 'true' and the result will contain soft-deleted records.
     /// </summary>
     public bool IncludeDeleted { get; set; } = false;
-    public Guid? BatchId { get; set; }
-    public Guid? SectionId { get; set; }
+    public Guid? ProviderId { get; set; }
+    public Guid? ProviderDetailsId { get; set; }
+    public Guid? ProviderSectionId { get; set; }
 }
 
 internal class GetServicesByFilterRequestValidator : AbstractValidator<GetServicesByFilterRequest>

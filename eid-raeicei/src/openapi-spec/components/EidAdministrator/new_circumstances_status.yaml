@@ -1,0 +1,9 @@
+schemas:
+  NewCircumstancesStatus:
+    type: string
+    enum:
+      - APPROVED
+      - FOR_CORRECTION
+      - SUSPENDED
+      - STOPPED
+      - ACTIVE

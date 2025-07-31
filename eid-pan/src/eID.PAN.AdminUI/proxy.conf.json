@@ -1,27 +1,31 @@
 {
     "/public/api": {
-        "target": "http://localhost:61003",
+        "target": "https://panapipublic-dev.mvreid.local/",
         "secure": false,
         "pathRewrite": {
             "^/public": ""
-        }
+        },
+        "changeOrigin": true
     },
     "/api": {
-        "target": "http://localhost:60003",
-        "secure": false
+        "target": "https://panapi-dev.mvreid.local/",
+        "secure": false,
+        "changeOrigin": true
     },
     "/logssearch/api": {
         "target": "https://locallogsapi-dev.mvreid.local",
         "secure": false,
         "pathRewrite": {
             "^/logssearch": ""
-        }
+        },
+        "changeOrigin": true
     },
     "/pjsservices/api": {
         "target": "https://pjsservices-dev.mvreid.local",
         "secure": false,
         "pathRewrite": {
             "^/pjsservices": ""
-        }
+        },
+        "changeOrigin": true
     }
 }

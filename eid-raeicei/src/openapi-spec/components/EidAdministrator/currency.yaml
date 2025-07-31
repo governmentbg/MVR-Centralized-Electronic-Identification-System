@@ -1,0 +1,6 @@
+schemas:
+  Currency:
+    type: string
+    enum:
+      - BGN
+      - EUR

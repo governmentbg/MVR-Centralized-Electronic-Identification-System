@@ -48,7 +48,7 @@ public class CommunicationsServiceTests : BaseTest
         _pushNotificationSender = new Mock<IPushNotificationSender>();
 
         _pushNotificationSender
-            .Setup(x => x.SendPushNotificationAsync(It.IsAny<Guid>(), It.IsAny<IReadOnlyList<string>>(), It.IsAny<string>()))
+            .Setup(x => x.SendPushNotificationAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(true);
 
         _smsSender = new Mock<ISmsSender>();
@@ -65,7 +65,8 @@ public class CommunicationsServiceTests : BaseTest
         aesOptionsMock.Setup(x => x.Value).Returns(() => new AesOptions { Key = "MyTestkey1234567", Vector = "MyTestVector1234" });
 
         var mockMpozeiCaller = new Mock<IMpozeiCaller>();
-        mockMpozeiCaller.Setup(x => x.FetchUserProfileAsync(It.IsAny<Guid>())).ReturnsAsync(new MpozeiUserProfile() { PhoneNumber  = "1234567"});
+        mockMpozeiCaller.Setup(x => x.FetchUserProfileAsync(It.IsAny<Guid>())).ReturnsAsync(new MpozeiUserProfile() { PhoneNumber  = "1234567", FirebaseId = "xyz"});
+        mockMpozeiCaller.Setup(x => x.FetchUserProfileByCitizenProfileIdAsync(It.IsAny<Guid>())).ReturnsAsync(new MpozeiUserProfile() { PhoneNumber  = "1234567", FirebaseId = "xyz"});
         _sut = new CommunicationsService(_logger, _cache, _dbContext, smtpOptionsMock.Object, _smtpClientMock.Object, _pushNotificationSender.Object, _smsSender.Object, _httpCallbackSender.Object, aesOptionsMock.Object, mockMpozeiCaller.Object);
     }
 
@@ -166,7 +167,7 @@ public class CommunicationsServiceTests : BaseTest
 
         //Assert
         Assert.That(result, Is.True);
-        _pushNotificationSender.Verify(x => x.SendPushNotificationAsync(It.IsAny<Guid>(), It.IsAny<IReadOnlyList<string>>(), It.IsAny<string>()), Times.Exactly(1));
+        _pushNotificationSender.Verify(x => x.SendPushNotificationAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(1));
 
     }
 
@@ -223,7 +224,7 @@ public class CommunicationsServiceTests : BaseTest
 
         //Assert
         Assert.That(result, Is.False, caseName);
-        _pushNotificationSender.Verify(x => x.SendPushNotificationAsync(It.IsAny<Guid>(), It.IsAny<IReadOnlyList<string>>(), It.IsAny<string>()), Times.Never);
+        _pushNotificationSender.Verify(x => x.SendPushNotificationAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test]

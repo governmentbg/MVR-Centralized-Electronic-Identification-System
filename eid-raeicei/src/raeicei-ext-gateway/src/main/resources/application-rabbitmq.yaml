@@ -1,0 +1,65 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+custom:
+  rabbitmq:
+    queue-prefix: raeicei.rpcqueue.
+    routing-key-prefix: raeicei.routingkey.
+    rpc-exchange: raeicei.rpc.exchange
+    #replies have to be different if we have 2 gateways for the same module
+    reply-exchange: raeicei-ext.reply.exchange
+    reply-queue: raeicei-ext.reply.rpcqueue
+    skipped-queues: >
+      GET/raeicei/external/api/v1/eidcenter/{id},
+      GET/raeicei/external/api/v1/eidcenter/getall,      
+      GET/raeicei/external/api/v1/eidcenter/history/getall,      
+      GET/raeicei/external/api/v1/device/{id},
+      GET/raeicei/external/api/v1/eidadministrator/{id},
+      GET/raeicei/external/api/v1/eidadministrator/getall,
+      GET/raeicei/external/api/v1/eidadministrator/history/getall,
+      GET/raeicei/external/api/v1/device,
+      GET/raeicei/external/api/v1/device/getall,
+      POST/raeicei/external/api/v1/calculatetariff,
+      GET/raeicei/external/api/v1/providedservice/getall,
+      GET/raeicei/external/api/v1/providedservice/get/{id},
+      GET/raeicei/external/api/v1/eidmanagerfrontoffice,
+      GET/raeicei/external/api/v1/eidmanagerfrontoffice/{id},
+      POST/raeicei/external/api/v1/circs/eidmanagerfrontoffice/create,
+      PUT/raeicei/external/api/v1/circs/eidmanagerfrontoffice/update,
+      GET/raeicei/external/api/v1/eidmanagerfrontoffice/getall/{eidmanagerid},
+      POST/raeicei/external/api/v1/application/document/upload/{id},
+      POST/raeicei/external/api/v1/eidmanager/document/upload,
+      GET/raeicei/external/api/v1/document/get/{id},
+      DELETE/raeicei/external/api/v1/document/delete/{id},
+      POST/raeicei/external/api/v1/document-type/create,
+      PUT/raeicei/external/api/v1/document-type/update,
+      GET/raeicei/external/api/v1/document-type/{id},
+      GET/raeicei/external/api/v1/document-type/list,
+      DELETE/raeicei/external/api/v1/document-type/delete/{id},
+      POST/raeicei/external/api/v1/application/create,
+      GET/raeicei/external/api/v1/application/{id},
+      POST/raeicei/external/api/v1/eidadministratorapplication/create,
+      GET/raeicei/external/api/v1/eidadministratorapplication/list,
+      GET/raeicei/external/api/v1/eidadministratorapplication/{id},
+      POST/raeicei/external/api/v1/eidcenterapplication/create,
+      GET/raeicei/external/api/v1/eidcenterapplication/list,
+      GET/raeicei/external/api/v1/eidcenterapplication/{id},
+      PUT/raeicei/external/api/v1/application-status/change/{id},
+      GET/raeicei/external/api/v1/application-status/documentsnotes/{id},
+      GET/raeicei/external/api/v1/region/list,
+      GET/raeicei/external/api/v1/tariff/getbydate,
+      GET/raeicei/external/api/v1/tariff/getall/{eidmanagerid},
+      POST/raeicei/external/api/v1/circs/tariff/create,
+      GET/raeicei/external/api/v1/tariff/{id},
+      PUT/raeicei/external/api/v1/circs/tariff/update/{id},
+      DELETE/raeicei/external/api/v1/circs/tariff/delete/{id},
+      POST/raeicei/external/api/v1/circs/discount/create,
+      GET/raeicei/external/api/v1/discount/getall/{eidmanagerid},
+      GET/raeicei/external/api/v1/discount/getbydate,
+      GET/raeicei/external/api/v1/discount/{id},
+      PUT/raeicei/external/api/v1/circs/discount/update/{id},
+      DELETE/raeicei/external/api/v1/circs/discount/delete/{id},
+      GET/raeicei/external/api/v1/circs/eidmanager/documentsnotes,
+      GET/raeicei/external/api/v1/checkcode/{code},

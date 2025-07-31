@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Text.RegularExpressions;
+using eID.PJS.AuditLogging;
 using eID.RO.Contracts.Commands;
 using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Events;
@@ -14,8 +16,10 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MimeKit;
 using Moq;
 using NUnit.Framework;
 
@@ -28,19 +32,22 @@ internal class EmpowermentServiceTests : BaseTest
     private ApplicationDbContext _dbContext;
     private Mock<IPublishEndpoint> _publishEndpoint;
     private Mock<IRequestClient<CheckUidsRestrictions>> _checkUidsRestrictions;
+    private Mock<IRequestClient<CheckForEmpowermentsVerification>> _checkEmpowermentVerificationSagasClient;
     private EmpowermentsService _sut;
     private Mock<IVerificationService> _verificationService;
     private Mock<IHttpClientFactory> _httpClientFactory;
+    private Mock<INumberRegistrator> _numberRegistrator;
+    private Mock<INotificationSender> _notificationSender;
 
     private const string _testUserName = "Test User";
-    private readonly UserIdentifierWithNameData _testEmpoweringUid = new() { Uid = "9201011235", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true };
+    private readonly AuthorizerIdentifierData _testEmpoweringUid = new() { Uid = "9201011235", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true };
     private const string _testEmpoweringName = "Test Name";
 
-    private const string _testSupplierId = "1";
-    private const string _testSupplierName = "Пътна Полиция";
+    private const string _testProviderId = "1";
+    private const string _testProviderName = "Пътна Полиция";
     private const int _testServiceId = 5;
     private const string _testServiceName = "Управление на автомобил";
-    private readonly VolumeOfRepresentation[] _testVolumeOfRepresentation = new[] { new VolumeOfRepresentation { Code = "1", Name = "Управление в страната" }, new VolumeOfRepresentation { Code = "3", Name = "Управление в чужбина" } };
+    private readonly VolumeOfRepresentation[] _testVolumeOfRepresentation = new[] { new VolumeOfRepresentation { Name = "1" }, new VolumeOfRepresentation { Name = "3" } };
     private readonly DateTime _testStartDate = DateTime.Today;
     private readonly DateTime _testEndDate = DateTime.Today.AddMonths(2);
 
@@ -48,6 +55,7 @@ internal class EmpowermentServiceTests : BaseTest
     public void Init()
     {
         _logger = new Mock<ILogger<EmpowermentsService>>();
+        var auditLogger = new Mock<IAuditLogger>().Object;
 
         var opts = Options.Create(new MemoryDistributedCacheOptions());
         _cache = new MemoryDistributedCache(opts);
@@ -55,17 +63,49 @@ internal class EmpowermentServiceTests : BaseTest
         _dbContext = GetTestDbContext();
         _publishEndpoint = new Mock<IPublishEndpoint>();
         _checkUidsRestrictions = new Mock<IRequestClient<CheckUidsRestrictions>>();
+        _checkEmpowermentVerificationSagasClient = new Mock<IRequestClient<CheckForEmpowermentsVerification>>();
+
+        var mockEmpowermentsVerificationSagasCheckResult = new Mock<Response<EmpowermentsVerificationSagasCheckResult>>();
+        mockEmpowermentsVerificationSagasCheckResult.Setup(x => x.Message).Returns(new EmpowermentsVerificationSagasCheckResultDTO
+        {
+            AllSagasExistAndFinished = true
+        });
+
+        _checkEmpowermentVerificationSagasClient
+            .Setup(x => x.GetResponse<EmpowermentsVerificationSagasCheckResult>(It.IsAny<object>(), default, default))
+            .ReturnsAsync(mockEmpowermentsVerificationSagasCheckResult.Object);
+
         _verificationService = new Mock<IVerificationService>();
         _httpClientFactory = new Mock<IHttpClientFactory>();
-        _verificationService = new Mock<IVerificationService>();
+        _numberRegistrator = new Mock<INumberRegistrator>();
+        _notificationSender = new Mock<INotificationSender>();
 
-        IOptions<TimestampServerOptions> someOptions = Options.Create<TimestampServerOptions>(new TimestampServerOptions
+        var configuration = new Mock<IConfiguration>();
+        var configurationSectionMock = new Mock<IConfigurationSection>();
+
+        configuration
+            .Setup(c => c.GetSection(It.IsAny<string>()))
+            .Returns(configurationSectionMock.Object);
+
+        configurationSectionMock
+            .Setup(s => s.Value)
+            .Returns("true");
+
+        _sut = new EmpowermentsService(
+            configuration.Object, _logger.Object, auditLogger, _cache, _dbContext, _publishEndpoint.Object, _checkUidsRestrictions.Object,
+            _verificationService.Object, _httpClientFactory.Object, _numberRegistrator.Object, _notificationSender.Object, _checkEmpowermentVerificationSagasClient.Object);
+    }
+    internal class EmpowermentsVerificationSagasCheckResultDTO : EmpowermentsVerificationSagasCheckResult
+    {
+        public bool AllSagasExistAndFinished { get; set; }
+        public IEnumerable<Guid> MissingIds { get; set; }
+    }
+    internal class CryptoKeyProviderStub : ICryptoKeyProvider
+    {
+        public byte[] GetKey()
         {
-            BaseUrl = "not empty",
-            CertificatePath = "not empty",
-            RequestTokenUrl = "not empty"
-        });
-        _sut = new EmpowermentsService(_logger.Object, _cache, _dbContext, _publishEndpoint.Object, _checkUidsRestrictions.Object, _verificationService.Object, _httpClientFactory.Object, someOptions);
+            return new byte[] { 0x00 };
+        }
     }
 
     [TearDown]
@@ -89,8 +129,8 @@ internal class EmpowermentServiceTests : BaseTest
             TypeOfEmpowerment = TypeOfEmpowerment.Separately,
             AuthorizerUids = new[] { _testEmpoweringUid },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "9002022237", UidType = IdentifierType.EGN } },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -124,8 +164,8 @@ internal class EmpowermentServiceTests : BaseTest
             TypeOfEmpowerment = TypeOfEmpowerment.Separately,
             AuthorizerUids = new[] { _testEmpoweringUid },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "9002022237", UidType = IdentifierType.EGN } },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -163,8 +203,8 @@ internal class EmpowermentServiceTests : BaseTest
                 new() { Uid = "9102023345", UidType = IdentifierType.EGN },
                 new() { Uid = "9203035560", UidType = IdentifierType.EGN }
             },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -210,8 +250,8 @@ internal class EmpowermentServiceTests : BaseTest
                 new() { Uid = "9102023345", UidType = IdentifierType.EGN },
                 new() { Uid = "9203035560", UidType = IdentifierType.EGN }
             },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -256,8 +296,8 @@ internal class EmpowermentServiceTests : BaseTest
             {
                 new EmpoweredUid { EmpowermentStatementId = empowermentId, Uid = "9002022237", UidType = IdentifierType.EGN}
             },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -307,8 +347,8 @@ internal class EmpowermentServiceTests : BaseTest
             {
                 new EmpoweredUid { EmpowermentStatementId = empowermentId, Uid = "9002022237", UidType = IdentifierType.EGN }
             },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -363,10 +403,10 @@ internal class EmpowermentServiceTests : BaseTest
             Name = _testEmpoweringName,
             OnBehalfOf = OnBehalfOf.Individual,
             TypeOfEmpowerment = TypeOfEmpowerment.Separately,
-            AuthorizerUids = new UserIdentifierWithNameData[] { _testEmpoweringUid },
+            AuthorizerUids = new AuthorizerIdentifierData[] { _testEmpoweringUid },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "9002022237", UidType = IdentifierType.EGN } },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -392,13 +432,13 @@ internal class EmpowermentServiceTests : BaseTest
                 Message = new ServiceResult<UidsRestrictionsResult>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Result = new UidsRestrictionsResult { Successfull = true }
+                    Result = new UidsRestrictionsResult { Successful = true }
                 }
             }));
 
         // Successful signature verification
         _verificationService
-            .Setup(vs => vs.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()))
+            .Setup(vs => vs.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()))
             .ReturnsAsync(() => new ServiceResult { StatusCode = HttpStatusCode.OK });
 
         var signEmpowermentCommand = CreateInterface<SignEmpowerment>(new
@@ -415,7 +455,7 @@ internal class EmpowermentServiceTests : BaseTest
         var serviceResult = await _sut.SignEmpowermentAsync(signEmpowermentCommand);
         // Assert
         _verificationService.Verify(x =>
-                x.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
+                x.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
                 Times.Once()
         );
         Assert.That(_dbContext.EmpowermentSignatures.Count(r => r.EmpowermentStatementId == empowermentId), Is.EqualTo(1));
@@ -446,7 +486,7 @@ internal class EmpowermentServiceTests : BaseTest
         var serviceResult = await _sut.SignEmpowermentAsync(signEmpowermentCommand);
         // Assert
         _verificationService.Verify(x =>
-                x.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
+                x.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
                 Times.Never
         );
         Assert.That(_dbContext.EmpowermentSignatures.Count(r => r.EmpowermentStatementId == empowermentId), Is.EqualTo(0));
@@ -472,8 +512,8 @@ internal class EmpowermentServiceTests : BaseTest
             TypeOfEmpowerment = TypeOfEmpowerment.Separately,
             AuthorizerUids = new[] { _testEmpoweringUid },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "9002022237", UidType = IdentifierType.EGN } },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -498,7 +538,7 @@ internal class EmpowermentServiceTests : BaseTest
         var serviceResult = await _sut.SignEmpowermentAsync(signEmpowermentCommand);
         // Assert
         _verificationService.Verify(x =>
-                x.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
+                x.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
                 Times.Never
         );
         Assert.That(_dbContext.EmpowermentSignatures.Count(r => r.EmpowermentStatementId == empowermentId), Is.EqualTo(0));
@@ -524,8 +564,8 @@ internal class EmpowermentServiceTests : BaseTest
             TypeOfEmpowerment = TypeOfEmpowerment.Separately,
             AuthorizerUids = new[] { _testEmpoweringUid },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "9002022237", UidType = IdentifierType.EGN } },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -550,7 +590,7 @@ internal class EmpowermentServiceTests : BaseTest
         var serviceResult = await _sut.SignEmpowermentAsync(signEmpowermentCommand);
         // Assert
         _verificationService.Verify(x =>
-                x.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
+                x.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
                 Times.Never
         );
         Assert.That(_dbContext.EmpowermentSignatures.Count(r => r.EmpowermentStatementId == empowermentId), Is.EqualTo(0));
@@ -576,8 +616,8 @@ internal class EmpowermentServiceTests : BaseTest
             TypeOfEmpowerment = TypeOfEmpowerment.Separately,
             AuthorizerUids = new[] { _testEmpoweringUid },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "9002022237", UidType = IdentifierType.EGN } },
-            SupplierId = _testSupplierId,
-            SupplierName = _testSupplierName,
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
             ServiceId = _testServiceId,
             ServiceName = _testServiceName,
             VolumeOfRepresentation = _testVolumeOfRepresentation,
@@ -603,13 +643,13 @@ internal class EmpowermentServiceTests : BaseTest
                 Message = new ServiceResult<UidsRestrictionsResult>
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Result = new UidsRestrictionsResult { Successfull = true }
+                    Result = new UidsRestrictionsResult { Successful = true }
                 }
             }));
 
         // Failing signature verification
         _verificationService
-            .Setup(vs => vs.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()))
+            .Setup(vs => vs.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()))
             .ReturnsAsync(() => new ServiceResult { StatusCode = HttpStatusCode.BadRequest });
 
         var signEmpowermentCommand = CreateInterface<SignEmpowerment>(new
@@ -626,7 +666,7 @@ internal class EmpowermentServiceTests : BaseTest
         var serviceResult = await _sut.SignEmpowermentAsync(signEmpowermentCommand);
         // Assert
         _verificationService.Verify(x =>
-                x.VerifySignatureAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
+                x.VerifySignatureAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IdentifierType>(), It.IsAny<SignatureProvider>()),
                 Times.Once()
         );
         Assert.That(_dbContext.EmpowermentSignatures.Count(r => r.EmpowermentStatementId == empowermentId), Is.EqualTo(0));
@@ -670,7 +710,77 @@ internal class EmpowermentServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(createdStatements, Is.EqualTo(0));
-            Assert.That(deniedStatements, Is.EqualTo(0));
+            Assert.That(deniedStatements, Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public async Task GetEmpowermentsToMeByFilterAsync_GetOneLegalEntityWithPartOfEik_Async()
+    {
+        // Arrange
+        var seededData = await SeedEmpowermentStatementsAsync();
+        var legalEntity = seededData.First(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity && sd.Status == EmpowermentStatementStatus.Active);
+        var uid = legalEntity.EmpoweredUids.First();
+
+        var getEmpowermentsToMeByFilter = CreateInterface<GetEmpowermentsToMeByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Uid = uid.Uid,
+            UidType = uid.UidType,
+            OnBehalfOf = OnBehalfOf.LegalEntity,
+            Eik = legalEntity.Uid,
+
+            PageSize = 10,
+            PageIndex = 1
+        });
+
+        // Act & Assert
+        var serviceResult = await _sut.GetEmpowermentsToMeByFilterAsync(getEmpowermentsToMeByFilter);
+
+        //Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+
+        var statements = serviceResult.Result.Data.Count();
+        var legalEntityCount = seededData.Count(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity && sd.Uid == "762640804");
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(statements, Is.EqualTo(legalEntityCount));
+        });
+    }
+
+    [Test]
+    public async Task GetEmpowermentsToMeByFilterAsync_GetOneLegalEntityWithoutEik_Async()
+    {
+        // Arrange
+        var seededData = await SeedEmpowermentStatementsAsync();
+        var legalEntity = seededData.First(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity && sd.Status == EmpowermentStatementStatus.Active);
+        var uid = legalEntity.EmpoweredUids.First();
+
+        var getEmpowermentsToMeByFilter = CreateInterface<GetEmpowermentsToMeByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Uid = uid.Uid,
+            UidType = uid.UidType,
+            OnBehalfOf = OnBehalfOf.LegalEntity,
+            //Eik = "762640804",
+
+            PageSize = 10,
+            PageIndex = 1
+        });
+
+        // Act & Assert
+        var serviceResult = await _sut.GetEmpowermentsToMeByFilterAsync(getEmpowermentsToMeByFilter);
+
+        //Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+
+        var statements = serviceResult.Result.Data.Count();
+        var legalEntityCount = seededData.Count(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(statements, Is.EqualTo(legalEntityCount));
         });
     }
 
@@ -735,7 +845,7 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenSupplierName_ReturnStatementsWithProvidedSupplier_Async()
+    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenProviderName_ReturnStatementsWithProvidedSupplier_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -744,7 +854,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "8802184852",
             UidType = IdentifierType.EGN,
-            SupplierName = "TestSupplierName5",
+            ProviderName = "TestProviderName5",
             PageSize = 10,
             PageIndex = 1
         });
@@ -758,7 +868,7 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenSupplierName_ReturnNotStatementsWithProvidedSupplierAndUnavailableStauts_Async()
+    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenProviderName_ReturnNotStatementsWithProvidedSupplierAndUnavailableStauts_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -767,7 +877,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "8802184852",
             UidType = IdentifierType.EGN,
-            SupplierName = "TestSupplierName2",
+            ProviderName = "TestProviderName2",
             PageSize = 10,
             PageIndex = 1
         });
@@ -875,7 +985,7 @@ internal class EmpowermentServiceTests : BaseTest
         var allStatementsBeforeDate = serviceResult.Result.Data.All(r => r.ExpiryDate < validToDate);
         Assert.Multiple(() =>
         {
-            Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(3));
+            Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
             Assert.That(allStatementsBeforeDate, Is.EqualTo(true));
         });
     }
@@ -926,7 +1036,7 @@ internal class EmpowermentServiceTests : BaseTest
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
         Assert.That(serviceResult.Result.Data.First().Name, Is.EqualTo("TestName1"));
         Assert.That(serviceResult.Result.Data.Last().Name, Is.EqualTo("TestName7"));
-        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
+        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(5));
     }
 
     [Test]
@@ -952,7 +1062,7 @@ internal class EmpowermentServiceTests : BaseTest
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
         Assert.That(serviceResult.Result.Data.First().Name, Is.EqualTo("TestName7"));
         Assert.That(serviceResult.Result.Data.Last().Name, Is.EqualTo("TestName1"));
-        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
+        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(5));
     }
 
     [Test]
@@ -978,7 +1088,7 @@ internal class EmpowermentServiceTests : BaseTest
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
         Assert.That(serviceResult.Result.Data.First().ServiceName, Is.EqualTo("TestServiceName1"));
         Assert.That(serviceResult.Result.Data.Last().ServiceName, Is.EqualTo("TestServiceName7"));
-        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
+        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(5));
     }
 
     [Test]
@@ -1004,11 +1114,11 @@ internal class EmpowermentServiceTests : BaseTest
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
         Assert.That(serviceResult.Result.Data.First().ServiceName, Is.EqualTo("TestServiceName7"));
         Assert.That(serviceResult.Result.Data.Last().ServiceName, Is.EqualTo("TestServiceName1"));
-        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
+        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(5));
     }
 
     [Test]
-    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenSupplierNameSort_ReturnSortedStatements_Async()
+    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenProviderNameSort_ReturnSortedStatements_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -1017,7 +1127,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "8802184852",
             UidType = IdentifierType.EGN,
-            SortBy = EmpowermentsToMeSortBy.SupplierName,
+            SortBy = EmpowermentsToMeSortBy.ProviderName,
             SortDirection = SortDirection.Asc,
             PageSize = 10,
             PageIndex = 1
@@ -1028,13 +1138,13 @@ internal class EmpowermentServiceTests : BaseTest
 
         //Assert
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
-        Assert.That(serviceResult.Result.Data.First().SupplierName, Is.EqualTo("TestSupplierName1"));
-        Assert.That(serviceResult.Result.Data.Last().SupplierName, Is.EqualTo("TestSupplierName7"));
-        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
+        Assert.That(serviceResult.Result.Data.First().ProviderName, Is.EqualTo("TestProviderName1"));
+        Assert.That(serviceResult.Result.Data.Last().ProviderName, Is.EqualTo("TestProviderName7"));
+        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(5));
     }
 
     [Test]
-    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenDescendingSupplierNameSort_ReturnSortedStatements_Async()
+    public async Task GetEmpowermentsToMeByFilterAsync_WhenGivenDescendingProviderNameSort_ReturnSortedStatements_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -1043,7 +1153,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "8802184852",
             UidType = IdentifierType.EGN,
-            SortBy = EmpowermentsToMeSortBy.SupplierName,
+            SortBy = EmpowermentsToMeSortBy.ProviderName,
             SortDirection = SortDirection.Desc,
             PageSize = 10,
             PageIndex = 1
@@ -1054,9 +1164,9 @@ internal class EmpowermentServiceTests : BaseTest
 
         //Assert
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
-        Assert.That(serviceResult.Result.Data.First().SupplierName, Is.EqualTo("TestSupplierName7"));
-        Assert.That(serviceResult.Result.Data.Last().SupplierName, Is.EqualTo("TestSupplierName1"));
-        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(4));
+        Assert.That(serviceResult.Result.Data.First().ProviderName, Is.EqualTo("TestProviderName7"));
+        Assert.That(serviceResult.Result.Data.Last().ProviderName, Is.EqualTo("TestProviderName1"));
+        Assert.That(serviceResult.Result.Data.Count(), Is.EqualTo(5));
     }
 
     [Test]
@@ -1128,6 +1238,110 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
+    [TestCaseSource(nameof(EmpowermentStatementNumberTestCases))]
+    public async Task GetEmpowermentsFromMeByFilterAsync_WhenFilteredByNumber_ReturnsOneOrZeroResults_Async(string number, string numberFilter, bool oneResult)
+    {
+        // Arrange
+        var empowermentId = Guid.NewGuid();
+        _dbContext.EmpowermentStatements.Add(new EmpowermentStatement
+        {
+            Id = empowermentId,
+            Number = number,
+            Status = EmpowermentStatementStatus.Active,
+            Uid = _testEmpoweringUid.Uid,
+            Name = _testEmpoweringName,
+            AuthorizerUids = new List<AuthorizerUid>
+            {
+                new AuthorizerUid { EmpowermentStatementId = empowermentId, Uid = _testEmpoweringUid.Uid, UidType = _testEmpoweringUid.UidType }
+            },
+            EmpoweredUids = new List<EmpoweredUid>
+            {
+                new EmpoweredUid { EmpowermentStatementId = empowermentId, Uid = "9002022237", UidType = IdentifierType.EGN}
+            },
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
+            ServiceId = _testServiceId,
+            ServiceName = _testServiceName,
+            VolumeOfRepresentation = _testVolumeOfRepresentation,
+            StartDate = _testStartDate,
+            ExpiryDate = _testEndDate,
+            CreatedBy = _testUserName,
+            XMLRepresentation = string.Empty
+        });
+        _dbContext.SaveChanges();
+        var getEmpowermentsFromMeByFilter = CreateInterface<GetEmpowermentsFromMeByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Number = numberFilter,
+            Uid = _testEmpoweringUid.Uid,
+            UidType = _testEmpoweringUid.UidType,
+            PageSize = 10,
+            PageIndex = 1
+        });
+
+        // Act
+        var serviceResult = await _sut.GetEmpowermentsFromMeByFilterAsync(getEmpowermentsFromMeByFilter);
+
+        //Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+        Assert.That(() => { return serviceResult?.Result?.Data?.Count() == (oneResult ? 1 : 0); }, 
+            "EmpowermentStatement number {0}, filter {1} result must be {2}, but result is {3}", 
+            number, numberFilter, oneResult ? 1 : 0, serviceResult?.Result?.Data?.Count());
+    }
+
+    [Test]
+    [TestCaseSource(nameof(EmpowermentStatementNumberTestCases))]
+    public async Task GetEmpowermentsToMeByFilterAsync_WhenFilteredByNumber_ReturnsOneOrZeroResults_Async(string number, string numberFilter, bool oneResult)
+    {
+        // Arrange
+        var empowermentId = Guid.NewGuid();
+        _dbContext.EmpowermentStatements.Add(new EmpowermentStatement
+        {
+            Id = empowermentId,
+            Number = number,
+            Status = EmpowermentStatementStatus.Active,
+            Uid = _testEmpoweringUid.Uid,
+            Name = _testEmpoweringName,
+            AuthorizerUids = new List<AuthorizerUid>
+            {
+                new AuthorizerUid { EmpowermentStatementId = empowermentId, Uid = _testEmpoweringUid.Uid, UidType = _testEmpoweringUid.UidType }
+            },
+            EmpoweredUids = new List<EmpoweredUid>
+            {
+                new EmpoweredUid { EmpowermentStatementId = empowermentId, Uid = "9002022237", UidType = IdentifierType.EGN}
+            },
+            ProviderId = _testProviderId,
+            ProviderName = _testProviderName,
+            ServiceId = _testServiceId,
+            ServiceName = _testServiceName,
+            VolumeOfRepresentation = _testVolumeOfRepresentation,
+            StartDate = _testStartDate,
+            ExpiryDate = _testEndDate,
+            CreatedBy = _testUserName,
+            XMLRepresentation = string.Empty
+        });
+        _dbContext.SaveChanges();
+        var getEmpowermentsFromMeByFilter = CreateInterface<GetEmpowermentsToMeByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Number = numberFilter,
+            Uid = "9002022237",
+            UidType = IdentifierType.EGN,
+            PageSize = 10,
+            PageIndex = 1
+        });
+
+        // Act
+        var serviceResult = await _sut.GetEmpowermentsToMeByFilterAsync(getEmpowermentsFromMeByFilter);
+
+        //Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+        Assert.That(() => { return serviceResult?.Result?.Data?.Count() == (oneResult ? 1 : 0); },
+            "EmpowermentStatement number {0}, filter {1} result must be {2}, but result is {3}",
+            number, numberFilter, oneResult ? 1 : 0, serviceResult?.Result?.Data?.Count());
+    }
+
+    [Test]
     public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenAuthorizer_ReturnStatementsWithProvidedAuthorizer_Async()
     {
         // Arrange
@@ -1151,7 +1365,7 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenSupplierName_ReturnStatementsWithProvidedSupplier_Async()
+    public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenProviderName_ReturnStatementsWithProvidedSupplier_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -1160,7 +1374,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "4711183713",
             UidType = IdentifierType.EGN,
-            SupplierName = "TestSupplierName5",
+            ProviderName = "TestProviderName5",
             PageSize = 10,
             PageIndex = 1
         });
@@ -1174,7 +1388,7 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenSupplierName_ReturnStatementsWithProvidedSupplierAndAllStautuses_Async()
+    public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenProviderName_ReturnStatementsWithProvidedSupplierAndAllStautuses_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -1183,7 +1397,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "4711183713",
             UidType = IdentifierType.EGN,
-            SupplierName = "TestSupplierName2",
+            ProviderName = "TestProviderName2",
             PageSize = 10,
             PageIndex = 1
         });
@@ -1483,7 +1697,7 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenDescendingSupplierNameSort_ReturnSortedStatements_Async()
+    public async Task GetEmpowermentsFromMeByFilterAsync_WhenGivenDescendingProviderNameSort_ReturnSortedStatements_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -1492,7 +1706,7 @@ internal class EmpowermentServiceTests : BaseTest
             CorrelationId = Guid.NewGuid(),
             Uid = "4711183713",
             UidType = IdentifierType.EGN,
-            SortBy = EmpowermentsFromMeSortBy.SupplierName,
+            SortBy = EmpowermentsFromMeSortBy.ProviderName,
             SortDirection = SortDirection.Desc,
             PageSize = 10,
             PageIndex = 1
@@ -1505,11 +1719,83 @@ internal class EmpowermentServiceTests : BaseTest
         CheckServiceResult(serviceResult, HttpStatusCode.OK);
         Assert.Multiple(() =>
         {
-            Assert.That(serviceResult?.Result?.Data?.First().SupplierName, Is.EqualTo("TestSupplierName7"));
-            Assert.That(serviceResult?.Result?.Data?.Last().SupplierName, Is.EqualTo("TestSupplierName1"));
+            Assert.That(serviceResult?.Result?.Data?.First().ProviderName, Is.EqualTo("TestProviderName7"));
+            Assert.That(serviceResult?.Result?.Data?.Last().ProviderName, Is.EqualTo("TestProviderName1"));
             Assert.That(serviceResult?.Result?.Data?.Count(), Is.EqualTo(6));
         });
     }
+
+
+    [Test]
+    public async Task GetEmpowermentsFromMeByFilterAsync_GetOneLegalEntityWithPartOfEik_Async()
+    {
+        // Arrange
+        var seededData = await SeedEmpowermentStatementsAsync();
+        var legalEntity = seededData.First(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity && sd.Status == EmpowermentStatementStatus.Active);
+        var authorizer = legalEntity.AuthorizerUids.First();
+
+        var getEmpowermentsFromMeByFilter = CreateInterface<GetEmpowermentsFromMeByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Uid = authorizer.Uid,
+            UidType = authorizer.UidType,
+            OnBehalfOf = OnBehalfOf.LegalEntity,
+            Eik = legalEntity.Uid,
+
+            PageSize = 10,
+            PageIndex = 1
+        });
+
+        // Act & Assert
+        var serviceResult = await _sut.GetEmpowermentsFromMeByFilterAsync(getEmpowermentsFromMeByFilter);
+
+        //Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+
+        var statements = serviceResult.Result.Data.Count();
+        var legalEntityCount = seededData.Count(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity && sd.Uid == "762640804");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(statements, Is.EqualTo(legalEntityCount));
+        });
+    }
+
+    [Test]
+    public async Task GetEmpowermentsFromMeByFilterAsync_GetOneLegalEntityWithoutEik_Async()
+    {
+        // Arrange
+        var seededData = await SeedEmpowermentStatementsAsync();
+        var legalEntity = seededData.First(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity && sd.Status == EmpowermentStatementStatus.Active);
+        var authorizer = legalEntity.AuthorizerUids.First();
+
+        var getEmpowermentsFromMeByFilter = CreateInterface<GetEmpowermentsFromMeByFilter>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            Uid = authorizer.Uid,
+            UidType = authorizer.UidType,
+            OnBehalfOf = OnBehalfOf.LegalEntity,
+            //Eik = "762640804",
+
+            PageSize = 10,
+            PageIndex = 1
+        });
+
+        // Act & Assert
+        var serviceResult = await _sut.GetEmpowermentsFromMeByFilterAsync(getEmpowermentsFromMeByFilter);
+
+        //Assert
+        CheckServiceResult(serviceResult, HttpStatusCode.OK);
+
+        var statements = serviceResult.Result.Data.Count();
+        var legalEntityCount = seededData.Count(sd => sd.OnBehalfOf == OnBehalfOf.LegalEntity);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(statements, Is.EqualTo(legalEntityCount));
+        });
+    }
+
 
     [Test]
     public void GetEmpowermentDisagreementReasonsAsync_WhenCalledWithNullMessage_ThrowsArgumentNullException()
@@ -1781,9 +2067,10 @@ internal class EmpowermentServiceTests : BaseTest
                 new ("Forbidden", $"After checking '{message.Uid}' it can't be allowed to disagree this empowerment.")
             }));
 
+        var maskedUid = Regex.Replace(message.Uid, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
         var errorMessage = string.Format("{0} has restrictions. Denying declaring disagreement with empowerment {1}.",
-            message.Uid, message.EmpowermentId);
-        _logger.VerifyLogging(errorMessage, LogLevel.Information, Times.Once());
+            maskedUid, message.EmpowermentId);
+        _logger.VerifyLogging(errorMessage, LogLevel.Warning, Times.Once());
     }
 
     [Test]
@@ -1795,7 +2082,7 @@ internal class EmpowermentServiceTests : BaseTest
     }
 
     [Test]
-    public async Task GetEmpowermentsByDeauAsync_SupplierValidation_ReturnsBadRequest_Async()
+    public async Task GetEmpowermentsByDeauAsync_ProviderValidation_ReturnsBadRequest_Async()
     {
         // Arrange
         await SeedEmpowermentStatementsAsync();
@@ -1834,7 +2121,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -1862,7 +2149,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -1892,7 +2179,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -1925,7 +2212,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddYears(1)
@@ -1954,7 +2241,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 2,
-            SupplierId = "2",
+            ProviderId = "2",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -1983,7 +2270,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2017,7 +2304,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 5,
-            SupplierId = "5",
+            ProviderId = "5",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2052,7 +2339,7 @@ internal class EmpowermentServiceTests : BaseTest
             RequesterUid = "8802184852",
             VolumeOfRepresentation = new List<string> { "1", "3" },
             ServiceId = 5,
-            SupplierId = "5",
+            ProviderId = "5",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2082,7 +2369,7 @@ internal class EmpowermentServiceTests : BaseTest
             RequesterUid = "8802184852",
             VolumeOfRepresentation = new List<string> { "1" },
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2116,7 +2403,7 @@ internal class EmpowermentServiceTests : BaseTest
             RequesterUid = "8802184852",
             VolumeOfRepresentation = new List<string> { "1", "2" },
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2149,7 +2436,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1000,
-            SupplierId = "1000",
+            ProviderId = "1000",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = new DateTime(1000, 10, 10, 23, 59, 59).ToUniversalTime()
@@ -2182,7 +2469,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1000,
-            SupplierId = "1000",
+            ProviderId = "1000",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = new DateTime(1000, 10, 11, 01, 00, 01).ToUniversalTime()
@@ -2215,7 +2502,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1000,
-            SupplierId = "1000",
+            ProviderId = "1000",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = new DateTime(1000, 10, 11, 01, 00, 00).ToUniversalTime()
@@ -2250,7 +2537,7 @@ internal class EmpowermentServiceTests : BaseTest
             OnBehalfOf = OnBehalfOf.Individual,
             VolumeOfRepresentation = new List<string> { "1", "2" },
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2283,7 +2570,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2317,7 +2604,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 1,
-            SupplierId = "1",
+            ProviderId = "1",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2352,7 +2639,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddDays(15)
@@ -2381,7 +2668,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddDays(5)
@@ -2414,7 +2701,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow
@@ -2447,7 +2734,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddDays(10)
@@ -2480,7 +2767,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddDays(35)
@@ -2513,7 +2800,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddDays(50)
@@ -2546,7 +2833,7 @@ internal class EmpowermentServiceTests : BaseTest
             EmpoweredUidType = IdentifierType.EGN,
             RequesterUid = "8802184852",
             ServiceId = 100,
-            SupplierId = "100",
+            ProviderId = "100",
             PageIndex = 1,
             PageSize = 10,
             StatusOn = DateTime.UtcNow.AddDays(10)
@@ -2633,7 +2920,7 @@ internal class EmpowermentServiceTests : BaseTest
         var allStatementsAreNoExpiry = result?.Result?.All(x => x.ExpiryDate.HasValue);
         Assert.Multiple(() =>
         {
-            Assert.That(result?.Result?.Count(), Is.EqualTo(2));
+            Assert.That(result?.Result?.Count(), Is.EqualTo(3));
             Assert.That(allStatementsAreNoExpiry, Is.EqualTo(true));
         });
     }
@@ -2658,7 +2945,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Active").Value,
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
 
         });
@@ -2690,7 +2977,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Unconfirmed").Value,
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2723,7 +3010,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Active").Value,
-            AdministrationId = "1111",  //Wrong SupplierId
+            ProviderId = "1111",  //Wrong ProviderId
             DenialReasonComment = "Other",
         });
 
@@ -2753,7 +3040,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Denied").Value,
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2783,7 +3070,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Withdrawn").Value,
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2813,7 +3100,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "DisagreementDeclared").Value,
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2843,7 +3130,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "CollectingAuthorizerSignatures").Value,
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2873,7 +3160,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = Guid.NewGuid(), //It will not be found
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2929,7 +3216,7 @@ internal class EmpowermentServiceTests : BaseTest
         var message = CreateInterface<DenyEmpowermentByDeau>(new
         {
             CorrelationId = Guid.NewGuid(),
-            AdministrationId = "000001",
+            ProviderId = "000001",
             DenialReasonComment = "Other",
         });
 
@@ -2961,7 +3248,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Unconfirmed").Value,
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -2991,7 +3278,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Active").Value,
-            AdministrationId = "1111"  //Wrong SupplierId
+            ProviderId = "1111"  //Wrong ProviderId
         });
 
         // Act
@@ -3020,7 +3307,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Active").Value,
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -3049,7 +3336,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "Withdrawn").Value,
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -3078,7 +3365,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "DisagreementDeclared").Value,
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -3107,7 +3394,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = empowermentStatusIdPairs.FirstOrDefault(kvp => kvp.Key == "CollectingAuthorizerSignatures").Value,
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -3136,7 +3423,7 @@ internal class EmpowermentServiceTests : BaseTest
         {
             CorrelationId = Guid.NewGuid(),
             EmpowermentId = Guid.NewGuid(), //It will not be found
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -3190,7 +3477,7 @@ internal class EmpowermentServiceTests : BaseTest
         var message = CreateInterface<ApproveEmpowermentByDeau>(new
         {
             CorrelationId = Guid.NewGuid(),
-            AdministrationId = "000001"
+            ProviderId = "000001"
         });
 
         // Act
@@ -3200,6 +3487,106 @@ internal class EmpowermentServiceTests : BaseTest
         CheckServiceResult(result, HttpStatusCode.BadRequest);
     }
     #endregion ApproveEmpowermentByDeau
+
+    private static readonly object[] EmpowermentStatementNumberTestCases =
+    {
+        new object[]
+        {
+            "PO3/22.02.2024", // PO En
+            "РО3", // РО Bg
+            false
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            "RO3",
+            false
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            "РО2",
+            false
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            "2/",
+            false
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            "/11",
+            false
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            ".14",
+            false
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            "РО3",
+            true
+        },
+        new object[]
+        {
+            "РО4/22.02.2024",
+            "ро4",
+            true
+        },
+        new object[]
+        {
+            "РО3/22.02.2024",
+            "22.02",
+            true
+        },
+        new object[]
+        {
+            "РО33/22.02.2024",
+            "РО3",
+            true
+        },
+        new object[]
+        {
+            "РО22/22.02.2024",
+            "2/",
+            true
+        },
+        new object[]
+        {
+            "РО22/22.02.2024",
+            "22",
+            true
+        },
+        new object[]
+        {
+            "РО22/22.02.2024",
+            ".02",
+            true
+        },
+        new object[]
+        {
+            "РО22/22.02.2024",
+            ".20",
+            true
+        },
+        new object[]
+        {
+            "РО22/22.02.2024",
+            "2024",
+            true
+        },
+        new object[]
+        {
+            "РО22/22.02.2024",
+            "22.02",
+            true
+        },
+    };
 
     private static readonly object[] DisagreeEmpowermentBadRequestMessages =
     {
@@ -3315,8 +3702,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 1,
                 ServiceName = "TestServiceName1",
-                SupplierId = "000001",
-                SupplierName = "TestSupplierName000001",
+                ProviderId = "000001",
+                ProviderName = "TestProviderName000001",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Active,
                 CreatedBy = "TestCreatedBy1",
@@ -3324,7 +3711,7 @@ internal class EmpowermentServiceTests : BaseTest
                 XMLRepresentation = "TestXMLRepresentation1",
                 ExpiryDate = DateTime.UtcNow.AddDays(100),
                 VolumeOfRepresentation = new List<VolumeOfRepresentation>() {new VolumeOfRepresentation
-                    { Code = "1", Name = "Name1"}, new VolumeOfRepresentation { Code = "2", Name = "Name2" } },
+                    { Name = "1"}, new VolumeOfRepresentation { Name = "2" } },
                 StatusHistory = new List<StatusHistoryRecord>(){ new StatusHistoryRecord
                     { Id = Guid.NewGuid(), DateTime = DateTime.UtcNow, Status = EmpowermentStatementStatus.Active } }
             },
@@ -3339,8 +3726,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 2,
                 ServiceName = "TestServiceName2",
-                SupplierId = "000001",
-                SupplierName = "TestSupplierName000001",
+                ProviderId = "000001",
+                ProviderName = "TestProviderName000001",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Unconfirmed,
                 CreatedBy = "TestCreatedBy2",
@@ -3360,8 +3747,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 3,
                 ServiceName = "TestServiceName3",
-                SupplierId = "000001",
-                SupplierName = "TestSupplierName000001",
+                ProviderId = "000001",
+                ProviderName = "TestProviderName000001",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.CollectingAuthorizerSignatures,
                 CreatedBy = "TestCreatedBy3",
@@ -3381,8 +3768,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow.AddDays(-5),
                 ServiceId = 100,
                 ServiceName = "TestServiceName4",
-                SupplierId = "000001",
-                SupplierName = "TestSupplierName000001",
+                ProviderId = "000001",
+                ProviderName = "TestProviderName000001",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Withdrawn,
                 CreatedBy = "TestCreatedBy4",
@@ -3408,8 +3795,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow.AddDays(-5),
                 ServiceId = 100,
                 ServiceName = "TestServiceName5",
-                SupplierId = "000001",
-                SupplierName = "TestSupplierName000001",
+                ProviderId = "000001",
+                ProviderName = "TestProviderName000001",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Denied,
                 CreatedBy = "TestCreatedBy5",
@@ -3435,8 +3822,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow.AddDays(-5),
                 ServiceId = 100,
                 ServiceName = "TestServiceName6",
-                SupplierId = "000001",
-                SupplierName = "TestSupplierName000001",
+                ProviderId = "000001",
+                ProviderName = "TestProviderName000001",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.DisagreementDeclared,
                 CreatedBy = "TestCreatedBy6",
@@ -3520,8 +3907,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 1,
                 ServiceName = "TestServiceName1",
-                SupplierId = "1",
-                SupplierName = "TestSupplierName1",
+                ProviderId = "1",
+                ProviderName = "TestProviderName1",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Active,
                 CreatedBy = "TestCreatedBy1",
@@ -3529,7 +3916,7 @@ internal class EmpowermentServiceTests : BaseTest
                 XMLRepresentation = "TestXMLRepresentation1",
                 ExpiryDate = DateTime.UtcNow.AddDays(100),
                 VolumeOfRepresentation = new List<VolumeOfRepresentation>() {new VolumeOfRepresentation
-                    { Code = "1", Name = "Name1"}, new VolumeOfRepresentation { Code = "2", Name = "Name2" } },
+                    { Name = "1"}, new VolumeOfRepresentation { Name = "2" } },
                 EmpowermentWithdrawals = new List<EmpowermentWithdrawal>(){ new EmpowermentWithdrawal
                     { Id = Guid.NewGuid(), Reason = "Reason 1", ActiveDateTime = DateTime.UtcNow.AddDays(2) } },
                 StatusHistory = new List<StatusHistoryRecord>(){ new StatusHistoryRecord
@@ -3546,8 +3933,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 2,
                 ServiceName = "TestServiceName2",
-                SupplierId = "2",
-                SupplierName = "TestSupplierName2",
+                ProviderId = "2",
+                ProviderName = "TestProviderName2",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Created,
                 CreatedBy = "TestCreatedBy2",
@@ -3567,8 +3954,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 1,
                 ServiceName = "TestServiceName4",
-                SupplierId = "1",
-                SupplierName = "TestSupplierName4",
+                ProviderId = "1",
+                ProviderName = "TestProviderName4",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Denied,
                 CreatedBy = "TestCreatedBy4",
@@ -3593,8 +3980,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 5,
                 ServiceName = "TestServiceName5",
-                SupplierId = "5",
-                SupplierName = "TestSupplierName5",
+                ProviderId = "5",
+                ProviderName = "TestProviderName5",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Active,
                 CreatedBy = "TestCreatedBy5",
@@ -3614,8 +4001,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 666,
                 ServiceName = "TestServiceName6",
-                SupplierId = "6",
-                SupplierName = "TestSupplierName6",
+                ProviderId = "6",
+                ProviderName = "TestProviderName6",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Active,
                 CreatedBy = "TestCreatedBy6",
@@ -3635,8 +4022,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow,
                 ServiceId = 777,
                 ServiceName = "TestServiceName7",
-                SupplierId = "7",
-                SupplierName = "TestSupplierName7",
+                ProviderId = "7",
+                ProviderName = "TestProviderName7",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Active,
                 CreatedBy = "TestCreatedBy7",
@@ -3656,8 +4043,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow.AddDays(-5),
                 ServiceId = 100,
                 ServiceName = "TestServiceName100",
-                SupplierId = "100",
-                SupplierName = "TestSupplierName100",
+                ProviderId = "100",
+                ProviderName = "TestProviderName100",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Withdrawn,
                 CreatedBy = "TestCreatedBy100",
@@ -3683,8 +4070,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow.AddDays(-5),
                 ServiceId = 100,
                 ServiceName = "TestServiceName100",
-                SupplierId = "100",
-                SupplierName = "TestSupplierName100",
+                ProviderId = "100",
+                ProviderName = "TestProviderName100",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.Denied,
                 CreatedBy = "TestCreatedBy100",
@@ -3710,8 +4097,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = DateTime.UtcNow.AddDays(-5),
                 ServiceId = 100,
                 ServiceName = "TestServiceName100",
-                SupplierId = "100",
-                SupplierName = "TestSupplierName100",
+                ProviderId = "100",
+                ProviderName = "TestProviderName100",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.DisagreementDeclared,
                 CreatedBy = "TestCreatedBy100",
@@ -3737,8 +4124,8 @@ internal class EmpowermentServiceTests : BaseTest
                 CreatedOn = new DateTime(1000,10,10,01,00,00).ToUniversalTime().ToUniversalTime(),
                 ServiceId = 1000,
                 ServiceName = "TestServiceName1000",
-                SupplierId = "1000",
-                SupplierName = "TestSupplierName1000",
+                ProviderId = "1000",
+                ProviderName = "TestProviderName1000",
                 OnBehalfOf = OnBehalfOf.Individual,
                 Status =  EmpowermentStatementStatus.DisagreementDeclared,
                 CreatedBy = "TestCreatedBy1000",
@@ -3754,6 +4141,31 @@ internal class EmpowermentServiceTests : BaseTest
                     new StatusHistoryRecord { Id = Guid.NewGuid(), DateTime = new DateTime(1000,10,10,01,00,02).ToUniversalTime(), Status = EmpowermentStatementStatus.Active },
                     new StatusHistoryRecord { Id = Guid.NewGuid(), DateTime = new DateTime(1000,10,11,01,00,00).ToUniversalTime(), Status = EmpowermentStatementStatus.DisagreementDeclared }
                 }
+            },
+            new EmpowermentStatement // Active LegalEntity
+            {
+                Id = Guid.NewGuid(),
+                Uid = "762640804",
+                UidType = IdentifierType.NotSpecified,
+                Name = "LegalEntity22",
+                AuthorizerUids = new List<AuthorizerUid>() { new() { Id = Guid.NewGuid(), Uid = "2105251412", UidType = IdentifierType.EGN } },
+                EmpoweredUids = new List<EmpoweredUid>() { new() { Id = Guid.NewGuid(), Uid = "6002016774", UidType = IdentifierType.EGN } },
+                CreatedOn = DateTime.UtcNow.AddDays(-2),
+                ServiceId = 1,
+                ServiceName = "TestServiceName1",
+                ProviderId = "1",
+                ProviderName = "TestProviderName1",
+                OnBehalfOf = OnBehalfOf.LegalEntity,
+                Status =  EmpowermentStatementStatus.Active,
+                CreatedBy = "TestCreatedBy1",
+                StartDate = DateTime.UtcNow.AddDays(-1),
+                XMLRepresentation = "TestXMLRepresentation1",
+                ExpiryDate = DateTime.UtcNow.AddDays(100),
+                VolumeOfRepresentation = new List<VolumeOfRepresentation>() {new VolumeOfRepresentation
+                    { Name = "1"}, new VolumeOfRepresentation { Name = "2" } },
+                EmpowermentWithdrawals = new List<EmpowermentWithdrawal>(),
+                StatusHistory = new List<StatusHistoryRecord>(){ new StatusHistoryRecord
+                    { Id = Guid.NewGuid(), DateTime = DateTime.UtcNow, Status = EmpowermentStatementStatus.Active } }
             }
         };
 

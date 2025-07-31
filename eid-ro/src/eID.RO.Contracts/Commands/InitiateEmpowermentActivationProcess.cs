@@ -38,7 +38,7 @@ public interface InitiateEmpowermentActivationProcess : CorrelatedBy<Guid>
     /// <summary>
     /// Uids of people that need to sign the empowerment
     /// </summary>
-    public IEnumerable<UserIdentifierWithName> AuthorizerUids { get; set; }
+    public IEnumerable<AuthorizerIdentifier> AuthorizerUids { get; set; }
     /// <summary>
     /// Uids of people that are being empowered
     /// </summary>

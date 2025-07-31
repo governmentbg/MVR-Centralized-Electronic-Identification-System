@@ -1,9 +1,9 @@
 ﻿using System.Net;
-using System.Security.Cryptography;
-using System.Security.Cryptography.Pkcs;
-using System.Security.Cryptography.X509Certificates;
+using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
+using eID.PJS.AuditLogging;
+using eID.RO.Contracts;
 using eID.RO.Contracts.Commands;
 using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Events;
@@ -11,17 +11,18 @@ using eID.RO.Contracts.Results;
 using eID.RO.Service.Database;
 using eID.RO.Service.Entities;
 using eID.RO.Service.EventsRegistration;
+using eID.RO.Service.Extensions;
 using eID.RO.Service.Interfaces;
-using eID.RO.Service.Options;
 using eID.RO.Service.Requests;
 using eID.RO.Service.Responses;
 using eID.RO.Service.Validators;
 using FluentValidation;
 using MassTransit;
+using MassTransit.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Npgsql;
@@ -30,39 +31,48 @@ namespace eID.RO.Service;
 
 public class EmpowermentsService : BaseService
 {
+    private readonly IConfiguration _configuration;
     private readonly ILogger<EmpowermentsService> _logger;
+    private readonly IAuditLogger _auditLogger;
     private readonly IDistributedCache _cache;
     private readonly ApplicationDbContext _context;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IRequestClient<CheckUidsRestrictions> _checkUidsRestrictionsClient;
     private readonly IVerificationService _verificationService;
-    protected HttpClient _timestampServerHttpClient;
-    private readonly TimestampServerOptions _timestampServerOptions;
+    private readonly INumberRegistrator _numberRegistrator;
+    private readonly INotificationSender _notificationSender;
+    protected HttpClient _httpClient;
 
-    private const string _representativeField1Id = "00100";
-    private const string _representativeField2Id = "00101";
-    private const string _representativeField3Id = "00102";
-    private const string _wayOfRepresentationFieldId = "00110";
+    private const string NumberPrefix = "РО";
+    private readonly IRequestClient<CheckForEmpowermentsVerification> _checkEmpowermentVerificationSagasClient;
 
     public EmpowermentsService(
+        IConfiguration configuration,
         ILogger<EmpowermentsService> logger,
+        IAuditLogger auditLogger,
         IDistributedCache cache,
         ApplicationDbContext context,
         IPublishEndpoint publishEndpoint,
         IRequestClient<CheckUidsRestrictions> checkUidsRestrictionsClient,
         IVerificationService verificationService,
         IHttpClientFactory httpClientFactory,
-        IOptions<TimestampServerOptions> timestampServerOptions)
+        INumberRegistrator numberRegistrator,
+        INotificationSender notificationSender,
+        IRequestClient<CheckForEmpowermentsVerification> checkEmpowermentVerificationSagasClient
+        )
     {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _auditLogger = auditLogger ?? throw new ArgumentNullException(nameof(auditLogger));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         _checkUidsRestrictionsClient = checkUidsRestrictionsClient ?? throw new ArgumentNullException(nameof(checkUidsRestrictionsClient));
         _verificationService = verificationService ?? throw new ArgumentNullException(nameof(verificationService));
-        _timestampServerHttpClient = httpClientFactory.CreateClient(TimestampServerOptions.HTTP_CLIENT_NAME);
-        _timestampServerOptions = timestampServerOptions?.Value ?? new TimestampServerOptions();
-        _timestampServerOptions.Validate();
+        _httpClient = httpClientFactory.CreateClient("Signing");
+        _numberRegistrator = numberRegistrator ?? throw new ArgumentNullException(nameof(numberRegistrator));
+        _notificationSender = notificationSender ?? throw new ArgumentNullException(nameof(notificationSender));
+        _checkEmpowermentVerificationSagasClient = checkEmpowermentVerificationSagasClient ?? throw new ArgumentNullException(nameof(checkEmpowermentVerificationSagasClient));
     }
 
     public async Task<ServiceResult<IEnumerable<Guid>>> CreateStatementAsync(AddEmpowermentStatement message)
@@ -77,7 +87,7 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(AddEmpowermentStatement), validationResult);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(AddEmpowermentStatement), validationResult);
             return BadRequest<IEnumerable<Guid>>(validationResult.Errors);
         }
 
@@ -98,25 +108,27 @@ public class EmpowermentsService : BaseService
         if (message.TypeOfEmpowerment == TypeOfEmpowerment.Together)
         {
             var empowermentId = Guid.NewGuid();
+            var createdOn = DateTime.UtcNow;
+            var number = await BuildNumberAsync(createdOn);
             var empowermentStatement = new EmpowermentStatement
             {
                 Id = empowermentId,
+                Number = number,
                 IssuerPosition = issuerPosition,
                 CreatedBy = message.CreatedBy,
-                CreatedOn = DateTime.UtcNow,
+                CreatedOn = createdOn,
                 Uid = message.Uid,
                 UidType = message.UidType,
                 Name = message.Name,
                 OnBehalfOf = message.OnBehalfOf,
                 AuthorizerUids = authorizedUids.ToList(),
-                EmpoweredUids = message.EmpoweredUids.Select(uid => new EmpoweredUid { Id = Guid.NewGuid(), Uid = uid.Uid, UidType = uid.UidType }).ToList(),
-                SupplierId = message.SupplierId,
-                SupplierName = message.SupplierName,
+                EmpoweredUids = message.EmpoweredUids.Select(uid => new EmpoweredUid { Id = Guid.NewGuid(), Uid = uid.Uid, UidType = uid.UidType, Name = uid.Name }).ToList(),
+                ProviderId = message.ProviderId,
+                ProviderName = message.ProviderName,
                 ServiceId = message.ServiceId,
                 ServiceName = message.ServiceName,
                 VolumeOfRepresentation = message.VolumeOfRepresentation.Select(vor => new VolumeOfRepresentation
                 {
-                    Code = vor.Code,
                     Name = vor.Name
                 }).ToList(),
                 StartDate = startDate,
@@ -125,19 +137,20 @@ public class EmpowermentsService : BaseService
                     new EmpowermentStatementItem
                     {
                         Id = empowermentId.ToString(),
-                        CreatedOn = DateTime.UtcNow,
+                        Number = number,
+                        CreatedOn = createdOn,
                         OnBehalfOf = message.OnBehalfOf.ToString(),
                         Uid = message.Uid,
                         UidType = message.UidType,
                         Name = message.Name,
-                        AuthorizerUids = message.AuthorizerUids.Select(x => new UserIdentifierWithNameData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }).ToArray(),
-                        EmpoweredUids = message.EmpoweredUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }).ToArray(),
-                        SupplierId = message.SupplierId,
-                        SupplierName = message.SupplierName,
+                        AuthorizerUids = message.AuthorizerUids.Select(x => new AuthorizerIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }).ToArray(),
+                        EmpoweredUids = message.EmpoweredUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }).ToArray(),
+                        ProviderId = message.ProviderId,
+                        ProviderName = message.ProviderName,
                         ServiceId = message.ServiceId,
                         ServiceName = message.ServiceName,
                         TypeOfEmpowerment = message.TypeOfEmpowerment.ToString(),
-                        VolumeOfRepresentation = message.VolumeOfRepresentation.Select(v => new VolumeOfRepresentationItem { Code = v.Code, Name = v.Name }).ToArray(),
+                        VolumeOfRepresentation = message.VolumeOfRepresentation.Select(v => new VolumeOfRepresentationItem { Name = v.Name }).ToArray(),
                         StartDate = startDate,
                         ExpiryDate = expiryDate,
                     }),
@@ -147,7 +160,7 @@ public class EmpowermentsService : BaseService
             empowermentStatement.StatusHistory.Add(new StatusHistoryRecord
             {
                 Id = Guid.NewGuid(),
-                DateTime = DateTime.UtcNow,
+                DateTime = createdOn,
                 Status = EmpowermentStatementStatus.Created
             });
 
@@ -162,14 +175,14 @@ public class EmpowermentsService : BaseService
                 Uid = empowermentStatement.Uid,
                 UidType = empowermentStatement.UidType,
                 Name = empowermentStatement.Name,
-                AuthorizerUids = message.AuthorizerUids.Select(x => new UserIdentifierWithNameData
+                AuthorizerUids = message.AuthorizerUids.Select(x => new AuthorizerIdentifierData
                 {
                     Uid = x.Uid,
                     UidType = x.UidType,
                     Name = x.Name,
                     IsIssuer = x.IsIssuer
                 }),
-                EmpoweredUids = empowermentStatement.EmpoweredUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+                EmpoweredUids = empowermentStatement.EmpoweredUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
                 ExpiryDate = empowermentStatement.ExpiryDate,
             });
         }
@@ -178,25 +191,27 @@ public class EmpowermentsService : BaseService
             foreach (var empoweredUid in message.EmpoweredUids)
             {
                 var empowermentId = Guid.NewGuid();
+                var createdOn = DateTime.UtcNow;
+                var number = await BuildNumberAsync(createdOn);
                 var empowermentStatement = new EmpowermentStatement
                 {
                     Id = empowermentId,
+                    Number = number,
                     IssuerPosition = issuerPosition,
                     CreatedBy = message.CreatedBy,
-                    CreatedOn = DateTime.UtcNow,
+                    CreatedOn = createdOn,
                     Uid = message.Uid,
                     UidType = message.UidType,
                     Name = message.Name,
                     OnBehalfOf = message.OnBehalfOf,
                     AuthorizerUids = authorizedUids.ToList(),
-                    EmpoweredUids = new List<EmpoweredUid> { new() { Id = Guid.NewGuid(), Uid = empoweredUid.Uid, UidType = empoweredUid.UidType } },
-                    SupplierId = message.SupplierId,
-                    SupplierName = message.SupplierName,
+                    EmpoweredUids = new List<EmpoweredUid> { new() { Id = Guid.NewGuid(), Uid = empoweredUid.Uid, UidType = empoweredUid.UidType, Name = empoweredUid.Name } },
+                    ProviderId = message.ProviderId,
+                    ProviderName = message.ProviderName,
                     ServiceId = message.ServiceId,
                     ServiceName = message.ServiceName,
                     VolumeOfRepresentation = message.VolumeOfRepresentation.Select(vor => new VolumeOfRepresentation
                     {
-                        Code = vor.Code,
                         Name = vor.Name
                     }).ToList(),
                     StartDate = startDate,
@@ -205,25 +220,26 @@ public class EmpowermentsService : BaseService
                     new EmpowermentStatementItem
                     {
                         Id = empowermentId.ToString(),
-                        CreatedOn = DateTime.UtcNow,
+                        Number = number,
+                        CreatedOn = createdOn,
                         OnBehalfOf = message.OnBehalfOf.ToString(),
                         Uid = message.Uid,
                         UidType = message.UidType,
                         Name = message.Name,
-                        AuthorizerUids = message.AuthorizerUids.Select(x => new UserIdentifierWithNameData
+                        AuthorizerUids = message.AuthorizerUids.Select(x => new AuthorizerIdentifierData
                         {
                             Uid = x.Uid,
                             UidType = x.UidType,
                             Name = x.Name,
                             IsIssuer = x.IsIssuer
                         }).ToArray(),
-                        EmpoweredUids = new[] { new UserIdentifierData { Uid = empoweredUid.Uid, UidType = empoweredUid.UidType } },
-                        SupplierId = message.SupplierId,
-                        SupplierName = message.SupplierName,
+                        EmpoweredUids = new[] { new UserIdentifierData { Uid = empoweredUid.Uid, UidType = empoweredUid.UidType, Name = empoweredUid.Name } },
+                        ProviderId = message.ProviderId,
+                        ProviderName = message.ProviderName,
                         ServiceId = message.ServiceId,
                         ServiceName = message.ServiceName,
                         TypeOfEmpowerment = message.TypeOfEmpowerment.ToString(),
-                        VolumeOfRepresentation = message.VolumeOfRepresentation.Select(v => new VolumeOfRepresentationItem { Code = v.Code, Name = v.Name }).ToArray(),
+                        VolumeOfRepresentation = message.VolumeOfRepresentation.Select(v => new VolumeOfRepresentationItem { Name = v.Name }).ToArray(),
                         StartDate = startDate,
                         ExpiryDate = expiryDate
                     }),
@@ -233,7 +249,7 @@ public class EmpowermentsService : BaseService
                 empowermentStatement.StatusHistory.Add(new StatusHistoryRecord
                 {
                     Id = Guid.NewGuid(),
-                    DateTime = DateTime.UtcNow,
+                    DateTime = createdOn,
                     Status = EmpowermentStatementStatus.Created,
                 });
 
@@ -248,14 +264,14 @@ public class EmpowermentsService : BaseService
                     Uid = empowermentStatement.Uid,
                     UidType = empowermentStatement.UidType,
                     Name = empowermentStatement.Name,
-                    AuthorizerUids = message.AuthorizerUids.Select(x => new UserIdentifierWithNameData
+                    AuthorizerUids = message.AuthorizerUids.Select(x => new AuthorizerIdentifierData
                     {
                         Uid = x.Uid,
                         UidType = x.UidType,
                         Name = x.Name,
                         IsIssuer = x.IsIssuer
                     }),
-                    EmpoweredUids = empowermentStatement.EmpoweredUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+                    EmpoweredUids = empowermentStatement.EmpoweredUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
                     ExpiryDate = empowermentStatement.ExpiryDate,
                 });
             }
@@ -280,7 +296,7 @@ public class EmpowermentsService : BaseService
             {
                 message.CorrelationId,
                 newRecord.EmpowermentId,
-                Uids = newRecord.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+                Uids = newRecord.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
                 EventCode = Events.EmpowermentCreated.Code,
                 Events.EmpowermentCreated.Translations
             });
@@ -300,22 +316,61 @@ public class EmpowermentsService : BaseService
             throw new ArgumentNullException(nameof(message));
         }
 
+        var logEventCode = message.Status switch
+        {
+            EmpowermentStatementStatus.CollectingAuthorizerSignatures => LogEventCode.EMPOWERMENT_IS_COLLECTED_SIGNATURES,
+            EmpowermentStatementStatus.Active => LogEventCode.EMPOWERMENT_IS_ACTIVATED,
+            EmpowermentStatementStatus.Denied => LogEventCode.EMPOWERMENT_IS_DENIED,
+            EmpowermentStatementStatus.DisagreementDeclared => LogEventCode.EMPOWERMENT_IS_DISAGREEMENT_DECLARED,
+            EmpowermentStatementStatus.Withdrawn => LogEventCode.EMPOWERMENT_IS_WITHDRAWN,
+            EmpowermentStatementStatus.Unconfirmed => LogEventCode.EMPOWERMENT_IS_UNCONFIRMED,
+            _ => LogEventCode.CHANGE_EMPOWERMENT_STATUS
+        };
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.Request, JsonConvert.SerializeObject(message) },
+            { nameof(message.EmpowermentId), message.EmpowermentId },
+            { nameof(message.Status), message.Status.ToString() }
+        };
+        AddAuditLog(message.CorrelationId, logEventCode, LogEventLifecycle.REQUEST, payload: eventPayload);
+
         var validator = new ChangeEmpowermentStatusValidator();
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(ChangeEmpowermentStatus), validationResult);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(ChangeEmpowermentStatus), validationResult);
+            var err = validationResult.Errors.Select(e => new KeyValuePair<string, string>(e.PropertyName, e.ErrorMessage));
+            eventPayload.Add("Reason", string.Join(",", err));
+            eventPayload.Add("ResponseStatusCode", HttpStatusCode.BadRequest);
+            AddAuditLog(message.CorrelationId, logEventCode, LogEventLifecycle.FAIL, payload: eventPayload);
             return BadRequest<bool>(validationResult.Errors);
         }
 
         var dbRecord = await _context.EmpowermentStatements
+            .Include(es => es.AuthorizerUids)
+            .Include(es => es.EmpoweredUids)
              .Where(es => es.Id == message.EmpowermentId)
              .FirstOrDefaultAsync();
 
         if (dbRecord is null)
         {
-            _logger.LogInformation("{CommandName} failed. Non existing Id {EmpowermentId}", nameof(ChangeEmpowermentStatus), message.EmpowermentId);
+            _logger.LogWarning("{CommandName} failed. Non existing Id {EmpowermentId}", nameof(ChangeEmpowermentStatus), message.EmpowermentId);
+            eventPayload.Add("Reason", "No empowerment with such id.");
+            eventPayload.Add("ResponseStatusCode", HttpStatusCode.NotFound);
+            AddAuditLog(message.CorrelationId, logEventCode, LogEventLifecycle.FAIL, payload: eventPayload);
             return NotFound<bool>(nameof(EmpowermentStatement.Id), message.EmpowermentId);
+        }
+
+        var targets = dbRecord.AuthorizerUids.Cast<UidResult>().Union(dbRecord.EmpoweredUids.Cast<UidResult>());
+        foreach (UidResult target in targets)
+        {
+            var currentPayload = new SortedDictionary<string, object>(eventPayload)
+            {
+                [AuditLoggingKeys.TargetUid] = target.Uid,
+                [AuditLoggingKeys.TargetUidType] = target.UidType.ToString(),
+                [AuditLoggingKeys.TargetName] = target.Name
+            };
+            AddAuditLog(message.CorrelationId, logEventCode, suffix: LogEventLifecycle.REQUEST, payload: currentPayload);
         }
 
         dbRecord.Status = message.Status;
@@ -323,6 +378,7 @@ public class EmpowermentsService : BaseService
         if (message.Status == EmpowermentStatementStatus.Denied && message.DenialReason != EmpowermentsDenialReason.None)
         {
             dbRecord.DenialReason = message.DenialReason;
+            eventPayload.Add(nameof(message.DenialReason), message.DenialReason.ToString());
         }
 
         var newStatusHistoryRecord = new StatusHistoryRecord
@@ -337,10 +393,10 @@ public class EmpowermentsService : BaseService
         //In case it is OtherWay we have to set the final status UnConfirmed instead of Active
         if (dbRecord.OnBehalfOf == OnBehalfOf.LegalEntity && message.Status == EmpowermentStatementStatus.Active)
         {
-            var legalEntityActualState = await _verificationService.GetLegalEntityActualStateAsync(dbRecord.Uid);
-            var wOr = GetWayOfRepresentation(legalEntityActualState?.Result);
+            var legalEntityActualStateResponse = await _verificationService.GetLegalEntityActualStateAsync(message.CorrelationId, dbRecord.Uid);
+            var wOr = legalEntityActualStateResponse?.Result?.GetWayOfRepresentation();
 
-            if (wOr.OtherWay)
+            if (wOr?.OtherWay ?? true) // If we were unable to parse the way of representation we go unclear
             {
                 newStatusHistoryRecord.Status = EmpowermentStatementStatus.Unconfirmed;
                 dbRecord.Status = EmpowermentStatementStatus.Unconfirmed;
@@ -349,7 +405,16 @@ public class EmpowermentsService : BaseService
 
         await _context.EmpowermentStatusHistory.AddAsync(newStatusHistoryRecord);
         await _context.SaveChangesAsync();
-
+        foreach (UidResult target in targets)
+        {
+            var currentPayload = new SortedDictionary<string, object>(eventPayload)
+            {
+                [AuditLoggingKeys.TargetUid] = target.Uid,
+                [AuditLoggingKeys.TargetUidType] = target.UidType.ToString(),
+                [AuditLoggingKeys.TargetName] = target.Name
+            };
+            AddAuditLog(message.CorrelationId, logEventCode, suffix: LogEventLifecycle.SUCCESS, payload: currentPayload);
+        }
         _logger.LogInformation("Changed empowerment statement {EmpowermentStatementId} status to {NewStatus}", message.EmpowermentId, message.Status);
         return Ok(true);
     }
@@ -366,7 +431,7 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsToMeByFilter), validationResult);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsToMeByFilter), validationResult);
             return BadRequest<IPaginatedData<EmpowermentStatementResult>>(validationResult.Errors);
         }
 
@@ -388,15 +453,25 @@ public class EmpowermentsService : BaseService
                    .Take(1))
            .Include(es => es.StatusHistory
                    .OrderByDescending(sh => sh.DateTime))
-           .Where(es => !disallowedStatuses.Contains(es.Status) && es.EmpoweredUids.Any(au => au.Uid == message.Uid && au.UidType == message.UidType))
+           .Where(es => (
+                            !disallowedStatuses.Contains(es.Status)
+                            || es.StatusHistory.Any(shi => shi.Status == EmpowermentStatementStatus.Active || shi.Status == EmpowermentStatementStatus.Unconfirmed) // Include it if it was Active or Uncofirmed at some point regardless of it's current status
+                        )
+                        && es.EmpoweredUids.Any(au => au.Uid == message.Uid && au.UidType == message.UidType))
            .AsNoTracking()
            .AsSingleQuery();
+
+        if (!string.IsNullOrWhiteSpace(message.Number))
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.Number.Contains(message.Number.ToUpper()));
+        }
 
         if (message.Status.HasValue)
         {
             empowermentStatements = message.Status switch
             {
                 EmpowermentsToMeFilterStatus.Active => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active && (es.ExpiryDate == null || es.ExpiryDate > DateTime.UtcNow)),
+                EmpowermentsToMeFilterStatus.Denied => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Denied),
                 EmpowermentsToMeFilterStatus.DisagreementDeclared => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.DisagreementDeclared),
                 EmpowermentsToMeFilterStatus.Withdrawn => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Withdrawn),
                 EmpowermentsToMeFilterStatus.Expired => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active && es.ExpiryDate < DateTime.UtcNow),
@@ -410,9 +485,9 @@ public class EmpowermentsService : BaseService
             empowermentStatements = empowermentStatements.Where(es => es.Name.ToLower().Contains(message.Authorizer.ToLower()));
         }
 
-        if (!string.IsNullOrWhiteSpace(message.SupplierName))
+        if (!string.IsNullOrWhiteSpace(message.ProviderName))
         {
-            empowermentStatements = empowermentStatements.Where(es => es.SupplierName.ToLower().Contains(message.SupplierName.ToLower()));
+            empowermentStatements = empowermentStatements.Where(es => es.ProviderName.ToLower().Contains(message.ProviderName.ToLower()));
         }
 
         if (!string.IsNullOrWhiteSpace(message.ServiceName))
@@ -431,6 +506,16 @@ public class EmpowermentsService : BaseService
             empowermentStatements = empowermentStatements.Where(es => es.ExpiryDate == null);
         }
 
+        if (message.OnBehalfOf.HasValue)
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.OnBehalfOf == message.OnBehalfOf.Value);
+
+            if (message.OnBehalfOf.Value == OnBehalfOf.LegalEntity && !string.IsNullOrWhiteSpace(message.Eik))
+            {
+                empowermentStatements = empowermentStatements.Where(es => es.UidType == IdentifierType.NotSpecified && es.Uid == message.Eik);
+            }
+        }
+
         if (message.SortBy.HasValue)
         {
             if (message.SortDirection == SortDirection.Desc)
@@ -439,7 +524,7 @@ public class EmpowermentsService : BaseService
                 {
                     EmpowermentsToMeSortBy.Id => empowermentStatements.OrderByDescending(es => es.Id),
                     EmpowermentsToMeSortBy.Authorizer => empowermentStatements.OrderByDescending(es => es.Name),
-                    EmpowermentsToMeSortBy.SupplierName => empowermentStatements.OrderByDescending(es => es.SupplierName),
+                    EmpowermentsToMeSortBy.ProviderName => empowermentStatements.OrderByDescending(es => es.ProviderName),
                     EmpowermentsToMeSortBy.ServiceName => empowermentStatements.OrderByDescending(es => es.ServiceName),
 
                     EmpowermentsToMeSortBy.Status => empowermentStatements
@@ -462,7 +547,7 @@ public class EmpowermentsService : BaseService
                 {
                     EmpowermentsToMeSortBy.Id => empowermentStatements.OrderBy(es => es.Id),
                     EmpowermentsToMeSortBy.Authorizer => empowermentStatements.OrderBy(es => es.Name),
-                    EmpowermentsToMeSortBy.SupplierName => empowermentStatements.OrderBy(es => es.SupplierName),
+                    EmpowermentsToMeSortBy.ProviderName => empowermentStatements.OrderBy(es => es.ProviderName),
                     EmpowermentsToMeSortBy.ServiceName => empowermentStatements.OrderBy(es => es.ServiceName),
 
                     EmpowermentsToMeSortBy.Status => empowermentStatements
@@ -514,7 +599,7 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsFromMeByFilter), validationResult);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsFromMeByFilter), validationResult);
             return BadRequest<IPaginatedData<EmpowermentStatementFromMeResult>>(validationResult.Errors);
         }
 
@@ -522,6 +607,7 @@ public class EmpowermentsService : BaseService
         var empowermentStatements = _context.EmpowermentStatements
            .Include(es => es.AuthorizerUids)
            .Include(es => es.EmpoweredUids)
+           .Include(es => es.EmpowermentSignatures)
            .Include(es => es.EmpowermentWithdrawals
                .Where(ew => ew.Status == EmpowermentWithdrawalStatus.Completed || ew.Status == EmpowermentWithdrawalStatus.InProgress)
                .OrderByDescending(ew => ew.StartDateTime)
@@ -534,6 +620,11 @@ public class EmpowermentsService : BaseService
            .AsNoTracking()
            .AsSingleQuery();
 
+        if (!string.IsNullOrWhiteSpace(message.Number))
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.Number.Contains(message.Number.ToUpper()));
+        }
+
         if (message.Status.HasValue)
         {
             empowermentStatements = message.Status switch
@@ -543,7 +634,6 @@ public class EmpowermentsService : BaseService
                 EmpowermentsFromMeFilterStatus.Active => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active && (es.ExpiryDate == null || es.ExpiryDate > DateTime.UtcNow)),
                 EmpowermentsFromMeFilterStatus.Denied => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Denied),
                 EmpowermentsFromMeFilterStatus.DisagreementDeclared => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.DisagreementDeclared),
-                EmpowermentsFromMeFilterStatus.CollectingWithdrawalSignatures => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.CollectingWithdrawalSignatures),
                 EmpowermentsFromMeFilterStatus.Withdrawn => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Withdrawn),
                 EmpowermentsFromMeFilterStatus.Expired => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active && es.ExpiryDate < DateTime.UtcNow),
                 EmpowermentsFromMeFilterStatus.Unconfirmed => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Unconfirmed),
@@ -554,6 +644,11 @@ public class EmpowermentsService : BaseService
         if (message.OnBehalfOf.HasValue)
         {
             empowermentStatements = empowermentStatements.Where(es => es.OnBehalfOf == message.OnBehalfOf.Value);
+
+            if (message.OnBehalfOf.Value == OnBehalfOf.LegalEntity && !string.IsNullOrWhiteSpace(message.Eik))
+            {
+                empowermentStatements = empowermentStatements.Where(es => es.UidType == IdentifierType.NotSpecified && es.Uid == message.Eik);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(message.Authorizer))
@@ -561,9 +656,9 @@ public class EmpowermentsService : BaseService
             empowermentStatements = empowermentStatements.Where(es => es.Name.ToLower().Contains(message.Authorizer.ToLower()));
         }
 
-        if (!string.IsNullOrWhiteSpace(message.SupplierName))
+        if (!string.IsNullOrWhiteSpace(message.ProviderName))
         {
-            empowermentStatements = empowermentStatements.Where(es => es.SupplierName.ToLower().Contains(message.SupplierName.ToLower()));
+            empowermentStatements = empowermentStatements.Where(es => es.ProviderName.ToLower().Contains(message.ProviderName.ToLower()));
         }
 
         if (!string.IsNullOrWhiteSpace(message.ServiceName))
@@ -589,7 +684,7 @@ public class EmpowermentsService : BaseService
                 empowermentStatements = message.SortBy switch
                 {
                     EmpowermentsFromMeSortBy.Name => empowermentStatements.OrderByDescending(es => es.Name),
-                    EmpowermentsFromMeSortBy.SupplierName => empowermentStatements.OrderByDescending(es => es.SupplierName),
+                    EmpowermentsFromMeSortBy.ProviderName => empowermentStatements.OrderByDescending(es => es.ProviderName),
                     EmpowermentsFromMeSortBy.ServiceName => empowermentStatements.OrderByDescending(es => es.ServiceName),
                     EmpowermentsFromMeSortBy.Uid => empowermentStatements.OrderByDescending(es => es.EmpoweredUids.Select(e => e.Uid)),
 
@@ -612,7 +707,7 @@ public class EmpowermentsService : BaseService
                 empowermentStatements = message.SortBy switch
                 {
                     EmpowermentsFromMeSortBy.Name => empowermentStatements.OrderBy(es => es.Name),
-                    EmpowermentsFromMeSortBy.SupplierName => empowermentStatements.OrderBy(es => es.SupplierName),
+                    EmpowermentsFromMeSortBy.ProviderName => empowermentStatements.OrderBy(es => es.ProviderName),
                     EmpowermentsFromMeSortBy.ServiceName => empowermentStatements.OrderBy(es => es.ServiceName),
                     EmpowermentsFromMeSortBy.Uid => empowermentStatements.OrderBy(es => es.EmpoweredUids.Select(e => e.Uid)),
 
@@ -677,7 +772,7 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentWithdrawReasons), validationResult);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentWithdrawReasons), validationResult);
             return BadRequest<IEnumerable<EmpowermentWithdrawalReasonResult>>(validationResult.Errors);
         }
 
@@ -688,7 +783,7 @@ public class EmpowermentsService : BaseService
         return Ok(result);
     }
 
-    public async Task<ServiceResult> WithdrawEmpowermentAsync(WithdrawEmpowerment message)
+    public async Task<ServiceResult<string>> WithdrawEmpowermentAsync(WithdrawEmpowerment message)
     {
         if (message is null)
         {
@@ -700,8 +795,8 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentWithdrawReasons), validationResult);
-            return BadRequest<IEnumerable<EmpowermentWithdrawalReasonResult>>(validationResult.Errors);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentWithdrawReasons), validationResult);
+            return BadRequest<string>(validationResult.Errors);
         }
 
         var empowerment = await _context.EmpowermentStatements
@@ -715,15 +810,16 @@ public class EmpowermentsService : BaseService
 
         if (empowerment == null)
         {
-            _logger.LogInformation("No empowerment with id {EmpowermentId} found.", message.EmpowermentId);
-            return NotFound(nameof(message.EmpowermentId), message.EmpowermentId);
+            _logger.LogWarning("No empowerment with id {EmpowermentId} found.", message.EmpowermentId);
+            return NotFound<string>(nameof(message.EmpowermentId), message.EmpowermentId);
         }
 
         // Check if the withdraw person is an authorizer
         if (!empowerment.AuthorizerUids.Any(au => au.Uid == message.Uid && au.UidType == message.UidType))
         {
-            _logger.LogInformation("{Uid} can't be allowed to withdraw empowerment with id {EmpowermentId}.", message.Uid, message.EmpowermentId);
-            return new ServiceResult
+            var maskedUid = Regex.Replace(message.Uid, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
+            _logger.LogWarning("{Uid} can't be allowed to withdraw empowerment with id {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Errors = new List<KeyValuePair<string, string>>
@@ -734,11 +830,16 @@ public class EmpowermentsService : BaseService
         }
 
         // Only Active empowerment can be withdraw
-        var withdrawableStatuses = new EmpowermentStatementStatus[] { EmpowermentStatementStatus.Active, EmpowermentStatementStatus.Unconfirmed };
+        var withdrawableStatuses = new EmpowermentStatementStatus[]
+        {
+            EmpowermentStatementStatus.CollectingAuthorizerSignatures,
+            EmpowermentStatementStatus.Active,
+            EmpowermentStatementStatus.Unconfirmed
+        };
         if (!withdrawableStatuses.Contains(empowerment.Status))
         {
-            _logger.LogInformation("Can't withdraw empowerment with id {EmpowermentId} and status {CurrentStatus}.", message.EmpowermentId, empowerment.Status);
-            return new ServiceResult<bool>
+            _logger.LogWarning("Can't withdraw empowerment with id {EmpowermentId} and status {CurrentStatus}.", message.EmpowermentId, empowerment.Status);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Conflict,
                 Errors = new List<KeyValuePair<string, string>>
@@ -751,8 +852,8 @@ public class EmpowermentsService : BaseService
         // When starting new withdrawal process reason is mandatory
         if (string.IsNullOrWhiteSpace(message.Reason))
         {
-            _logger.LogInformation("Can't withdraw empowerment without a reason.");
-            return BadRequest(nameof(message.Reason), "Must not be empty");
+            _logger.LogWarning("Can't withdraw empowerment without a reason.");
+            return BadRequest<string>(nameof(message.Reason), "Must not be empty");
         }
 
         // Start process
@@ -789,7 +890,8 @@ public class EmpowermentsService : BaseService
         });
 
         _logger.LogInformation("Confirmed withdrawal of empowerment with id {EmpowermentId}.", message.EmpowermentId);
-        return Accepted();
+
+        return Accepted(empowerment.Number);
     }
 
     public async Task<ServiceResult<bool>> ChangeEmpowermentsWithdrawStatusAsync(ChangeEmpowermentWithdrawalStatus message)
@@ -855,7 +957,7 @@ public class EmpowermentsService : BaseService
         return Ok(result);
     }
 
-    public async Task<ServiceResult> DisagreeEmpowermentAsync(DisagreeEmpowerment message)
+    public async Task<ServiceResult<string>> DisagreeEmpowermentAsync(DisagreeEmpowerment message)
     {
         if (message is null)
         {
@@ -868,7 +970,7 @@ public class EmpowermentsService : BaseService
         if (!validationResult.IsValid)
         {
             _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(DisagreeEmpowerment), validationResult);
-            return BadRequest(validationResult.Errors);
+            return BadRequest<string>(validationResult.Errors);
         }
 
         var empowerment = await _context.EmpowermentStatements
@@ -880,14 +982,15 @@ public class EmpowermentsService : BaseService
         if (empowerment == null)
         {
             _logger.LogInformation("No empowerment with id {EmpowermentId} found.", message.EmpowermentId);
-            return NotFound(nameof(message.EmpowermentId), message.EmpowermentId);
+            return NotFound<string>(nameof(message.EmpowermentId), message.EmpowermentId);
         }
 
+        var maskedUid = Regex.Replace(message.Uid, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
         // Check if person declaring disagreement is empowered
         if (!empowerment.EmpoweredUids.Any(au => au.Uid == message.Uid && au.UidType == message.UidType))
         {
-            _logger.LogInformation("{Uid} forbidden to declare disagreement with empowerment {EmpowermentId}.", message.Uid, message.EmpowermentId);
-            return new ServiceResult
+            _logger.LogWarning("{Uid} forbidden to declare disagreement with empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Errors = new List<KeyValuePair<string, string>>
@@ -897,13 +1000,13 @@ public class EmpowermentsService : BaseService
             };
         }
 
-        // Only Active empowerment can be disagree
+        // Only empowerment with these statuses can be disagreed
         var disagreeableStatuses = new EmpowermentStatementStatus[] { EmpowermentStatementStatus.Active, EmpowermentStatementStatus.Unconfirmed };
         if (!disagreeableStatuses.Contains(empowerment.Status)
             || (empowerment.ExpiryDate.HasValue && empowerment.ExpiryDate.Value < DateTime.UtcNow))
         {
-            _logger.LogInformation("{Uid} tried declaring disagreement with expired empowerment {EmpowermentId}.", message.Uid, message.EmpowermentId);
-            return new ServiceResult
+            _logger.LogWarning("{Uid} tried declaring disagreement with expired empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Conflict,
                 Errors = new List<KeyValuePair<string, string>>
@@ -917,15 +1020,15 @@ public class EmpowermentsService : BaseService
         {
             message.CorrelationId,
             message.EmpowermentId,
-            Uids = new UserIdentifierData[] { new() { Uid = message.Uid, UidType = message.UidType } },
+            Uids = new UserIdentifierData[] { new() { Uid = message.Uid, UidType = message.UidType, Name = message.Name } },
             RespondWithRawServiceResult = true,
             RapidRetries = true
         });
 
         if (checkUidForRestrictionResult == null)
         {
-            _logger.LogInformation("No response from restriction check for {Uid} during declaring disagreement with empowerment {EmpowermentId}.", message.Uid, message.EmpowermentId);
-            return new ServiceResult
+            _logger.LogWarning("No response from restriction check for {Uid} during declaring disagreement with empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.InternalServerError,
                 Error = "Failed checking uid restriction status."
@@ -934,20 +1037,20 @@ public class EmpowermentsService : BaseService
 
         if (checkUidForRestrictionResult.Message?.StatusCode != HttpStatusCode.OK)
         {
-            _logger.LogWarning("Failed restriction check for {Uid} during declaring disagreement with empowerment {EmpowermentId}.", message.Uid, message.EmpowermentId);
+            _logger.LogWarning("Failed restriction check for {Uid} during declaring disagreement with empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
 
-            return new ServiceResult
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.InternalServerError,
-                Error = String.Join(",", checkUidForRestrictionResult.Message?.Errors?.Select(kvp => kvp.Value) ?? Array.Empty<string>())
+                Error = string.Join(",", checkUidForRestrictionResult.Message?.Errors?.Select(kvp => kvp.Value) ?? Array.Empty<string>())
             };
         }
 
-        if (!checkUidForRestrictionResult.Message?.Result?.Successfull ?? true)
+        if (!checkUidForRestrictionResult.Message?.Result?.Successful ?? true)
         {
-            _logger.LogInformation("{Uid} has restrictions. Denying declaring disagreement with empowerment {EmpowermentId}.", message.Uid, message.EmpowermentId);
+            _logger.LogWarning("{Uid} has restrictions. Denying declaring disagreement with empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
 
-            return new ServiceResult
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Errors = new List<KeyValuePair<string, string>>
@@ -966,61 +1069,39 @@ public class EmpowermentsService : BaseService
             Reason = message.Reason,
             EmpowermentStatement = empowerment
         };
-        using var sha256 = SHA256.Create();
-        var disagreementHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(empowermentDisagreement.ToString()));
-        var timestampRequest = Rfc3161TimestampRequest.CreateFromData(disagreementHash, HashAlgorithmName.SHA256, requestSignerCertificates: true);
-
-        // I've observed that regardless of hashSize, encoded result was always 59 bytes
-        var resultData = new byte[64];
-        if (!timestampRequest.TryEncode(resultData, out int OK))
-        {
-            _logger.LogInformation("Failed encoding result data for empowerment {EmpowermentId}", empowerment.Id);
-            return InternalServerError("Failed encoding result data.");
-        }
 
         HttpResponseMessage response;
         try
         {
-            response = await TimestampDataAsync(resultData);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request to timestamping server failed.");
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
-        }
-        catch (TaskCanceledException ex)
-        {
-            _logger.LogError(ex, "HTTP request to timestamping server timed out.");
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.RequestTimeout };
+            response = await TimestampPlainTextDataAsync(message.CorrelationId, empowermentDisagreement.Id, empowermentDisagreement.ToString());
         }
         catch (Exception ex)
         {
             var logMessage = "An unexpected error occurred during the timestamping server call.";
             _logger.LogError(ex, logMessage);
-            return InternalServerError<TimestampingOutcome>(logMessage);
+            return InternalServerError<string>(logMessage);
         }
         var responseRawData = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             _logger.LogInformation("Timestamping call failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
-            return new ServiceResult { StatusCode = HttpStatusCode.BadGateway };
+            return new ServiceResult<string> { StatusCode = HttpStatusCode.BadGateway };
         }
 
-        var responseObj = JsonConvert.DeserializeObject<TimestampServerTokenResponse>(responseRawData);
+        var responseObj = JsonConvert.DeserializeObject<TimestampResponse>(responseRawData);
         if (responseObj is null)
         {
             _logger.LogInformation("Deserialization of timestamp token response failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
-            return new ServiceResult { StatusCode = HttpStatusCode.BadGateway };
+            return new ServiceResult<string> { StatusCode = HttpStatusCode.BadGateway };
         }
 
-        var verifySignatureForData = VerifyHashWithTimestampSignatureData(disagreementHash, timestampRequest, responseObj.Data);
-        if (!verifySignatureForData)
+        var signature = responseObj?.Data?.Signatures?.FirstOrDefault()?.Signature;
+        if (string.IsNullOrWhiteSpace(signature))
         {
-            _logger.LogInformation("Timestamp signature for data verification failed for empowerment {EmpowermentId}", empowerment.Id);
-            return InternalServerError("Timestamp signature for data verification failed.");
+            _logger.LogWarning("Malformed or missing signature data while disagreeing empowerment {EmpowermentId} with disagreement {EmpowermentDisagreementId}", empowerment.Id, empowermentDisagreement.Id);
+            return new ServiceResult<string> { StatusCode = HttpStatusCode.BadGateway };
         }
-
-        empowermentDisagreement.TimestampData = responseObj.Data;
+        empowermentDisagreement.TimestampData = signature;
 
         _context.EmpowermentDisagreements.Add(empowermentDisagreement);
         empowerment.Status = EmpowermentStatementStatus.DisagreementDeclared;
@@ -1043,7 +1124,7 @@ public class EmpowermentsService : BaseService
             {
                 message.CorrelationId,
                 message.EmpowermentId,
-                Uids = empowerment.AuthorizerUids.Select(au => new UserIdentifierData { Uid = au.Uid, UidType = au.UidType }),
+                Uids = empowerment.AuthorizerUids.Select(au => new UserIdentifierData { Uid = au.Uid, UidType = au.UidType, Name = au.Name }),
                 EventCode = Events.EmpowermentWasDisagreed.Code,
                 Events.EmpowermentWasDisagreed.Translations
             }),
@@ -1051,15 +1132,15 @@ public class EmpowermentsService : BaseService
             {
                 message.CorrelationId,
                 message.EmpowermentId,
-                Uids = empowerment.EmpoweredUids.Select(eu => new UserIdentifierData { Uid = eu.Uid, UidType = eu.UidType }),
+                Uids = empowerment.EmpoweredUids.Select(eu => new UserIdentifierData { Uid = eu.Uid, UidType = eu.UidType, Name = eu.Name }),
                 EventCode = Events.EmpowermentToMeWasDisagreed.Code,
                 Events.EmpowermentToMeWasDisagreed.Translations
             })
         };
 
         await Task.WhenAll(messageTasks);
-        _logger.LogInformation("{Uid} successfully declared disagreement with empowerment {EmpowermentId}.", message.Uid, message.EmpowermentId);
-        return Ok();
+        _logger.LogInformation("{Uid} successfully declared disagreement with empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
+        return Ok(empowerment.Number);
     }
 
     public async Task<ServiceResult<IPaginatedData<EmpowermentStatementResult>>> GetEmpowermentsByDeauAsync(GetEmpowermentsByDeau message)
@@ -1092,7 +1173,7 @@ public class EmpowermentsService : BaseService
            .Where(es =>
                 es.EmpoweredUids.Any(eu => eu.Uid == message.EmpoweredUid && eu.UidType == message.EmpoweredUidType) &&
                 es.CreatedOn.Value.Date <= message.StatusOn.ToUniversalTime().Date &&
-                es.SupplierId == message.SupplierId &&
+                es.ProviderId == message.ProviderId &&
                 es.ServiceId == message.ServiceId)
            .AsQueryable<EmpowermentStatementResult>()
            .AsNoTracking()
@@ -1126,21 +1207,97 @@ public class EmpowermentsService : BaseService
         if (message.VolumeOfRepresentation is not null)
         {
             var ids = (await empowermentStatements
-                   .ToListAsync()).Where(es => message.VolumeOfRepresentation.All(vor => es.VolumeOfRepresentation.Select(x => x.Code).Contains(vor)))
+                   .ToListAsync()).Where(es => message.VolumeOfRepresentation.All(vor => es.VolumeOfRepresentation.Select(x => x.Name).Contains(vor)))
                    .Select(e => e.Id);
 
             empowermentStatements = empowermentStatements.Where(x => ids.Contains(x.Id));
         }
 
-        empowermentStatements = empowermentStatements
-            .OrderBy(es => es.Status)
-            .ThenByDescending(es => !es.ExpiryDate.HasValue || (es.ExpiryDate.HasValue && es.ExpiryDate > DateTime.UtcNow))
-            .ThenBy(es => es.ExpiryDate);
+        if (message.SortBy.HasValue)
+        {
+            if (message.SortDirection == SortDirection.Desc)
+            {
+                empowermentStatements = message.SortBy switch
+                {
+                    EmpowermentsByDeauSortBy.Name => empowermentStatements.OrderByDescending(es => es.Name),
+                    EmpowermentsByDeauSortBy.ServiceName => empowermentStatements.OrderByDescending(es => es.ServiceName),
+                    EmpowermentsByDeauSortBy.ExpiryDate => empowermentStatements.OrderByDescending(es => es.ExpiryDate),
+                    _ => empowermentStatements.OrderByDescending(es => es.Name),
+                };
+            }
+            else
+            {
+                empowermentStatements = message.SortBy switch
+                {
+                    EmpowermentsByDeauSortBy.Name => empowermentStatements.OrderBy(es => es.Name),
+                    EmpowermentsByDeauSortBy.ServiceName => empowermentStatements.OrderBy(es => es.ServiceName),
+                    EmpowermentsByDeauSortBy.ExpiryDate => empowermentStatements.OrderBy(es => es.ExpiryDate),
+                    _ => empowermentStatements.OrderBy(es => es.Name),
+                };
+            }
+        }
+        else
+        {
+            empowermentStatements = empowermentStatements
+                .OrderBy(es => es.Status)
+                .ThenByDescending(es => !es.ExpiryDate.HasValue || (es.ExpiryDate.HasValue && es.ExpiryDate > DateTime.UtcNow))
+                .ThenBy(es => es.ExpiryDate);
+        }
 
         // Execute query 
         var result = await PaginatedData<EmpowermentStatementResult>.CreateAsync(empowermentStatements, message.PageIndex, message.PageSize);
+        var activeOrUnconfirmedEmpowermentStatements = result.Data.Where(es => es.Status == EmpowermentStatementStatus.Active || es.Status == EmpowermentStatementStatus.Unconfirmed);
+
+        if (activeOrUnconfirmedEmpowermentStatements.Any())
+        {
+            var sagasCheckResult = await _checkEmpowermentVerificationSagasClient.GetResponse<EmpowermentsVerificationSagasCheckResult>(new
+            {
+                message.CorrelationId,
+                EmpowermentIds = activeOrUnconfirmedEmpowermentStatements.Select(x => x.Id)
+            });
+            if (!sagasCheckResult.Message.AllSagasExistAndFinished)
+            {
+                var tasks = activeOrUnconfirmedEmpowermentStatements
+                            .Where(es => sagasCheckResult.Message.MissingIds.Contains(es.Id))
+                            .Select(es => _publishEndpoint.Publish<InitiateEmpowermentValidationProcess>(new
+                            {
+                                message.CorrelationId,
+                                EmpowermentId = es.Id,
+                                es.OnBehalfOf,
+                                es.Uid,
+                                es.UidType,
+                                es.Name,
+                                es.IssuerPosition,
+                                es.AuthorizerUids,
+                                es.EmpoweredUids
+                            }));
+
+                await Task.WhenAll(tasks);
+                return Accepted(PaginatedData<EmpowermentStatementResult>.CreateEmpty(message.PageIndex));
+            }
+        }
 
         result.Data.ToList().ForEach(x => x.CalculateStatusOn(message.StatusOn));
+
+        // Send EmpowermentIsBeingCheckedFromDEAU notifications to all involved Uids
+        var notifiedUids = result.Data.SelectMany(s => s.AuthorizerUids).Select(u => (u.Uid, u.UidType)).ToList();
+        notifiedUids.AddRange(result.Data.SelectMany(s => s.EmpoweredUids).Select(u => (u.Uid, u.UidType)).ToList());
+        notifiedUids.AddRange(result.Data.Where(es => es.OnBehalfOf == OnBehalfOf.Individual).Select(u => (u.Uid, u.UidType)).ToList());
+        notifiedUids = notifiedUids.Distinct().ToList();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        Task.Run(async () =>
+        {
+            var tasks = notifiedUids.Select(n => _notificationSender.SendAsync(
+                new NotifyUid
+                {
+                    CorrelationId = message.CorrelationId,
+                    Uid = n.Uid,
+                    UidType = n.UidType,
+                    EventCode = Events.EmpowermentIsBeingCheckedByDEAU.Code
+                }));
+            await Task.WhenAll(tasks);
+        });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         // Result
         return Ok(result);
@@ -1165,20 +1322,20 @@ public class EmpowermentsService : BaseService
         var empowermentStatement = await _context.EmpowermentStatements.FirstOrDefaultAsync(s => s.Id == message.EmpowermentId);
         if (empowermentStatement is null)
         {
-            _logger.LogInformation("Administration {AdministrationId} tried to deny non-existent empowerment ({EmpowermentId}).", message.AdministrationId, message.EmpowermentId);
+            _logger.LogInformation("Provider {ProviderId} tried to deny non-existent empowerment ({EmpowermentId}).", message.ProviderId, message.EmpowermentId);
             return NotFound<Guid>(nameof(message.EmpowermentId), message.EmpowermentId);
         }
 
         //Check if the empowerment with the given Id belongs to the logged DEAU
-        if (empowermentStatement.SupplierId != message.AdministrationId)
+        if (empowermentStatement.ProviderId != message.ProviderId)
         {
-            _logger.LogInformation("Administration {AdministrationId} tried to deny another supplier's empowerment ({EmpowermentId}).", message.AdministrationId, message.EmpowermentId);
+            _logger.LogInformation("Provider {ProviderId} tried to deny another supplier's empowerment ({EmpowermentId}).", message.ProviderId, message.EmpowermentId);
             return new ServiceResult<Guid>
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new ("Forbidden", $"'{message.AdministrationId}' can't be allowed to deny this empowerment.")
+                    new ("Forbidden", $"'{message.ProviderId}' can't be allowed to deny this empowerment.")
                 }
             };
         }
@@ -1186,7 +1343,7 @@ public class EmpowermentsService : BaseService
         //Check if the empowerment is in status Unconfirmed or Active
         if (empowermentStatement.Status != EmpowermentStatementStatus.Unconfirmed && empowermentStatement.Status != EmpowermentStatementStatus.Active)
         {
-            _logger.LogInformation("Administration {AdministrationId} tried to deny {EmpowermentStatus} empowerment ({EmpowermentId}).", message.AdministrationId, empowermentStatement.Status, message.EmpowermentId);
+            _logger.LogInformation("Provider {ProviderId} tried to deny {EmpowermentStatus} empowerment ({EmpowermentId}).", message.ProviderId, empowermentStatement.Status, message.EmpowermentId);
             return new ServiceResult<Guid>
             {
                 StatusCode = HttpStatusCode.Conflict,
@@ -1219,7 +1376,7 @@ public class EmpowermentsService : BaseService
         {
             message.CorrelationId,
             message.EmpowermentId,
-            Uids = empowermentStatement.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+            Uids = empowermentStatement.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
             EventCode = Events.EmpowermentDeclined.Code,
             Events.EmpowermentDeclined.Translations
         });
@@ -1247,20 +1404,20 @@ public class EmpowermentsService : BaseService
         var empowermentStatement = await _context.EmpowermentStatements.FirstOrDefaultAsync(s => s.Id == message.EmpowermentId);
         if (empowermentStatement is null)
         {
-            _logger.LogInformation("Administration {AdministrationId} tried to approve non-existent empowerment ({EmpowermentId}).", message.AdministrationId, message.EmpowermentId);
+            _logger.LogInformation("Provider {ProviderId} tried to approve non-existent empowerment ({EmpowermentId}).", message.ProviderId, message.EmpowermentId);
             return NotFound<Guid>(nameof(message.EmpowermentId), message.EmpowermentId);
         }
 
         //Check if the empowerment with the given Id belongs to the logged DEAU
-        if (empowermentStatement.SupplierId != message.AdministrationId)
+        if (empowermentStatement.ProviderId != message.ProviderId)
         {
-            _logger.LogInformation("Administration {AdministrationId} tried to approve another supplier's empowerment ({EmpowermentId}).", message.AdministrationId, message.EmpowermentId);
+            _logger.LogInformation("Provider {ProviderId} tried to approve another provider's empowerment ({EmpowermentId}).", message.ProviderId, message.EmpowermentId);
             return new ServiceResult<Guid>
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new ("Forbidden", $"'{message.AdministrationId}' can't be allowed to approve this empowerment.")
+                    new ("Forbidden", $"'{message.ProviderId}' can't be allowed to approve this empowerment.")
                 }
             };
         }
@@ -1268,7 +1425,7 @@ public class EmpowermentsService : BaseService
         //Check if the empowerment is in status Unconfirmed 
         if (empowermentStatement.Status != EmpowermentStatementStatus.Unconfirmed)
         {
-            _logger.LogInformation("Administration {AdministrationId} tried to approve {EmpowermentStatus} empowerment ({EmpowermentId}).", message.AdministrationId, empowermentStatement.Status, message.EmpowermentId);
+            _logger.LogInformation("Provider {ProviderId} tried to approve {EmpowermentStatus} empowerment ({EmpowermentId}).", message.ProviderId, empowermentStatement.Status, message.EmpowermentId);
             return new ServiceResult<Guid>
             {
                 StatusCode = HttpStatusCode.Conflict,
@@ -1299,7 +1456,7 @@ public class EmpowermentsService : BaseService
         {
             message.CorrelationId,
             message.EmpowermentId,
-            Uids = empowermentStatement.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+            Uids = empowermentStatement.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
             EventCode = Events.EmpowermentCompleted.Code,
             Events.EmpowermentCompleted.Translations
         });
@@ -1308,7 +1465,7 @@ public class EmpowermentsService : BaseService
         return Ok(empowermentStatement.Id);
     }
 
-    public async Task<ServiceResult> SignEmpowermentAsync(SignEmpowerment message)
+    public async Task<ServiceResult<string>> SignEmpowermentAsync(SignEmpowerment message)
     {
         if (message is null)
         {
@@ -1321,18 +1478,19 @@ public class EmpowermentsService : BaseService
         if (!validationResult.IsValid)
         {
             _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(SignEmpowerment), validationResult);
-            return BadRequest(validationResult.Errors);
+            return BadRequest<string>(validationResult.Errors);
         }
 
         var empowerment = await _context.EmpowermentStatements
             .Include(es => es.AuthorizerUids)
+            .Include(es => es.EmpowermentSignatures)
             .AsSplitQuery()
             .FirstOrDefaultAsync(es => es.Id == message.EmpowermentId);
 
         if (empowerment == null)
         {
             _logger.LogInformation("No empowerment with id {EmpowermentId} found.", message.EmpowermentId);
-            return NotFound(nameof(message.EmpowermentId), message.EmpowermentId);
+            return NotFound<string>(nameof(message.EmpowermentId), message.EmpowermentId);
         }
 
         var maskedUid = Regex.Replace(message.Uid, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
@@ -1341,8 +1499,8 @@ public class EmpowermentsService : BaseService
         if (!empowerment.AuthorizerUids.Any(au => au.Uid == message.Uid && au.UidType == message.UidType)
             || !xmlEmpowerment.AuthorizerUids.Any(au => au.Uid == message.Uid && au.UidType == message.UidType))
         {
-            _logger.LogInformation("{Uid} forbidden to sign empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
-            return new ServiceResult
+            _logger.LogWarning("{Uid} forbidden to sign empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Forbidden,
                 Errors = new List<KeyValuePair<string, string>>
@@ -1354,22 +1512,37 @@ public class EmpowermentsService : BaseService
 
         if (empowerment.Status != EmpowermentStatementStatus.CollectingAuthorizerSignatures)
         {
-            _logger.LogInformation("{Uid} tried signing {EmpowermentId}.", maskedUid, message.EmpowermentId);
-            return new ServiceResult
+            _logger.LogWarning("{Uid} tried signing {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
             {
                 StatusCode = HttpStatusCode.Conflict,
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new ("Invalid status", $"'Only {EmpowermentStatementStatus.CollectingAuthorizerSignatures} empowerments can be signed.")
+                    new ("Invalid status", $"Only {EmpowermentStatementStatus.CollectingAuthorizerSignatures} empowerments can be signed.")
                 }
             };
         }
 
-        var verifySignatureServiceResult = await _verificationService.VerifySignatureAsync(empowerment.XMLRepresentation, message.DetachedSignature, message.Uid, message.UidType, message.SignatureProvider);
+        var verifySignatureServiceResult = await _verificationService.VerifySignatureAsync(message.CorrelationId, empowerment.XMLRepresentation, message.DetachedSignature, message.Uid, message.UidType, message.SignatureProvider);
         if (verifySignatureServiceResult.StatusCode != HttpStatusCode.OK)
         {
-            return verifySignatureServiceResult;
+            return verifySignatureServiceResult.ToType<string>();
         }
+
+        var alreadySigned = empowerment.EmpowermentSignatures.Any(es => es.SignerUid == message.Uid && es.SignerUidType == message.UidType);
+        if (alreadySigned)
+        {
+            _logger.LogWarning("{Uid} has already signed the Empowerment: {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return new ServiceResult<string>
+            {
+                StatusCode = HttpStatusCode.Conflict,
+                Errors = new List<KeyValuePair<string, string>>
+                {
+                    new ("Invalid status", "You have already signed this empowerment")
+                }
+            };
+        }
+
         try
         {
             _context.EmpowermentSignatures.Add(new EmpowermentSignature
@@ -1392,12 +1565,12 @@ public class EmpowermentsService : BaseService
                 SignerUidType = message.UidType,
             });
             _logger.LogInformation("{Uid} successfully signed empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
-            return Ok();
+            return Ok(empowerment.Number);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "{Uid} failed signing empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
-            return UnhandledException();
+            _logger.LogError(ex, "{Uid} failed signing empowerment {EmpowermentId}.", maskedUid, message.EmpowermentId);
+            return UnhandledException<string>();
         }
     }
 
@@ -1413,7 +1586,7 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{RequestName} validation failed. {Errors}", nameof(GetExpiringEmpowermentsRequest), validationResult);
+            _logger.LogWarning("{RequestName} validation failed. {Errors}", nameof(GetExpiringEmpowermentsRequest), validationResult);
             return BadRequest<IEnumerable<EmpowermentStatementResult>>(validationResult.Errors);
         }
 
@@ -1447,7 +1620,7 @@ public class EmpowermentsService : BaseService
         var validationResult = await validator.ValidateAsync(message);
         if (!validationResult.IsValid)
         {
-            _logger.LogInformation("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsByEik), validationResult);
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsByEik), validationResult);
             return BadRequest<IPaginatedData<EmpowermentStatementResult>>(validationResult.Errors);
         }
 
@@ -1480,9 +1653,9 @@ public class EmpowermentsService : BaseService
             };
         }
 
-        if (!string.IsNullOrWhiteSpace(message.SupplierName))
+        if (!string.IsNullOrWhiteSpace(message.ProviderName))
         {
-            empowermentStatements = empowermentStatements.Where(es => es.SupplierName.ToLower().Contains(message.SupplierName.ToLower()));
+            empowermentStatements = empowermentStatements.Where(es => es.ProviderName.ToLower().Contains(message.ProviderName.ToLower()));
         }
 
         if (!string.IsNullOrWhiteSpace(message.ServiceName))
@@ -1508,7 +1681,7 @@ public class EmpowermentsService : BaseService
                 empowermentStatements = message.SortBy switch
                 {
                     EmpowermentsByEikSortBy.Name => empowermentStatements.OrderByDescending(es => es.Name),
-                    EmpowermentsByEikSortBy.SupplierName => empowermentStatements.OrderByDescending(es => es.SupplierName),
+                    EmpowermentsByEikSortBy.ProviderName => empowermentStatements.OrderByDescending(es => es.ProviderName),
                     EmpowermentsByEikSortBy.ServiceName => empowermentStatements.OrderByDescending(es => es.ServiceName),
                     EmpowermentsByEikSortBy.Uid => empowermentStatements.OrderByDescending(es => es.EmpoweredUids.Select(e => e.Uid)),
 
@@ -1531,7 +1704,7 @@ public class EmpowermentsService : BaseService
                 empowermentStatements = message.SortBy switch
                 {
                     EmpowermentsByEikSortBy.Name => empowermentStatements.OrderBy(es => es.Name),
-                    EmpowermentsByEikSortBy.SupplierName => empowermentStatements.OrderBy(es => es.SupplierName),
+                    EmpowermentsByEikSortBy.ProviderName => empowermentStatements.OrderBy(es => es.ProviderName),
                     EmpowermentsByEikSortBy.ServiceName => empowermentStatements.OrderBy(es => es.ServiceName),
                     EmpowermentsByEikSortBy.Uid => empowermentStatements.OrderBy(es => es.EmpoweredUids.Select(e => e.Uid)),
 
@@ -1584,23 +1757,18 @@ public class EmpowermentsService : BaseService
         {
             result.Data.ToList().ForEach(x => x.CalculateStatusOn(DateTime.UtcNow));
 
-            //NTR Check if requester is part of legal entity's representatives
-            var verificationResult = await _verificationService.VerifyRequesterInLegalEntityAsync(new CheckLegalEntityInNTRData
-            {
-                CorrelationId = message.CorrelationId,
-                Uid = message.Eik,                                                     // Eik of the legal entity. Used to match with data in TR.
-                Name = result.Data.First().Name,                                       // Name of the legal entity. Used to match with data in TR.
-                IssuerName = message.IssuerName,                                       // Name of the requester. Used to match with data in TR.
-                IssuerPosition = nameof(CheckLegalEntityInNTRData.IssuerPosition),     // TODO: Not used at the moment
-                IssuerUid = message.IssuerUid,                                         // Uid of the requester. Used to match with data in TR.
-                IssuerUidType = message.IssuerUidType,                                 // UidType of the requester. Used to match with data in TR.
-            });
+            //Confirm legal entity name and issuer
+            var legalEntityActualState = await _verificationService.GetLegalEntityActualStateAsync(message.CorrelationId, message.Eik);
+            var legalEntity = legalEntityActualState.Result;
+            var incorrectCompanyData = !legalEntity.MatchCompanyData(result.Data.First().Name, message.Eik);
+            var issuerIsNotRepresenter = !legalEntity.IsAmongRepresentatives(message.IssuerUid, message.IssuerName);
+            var representativesDataIsAvailable = legalEntity.ContainsRepresentativesData();
 
-            //If there is a problem verifying requester or he is not part of legal entity's representation - access is forbidden
-            if (verificationResult is null || verificationResult.Result is null || !verificationResult.Result.Successfull)
+            if (incorrectCompanyData || (representativesDataIsAvailable && issuerIsNotRepresenter))
             {
                 var bulstatResult = await _verificationService.CheckLegalEntityInBulstatAsync(new CheckLegalEntityInBulstatRequest
                 {
+                    CorrelationId = message.CorrelationId,
                     Uid = message.Eik,
                     AuthorizerUids = new AuthorizerUidData[] {
                         new AuthorizerUidData {
@@ -1628,7 +1796,7 @@ public class EmpowermentsService : BaseService
         return Ok(result);
     }
 
-    public async Task<bool> ConfirmAuthorizersInLegalEntityRepresentationAsync(Guid empowermentId, LegalEntityActualState legalEntityActualState)
+    public async Task<bool?> ConfirmAuthorizersInLegalEntityRepresentationAsync(Guid empowermentId, LegalEntityActualState legalEntityActualState)
     {
         if (legalEntityActualState is null)
         {
@@ -1640,11 +1808,9 @@ public class EmpowermentsService : BaseService
             throw new ArgumentNullException(nameof(empowermentId));
         }
 
-        var wOr = GetWayOfRepresentation(legalEntityActualState);
-
-        var authorizerUids = await _context.AuthorizerUids
+        var authorizersData = await _context.AuthorizerUids
             .Where(a => a.EmpowermentStatementId == empowermentId)
-            .Select(a => new UserIdentifierWithNameData
+            .Select(a => new AuthorizerIdentifierData
             {
                 Uid = a.Uid,
                 UidType = a.UidType,
@@ -1652,68 +1818,17 @@ public class EmpowermentsService : BaseService
             })
             .ToListAsync();
 
-        var representativeRecords = legalEntityActualState?.Response?.ActualStateResponseV3?.Deed?
-            .Subdeeds?.Subdeed?.FirstOrDefault()?.Records?.Record
-            .Where(r => r.MainField?.MainFieldIdent == _representativeField1Id || r.MainField?.MainFieldIdent == _representativeField2Id || r.MainField?.MainFieldIdent == _representativeField3Id)
-            .Select(x =>
-            {
-                return JsonConvert.DeserializeObject<Representative>(x?.RecordData?["representative"]?.ToString()) ?? new Representative();
-            });
-
-        if (!authorizerUids.Any() || !representativeRecords.Any())
+        if (!authorizersData.Any() || legalEntityActualState.ContainsRepresentativesData())
         {
-            _logger.LogInformation("Missing Authorizers or Representatives information");
-            return false;
+            _logger.LogWarning("Missing Authorizers or Representatives information");
+            return null;
         }
 
-        //When Jointly we have to ensure authorziers legal entity representatives fully match. Count + Uids
-        if (wOr.Jointly == true && wOr.Severally == false)
-        {
-            if (authorizerUids.Count != representativeRecords.Count())
-            {
-                _logger.LogInformation("Authorizers and Representatives count mismatch");
-                return false;
-            }
-        }
-
-        //In every other case we have to check if all authorizers are present among Representatives
-        foreach (var authorizer in authorizerUids)
-        {
-            if (!representativeRecords.Any(x => x?.Subject?.Indent == authorizer.Uid &&
-                                                x?.Subject?.Name?.ToLower().Trim() == authorizer.Name.ToLower().Trim()))
-            {
-                _logger.LogInformation("Authorizer is missing from Representatives", authorizer);
-                return false;
-            }
-        }
-
-        _logger.LogInformation("All authorizers match with Representatives");
-        return true;
+        //We have to check if all authorizers are present among Representatives
+        return authorizersData.All(authorizer => legalEntityActualState.IsAmongRepresentatives(authorizer.Uid, authorizer.Name));
     }
 
-    public WayOfRepresentation GetWayOfRepresentation(LegalEntityActualState legalEntityActualState)
-    {
-        var wayOfRepresentation = legalEntityActualState?.Response?.ActualStateResponseV3?.Deed?.Subdeeds?.Subdeed?
-           .FirstOrDefault()?.Records?.Record
-           .FirstOrDefault(r => r.MainField?.MainFieldIdent == _wayOfRepresentationFieldId);
-
-        var wOrD = wayOfRepresentation?.RecordData?["wayOfRepresentation"];
-
-        var wOr = default(WayOfRepresentation);
-        try
-        {
-            wOr = JsonConvert.DeserializeObject<WayOfRepresentation>(wOrD.ToString());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Way of representation data malformed.");
-            throw;
-        }
-
-        return wOr;
-    }
-
-    public async Task<EmpowermentStatementResult> GetEmpowermentStatementByIdAsync(Guid id)
+    public async Task<EmpowermentStatementResult?> GetEmpowermentStatementByIdAsync(Guid id)
     {
         if (id == Guid.Empty)
         {
@@ -1726,8 +1841,45 @@ public class EmpowermentsService : BaseService
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<ServiceResult<TimestampingOutcome>> TimestampEmpowermentXmlAsync(Guid id)
+    public async Task<ServiceResult<EmpowermentStatementWithSignaturesResult>> GetEmpowermentStatementByIdAsync(GetEmpowermentById message)
     {
+        if (message is null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
+
+        // Validation
+        var validator = new GetEmpowermentByIdValidator();
+        var validationResult = await validator.ValidateAsync(message);
+        if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentById), validationResult);
+            return BadRequest<EmpowermentStatementWithSignaturesResult>(validationResult.Errors);
+        }
+
+        var result = await _context.EmpowermentStatements
+            .Include(es => es.AuthorizerUids)
+            .Include(es => es.EmpoweredUids)
+            .Include(es => es.EmpowermentSignatures)
+            .Include(es => es.EmpowermentDisagreements)
+            .Include(es => es.EmpowermentWithdrawals)
+            .Include(es => es.StatusHistory
+                .OrderByDescending(sh => sh.DateTime))
+            .FirstOrDefaultAsync(x => x.Id == message.EmpowermentId);
+        if (result is null)
+        {
+            return NotFound<EmpowermentStatementWithSignaturesResult>(nameof(EmpowermentStatement.Id), message.EmpowermentId);
+        }
+
+        return Ok<EmpowermentStatementWithSignaturesResult>(result);
+    }
+
+    public async Task<ServiceResult<TimestampingOutcome>> TimestampEmpowermentXmlAsync(Guid correlationId, Guid id)
+    {
+        if (correlationId == Guid.Empty)
+        {
+            throw new ArgumentNullException(nameof(correlationId));
+        }
         if (id == Guid.Empty)
         {
             throw new ArgumentNullException(nameof(id));
@@ -1741,72 +1893,27 @@ public class EmpowermentsService : BaseService
 
         if (_context.EmpowermentTimestamps.Any(et => et.EmpowermentStatementId == id))
         {
-            _logger.LogInformation("Attempt to timestamp already timestamped Empowerment {EmpowermentId}", id);
+            _logger.LogWarning("Attempt to timestamp already timestamped Empowerment {EmpowermentId}", id);
             return Conflict<TimestampingOutcome>(nameof(EmpowermentStatement.Timestamp), id);
         }
 
-        using var sha256 = SHA256.Create();
-        var xmlHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(empowermentStatement.XMLRepresentation));
-        var timestampRequest = Rfc3161TimestampRequest.CreateFromData(xmlHash, HashAlgorithmName.SHA256, requestSignerCertificates: true);
-        
-        // I've observed that regardless of hashSize, encoded result was always 59 bytes
-        var resultData = new byte[64];
-        if (!timestampRequest.TryEncode(resultData, out int OK))
+        var response = await TimestampXMLDataAsync(correlationId, empowermentStatement.Id, empowermentStatement.XMLRepresentation);
+        var body = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<TimestampResponse>(body);
+        var signature = result?.Data?.Signatures?.FirstOrDefault()?.Signature;
+
+        if (string.IsNullOrWhiteSpace(signature))
         {
-            _logger.LogInformation("Failed encoding timestamp request for empowerment {EmpowermentId}", id);
-            return InternalServerError<TimestampingOutcome>("Failed encoding result data.");
+            _logger.LogWarning("Malformed or missing signature for {EmpowermentId}", id);
+            return BadGateway<TimestampingOutcome>("Malformed or missing signature.");
         }
 
-        HttpResponseMessage response;
-        try
-        {
-            response = await TimestampDataAsync(resultData);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request to timestamping server failed.");
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
-        }
-        catch (TaskCanceledException ex)
-        {
-            _logger.LogError(ex, "HTTP request to timestamping server timed out.");
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.RequestTimeout };
-        }
-        catch (Exception ex)
-        {
-            var logMessage = "An unexpected error occurred during the timestamping server call.";
-            _logger.LogError(ex, logMessage);
-            return InternalServerError<TimestampingOutcome>(logMessage);
-        }
-        var responseRawData = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-        {
-            _logger.LogInformation("Timestamping call failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
-        }
-
-        var responseObj = JsonConvert.DeserializeObject<TimestampServerTokenResponse>(responseRawData);
-        if (responseObj is null)
-        {
-            _logger.LogInformation("Deserialization of timestamp token response failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
-        }
-
-        Rfc3161TimestampToken timestampToken = timestampRequest.ProcessResponse(Convert.FromBase64String(responseObj.Data), out _);
-        var verifySignatureForData = VerifyHashWithTimestampSignatureData(xmlHash, timestampRequest, responseObj.Data);
-        if (!verifySignatureForData)
-        {
-            _logger.LogInformation("Timestamp signature for data verification failed for empowerment {EmpowermentId}", id);
-            return InternalServerError<TimestampingOutcome>("Timestamp signature for data verification failed.");
-        }
-
-        // Store to DB
         try
         {
             var dbEntity = await _context.EmpowermentTimestamps.AddAsync(new EmpowermentTimestamp
             {
                 EmpowermentStatement = empowermentStatement,
-                Data = responseObj.Data,
+                Data = signature,
                 DateTime = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
@@ -1815,17 +1922,17 @@ public class EmpowermentsService : BaseService
         {
             if (ex.InnerException is PostgresException postgresException && postgresException.SqlState == "23505")
             {
-                _logger.LogInformation("Attempt to timestamp already timestamped Empowerment {EmpowermentId}", id);
+                _logger.LogWarning("Attempt to timestamp already timestamped Empowerment {EmpowermentId}", id);
                 return Conflict<TimestampingOutcome>(nameof(EmpowermentStatement.Timestamp), id);
             }
-            _logger.LogInformation(ex, "DBUpdateException during timestamp saving for Empowerment {EmpowermentId}", id);
+            _logger.LogWarning(ex, "DBUpdateException during timestamp saving for Empowerment {EmpowermentId}", id);
             return InternalServerError<TimestampingOutcome>("Persisting timestamp data error.");
         }
 
         return Ok(new TimestampingOutcome { Successful = true });
     }
 
-    public async Task<ServiceResult<TimestampingOutcome>> TimestampEmpowermentWithdrawalAsync(Guid empowermentId, Guid withdrawalId)
+    public async Task<ServiceResult<TimestampingOutcome>> TimestampEmpowermentWithdrawalAsync(Guid correlationId, Guid empowermentId, Guid withdrawalId)
     {
         if (empowermentId == Guid.Empty)
         {
@@ -1848,36 +1955,14 @@ public class EmpowermentsService : BaseService
 
         if (!string.IsNullOrWhiteSpace(empowermentWithdrawal.TimestampData))
         {
-            _logger.LogInformation("Attempt to timestamp already timestamped Empowerment {EmpowermentId}  Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
+            _logger.LogWarning("Attempt to timestamp already timestamped Empowerment {EmpowermentId}  Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
             return Conflict<TimestampingOutcome>(nameof(EmpowermentWithdrawal.TimestampData), empowermentId);
-        }
-
-        using var sha256 = SHA256.Create();
-        var withdrawalHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(empowermentWithdrawal.ToString()));
-        var timestampRequest = Rfc3161TimestampRequest.CreateFromData(withdrawalHash, HashAlgorithmName.SHA256, requestSignerCertificates: true);
-
-        // I've observed that regardless of hashSize, encoded result was always 59 bytes
-        var resultData = new byte[64];
-        if (!timestampRequest.TryEncode(resultData, out int OK))
-        {
-            _logger.LogInformation("Failed encoding result data for empowerment {EmpowermentId}  Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
-            return InternalServerError<TimestampingOutcome>("Failed encoding result data.");
         }
 
         HttpResponseMessage response;
         try
         {
-            response = await TimestampDataAsync(resultData);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request to timestamping server failed.");
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
-        }
-        catch (TaskCanceledException ex)
-        {
-            _logger.LogError(ex, "HTTP request to timestamping server timed out.");
-            return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.RequestTimeout };
+            response = await TimestampPlainTextDataAsync(correlationId, empowermentWithdrawal.Id, empowermentWithdrawal.ToString());
         }
         catch (Exception ex)
         {
@@ -1888,63 +1973,90 @@ public class EmpowermentsService : BaseService
         var responseRawData = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogInformation("Timestamping call failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
+            _logger.LogWarning("Timestamping call failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
             return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
         }
 
-        var responseObj = JsonConvert.DeserializeObject<TimestampServerTokenResponse>(responseRawData);
+        var responseObj = JsonConvert.DeserializeObject<TimestampResponse>(responseRawData);
         if (responseObj is null)
         {
-            _logger.LogInformation("Deserialization of timestamp token response failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
+            _logger.LogWarning("Deserialization of timestamp token response failed. StatusCode: {StatusCode}; Response raw data: {ResponseRawData}", response.StatusCode, responseRawData);
             return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
         }
 
-        var verifySignatureForData = VerifyHashWithTimestampSignatureData(withdrawalHash, timestampRequest, responseObj.Data);
-        if (!verifySignatureForData)
-        {
-            _logger.LogInformation("Timestamp signature for data verification failed for empowerment {EmpowermentId} Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
-            return InternalServerError<TimestampingOutcome>("Timestamp signature for data verification failed.");
-        }
-
-        // Store to DB
         try
         {
             if (_context.EmpowermentWithdrawals.Any(ew => ew.Id == withdrawalId && ew.EmpowermentStatementId == empowermentId && ew.TimestampData.Length > 0))
             {
-                _logger.LogInformation("Attempt to timestamp already timestamped Empowerment {EmpowermentId} Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
+                _logger.LogWarning("Attempt to timestamp already timestamped Empowerment {EmpowermentId} Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
                 return Conflict<TimestampingOutcome>(nameof(EmpowermentWithdrawal.TimestampData), withdrawalId);
             }
+            var signature = responseObj?.Data?.Signatures?.FirstOrDefault()?.Signature;
+            if (string.IsNullOrWhiteSpace(signature))
+            {
+                _logger.LogWarning("Malformed or missing signature data while withdrawing empowerment {EmpowermentId} with Withdrawal {EmpowermentWithdrawalId}", empowermentId, withdrawalId);
+                return new ServiceResult<TimestampingOutcome> { StatusCode = HttpStatusCode.BadGateway };
+            }
 
-            empowermentWithdrawal.TimestampData = responseObj.Data;
+            empowermentWithdrawal.TimestampData = signature;
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogInformation(ex, "DBUpdateException during timestamp saving for Empowerment {EmpowermentId} Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
+            _logger.LogError(ex, "DBUpdateException during timestamp saving for Empowerment {EmpowermentId} Withdrawal {WithdrawalId}", empowermentId, withdrawalId);
             return InternalServerError<TimestampingOutcome>("Persisting withdrawal timestamp data error.");
         }
 
         return Ok(new TimestampingOutcome { Successful = true });
     }
 
-    private async Task<HttpResponseMessage> TimestampDataAsync(byte[] resultData)
+    private async Task<HttpResponseMessage> TimestampXMLDataAsync(Guid correlationId, Guid empowermentStatementId, string xmlRepresentation)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, _timestampServerOptions.RequestTokenUrl);
-        request.Headers.TryAddWithoutValidation(HeaderNames.ContentType, System.Net.Mime.MediaTypeNames.Application.Json);
-        request.Content = System.Net.Http.Json.JsonContent.Create(new { data = Convert.ToBase64String(resultData), encoding = "BASE64" });
-
-        var response = await _timestampServerHttpClient.SendAsync(request);
-        return response;
+        var bytes = Encoding.UTF8.GetBytes(xmlRepresentation);
+        var requestBody = new
+        {
+            Contents = new[]
+            {
+                new
+                {
+                    MediaType = MediaTypeNames.Application.Xml,
+                    Data = Convert.ToBase64String(bytes),
+                    FileName = $"{empowermentStatementId}.xml",
+                    SignatureType = "XADES_BASELINE_B_DETACHED"
+                }
+            }
+        };
+        var content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, MediaTypeNames.Application.Json);
+        return await SendTimestampRequest(correlationId, content);
     }
 
-    /// <param name="sha256Hash">SHA256 hash that was timestamped</param>
-    /// <param name="timestampRequest"></param>
-    /// <param name="timestampingData">Base64 encoded data. Returned from timestamp server after successful timestamping.</param>
-    /// <returns></returns>
-    private static bool VerifyHashWithTimestampSignatureData(byte[] sha256Hash, Rfc3161TimestampRequest timestampRequest, string timestampingData)
+    private async Task<HttpResponseMessage> TimestampPlainTextDataAsync(Guid correlationId, Guid id, string text)
     {
-        Rfc3161TimestampToken timestampToken = timestampRequest.ProcessResponse(Convert.FromBase64String(timestampingData), out _);
-        return timestampToken.VerifySignatureForData(sha256Hash, out X509Certificate2 _);
+        var bytes = Encoding.UTF8.GetBytes(text);
+        var requestBody = new
+        {
+            Contents = new[]
+            {
+                new
+                {
+                    MediaType = MediaTypeNames.Text.Plain,
+                    Data = Convert.ToBase64String(bytes),
+                    FileName = $"{id}.txt",
+                    SignatureType = "CADES_BASELINE_B_DETACHED"
+                }
+            }
+        };
+        var content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, MediaTypeNames.Application.Json);
+        return await SendTimestampRequest(correlationId, content);
+    }
+
+    private Task<HttpResponseMessage> SendTimestampRequest(Guid correlationId, StringContent content)
+    {
+        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(HeaderNames.RequestId, correlationId.ToString());
+        return _httpClient.PostAsync(
+            "/api/v1/borica/sign",
+            content);
+
     }
 
     public class TimestampingOutcome
@@ -1970,6 +2082,215 @@ public class EmpowermentsService : BaseService
             .ToListAsync();
     }
 
+
+    public async Task<ServiceResult<IPaginatedData<EmpowermentStatementWithSignaturesResult>>> GetEmpowermentsByFilterAsync(GetEmpowermentsByFilter message)
+    {
+        if (message is null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
+
+        // Validation
+        var validator = new GetEmpowermentsByFilterValidator();
+        var validationResult = await validator.ValidateAsync(message);
+        if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("{CommandName} validation failed. {Errors}", nameof(GetEmpowermentsByFilter), validationResult);
+            return BadRequest<IPaginatedData<EmpowermentStatementWithSignaturesResult>>(validationResult.Errors);
+        }
+
+        // Action
+        var empowermentStatements = _context.EmpowermentStatements
+           .Include(es => es.AuthorizerUids)
+           .Include(es => es.EmpoweredUids)
+           .Include(es => es.EmpowermentSignatures)
+           .Include(es => es.EmpowermentWithdrawals
+               .Where(ew => ew.Status == EmpowermentWithdrawalStatus.Completed || ew.Status == EmpowermentWithdrawalStatus.InProgress)
+               .OrderByDescending(ew => ew.StartDateTime)
+               .Take(1))
+           .Include(es => es.EmpowermentDisagreements)
+           .Include(es => es.StatusHistory
+                .OrderByDescending(sh => sh.DateTime))
+           .AsQueryable<EmpowermentStatementWithSignaturesResult>()
+           .AsNoTracking()
+           .AsSingleQuery();
+
+        if (!string.IsNullOrWhiteSpace(message.Number))
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.Number.Contains(message.Number.ToUpper()));
+        }
+
+        if (message.Status.HasValue)
+        {
+            empowermentStatements = message.Status switch
+            {
+                EmpowermentsFromMeFilterStatus.Created => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Created),
+                EmpowermentsFromMeFilterStatus.CollectingAuthorizerSignatures => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.CollectingAuthorizerSignatures),
+                EmpowermentsFromMeFilterStatus.Active => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active && (es.ExpiryDate == null || es.ExpiryDate > DateTime.UtcNow)),
+                EmpowermentsFromMeFilterStatus.Denied => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Denied),
+                EmpowermentsFromMeFilterStatus.DisagreementDeclared => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.DisagreementDeclared),
+                EmpowermentsFromMeFilterStatus.Withdrawn => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Withdrawn),
+                EmpowermentsFromMeFilterStatus.Expired => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active && es.ExpiryDate < DateTime.UtcNow),
+                EmpowermentsFromMeFilterStatus.Unconfirmed => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Unconfirmed),
+                _ => empowermentStatements.Where(es => es.Status == EmpowermentStatementStatus.Active),
+            };
+        }
+
+        if (message.OnBehalfOf.HasValue)
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.OnBehalfOf == message.OnBehalfOf.Value);
+        }
+
+        if (message.CreatedOnFrom.HasValue)
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.CreatedOn >= message.CreatedOnFrom.Value);
+        }
+
+        if (message.CreatedOnTo.HasValue)
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.CreatedOn <= message.CreatedOnTo.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(message.EmpowermentUid))
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.Uid == message.EmpowermentUid);
+        }
+
+        if (!string.IsNullOrWhiteSpace(message.Authorizer))
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.Name.ToLower().Contains(message.Authorizer.ToLower()));
+        }
+
+        if (!string.IsNullOrWhiteSpace(message.ProviderName))
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.ProviderName.ToLower().Contains(message.ProviderName.ToLower()));
+        }
+
+        if (!string.IsNullOrWhiteSpace(message.ServiceName))
+        {
+            empowermentStatements = empowermentStatements
+                .Where(es => es.ServiceName.ToLower().Contains(message.ServiceName.ToLower()) || es.ServiceId.ToString().ToLower().Contains(message.ServiceName.ToLower()));
+        }
+
+        if (message.ValidToDate.HasValue)
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.ExpiryDate != null && es.ExpiryDate.Value <= message.ValidToDate.Value.ToUniversalTime());
+        }
+
+        if (message.ShowOnlyNoExpiryDate.HasValue && message.ShowOnlyNoExpiryDate.Value == true)
+        {
+            empowermentStatements = empowermentStatements.Where(es => es.ExpiryDate == null);
+        }
+
+        if (message.SortBy.HasValue)
+        {
+            if (message.SortDirection == SortDirection.Desc)
+            {
+                empowermentStatements = message.SortBy switch
+                {
+                    EmpowermentsFromMeSortBy.Name => empowermentStatements.OrderByDescending(es => es.Name),
+                    EmpowermentsFromMeSortBy.ProviderName => empowermentStatements.OrderByDescending(es => es.ProviderName),
+                    EmpowermentsFromMeSortBy.ServiceName => empowermentStatements.OrderByDescending(es => es.ServiceName),
+                    EmpowermentsFromMeSortBy.Uid => empowermentStatements.OrderByDescending(es => es.EmpoweredUids.Select(e => e.Uid)),
+
+                    EmpowermentsFromMeSortBy.Status => empowermentStatements
+                        .OrderByDescending(es => es.Status)
+                        // We need to separate Expired from Active empowerments by ExpiryDate
+                        // to have them properly ordered on CreatedOn later on.
+                        // When ExpiryDate is null or in the future - that empowerment is considered "Active",
+                        // on the other hand when ExpiryDate is not null and in the past - "Expired".
+                        .ThenBy(es => es.Status == EmpowermentStatementStatus.Active && (!es.ExpiryDate.HasValue || (es.ExpiryDate.HasValue && es.ExpiryDate < DateTime.UtcNow)))
+                        .ThenByDescending(es => es.CreatedOn)
+                        .ThenByDescending(es => es.ExpiryDate),
+
+                    EmpowermentsFromMeSortBy.CreatedOn => empowermentStatements.OrderByDescending(es => es.CreatedOn),
+                    _ => empowermentStatements.OrderByDescending(es => es.Name),
+                };
+            }
+            else
+            {
+                empowermentStatements = message.SortBy switch
+                {
+                    EmpowermentsFromMeSortBy.Name => empowermentStatements.OrderBy(es => es.Name),
+                    EmpowermentsFromMeSortBy.ProviderName => empowermentStatements.OrderBy(es => es.ProviderName),
+                    EmpowermentsFromMeSortBy.ServiceName => empowermentStatements.OrderBy(es => es.ServiceName),
+                    EmpowermentsFromMeSortBy.Uid => empowermentStatements.OrderBy(es => es.EmpoweredUids.Select(e => e.Uid)),
+
+                    EmpowermentsFromMeSortBy.Status => empowermentStatements
+                        .OrderBy(es => es.Status)
+                        // We need to separate Expired from Active empowerments by ExpiryDate
+                        // to have them properly ordered on CreatedOn later on.
+                        // When ExpiryDate is null or in the future - that empowerment is considered "Active",
+                        // on the other hand when ExpiryDate is not null and in the past - "Expired".
+                        .ThenByDescending(es => es.Status == EmpowermentStatementStatus.Active && (!es.ExpiryDate.HasValue || (es.ExpiryDate.HasValue && es.ExpiryDate > DateTime.UtcNow)))
+                        .ThenByDescending(es => es.CreatedOn)
+                        .ThenBy(es => es.ExpiryDate),
+
+                    EmpowermentsFromMeSortBy.CreatedOn => empowermentStatements.OrderBy(es => es.CreatedOn),
+                    _ => empowermentStatements.OrderBy(es => es.Name),
+                };
+            }
+        }
+        else
+        {
+            empowermentStatements = empowermentStatements
+                .OrderBy(es => es.Status)
+                // We need to separate Expired from Active empowerments by ExpiryDate
+                // to have them properly ordered on CreatedOn later on.
+                // When ExpiryDate is null or in the future - that empowerment is considered "Active",
+                // on the other hand when ExpiryDate is not null and in the past - "Expired".
+                .ThenByDescending(es => es.Status == EmpowermentStatementStatus.Active && (!es.ExpiryDate.HasValue || (es.ExpiryDate.HasValue && es.ExpiryDate > DateTime.UtcNow)))
+                .ThenByDescending(es => es.CreatedOn)
+                .ThenBy(es => es.ExpiryDate);
+        }
+        if (message.EmpoweredUids is not null && message.EmpoweredUids.Any())
+        {
+            var ids = _context.EmpoweredUids
+                    //.Where(eu => message.EmpoweredUids.Any(m => eu.Uid == m.Uid && eu.UidType == m.UidType)) // Cannot translate to SQL
+                    .Where(eu => message.EmpoweredUids.Select(m => m.Uid).Contains(eu.Uid))
+                    .GroupBy(gr => gr.EmpowermentStatementId)
+                    .ToList() // Materialize the query
+                    .Where(group => message.EmpoweredUids.All(m => group.Any(gr => gr.Uid == m.Uid && gr.UidType == m.UidType))) // Get empowerments that have the filtered Uids
+                    .Select(x => x.Key) // Select EmpowermentIds
+                    .ToHashSet(); // Distinct
+            empowermentStatements = empowermentStatements.Where(x => ids.Contains(x.Id));
+        }
+
+        // Execute query
+        var result = await PaginatedData<EmpowermentStatementWithSignaturesResult>.CreateAsync(empowermentStatements, message.PageIndex, message.PageSize);
+
+        result.Data.ToList().ForEach(x => x.CalculateStatusOn(DateTime.UtcNow));
+
+        // Result
+        return Ok(result);
+    }
+
+
+    private async Task<string> BuildNumberAsync(DateTime dateTime)
+    {
+        var currentNumber = await _numberRegistrator.GetEmpowermentNextNumberAsync(dateTime);
+
+        return $"{NumberPrefix}{currentNumber}/{dateTime:dd.MM.yyyy}";
+    }
+
+    private void AddAuditLog(Guid correlationId, LogEventCode logEvent, LogEventLifecycle suffix, string? targetUserId = default, string? message = default, SortedDictionary<string, object>? payload = default)
+    {
+        if (bool.TryParse(_configuration.GetSection("SkipAuditLogging").Value, out var result) && result)
+        {
+            return;
+        }
+        _auditLogger.LogEvent(new AuditLogEvent
+        {
+            CorrelationId = correlationId.ToString(),
+            RequesterSystemId = "RO", // TODO: Change to whatever you see fit
+            RequesterUserId = null,
+            TargetUserId = targetUserId,
+            EventType = $"{logEvent}_{suffix}",
+            Message = LogEventMessages.GetLogEventMessage(logEvent, suffix),
+            EventPayload = payload
+        });
+    }
+
     internal class EmpowermentActivationProcessData : InitiateEmpowermentActivationProcess
     {
         public Guid CorrelationId { get; set; }
@@ -1980,10 +2301,8 @@ public class EmpowermentsService : BaseService
         public string IssuerPosition { get; set; }
         public string IssuerName { get; set; }
         public OnBehalfOf OnBehalfOf { get; set; }
-        public IEnumerable<UserIdentifierWithName> AuthorizerUids { get; set; }
+        public IEnumerable<AuthorizerIdentifier> AuthorizerUids { get; set; }
         public IEnumerable<UserIdentifier> EmpoweredUids { get; set; }
         public DateTime? ExpiryDate { get; set; }
     }
-
-
 }

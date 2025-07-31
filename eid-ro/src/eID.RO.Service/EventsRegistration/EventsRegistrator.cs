@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,18 +11,15 @@ public class EventsRegistrator : IEventsRegistrator
 {
     private readonly ILogger<EventsRegistrator> _logger;
     private readonly HttpClient _httpClient;
-    private readonly IKeycloakCaller _keycloakCaller;
 
     public EventsRegistrator(
         ILogger<EventsRegistrator> logger,
-        IHttpClientFactory httpClientFactory,
-        IKeycloakCaller keycloakCaller)
+        IHttpClientFactory httpClientFactory)
 
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _ = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _httpClient = httpClientFactory.CreateClient("PAN");
-        _keycloakCaller = keycloakCaller ?? throw new ArgumentNullException(nameof(keycloakCaller));
     }
 
     public async Task<bool> RegisterAsync()
@@ -33,33 +31,34 @@ public class EventsRegistrator : IEventsRegistrator
 
         try
         {
-            var keycloakToken = await _keycloakCaller.GetTokenAsync();
-            if (string.IsNullOrWhiteSpace(keycloakToken))
-            {
-                _logger.LogWarning("Unable to obtain Keycloak token");
-                throw new InvalidOperationException("Unable to obtain Keycloak token");
-            }
-
+            var statusesWeWontRetry = new System.Net.HttpStatusCode[] {
+                System.Net.HttpStatusCode.BadRequest,
+                System.Net.HttpStatusCode.NotFound,
+                System.Net.HttpStatusCode.Unauthorized,
+                System.Net.HttpStatusCode.Forbidden
+            };
             var policy = Policy<HttpResponseMessage>
                             .Handle<Exception>()
-                            .OrResult(httpResponse => !httpResponse.IsSuccessStatusCode && httpResponse.StatusCode != System.Net.HttpStatusCode.BadRequest)
+                            .OrResult(httpResponse => !httpResponse.IsSuccessStatusCode
+                                            && !statusesWeWontRetry.Contains(httpResponse.StatusCode))
                             .WaitAndRetryForeverAsync(
                             _ => TimeSpan.FromSeconds(60),
                             (exception, timespan) =>
                             {
-                                _logger.LogInformation("Failed event registration. Next attempt will be at {NextAttemptTime}", DateTime.UtcNow.Add(timespan));
+                                _logger.LogWarning(
+                                    exception.Exception,
+                                    "Failed event registration. StatusCode: ({StatusCode}) {Result}. Next attempt will be at {NextAttemptTime}",
+                                    exception.Result?.StatusCode, exception.Result?.ToString(), DateTime.UtcNow.Add(timespan));
                             });
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", keycloakToken);
 
             var response = await policy.ExecuteAsync(() => _httpClient.PostAsync(
                 registrationUrl,
-                new StringContent(JsonConvert.SerializeObject(httpRegistrationBody), Encoding.UTF8, "application/json")
+                new StringContent(JsonConvert.SerializeObject(httpRegistrationBody), Encoding.UTF8, MediaTypeNames.Application.Json)
             ));
             if (!response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation("Event registration failed response: {Response}", responseBody);
+                _logger.LogWarning("Event registration failed response: ({StatusCode}) {Response}", response.StatusCode, response.ToString());
             }
             response.EnsureSuccessStatusCode();
         }
@@ -73,7 +72,7 @@ public class EventsRegistrator : IEventsRegistrator
         return true;
     }
 
-    private static object BuildRegistrationHttpBody()
+    private object BuildRegistrationHttpBody()
     {
         var body = new
         {
@@ -82,7 +81,7 @@ public class EventsRegistrator : IEventsRegistrator
                 new { Language = "bg", Name = "Регистър на овластяванията" },
                 new { Language = "en", Name = "Authorizations register" }
             },
-            Events = Events.GetAllEvents()
+            Events = Events.GetAllEvents(_logger)
         };
 
         return body;

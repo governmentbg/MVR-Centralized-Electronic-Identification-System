@@ -1,5 +1,9 @@
+cd src/eID.RO.API
+start RunApp.bat
 
-cd src/eID.RO.API.Public
+cd ../
+
+cd eID.RO.API.Public
 start RunApp.bat
 
 cd ../

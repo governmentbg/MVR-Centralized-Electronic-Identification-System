@@ -1,0 +1,8 @@
+schemas:
+  FindEidentitiesRequest:
+    type: object
+    properties:
+      eidentities:
+        type: array
+        items:
+          $ref: './eidentity_request_v1.yaml#/schemas/EidentityRequest'

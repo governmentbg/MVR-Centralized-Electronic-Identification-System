@@ -10,8 +10,8 @@ public enum EmpowermentStatementStatus
     /// <summary>
     /// Process of withdrawal is started.
     /// </summary>
-    [Obsolete("This status won't be used in the future")]
-    CollectingWithdrawalSignatures = 2,
+    //[Obsolete("This status won't be used in the future")]
+    //CollectingWithdrawalSignatures = 2,
     /// <summary>
     /// All checks passed successfully and all signatures are collected.
     /// </summary>

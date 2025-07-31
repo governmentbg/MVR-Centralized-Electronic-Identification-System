@@ -1,0 +1,10 @@
+schemas:
+  DiscountDateDTO:
+    type: object
+    properties:
+      eidManagerId:
+        type: string
+        format: uuid
+      date:
+        type: string
+        format: date

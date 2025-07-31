@@ -1,0 +1,28 @@
+schemas:
+  DocumentTypeDTO:
+    type: object
+    properties:
+      name:
+        type: string
+      active:
+        type: boolean
+      requiredForAdministrator:
+        type: boolean
+      requiredForCenter:
+        type: boolean
+      descriptions:
+        type: object
+        additionalProperties:
+          type: string
+        example:
+          en: Certificate
+          bg: Удостоверение
+  DocumentTypeResponseDTO:
+    allOf: 
+      - $ref: "#/schemas/DocumentTypeDTO"
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+   

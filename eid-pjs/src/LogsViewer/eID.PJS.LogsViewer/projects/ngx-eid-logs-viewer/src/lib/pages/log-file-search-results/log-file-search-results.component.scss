@@ -1,0 +1,55 @@
+@import '../../styles/variables.scss';
+
+.log-file-search-results-container {
+    .sub-title {
+        color: $button-dark;
+    }
+
+    .details-container {
+        background-color: $theme-secondary-light;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+    }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+
+    .file-data-container {
+        div.scroll {
+            cursor: pointer;
+            margin: 4px;
+            padding: 4px;
+            width: 100%;
+            white-space: nowrap;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            letter-spacing: 0px;
+            text-align: left;
+
+            .object-container {
+                .key {
+                    color: #0c53b2;
+                }
+
+                .value {
+                    color: #018930;
+                }
+
+                .bracket {
+                    color: #1c3050;
+                }
+            }
+        }
+        ::ng-deep .p-virtualscroller-item {
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+    }
+
+    ::ng-deep .header-divider .p-divider.p-divider-horizontal:before {
+        border-color: $theme-primary-light;
+    }
+}

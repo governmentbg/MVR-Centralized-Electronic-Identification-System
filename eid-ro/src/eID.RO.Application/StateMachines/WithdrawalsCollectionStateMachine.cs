@@ -163,10 +163,9 @@ public class WithdrawalsCollectionStateMachine : MassTransitStateMachine<Withdra
                         {
                             CorrelationId = ctx.Saga.OriginCorrelationId,
                             ctx.Saga.EmpowermentId,
-                            Uids = ctx.Saga.EmpoweredUids.Union(
-                                    ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType })
-                                )
-                                .Distinct(new Service.UserIdentifierEqualityComparer()),
+                            Uids = ctx.Saga.EmpoweredUids
+                                        .Union(ctx.Saga.AuthorizerUids)
+                                        .Distinct(new Service.UserIdentifierEqualityComparer()),
                             RapidRetries = false, // Suppress warning for missing property
                             RespondWithRawServiceResult = false // Suppress warning for missing property
                         }))
@@ -286,6 +285,11 @@ public class WithdrawalsCollectionStateMachine : MassTransitStateMachine<Withdra
                     ctx.Saga.EmpowermentId,
                     EventCode = Service.EventsRegistration.Events.EmpowermentToMeWasWithdrawn.Code,
                     Service.EventsRegistration.Events.EmpowermentToMeWasWithdrawn.Translations
+                }))
+                .PublishAsync(ctx => ctx.Init<EmpowermentIsWithdrawn>(new
+                {
+                    CorrelationId = ctx.Saga.OriginCorrelationId,
+                    ctx.Saga.EmpowermentId
                 }))
                 .Finalize()
             );

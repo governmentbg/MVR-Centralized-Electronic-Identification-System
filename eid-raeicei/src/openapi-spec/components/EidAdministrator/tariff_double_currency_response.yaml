@@ -1,0 +1,26 @@
+schemas:
+  TariffDoubleCurrencyResponseDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      startDate:
+        type: string
+        format: date
+      primaryPrice:
+        type: number
+        format: double
+      primaryCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      secondaryPrice:
+        type: number
+        format: double
+      secondaryCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      eidManagerId:
+        type: string
+        format: uuid
+      providedServiceId:
+        type: string
+        format: uuid

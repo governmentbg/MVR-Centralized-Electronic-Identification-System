@@ -1,0 +1,10 @@
+schemas:
+  EidManagerStatus:
+    type: string
+    enum:
+      - ACTIVE
+      - SUSPENDED
+      - STOP
+      - IN_REVIEW
+      - PENDING_ATTACHMENTS
+      - TECHNICAL_CHECK

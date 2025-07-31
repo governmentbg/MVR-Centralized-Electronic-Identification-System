@@ -25,11 +25,45 @@ public class MpozeiCaller : IMpozeiCaller
         _mpozeiHttpClient = httpClientFactory.CreateClient(HTTPClientName);
     }
 
-    public async Task<MpozeiUserProfile> FetchUserProfileAsync(string uId, IdentifierType identifierType)
+    public async Task<MpozeiUserProfile?> FetchUserProfileAsync(string uId, IdentifierType identifierType)
     {
         if (string.IsNullOrWhiteSpace(uId))
         {
             throw new ArgumentException($"'{nameof(uId)}' cannot be null or whitespace.", nameof(uId));
+        }
+
+        var queryString = new Dictionary<string, string>()
+        {
+            { "number", uId },
+            { "type", identifierType.ToString() }
+        };
+        var result = await FindEidentityAsync(queryString);
+        var maskedUid = Regex.Replace(uId, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
+        _logger.LogInformation("Successfully obtained User profile from Mpozei for {UserParam}", maskedUid);
+        return result;
+    }
+
+    public async Task<MpozeiUserProfile?> FetchUserProfileByCitizenProfileIdAsync(Guid citizenProfileId)
+    {
+        if (Guid.Empty == citizenProfileId)
+        {
+            throw new ArgumentException($"'{nameof(citizenProfileId)}' cannot be empty.", nameof(citizenProfileId));
+        }
+
+        var queryString = new Dictionary<string, string>()
+        {
+            { "citizenProfileId", citizenProfileId.ToString() }
+        };
+        var result = await FindEidentityAsync(queryString);
+        _logger.LogInformation("Successfully obtained User profile from Mpozei for {UserParam}", citizenProfileId.ToString());
+        return result;
+    }
+
+    private async Task<MpozeiUserProfile?> FindEidentityAsync(Dictionary<string, string> queryString)
+    {
+        if (queryString is null)
+        {
+            throw new ArgumentNullException(nameof(queryString));
         }
 
         var keycloakToken = await _keycloakCaller.GetTokenAsync();
@@ -38,12 +72,6 @@ public class MpozeiCaller : IMpozeiCaller
             _logger.LogWarning("Unable to obtain Keycloak token");
             throw new InvalidOperationException("Unable to obtain Keycloak token");
         }
-
-        var queryString = new Dictionary<string, string>()
-        {
-            { "number", uId },
-            { "type", identifierType.ToString() }
-        };
 
         _mpozeiHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", keycloakToken);
         HttpResponseMessage response;
@@ -76,12 +104,10 @@ public class MpozeiCaller : IMpozeiCaller
             _logger.LogInformation("Parsed null response from Mpozei.");
             return null;
         }
-        var maskedUid = Regex.Replace(uId, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
-        _logger.LogInformation("Successfully obtained User profile from Mpozei. Uid: {Uid}", maskedUid);
         return userInfo;
     }
 
-    public async Task<MpozeiUserProfile> FetchUserProfileAsync(Guid eId)
+    public async Task<MpozeiUserProfile?> FetchUserProfileAsync(Guid eId)
     {
         if (eId == Guid.Empty)
         {
@@ -130,22 +156,23 @@ public class MpozeiCaller : IMpozeiCaller
 
 public class MpozeiUserProfile
 {
-    public string EidentityId { get; set; }
-    public string CitizenProfileId { get; set; }
+    public string EidentityId { get; set; } = string.Empty;
+    public string CitizenProfileId { get; set; } = string.Empty;
     public bool Active { get; set; }
-    public string FirstName { get; set; }
-    public string SecondName { get; set; }
-    public string LastName { get; set; }
-    public string CitizenIdentifierNumber { get; set; }
-    public string CitizenIdentifierType { get; set; }
-    public string Email { get; set; }
-    public string PhoneNumber { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string SecondName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string CitizenIdentifierNumber { get; set; } = string.Empty;
+    public string CitizenIdentifierType { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
     public string Language { get; set; } = "bg";
-    public List<string> RegistrationTokens { get; set; }
+    public string FirebaseId { get; set; } = string.Empty;
 }
 
 public interface IMpozeiCaller
 {
-    Task<MpozeiUserProfile> FetchUserProfileAsync(string uId, IdentifierType identifierType);
-    Task<MpozeiUserProfile> FetchUserProfileAsync(Guid eId);
+    Task<MpozeiUserProfile?> FetchUserProfileAsync(string uId, IdentifierType identifierType);
+    Task<MpozeiUserProfile?> FetchUserProfileAsync(Guid eId);
+    Task<MpozeiUserProfile?> FetchUserProfileByCitizenProfileIdAsync(Guid citizenProfileId);
 }

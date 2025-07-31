@@ -1,0 +1,14 @@
+schemas:
+  NoteDTO:
+    type: object
+    properties:
+      authorsUsername:
+        type: string
+      isOutgoing:
+        type: boolean
+      content:
+        type: string
+      attachmentsNames:
+        type: array
+        items:
+          type: string

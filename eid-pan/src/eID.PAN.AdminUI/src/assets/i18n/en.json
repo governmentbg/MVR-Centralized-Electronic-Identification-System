@@ -14,7 +14,8 @@
         "txtUnexpectedError": "Unexpected error",
         "txtInvalidDataError": "Invalid data",
         "txtTablePagination": "Showing {{first}} to {{last}} of {{totalRecords}} entries",
-        "txtNoRecordsFound": "No records found"
+        "txtNoRecordsFound": "No records found",
+        "txtSuccessTitle": "Success"
     },
     "navbar": {
         "title": "Subsystem for Automatic Notifications",
@@ -29,7 +30,8 @@
         "txtSystems": "Systems",
         "txtJournals": "Journals",
         "txtIntegrity": "Integrity",
-        "txtLocalJournals": "Local journals"
+        "txtLocalJournals": "Local journals",
+        "txtSystemProcesses": "System processes"
     },
     "footer": {
         "txtMainText": "Ministry of Interior",
@@ -40,6 +42,10 @@
         "txtPageNotFoundTitle": "Page not found.",
         "txtPageNotFoundInformationText": "The page you're looking for doesn't exist.",
         "txtPageNotFoundGoHome": "Go Home"
+    },
+    "pageUnauthorized": {
+        "txtPageUnauthorizedTitle": "Unauthorized",
+        "txtPageUnauthorizedInformationText": "You are not authorized to access this page"
     },
     "modules": {
         "channels": {
@@ -64,7 +70,18 @@
             "txtReject": "Reject",
             "txtArchiveAction": "Deactivate",
             "txtRestoreAction": "Reactivate",
-            "txtChannelsTitle": "Channels for sending notifications"
+            "txtChannelsTitle": "Channels for sending notifications",
+            "txtEmail": "Email",
+            "txtReason": "Reason",
+            "txtSystemName": "System",
+            "txtTest": "Test",
+            "txtSuccessfulTest": "Successfully sent test message to the channel",
+            "txtUnsuccessfulTest": "Error sending test message to the channel",
+            "txtModifiedOnTitle": "Date Modified",
+            "txtActiveChannelsModifiedOnTitle": "Activated on",
+            "txtInactiveChannelsModifiedOnTitle": "Deactivated on",
+            "txtAwaitingChannelsModifiedOnTitle": "Registration Time",
+            "txtRejectedChannelsModifiedOnTitle": "Rejected on"
         },
         "notifications": {
             "txtNotifications": "Notifications",
@@ -87,7 +104,12 @@
             "txtRejectConfirm": "The system will be moved to a rejected list and you will not be able to activate it afterward. Do you want to continue?",
             "txtSystemNotification": "System",
             "txtNotificationDescription": "Notification description",
-            "txtExpandCollapseLabel": "expand/collapse"
+            "txtExpandCollapseLabel": "expand/collapse",
+            "txtModifiedOnTitle": "Date Modified",
+            "txtActiveChannelsModifiedOnTitle": "Activated on",
+            "txtInactiveChannelsModifiedOnTitle": "Deactivated on",
+            "txtAwaitingChannelsModifiedOnTitle": "Registration Time",
+            "txtRejectedChannelsModifiedOnTitle": "Rejected on"
         },
         "authentication": {
             "login": {
@@ -118,7 +140,8 @@
             "txtEncryption": "Encryption",
             "txtAddConfiguration": "Add configuration",
             "txtEditConfiguration": "Edit configuration",
-            "txtErrorNameAlreadyExists": "The configuration could not be saved due to a name conflict with another configuration."
+            "txtErrorNameAlreadyExists": "The configuration could not be saved due to a name conflict with another configuration.",
+            "txtErrorNoConnectionToServer": "Wrong configuration. Unable to establish a connection to the configured server."
         },
         "journalLogs": {
             "txtLogFiles": "Log files",
@@ -209,6 +232,7 @@
             "txtCompromised": "Compromised",
             "txtNotCompromised": "Not compromised",
             "txtUnableToVisualize": "Unable to visualize",
+            "txtCheckIntegrityLastStateUnknown": "There is no information about the integrity of the logs in the system",
             "periods": {
                 "Disabled": "Disabled",
                 "All": "All",
@@ -233,6 +257,21 @@
             "txtDaysWithoutLogs": "days without data",
             "txtDaysThatDoesntHaveLogFile": "Days without log files",
             "txtNoLogsDateBefore": "No data before"
+        },
+        "systemProcesses": {
+            "txtStatusOfInternalSystems": "Status of Internal Services",
+            "txtConfigurationsAndLimits": "Configurations and Limits",
+            "txtAddress": "Address",
+            "txtDescription": "Description",
+            "descriptions": {
+                "Prometheus": "Monitoring and alerting tool designed for real-time data collection from applications.",
+                "Grafana": "Tool for visualizing metrics in real-time.",
+                "DDOSProtectionServer1": "Lozenets (Primary) - a tool for protection against malicious traffic and request limit configuration.",
+                "DDOSProtectionServer2": "Bankya - a tool for protection against malicious traffic and request limit configuration.",
+                "keycloak_internal": "Identity management system for users and systems in the internal environment of CSEI",
+                "keycloak_external": "Identity management system for citizens and external systems"
+            },
+            "txtMissingConfig": "Missing configuration"
         }
     },
     "validations": {
@@ -270,9 +309,33 @@
         "cancel": "Cancel",
         "completed": "Completed",
         "pending": "Pending",
-        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        "dayNames": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ],
+        "dayNamesShort": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ],
+        "dayNamesMin": [
+            "Su",
+            "Mo",
+            "Tu",
+            "We",
+            "Th",
+            "Fr",
+            "Sa"
+        ],
         "monthNames": [
             "January",
             "February",
@@ -287,7 +350,20 @@
             "November",
             "December"
         ],
-        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "monthNamesShort": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ],
         "chooseYear": "Choose Year",
         "chooseMonth": "Choose Month",
         "chooseDate": "Choose Date",

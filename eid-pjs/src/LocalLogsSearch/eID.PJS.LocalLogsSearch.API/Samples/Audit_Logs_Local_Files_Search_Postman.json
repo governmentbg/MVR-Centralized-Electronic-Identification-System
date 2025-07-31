@@ -1,0 +1,289 @@
+{
+	"info": {
+		"_postman_id": "7bdd31ad-549f-40e6-9434-4145841a8ace",
+		"name": "Audit Logs Local Files Search",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2859578"
+	},
+	"item": [
+		{
+			"name": "Get Logs By eventType",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-01-12T10:39:55.170Z\",\r\n        \"toDate\": \"2024-01-12T10:39:55.170Z\"\r\n    },\r\n    \"dataQuery\": {\r\n\t\t\"type\": \"compare\",\r\n\t\t\"operator\": \"Equal\",\r\n\t\t\"field\": \"eventType\",\r\n\t\t\"value\": \"UPDATE\"\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Logs By eventPayload.FieldDate Range",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-07-01T00:00:00.000Z\",\r\n        \"toDate\": \"2023-07-30T23:59:59.000Z\"\r\n    },\r\n    \"dataQuery\": {\r\n\t\"type\": \"logical\",\r\n\t\"operator\": \"and\",\r\n\t\"nodes\": [\r\n\t\t{\r\n\t\t\t\"type\": \"compare\",\r\n\t\t\t\"operator\": \"GreaterThan\",\r\n\t\t\t\"field\": \"eventPayload.FieldDate\",\r\n\t\t\t\"value\": \"2023-06-03T00:00:00.000Z\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"type\": \"compare\",\r\n\t\t\t\"operator\": \"LessThan\",\r\n\t\t\t\"field\": \"eventPayload.FieldDate\",\r\n\t\t\t\"value\": \"2023-06-30T00:00:00.000Z\"\r\n\t\t}\r\n\t]\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estimate Query By File Date Range",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-01-12T10:39:55.170Z\",\r\n        \"toDate\": \"2024-01-12T10:39:55.170Z\"\r\n    },\r\n    \"dataQuery\": {\r\n\t\t\"type\": \"compare\",\r\n\t\t\"operator\": \"Equal\",\r\n\t\t\"field\": \"systemId\",\r\n\t\t\"value\": \"eid-mpozei\"\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/estimate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"estimate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estimate Query By SystemID",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-01-12T10:39:55.170Z\",\r\n        \"toDate\": \"2024-01-12T10:39:55.170Z\"\r\n    },\r\n    \"dataQuery\": {\r\n\t\t\"type\": \"compare\",\r\n\t\t\"operator\": \"Equal\",\r\n\t\t\"field\": \"systemId\",\r\n\t\t\"value\": \"eid-mpozei\"\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/estimate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"estimate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Logs By File Date Range and eventDate Range",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-07-01T00:00:00.000Z\",\r\n        \"toDate\": \"2023-07-30T23:59:59.000Z\"\r\n    },\r\n    \"dataQuery\": {\r\n\t\"type\": \"logical\",\r\n\t\"operator\": \"and\",\r\n\t\"nodes\": [\r\n\t\t{\r\n\t\t\t\"type\": \"compare\",\r\n\t\t\t\"operator\": \"GreaterThan\",\r\n\t\t\t\"field\": \"eventDate\",\r\n\t\t\t\"value\": \"2023-06-11T00:00:00.000Z\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"type\": \"compare\",\r\n\t\t\t\"operator\": \"LessThan\",\r\n\t\t\t\"field\": \"eventDate\",\r\n\t\t\t\"value\": \"2023-06-12T00:00:00.000Z\"\r\n\t\t}\r\n\t]\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Logs By File Date Range",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-07-01T00:00:00.000Z\",\r\n        \"toDate\": \"2023-07-30T23:59:59.000Z\"\r\n    },\r\n    \"dataQuery\": {}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Logs By eventPayload.FieldNum",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-01-12T10:39:55.170Z\",\r\n        \"toDate\": \"2024-01-12T10:39:55.170Z\"\r\n    },\r\n    \"dataQuery\": {\r\n\t\t\"type\": \"compare\",\r\n\t\t\"operator\": \"Equal\",\r\n\t\t\"field\": \"eventPayload.FieldNum\",\r\n\t\t\"value\": 547921276\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Files By Date Range",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"folders\": [\r\n        \"..\\\\logs.all\"\r\n    ],\r\n    \"fileExtensionFilter\": \"*.log\",\r\n    \"fileDateRangeFilter\": {\r\n        \"fromDate\": \"2023-06-29T10:00:00.000Z\",\r\n        \"toDate\": \"2023-06-29T12:59:59.999Z\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Files Content",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"filePath\": \"f:\\\\Bulpros\\\\eID\\\\source\\\\eid-pjs\\\\poc\\\\AuditLogPOC\\\\logs.all\\\\eid-iscei_18d72578-e9f9-4fd1-bcb6-7fe52ab646e0_2023062913_013.log\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5290/api/v1/Search/file",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5290",
+					"path": [
+						"api",
+						"v1",
+						"Search",
+						"file"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

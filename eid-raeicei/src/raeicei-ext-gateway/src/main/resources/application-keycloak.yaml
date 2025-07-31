@@ -1,0 +1,12 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}
+          audiences:
+            - eid_raeicei_ext
+keycloak:
+  auth-server-url: https://${EXTERNAL_KEYCLOAK_BASE_URL}
+  realm: ${EXTERNAL_KEYCLOAK_REALM}
+  oauth-scheme-name: keycloak

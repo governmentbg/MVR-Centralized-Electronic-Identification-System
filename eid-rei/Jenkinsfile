@@ -1,0 +1,82 @@
+node {
+//   def POM_VERSION = sh script: './mvnw help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
+//   def dockerImageTag = "api-gateway${env.BUILD_NUMBER}"
+//   def WORKSPACE = "/var/lib/jenkins/workspace/rei"
+  final String gitlabBranch = sh(returnStdout: true, script: 'echo $gitlabBranch').trim()
+  final String docker_host = 'main' == "${gitlabBranch}" ? "10.10.0.94" : "10.10.0.94"
+//  env.SPRING_PROFILES = 'main' == "${gitlabBranch}" ? "postgres,postgres-test,logging-production" : "postgres,postgres-dev,logging-production"
+//       sh "printenv"
+  try {
+//     notifyBuild('STARTED')
+    stage('clone') {
+      echo ">>> Pooling from branch: [\"${gitlabBranch}\"]..."
+      git url: 'https://gitlab.bul-si.bg/mvr/rei.git',
+      credentialsId: 'cintegration_gitlab_api_token',
+      branch: "${gitlabBranch}"
+    }
+    stage('check-java') {
+      sh "java -version"
+    }
+    stage('clean') {
+      sh "chmod +x mvnw"
+      sh "./mvnw clean"
+    }
+    stage('tests') {
+      try {
+        sh "./mvnw -Ptest test"
+      } catch(err) {
+        throw err
+      } finally {
+        junit '**/backend/target/surefire-reports/TEST-*.xml'
+      }
+    }
+    stage('package') {
+      sh "./mvnw -Ptest -DskipTests=true -Dgit.commitId=\"\$(git rev-parse HEAD)\" -Dgit.commitTime=\"\$(git log -1 --format=%ci)\" package"
+    }
+    stage('docker-check') {
+      echo ">>> docker_host: [\"${docker_host}\"]"
+      sh "docker -v"
+    }
+    stage('docker-clean') {
+      sh "docker -H \"ssh://bulsiadmin@${docker_host}:6500\" stop \$(docker -H \"ssh://bulsiadmin@${docker_host}:6500\" ps -a -q) || true"
+      sh "docker -H \"ssh://bulsiadmin@${docker_host}:6500\" rm \$(docker -H \"ssh://bulsiadmin@${docker_host}:6500\" ps -a -q) || true"
+      sh "docker -H \"ssh://bulsiadmin@${docker_host}:6500\" system prune -a -f"
+    }
+    stage('docker-deploy') {
+      sh "DOCKER_HOST=\"ssh://bulsiadmin@${docker_host}:6500\" docker-compose -f build/Dockerfiles/docker-compose-modules.yaml --env-file infra/dev/env/test.env up -d"
+    }
+  } catch(e) {
+    currentBuild.result = "FAILED"
+    throw e
+  } finally {
+    notifyBuild(currentBuild.result)
+  }
+}
+
+def getGitBranchName() {
+  return scm.branches[0].name
+}
+
+def notifyBuild(String buildStatus = 'STARTED') {
+// build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def now = new Date()
+  // message
+  def subject = "${buildStatus}, Job: ${env.JOB_NAME} FRONTEND - Deployment Sequence: [${env.BUILD_NUMBER}] "
+  def summary = "${subject} - Check On: (${env.BUILD_URL}) - Time: ${now}"
+  def subject_email = "[Jenkins] MVR REI Backend CI/CD Deployment"
+  def details = """<p>${buildStatus} JOB </p>
+    <p>Job: ${env.JOB_NAME} - Deployment Sequence: [${env.BUILD_NUMBER}] - Time: ${now}</p>
+    <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME}</a>"</p>"""
+
+  // Email notification
+  emailext(
+    to: "strahil.vitkov@bul-si.bg, petar.aleksiev@bul-si.bg, snedyalkov@bul-si.bg, david.natov@bul-si.bg",
+    subject: subject_email,
+    body: details,
+    recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+  )
+}

@@ -5,12 +5,16 @@ export interface ISystem {
     isDeleted: boolean;
     events: INotificationEvent[];
     translations: { language: string; name: string }[];
+    reason?: string;
+    modifiedOn: string;
 }
 
 export interface IRejectedSystem {
     id: string;
     name: string;
     translations: { language: string; name: string }[];
+    reason: string;
+    rejectedOn: string;
 }
 
 export interface INotificationEvent {

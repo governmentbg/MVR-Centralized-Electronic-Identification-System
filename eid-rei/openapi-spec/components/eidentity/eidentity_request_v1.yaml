@@ -1,0 +1,15 @@
+schemas:
+  EidentityRequest:
+    type: object
+    required:
+      - number
+      - type
+    properties:
+      citizenIdentifierNumber:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_CANNOT_BE_NULL) 
+        @jakarta.validation.constraints.Size(min = 10, max = 10, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_LENGTH_NOT_VALID) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.CITIZEN_IDENTIFIER_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_NOT_VALID) '
+        description: Citizen Number
+      citizenIdentifierType:
+        $ref: './citizen_identifier_type_v1.yaml#/schemas/IdentifierType'

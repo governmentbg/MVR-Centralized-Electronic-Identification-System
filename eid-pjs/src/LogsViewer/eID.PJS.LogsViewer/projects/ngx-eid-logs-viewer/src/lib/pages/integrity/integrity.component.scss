@@ -1,0 +1,71 @@
+@import "../../styles/variables.scss";
+.integrity {
+    ::ng-deep .p-datatable .p-datatable-tbody > tr {
+        height: 80px;
+    }
+}
+.p-card {
+    padding: 24px;
+}
+
+.integrity-information-container {
+    border-radius: 0.5rem;
+    letter-spacing: 0px;
+    text-align: left;
+    .title {
+        color: $text-default;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 24px;
+    }
+    .sub-title-blue {
+        color: $text-light;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 22px;
+    }
+
+    .sub-title-black {
+        color: $text-default;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 24px;
+    }
+}
+.subsystem-header {
+    background-color: $theme-secondary-light;
+    border-radius: 0.5rem;
+    padding: 16px;
+    .subsystem-label {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px;
+        letter-spacing: 0px;
+    }
+
+    .subsystem-text {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 24px;
+        letter-spacing: 0px;
+    }
+}
+
+.calendar-section {
+    border-radius: 0.5rem;
+    background-color: $background-light-grey;
+}
+
+.fade-in {
+    animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

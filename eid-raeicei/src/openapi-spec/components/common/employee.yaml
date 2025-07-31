@@ -1,0 +1,27 @@
+schemas:
+  EmployeeDTO:
+    allOf:
+      - $ref: "./person.yaml#/schemas/PersonDTO"
+    type: object
+    properties:
+      roles:
+        type: array
+        items:
+          type: string
+  EmployeeByUidResult:
+    type: object
+    properties:
+      uid:
+        type: string
+#        nullable: true
+      uidType:
+        $ref: 'identifier_type_v1.yaml#/schemas/IdentifierTypeDTO'
+      providerId:
+        type: string
+        format: uuid
+      providerName:
+        type: string
+#        nullable: true
+      isAdministrator:
+        type: boolean
+    additionalProperties: false

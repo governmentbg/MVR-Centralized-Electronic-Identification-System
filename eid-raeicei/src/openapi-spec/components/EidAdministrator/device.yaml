@@ -1,0 +1,19 @@
+schemas:
+  DeviceDTO:
+    type: object
+    properties:
+     id:
+      type: string
+      format: uuid
+     name:
+      type: string
+     type:
+       $ref: './device_type.yaml#/schemas/DeviceType'
+     description:
+       type: string
+     authorizationLink:
+       type: string
+     backchannelAuthorizationLink:
+       type: string
+     isActive:
+       type: boolean

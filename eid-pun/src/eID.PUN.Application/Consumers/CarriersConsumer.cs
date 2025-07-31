@@ -6,7 +6,7 @@ namespace eID.PUN.Application.Consumers;
 
 public class CarriersConsumer : BaseConsumer,
     IConsumer<RegisterCarrier>,
-    IConsumer<GetCarriersBy>
+    IConsumer<GetCarriersByFilter>
 {
     private readonly CarriersService _carriersService;
 
@@ -21,8 +21,8 @@ public class CarriersConsumer : BaseConsumer,
         await ExecuteMethodAsync(context, () => _carriersService.RegisterAsync(context.Message));
     }
 
-    public async Task Consume(ConsumeContext<GetCarriersBy> context)
+    public async Task Consume(ConsumeContext<GetCarriersByFilter> context)
     {
-        await ExecuteMethodAsync(context, () => _carriersService.GetByAsync(context.Message));
+        await ExecuteMethodAsync(context, () => _carriersService.GetByFilterAsync(context.Message));
     }
 }

@@ -8,6 +8,7 @@ ARG EID_NPM_REPO_URL
 ARG EID_NUGET_REPO_URL
 COPY "./eID.RO.sln" "eID.RO.sln"
 
+COPY ["./eID.RO.API/eID.RO.API.csproj", "eID.RO.API/"]
 COPY ["./eID.RO.API.Public/eID.RO.API.Public.csproj", "eID.RO.API.Public/"]
 COPY ["./eID.RO.Application/eID.RO.Application.csproj", "eID.RO.Application/"]
 COPY ["./eID.RO.Service/eID.RO.Service.csproj", "eID.RO.Service/"]
@@ -28,4 +29,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "eID.RO.Application.dll"]
+ENTRYPOINT ["sh", "-c", "update-ca-certificates && exec dotnet eID.RO.Application.dll"]

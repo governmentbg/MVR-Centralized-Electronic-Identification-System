@@ -36,7 +36,7 @@ internal class SignaturesCollectionStateMachineTests
             {
                 CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
                 EmpowermentId = Guid.NewGuid(),
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Name = "Test Name", Uid = "8802184852", UidType = IdentifierType.EGN } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Name = "Test Name", Uid = "8802184852", UidType = IdentifierType.EGN } },
                 SignaturesCollectionDeadline = DateTime.UtcNow.AddHours(1)
             };
             await harness.Bus.Publish<CollectAuthorizerSignatures>(command);
@@ -70,7 +70,7 @@ internal class SignaturesCollectionStateMachineTests
             {
                 CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
                 EmpowermentId = Guid.NewGuid(),
-                AuthorizerUids = new UserIdentifierWithNameData[]
+                AuthorizerUids = new AuthorizerIdentifierData[]
                 {
                     new() { Name = "Test Name", Uid = "8802184852", UidType = IdentifierType.EGN },
                     new() { Name = "Test Name", Uid = "8402241834", UidType = IdentifierType.EGN }
@@ -130,6 +130,61 @@ internal class SignaturesCollectionStateMachineTests
     }
 
     [Test]
+    public async Task IsFinalizedAfterEmpowermentDisagreedReceivedAsync()
+    {
+        await using var provider = new ServiceCollection()
+                .AddMassTransitTestHarness(mt =>
+                {
+                    mt.AddSagaStateMachine<SignaturesCollectionStateMachine, SignaturesCollectionState>();
+                })
+                .BuildServiceProvider(true);
+
+        var harness = provider.GetTestHarness();
+
+        await harness.Start();
+        try
+        {
+            var command = new InitiateSignatureCollectionProcessCommand
+            {
+                CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+                EmpowermentId = Guid.NewGuid(),
+                AuthorizerUids = new AuthorizerIdentifierData[]
+                {
+                    new() { Name = "Test Name", Uid = "8802184852", UidType = IdentifierType.EGN },
+                    new() { Name = "Test Name", Uid = "8402241834", UidType = IdentifierType.EGN }
+                },
+                SignaturesCollectionDeadline = DateTime.UtcNow.AddHours(1)
+            };
+            await harness.Bus.Publish<CollectAuthorizerSignatures>(command);
+            var sagaHarness = harness.GetSagaStateMachineHarness<SignaturesCollectionStateMachine, SignaturesCollectionState>();
+            Assert.Multiple(async () =>
+            {
+                Assert.That(await harness.Published.Any<CollectAuthorizerSignatures>(), Is.True);
+                Assert.That(await sagaHarness.Consumed.Any<CollectAuthorizerSignatures>());
+            });
+            var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).First();
+            Assert.That(currSaga.Saga.SignedUids.Count, Is.EqualTo(0));
+
+            await harness.Bus.Publish<EmpowermentIsWithdrawn>(new
+            {
+                command.EmpowermentId
+            });
+
+            Assert.Multiple(async () =>
+            {
+                Assert.That(await harness.Published.Any<EmpowermentIsWithdrawn>(), Is.True);
+                Assert.That(await sagaHarness.Consumed.Any<EmpowermentIsWithdrawn>(s => s.Context.Message.EmpowermentId == command.EmpowermentId));
+                Assert.That(currSaga.Saga.IsEmpowermentWithdrawn, Is.True);
+                Assert.That(currSaga.Saga.CurrentState, Is.EqualTo(sagaHarness.StateMachine.Final.Name));
+            });
+        }
+        finally
+        {
+            await harness.Stop();
+        }
+    }
+
+    [Test]
     public async Task GetsFinalizedAfterDeadlineAsync()
     {
         await using var provider = new ServiceCollection()
@@ -162,7 +217,7 @@ internal class SignaturesCollectionStateMachineTests
             {
                 CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
                 EmpowermentId = Guid.NewGuid(),
-                AuthorizerUids = new UserIdentifierWithNameData[]
+                AuthorizerUids = new AuthorizerIdentifierData[]
                 {
                     new() { Uid = "8802184852", UidType = IdentifierType.EGN },
                     new() { Uid = "8402241834", UidType = IdentifierType.EGN }

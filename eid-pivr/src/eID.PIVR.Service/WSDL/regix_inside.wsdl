@@ -1,0 +1,37 @@
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://general.service.ict.mvr.bg/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://general.service.ict.mvr.bg/" name="genWS" targetNamespace="http://general.service.ict.mvr.bg/">
+<wsdl:types>
+<xs:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://general.service.ict.mvr.bg/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://general.service.ict.mvr.bg/" elementFormDefault="qualified" targetNamespace="http://general.service.ict.mvr.bg/" version="1.0">
+<xs:element name="Call" type="xs:string"/>
+<xs:element name="Message" type="xs:string"/>
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="Call">
+<wsdl:part element="tns:Call" name="message"> </wsdl:part>
+</wsdl:message>
+<wsdl:message name="CallResponse">
+<wsdl:part element="tns:Message" name="message"> </wsdl:part>
+</wsdl:message>
+<wsdl:portType name="IntSyncPortType">
+<wsdl:operation name="Call">
+<wsdl:input message="tns:Call" name="Call"> </wsdl:input>
+<wsdl:output message="tns:CallResponse" name="CallResponse"> </wsdl:output>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="genWSSoapBinding" type="tns:IntSyncPortType">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="Call">
+<soap:operation soapAction="" style="document"/>
+<wsdl:input name="Call">
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output name="CallResponse">
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="genWS">
+<wsdl:port binding="tns:genWSSoapBinding" name="genWSImplPort">
+<soap:address location="http://ws2016kapsht:11036/services/regix/"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

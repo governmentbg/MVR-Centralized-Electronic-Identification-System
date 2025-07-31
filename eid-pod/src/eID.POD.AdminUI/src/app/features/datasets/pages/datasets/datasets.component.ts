@@ -115,6 +115,7 @@ export class DatasetsComponent implements OnInit {
             next: (response: any) => {
                 this.isLoading = false;
                 this.showSuccessToast(this.translateService.translate('modules.datasets.txtSuccessfullyUpload'));
+                this.getAllDatasets();
             },
             error: error => {
                 switch (error.status) {
@@ -133,6 +134,12 @@ export class DatasetsComponent implements OnInit {
     navigateToEdit(dataset: IDataset) {
         this.router.navigate(['/datasets/form'], {
             state: { dataset: dataset, isEditMode: true },
+        });
+    }
+
+    showDetails(dataset: IDataset) {
+        this.router.navigate(['/datasets/form'], {
+            state: { dataset: dataset, isPreviewMode: true },
         });
     }
 

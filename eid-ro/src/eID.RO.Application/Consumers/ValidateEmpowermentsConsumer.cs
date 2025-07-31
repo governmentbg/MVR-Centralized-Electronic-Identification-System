@@ -14,14 +14,6 @@ public class ValidateEmpowermentsConsumer : BaseConsumer,
     private readonly IVerificationService _verificationService;
     private readonly EmpowermentsService _empowermentsService;
 
-    //At this point we know those statuses:
-    //N - нова
-    //Е - Пререгистрирана фирма по Булстат
-    //C - Нова партида затворена
-    //L - Пререгистрирана фирма по Булстат затворена
-    private readonly string[] _notActiveStatuses = { "C", "L" };
-    private readonly string[] _checkInBulstatStatuses = { "E", "L" };
-
     public ValidateEmpowermentsConsumer(
         ILogger<ValidateEmpowermentsConsumer> logger,
         IVerificationService verificationService,
@@ -51,40 +43,41 @@ public class ValidateEmpowermentsConsumer : BaseConsumer,
             return;
         }
 
-        var legalEntityActualState = await _verificationService.GetLegalEntityActualStateAsync(empowermentStatement.Uid);
+        var legalEntityActualState = await _verificationService.GetLegalEntityActualStateAsync(context.Message.CorrelationId, empowermentStatement.Uid);
 
         //If Legal Entity Restrictions check failed, respond with Denial Reason
-        if (legalEntityActualState?.Result?.Response?.ActualStateResponseV3?.Deed is null)
+        //Error while getting Legal Entity actual state in TR
+        if (legalEntityActualState is null || legalEntityActualState.Result is null || legalEntityActualState?.Result?.Response?.ActualStateResponseV3?.Deed is null)
         {
             await context.RespondAsync<LegalEntityNotPresentInNTR>(new
             {
                 context.Message.CorrelationId,
-                context.Message.EmpowermentId
+                context.Message.EmpowermentId,
+                MissingOrMalformedResponse = true
             });
             return;
         }
 
-        var legalEntityState = legalEntityActualState?.Result?.Response;
+        var legalEntity = legalEntityActualState.Result;
+        var representativesDataIsAvailable = legalEntity.ContainsRepresentativesData();
 
-        var validAuthorizers = await _empowermentsService.ConfirmAuthorizersInLegalEntityRepresentationAsync(context.Message.EmpowermentId, legalEntityActualState.Result);
-        if (!validAuthorizers)
+        //Confirm Authorizers in Legal Entity
+        var someAuthorizersAreNotRepresenters = empowermentStatement.AuthorizerUids.Any(authorizer => !legalEntity.IsAmongRepresentatives(authorizer.Uid, authorizer.Name));
+        if (representativesDataIsAvailable && someAuthorizersAreNotRepresenters)
         {
             await context.RespondAsync<LegalEntityEmpowermentValidationFailed>(new
             {
                 context.Message.CorrelationId,
                 context.Message.EmpowermentId,
-                DenialReason = EmpowermentsDenialReason.LegalEntityRepresentationNotMatch,
+                DenialReason = EmpowermentsDenialReason.LegalEntityRepresentationNotMatch
             });
 
             return;
         }
 
-        //Not active - Legal Entity is not active in TR and we have to deny the empowerment
-        //Empowerment status: Denied with Reason: LegalEntityNotActive
-        var legalEntityStatus = legalEntityState?.ActualStateResponseV3?.Deed?.DeedStatus;
-        if (!string.IsNullOrWhiteSpace(legalEntityStatus) && _notActiveStatuses.Contains(legalEntityStatus))
+        if (legalEntity.HasValidDeedStatus())
         {
-            if (_checkInBulstatStatuses.Contains(legalEntityStatus))
+            if (legalEntity.IsToBeCheckedInBulstat())
             {
                 await context.RespondAsync<LegalEntityNotPresentInNTR>(new
                 {
@@ -93,40 +86,49 @@ public class ValidateEmpowermentsConsumer : BaseConsumer,
                 });
                 return;
             }
-
-            if (_notActiveStatuses.Contains(legalEntityStatus))
+            //Not active - Legal Entity is not active in TR and we have to deny the empowerment
+            //Empowerment status: Denied with Reason: LegalEntityNotActive
+            if (legalEntity.IsInactive())
             {
                 await context.RespondAsync<LegalEntityEmpowermentValidationFailed>(new
                 {
                     context.Message.CorrelationId,
                     context.Message.EmpowermentId,
-                    DenialReason = EmpowermentsDenialReason.LegalEntityNotActive,
+                    DenialReason = EmpowermentsDenialReason.LegalEntityNotActive
                 });
                 return;
             }
         }
 
+        //Confirm legal entity name and issuer
         var issuer = context.Message.AuthorizerUids.FirstOrDefault(a => a.IsIssuer);
-        var verificationResult = VerificationService.CalculateVerificationResult(new CheckLegalEntityInNTRData
+        if (issuer is null)
         {
-            CorrelationId = context.Message.CorrelationId,
-            Uid = empowermentStatement.Uid,                                        // Eik of the legal entity. Used to match with data in TR.
-            Name = empowermentStatement.Name,                                      // Name of the legal entity. Used to match with data in TR.
-            IssuerName = issuer?.Name,                                             // Name of the requester. Used to match with data in TR.
-            IssuerPosition = nameof(CheckLegalEntityInNTRData.IssuerPosition),     // TODO: Not used at the moment
-            IssuerUid = issuer?.Uid,                                               // Uid of the requester. Used to match with data in TR.
-            IssuerUidType = issuer.UidType,                                        // UidType of the requester. Used to match with data in TR.
-        }, legalEntityActualState.Result);
-
-        if (!verificationResult.Successfull)
+            // Since we don't store IsIssuer data in Authorizers, during EmpowermentValidation process we can't retrieve it.
+            // We have it in the XML, so we fallback to getting it from there.
+            var deserializedXML = XMLSerializationHelper.DeserializeEmpowermentStatementItem(empowermentStatement.XMLRepresentation);
+            issuer = deserializedXML.AuthorizerUids.FirstOrDefault(a => a.IsIssuer);
+            if (issuer is null)
+            {
+                await context.RespondAsync<LegalEntityEmpowermentValidationFailed>(new
+                {
+                    context.Message.CorrelationId,
+                    context.Message.EmpowermentId,
+                    DenialReason = EmpowermentsDenialReason.NTRCheckFailed
+                });
+                return;
+            }
+        }
+        var incorrectCompanyData = !legalEntity.MatchCompanyData(empowermentStatement.Name, empowermentStatement.Uid);
+        var issuerIsNotRepresenter = !legalEntity.IsAmongRepresentatives(issuer.Uid, issuer.Name);
+        if (incorrectCompanyData || (representativesDataIsAvailable && issuerIsNotRepresenter))
         {
             await context.RespondAsync<LegalEntityEmpowermentValidationFailed>(new
             {
                 context.Message.CorrelationId,
                 context.Message.EmpowermentId,
-                DenialReason = EmpowermentsDenialReason.NTRCheckFailed,
+                DenialReason = EmpowermentsDenialReason.NTRCheckFailed
             });
-
             return;
         }
 
@@ -146,6 +148,7 @@ public class ValidateEmpowermentsConsumer : BaseConsumer,
 
         var empowermentStatement = await _empowermentsService.GetEmpowermentStatementByIdAsync(context.Message.EmpowermentId);
         var activeEmpowermentStatuses = new EmpowermentStatementStatus[] {
+            EmpowermentStatementStatus.CollectingAuthorizerSignatures,
             EmpowermentStatementStatus.Active,
             EmpowermentStatementStatus.Unconfirmed
         };
@@ -159,8 +162,20 @@ public class ValidateEmpowermentsConsumer : BaseConsumer,
             return;
         }
 
-        var legalEntityActualState = await _verificationService.GetLegalEntityActualStateAsync(empowermentStatement.Uid);
-        if (legalEntityActualState?.Result?.Response?.ActualStateResponseV3?.Deed is null)
+        var legalEntityActualState = await _verificationService.GetLegalEntityActualStateAsync(context.Message.CorrelationId, empowermentStatement.Uid);
+        if (legalEntityActualState is null || legalEntityActualState.Result is null || legalEntityActualState?.Result?.Response?.ActualStateResponseV3?.Deed is null)
+        {
+            await context.RespondAsync<LegalEntityNotPresentInNTR>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId,
+                MissingOrMalformedResponse = true
+            });
+            return;
+        }
+
+        var legalEntity = legalEntityActualState.Result;
+        if (legalEntity.IsToBeCheckedInBulstat())
         {
             await context.RespondAsync<LegalEntityNotPresentInNTR>(new
             {
@@ -170,29 +185,10 @@ public class ValidateEmpowermentsConsumer : BaseConsumer,
             return;
         }
 
-        var legalEntityDeedStatus = legalEntityActualState?.Result?.Response?.ActualStateResponseV3?.Deed?.DeedStatus;
-        if (!string.IsNullOrWhiteSpace(legalEntityDeedStatus) && _checkInBulstatStatuses.Contains(legalEntityDeedStatus))
-        {
-            await context.RespondAsync<LegalEntityNotPresentInNTR>(new
-            {
-                context.Message.CorrelationId,
-                context.Message.EmpowermentId
-            });
-            return;
-        }
-
-        var verificationResult = VerificationService.CalculateVerificationResult(new CheckLegalEntityInNTRData
-        {
-            CorrelationId = context.Message.CorrelationId,
-            Uid = empowermentStatement.Uid,                                        // Eik of the legal entity. Used to match with data in TR.
-            Name = empowermentStatement.Name,                                      // Name of the legal entity. Used to match with data in TR.
-            IssuerName = context.Message.IssuerName,                               // Name of the requester. Used to match with data in TR.
-            IssuerPosition = nameof(CheckLegalEntityInNTRData.IssuerPosition),     // TODO: Not used at the moment
-            IssuerUid = context.Message.IssuerUid,                                 // Uid of the requester. Used to match with data in TR.
-            IssuerUidType = context.Message.IssuerUidType,                         // UidType of the requester. Used to match with data in TR.
-        }, legalEntityActualState.Result);
-
-        if (!verificationResult.Successfull)
+        //Confirm legal entity name and issuer
+        var incorrectCompanyData = !legalEntity.MatchCompanyData(empowermentStatement.Name, empowermentStatement.Uid);
+        var issuerIsNotRepresenter = !legalEntity.IsAmongRepresentatives(context.Message.IssuerUid, context.Message.IssuerName);
+        if (incorrectCompanyData || (legalEntity.ContainsRepresentativesData() && issuerIsNotRepresenter))
         {
             await context.RespondAsync<VerifyLegalEntityWithdrawalRequesterFailed>(new
             {

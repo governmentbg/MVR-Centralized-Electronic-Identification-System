@@ -1,0 +1,31 @@
+schemas:
+  PersonDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.NAME_CANNOT_BE_BLANK) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.NAME_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.NAME_NOT_VALID)'
+      nameLatin:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.NAME_LATIN_CANNOT_BE_BLANK) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.NAME_LATIN_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.NAME_LATIN_NOT_VALID)'
+      isActive:
+        type: boolean
+      phoneNumber:
+        type: string
+#        x-field-extra-annotation: '@jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.PHONE_NUMBER_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.PHONE_NUMBER_NOT_VALID)'
+      email:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.EMAIL_CANNOT_BE_BLANK) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.EMAIL_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.EMAIL_NOT_VALID)'
+      citizenIdentifierType:
+        $ref: '../common/identifier_type_v1.yaml#/schemas/IdentifierTypeDTO'
+      citizenIdentifierNumber:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_CANNOT_BE_NULL) 
+        @jakarta.validation.constraints.Size(min = 10, max = 10, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_LENGTH_NOT_VALID) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.CITIZEN_IDENTIFIER_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_NOT_VALID)'

@@ -34,7 +34,7 @@ public class DatasetsService : BaseService
         ISchedulerFactory schedulerFactory)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _httpClient = httpClientFactory.CreateClient();
+        _httpClient = httpClientFactory.CreateClient("EidOpenData");
         _openDataHttpClient = httpClientFactory.CreateClient("OpenData");
         _openDataSettings = (openDataSettings ?? throw new ArgumentNullException(nameof(openDataSettings))).Value;
         _openDataSettings.Validate();
@@ -111,27 +111,16 @@ public class DatasetsService : BaseService
             return NotFound(nameof(message.Id), message.Id);
         }
 
-        if (!string.IsNullOrWhiteSpace(message.DatasetName))
+        // Name change should result into creation of a new dataset in OpenData portal
+        if (dataset.DatasetName != message.DatasetName)
         {
-            // Name change should result into creation of a new dataset in OpenData portal
-            if (dataset.DatasetName != message.DatasetName)
-            {
-                _logger.LogInformation("Dataset {DatasetId} name changed. Next data upload will create and use new OpenData portal dataset.", dataset.Id);
-                dataset.DatasetUri = string.Empty;
-            }
-            dataset.DatasetName = message.DatasetName;
+            _logger.LogInformation("Dataset {DatasetId} name changed. Next data upload will create and use new OpenData portal dataset.", dataset.Id);
+            dataset.DatasetUri = string.Empty;
         }
-
-        if (!string.IsNullOrWhiteSpace(message.CronPeriod))
-        {
-            dataset.CronPeriod = message.CronPeriod;
-        }
-
-        if (!string.IsNullOrWhiteSpace(message.DataSource))
-        {
-            dataset.DataSource = message.DataSource;
-        }
-
+        dataset.DatasetName = message.DatasetName;
+        dataset.CronPeriod = message.CronPeriod;
+        dataset.DataSource = message.DataSource;
+        dataset.Description = message.Description;
         dataset.IsActive = message.IsActive;
         dataset.LastModifiedBy = message.LastModifiedBy;
 
@@ -350,7 +339,8 @@ public class DatasetsService : BaseService
             DataSource = message.DataSource,
             IsActive = message.IsActive,
             CreatedBy = message.CreatedBy,
-            LastModifiedBy = message.CreatedBy
+            LastModifiedBy = message.CreatedBy,
+            Description = message.Description
         };
 
         await _context.Datasets.AddAsync(newDataset);
@@ -554,7 +544,8 @@ public class DatasetsService : BaseService
                     name = dataset.DatasetName,
                     org_id = _openDataSettings.OrganizationId,
                     category_id = _openDataSettings.CategoryId,
-                    visibility = 1
+                    visibility = 2, // 1-публично 2-частно
+                    description = dataset.Description
                 }
             }), Encoding.UTF8, "application/json")
         });
@@ -603,6 +594,7 @@ public class DatasetsService : BaseService
                     locale = "bg",
                     name = $"{dataset.DatasetName} към {DateTime.UtcNow:MM/yyyy}",
                     type = 1, // файл
+                    file_format = "csv",
                     category_id = _openDataSettings.CategoryId,
                 }
             }), Encoding.UTF8, "application/json")

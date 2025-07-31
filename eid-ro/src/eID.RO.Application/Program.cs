@@ -1,4 +1,5 @@
-﻿using eID.RO.Application;
+﻿using eID.PJS.AuditLogging;
+using eID.RO.Application;
 using eID.RO.Application.StateMachines;
 using eID.RO.Service.Database;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,10 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
                 .Enrich.WithEnvironmentName()
                 .Enrich.WithProperty("SystemId", ApplicationName);
         })
+        .ConfigureAppConfiguration((hbc, cb) =>
+        {
+            cb.AddAuditLogConfiguration(SystemName, ApplicationName);
+        })
         .ConfigureWebHostDefaults(webBuilder =>
         {
             webBuilder.UseStartup<Startup>();
@@ -94,6 +99,7 @@ static void AddInformation(string text)
 
 public partial class Program
 {
-    private static readonly string? _namespace = typeof(Startup).Namespace;
-    public static readonly string ApplicationName = _namespace?.Substring(_namespace.LastIndexOf('.', _namespace.LastIndexOf('.') - 1) + 1) ?? "DefaultApplicationName";
+    private static readonly string? Namespace = typeof(Startup).Namespace;
+    public static readonly string ApplicationName = Namespace?.Substring(Namespace.IndexOf('.') + 1) ?? "DefaultApplicationName";
+    public static readonly string SystemName = ApplicationName.Split(".").FirstOrDefault() ?? "RO";
 }

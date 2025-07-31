@@ -11,7 +11,7 @@ public interface GetEmpowermentsByEik : CorrelatedBy<Guid>
     public IdentifierType IssuerUidType { get; set; }
     public string IssuerName { get; set; }
     public EmpowermentsByEikFilterStatus? Status { get; set; }
-    public string SupplierName { get; set; }
+    public string ProviderName { get; set; }
     public string ServiceName { get; set; }
     public DateTime? ValidToDate { get; set; }
     public bool? ShowOnlyNoExpiryDate { get; set; }

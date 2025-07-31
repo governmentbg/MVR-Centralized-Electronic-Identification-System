@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { RoleType } from '../../../core/enums/auth.enum';
 
 @Component({
     selector: 'app-sidebar',
@@ -9,6 +10,7 @@ import { Router } from '@angular/router';
 export class SidebarComponent implements OnInit {
     constructor(private router: Router) {}
     isMenuToggled = false;
+    RoleType = RoleType;
     ngOnInit() {
         if (this.router.url === '/logs-viewer/journals' || this.router.url === '/logs-viewer/integrity') {
             this.isMenuToggled = true;

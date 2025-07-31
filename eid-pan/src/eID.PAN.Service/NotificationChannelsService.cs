@@ -18,16 +18,22 @@ public class NotificationChannelsService : BaseService
     private readonly IDistributedCache _cache;
     private readonly ApplicationDbContext _context;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IHttpCallbackSender _httpCallbackSender;
 
-    public NotificationChannelsService(ILogger<NotificationChannelsService> logger, IDistributedCache cache, ApplicationDbContext context, IPublishEndpoint publishEndpoint)
+    public NotificationChannelsService(ILogger<NotificationChannelsService> logger,
+                                       IDistributedCache cache,
+                                       ApplicationDbContext context,
+                                       IPublishEndpoint publishEndpoint,
+                                       IHttpCallbackSender httpCallbackSender)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+        _httpCallbackSender = httpCallbackSender ?? throw new ArgumentNullException(nameof(httpCallbackSender));
     }
 
-    public async Task<ServiceResult<INotificationChannelsData<NotificationChannelResult>>> GetAllChannelsAsync()
+    public async Task<ServiceResult<INotificationChannelsData<NotificationChannelResult, NotificationChannelRejectedResult>>> GetAllChannelsAsync()
     {
         // Prepare query
         var pendingNotificationChannels = _context.NotificationChannelsPending
@@ -43,7 +49,8 @@ public class NotificationChannelsService : BaseService
             .AsQueryable();
 
         // Execute query
-        var result = await NotificationChannelsData<NotificationChannelResult>.CreateAsync(pendingNotificationChannels, approvedNotificationChannels, rejectedNotificationChannels, archivedNotificationChannels);
+        var result = await NotificationChannelsData<NotificationChannelResult, NotificationChannelRejectedResult>
+            .CreateAsync(pendingNotificationChannels, approvedNotificationChannels, rejectedNotificationChannels, archivedNotificationChannels);
 
         // Result
         return Ok(result);
@@ -78,7 +85,7 @@ public class NotificationChannelsService : BaseService
             .FirstOrDefaultAsync(nc => nc.Name.ToLower() == message.Name.ToLower());
 
         if (pendingChannelWithSameName != null &&
-            pendingChannelWithSameName.SystemId != message.SystemId)
+            pendingChannelWithSameName.SystemName != message.SystemName)
         {
             _logger.LogInformation("Pending notification channel with this name already exist : {Name}.", message.Name);
             return Conflict<Guid>(nameof(message.Name), message.Name);
@@ -87,7 +94,7 @@ public class NotificationChannelsService : BaseService
         // Action
         //update channel with new version from message
         if (pendingChannelWithSameName != null &&
-            pendingChannelWithSameName.SystemId == message.SystemId)
+            pendingChannelWithSameName.SystemName == message.SystemName)
         {
             pendingChannelWithSameName.ModifiedBy = message.ModifiedBy;
             pendingChannelWithSameName.ModifiedOn = DateTime.UtcNow;
@@ -96,6 +103,7 @@ public class NotificationChannelsService : BaseService
             //pendingChannelWithSameName.SystemId = message.SystemId; //not sure about this field
             pendingChannelWithSameName.CallbackUrl = message.CallbackUrl;
             pendingChannelWithSameName.Price = message.Price;
+            pendingChannelWithSameName.Email = message.Email;
             pendingChannelWithSameName.InfoUrl = message.InfoUrl;
 
             message.Translations.ToList()
@@ -119,9 +127,10 @@ public class NotificationChannelsService : BaseService
                 ModifiedOn = DateTime.UtcNow,
                 Name = message.Name.Trim(),
                 Description = message.Description,
-                SystemId = message.SystemId,
+                SystemName = message.SystemName,
                 CallbackUrl = message.CallbackUrl,
                 Price = message.Price,
+                Email = message.Email,
                 InfoUrl = message.InfoUrl
             };
 
@@ -159,7 +168,7 @@ public class NotificationChannelsService : BaseService
             .FirstOrDefaultAsync(nc => nc.Name.ToLower() == message.Name.ToLower());
 
         if (pendingChannelWithSameName != null &&
-            pendingChannelWithSameName.SystemId != message.SystemId)
+            pendingChannelWithSameName.SystemName != message.SystemName)
         {
             _logger.LogInformation("Pending notification channel with this name already exist : {Name}.", message.Name);
             return Conflict<Guid>(nameof(message.Name), message.Name);
@@ -175,7 +184,7 @@ public class NotificationChannelsService : BaseService
         // Action
         //update channel with new version from message
         if (pendingChannelWithSameName != null &&
-            pendingChannelWithSameName.SystemId == message.SystemId)
+            pendingChannelWithSameName.SystemName == message.SystemName)
         {
             pendingChannelWithSameName.ModifiedBy = message.ModifiedBy;
             pendingChannelWithSameName.ModifiedOn = DateTime.UtcNow;
@@ -184,6 +193,7 @@ public class NotificationChannelsService : BaseService
             //pendingChannelWithSameName.SystemId = message.SystemId; //not sure about this field
             pendingChannelWithSameName.CallbackUrl = message.CallbackUrl;
             pendingChannelWithSameName.Price = message.Price;
+            pendingChannelWithSameName.Email = message.Email;
             pendingChannelWithSameName.InfoUrl = message.InfoUrl;
 
             message.Translations.ToList()
@@ -207,9 +217,10 @@ public class NotificationChannelsService : BaseService
                 ModifiedOn = DateTime.UtcNow,
                 Name = message.Name.Trim(),
                 Description = message.Description,
-                SystemId = message.SystemId,
+                SystemName = message.SystemName,
                 CallbackUrl = message.CallbackUrl,
                 Price = message.Price,
+                Email = message.Email,
                 InfoUrl = message.InfoUrl
             };
 
@@ -252,9 +263,10 @@ public class NotificationChannelsService : BaseService
                 ModifiedOn = DateTime.UtcNow,
                 Name = notificationChannel.Name.Trim(),
                 Description = notificationChannel.Description,
-                SystemId = notificationChannel.SystemId,
+                SystemName = notificationChannel.SystemName,
                 CallbackUrl = notificationChannel.CallbackUrl,
                 Price = notificationChannel.Price,
+                Email = notificationChannel.Email,
                 InfoUrl = notificationChannel.InfoUrl,
                 Translations = notificationChannel.Translations,
                 IsBuiltIn = notificationChannel.IsBuiltIn
@@ -285,9 +297,10 @@ public class NotificationChannelsService : BaseService
             approvedNotificationChannel.ModifiedOn = DateTime.UtcNow;
             approvedNotificationChannel.Name = notificationChannel.Name.Trim();
             approvedNotificationChannel.Description = notificationChannel.Description;
-            approvedNotificationChannel.SystemId = notificationChannel.SystemId;
+            approvedNotificationChannel.SystemName = notificationChannel.SystemName;
             approvedNotificationChannel.CallbackUrl = notificationChannel.CallbackUrl;
             approvedNotificationChannel.Price = notificationChannel.Price;
+            approvedNotificationChannel.Email = notificationChannel.Email;
             approvedNotificationChannel.InfoUrl = notificationChannel.InfoUrl;
             approvedNotificationChannel.Translations = notificationChannel.Translations;
             _context.Entry(approvedNotificationChannel);
@@ -322,13 +335,23 @@ public class NotificationChannelsService : BaseService
             throw new ArgumentNullException(nameof(message));
         }
 
+        // Validation
+        var validator = new RejectNotificationChannelValidator();
+        var validationResult = await validator.ValidateAsync(message);
+        if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("{MessageName} message is not valid. Errors: {Errors}.", nameof(RejectNotificationChannel), validationResult.Errors);
+            return BadRequest<Guid>(validationResult.Errors);
+        }
+
         var notificationChannel = await _context.NotificationChannelsPending.FindAsync(message.Id);
         if (notificationChannel is null)
         {
-            _logger.LogInformation("NotificationChannel with this Id does not exist : {Id}.", message.Id);
+            _logger.LogWarning("NotificationChannel with this Id does not exist : {Id}.", message.Id);
             return NotFound<Guid>(nameof(message.Id), message.Id);
         }
 
+        // Action
         var rejectedNotificationChannel = new NotificationChannelRejected
         {
             Id = Guid.NewGuid(),
@@ -336,11 +359,13 @@ public class NotificationChannelsService : BaseService
             ModifiedOn = DateTime.UtcNow,
             Name = notificationChannel.Name.Trim(),
             Description = notificationChannel.Description,
-            SystemId = notificationChannel.SystemId,
+            SystemName = notificationChannel.SystemName,
             CallbackUrl = notificationChannel.CallbackUrl,
             Price = notificationChannel.Price,
+            Email = notificationChannel.Email,
             InfoUrl = notificationChannel.InfoUrl,
-            Translations = notificationChannel.Translations
+            Translations = notificationChannel.Translations,
+            Reason = message.Reason
         };
 
         using (var transaction = _context.Database.BeginTransaction())
@@ -395,9 +420,10 @@ public class NotificationChannelsService : BaseService
             ModifiedOn = DateTime.UtcNow,
             Name = notificationChannel.Name.Trim(),
             Description = notificationChannel.Description,
-            SystemId = notificationChannel.SystemId,
+            SystemName = notificationChannel.SystemName,
             CallbackUrl = notificationChannel.CallbackUrl,
             Price = notificationChannel.Price,
+            Email = notificationChannel.Email,
             InfoUrl = notificationChannel.InfoUrl,
             Translations = notificationChannel.Translations,
             IsBuiltIn = notificationChannel.IsBuiltIn
@@ -462,9 +488,10 @@ public class NotificationChannelsService : BaseService
             ModifiedOn = DateTime.UtcNow,
             Name = notificationChannel.Name.Trim(),
             Description = notificationChannel.Description,
-            SystemId = notificationChannel.SystemId,
+            SystemName = notificationChannel.SystemName,
             CallbackUrl = notificationChannel.CallbackUrl,
             Price = notificationChannel.Price,
+            Email = notificationChannel.Email,
             InfoUrl = notificationChannel.InfoUrl,
             Translations = notificationChannel.Translations,
             IsBuiltIn = notificationChannel.IsBuiltIn
@@ -484,6 +511,41 @@ public class NotificationChannelsService : BaseService
             _logger.LogError(ex, "Restore notification channel {Name}: Saving to DB failed.", notificationChannel.Name);
             return new ServiceResult<Guid> { StatusCode = HttpStatusCode.InternalServerError, Error = "Something went wrong." };
         }
+    }
+
+    public async Task<ServiceResult<TestHttpCallbackResult>> TestChannelAsync(TestNotificationChannel message)
+    {
+        if (message is null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
+
+        // Validation
+        var validator = new TestNotificationChannelValidator();
+        var validationResult = await validator.ValidateAsync(message);
+        if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("({Command}) Validation failed with errors: {Errors}.", nameof(TestChannelAsync), validationResult);
+            return BadRequest<TestHttpCallbackResult>(validationResult.Errors);
+        }
+
+        var notificationChannel = await _context.NotificationChannelsPending.FindAsync(message.Id);
+        if (notificationChannel is null)
+        {
+            _logger.LogWarning("NotificationChannel with this Id does not exist : {Id}.", message.Id);
+            return NotFound<TestHttpCallbackResult>(nameof(message.Id), message.Id);
+        }
+
+        // Built-in channels go through another flow
+        if (notificationChannel.IsBuiltIn)
+        {
+            _logger.LogWarning("Testing NotificationChannel {Name} is not allowed.", notificationChannel.Name);
+            return Conflict<TestHttpCallbackResult>(nameof(message.Id), message.Id, $"{notificationChannel.Name} is built-in and testing is not allowed.");
+        }
+
+        var result = await _httpCallbackSender.TestHttpCallbackAsync(notificationChannel.CallbackUrl);
+        _logger.LogInformation("Sent test notification to {CallbackUrl} for notification channel {Name}", notificationChannel.CallbackUrl, notificationChannel.Name);
+        return Ok(result);
     }
 
     private static Entities.NotificationChannelTranslation CreateFromMessageNCTranslation(Contracts.Commands.NotificationChannelTranslation t)

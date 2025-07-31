@@ -1,0 +1,22 @@
+schemas:
+  NoteResponseDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      authorsUsername:
+        type: string
+      isOutgoing:
+        type: boolean
+      content:
+        type: string
+      attachmentsNames:
+        type: array
+        items:
+          type: string
+      newStatus:
+        type: string
+      createDate:
+        type: string
+        format: date-time

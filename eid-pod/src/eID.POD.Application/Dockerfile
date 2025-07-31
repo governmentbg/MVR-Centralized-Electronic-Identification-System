@@ -7,7 +7,6 @@ WORKDIR /src
 ARG EID_NPM_REPO_URL
 ARG EID_NUGET_REPO_URL
 COPY "./eID.POD.sln" "eID.POD.sln"
-
 COPY ["./eID.POD.API/eID.POD.API.csproj", "eID.POD.API/"]
 COPY ["./eID.POD.Application/eID.POD.Application.csproj", "eID.POD.Application/"]
 COPY ["./eID.POD.Service/eID.POD.Service.csproj", "eID.POD.Service/"]
@@ -28,4 +27,5 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "eID.POD.Application.dll"]
+#RUN echo 'extra/management_ca.pem' >> /etc/ca-certificates.conf
+ENTRYPOINT ["sh", "-c", "update-ca-certificates && exec dotnet eID.POD.Application.dll"]

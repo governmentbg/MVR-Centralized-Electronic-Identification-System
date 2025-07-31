@@ -40,15 +40,16 @@ internal class AddEmpowermentStatementValidator : AbstractValidator<AddEmpowerme
 
         RuleFor(r => r.AuthorizerUids)
             .NotEmpty()
+            .Must(q => HaveNoDuplicates(q))
+                .WithMessage("{PropertyName} contains duplicates.")
             .ForEach(r => r.SetValidator(new UserIdentifierWithNameValidator()));
         RuleFor(r => r.EmpoweredUids)
             .NotEmpty()
             .ForEach(r => r.SetValidator(new UserIdentifierValidator()));
         RuleFor(r => r.TypeOfEmpowerment).IsInEnum();
 
-        RuleFor(r => r.SupplierId).NotEmpty();
-        RuleFor(r => r.SupplierName).NotEmpty();
-        RuleFor(r => r.ServiceId).NotEmpty();
+        RuleFor(r => r.ProviderId).NotEmpty();
+        RuleFor(r => r.ProviderName).NotEmpty();
         RuleFor(r => r.ServiceName).NotEmpty();
         RuleFor(r => r.VolumeOfRepresentation)
             .NotEmpty()
@@ -59,6 +60,34 @@ internal class AddEmpowermentStatementValidator : AbstractValidator<AddEmpowerme
             RuleFor(r => r.ExpiryDate).Cascade(CascadeMode.Stop).GreaterThanOrEqualTo(r => r.StartDate);
         });
         RuleFor(r => r.CreatedBy).NotEmpty();
+
+        When(r => !r.AllowSelfEmpowerment, () =>
+        {
+            When(r => r.OnBehalfOf == OnBehalfOf.Individual, () =>
+            {
+                RuleFor(r => r.AuthorizerUids.Any(au => r.EmpoweredUids.Any(eu => eu.Uid == au.Uid && eu.UidType == au.UidType)))
+                    .NotEqual(true)
+                    .WithName("AuthorizerUids, EmpoweredUids")
+                    .WithMessage("Self empowerment is not allowed");
+            });
+
+            When(r => r.OnBehalfOf == OnBehalfOf.LegalEntity && r.AuthorizerUids.DistinctBy(au => (au.Uid, au.UidType)).Count() == 1, () =>
+            {
+                RuleFor(r => r.EmpoweredUids.Any(eu => eu.Uid == r.AuthorizerUids.First().Uid
+                            && eu.UidType == r.AuthorizerUids.First().UidType))
+                    .NotEqual(true)
+                    .WithName("AuthorizerUids, EmpoweredUids")
+                    .WithMessage("Self empowerment is not allowed");
+            });
+        });
+    }
+    private bool HaveNoDuplicates(IEnumerable<AuthorizerIdentifier> items)
+    {
+        if (items is null)
+        {
+            return true;
+        }
+        return items.Select(r => r.Uid).Distinct().Count() == items.Count();
     }
 }
 
@@ -66,7 +95,6 @@ public class VolumeOfRepresentationValidator : AbstractValidator<VolumeOfReprese
 {
     public VolumeOfRepresentationValidator()
     {
-        RuleFor(r => r.Code).NotEmpty();
         RuleFor(r => r.Name).NotEmpty();
     }
 }
@@ -90,11 +118,12 @@ public class UserIdentifierValidator : AbstractValidator<UserIdentifier>
     }
 }
 
-public class UserIdentifierWithNameValidator : AbstractValidator<UserIdentifierWithName>
+public class UserIdentifierWithNameValidator : AbstractValidator<AuthorizerIdentifier>
 {
     public UserIdentifierWithNameValidator()
     {
-        When(r => r.UidType == IdentifierType.EGN, () => {
+        When(r => r.UidType == IdentifierType.EGN, () =>
+        {
             RuleFor(r => r.Uid)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -104,7 +133,8 @@ public class UserIdentifierWithNameValidator : AbstractValidator<UserIdentifierW
                 .WithMessage("{PropertyName} people below lawful age.");
         });
 
-        When(r => r.UidType == IdentifierType.LNCh, () => {
+        When(r => r.UidType == IdentifierType.LNCh, () =>
+        {
             RuleFor(r => r.Uid)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()

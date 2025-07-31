@@ -1,0 +1,20 @@
+schemas:
+  CalculateTariffDTO:
+    type: object
+    properties:
+      eidManagerId:
+        type: string
+        format: uuid
+      deviceId:
+        type: string
+        format: uuid
+      currentDate:
+        type: string
+        format: date
+      age:
+        type: integer
+      disability:
+        type: boolean
+      providedServiceId:
+        type: string
+        format: uuid

@@ -9,21 +9,23 @@ import {
     ISystemPaginatedData,
 } from '../../interfaces/inotification';
 import { TranslocoService } from '@ngneat/transloco';
-import { ConfirmationService, LazyLoadEvent, MenuItem } from 'primeng/api';
+import { ConfirmationService, LazyLoadEvent, MenuItem, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table/table';
 import { Observable, Subscription } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-notifications',
     templateUrl: './notifications.component.html',
     styleUrls: ['./notifications.component.scss'],
-    providers: [ConfirmationService],
+    providers: [ConfirmationService, MessageService],
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
     constructor(
         private notificationsClientService: NotificationsClientService,
         private translocoService: TranslocoService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService
     ) {}
 
     systems: ISystem[] | IRejectedSystem[] = [];
@@ -47,6 +49,12 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         pending: (params: IGetSystemsParams) => this.notificationsClientService.getPendingSystems(params),
         rejected: (params: IGetSystemsParams) => this.notificationsClientService.getRejectedSystems(params),
     };
+    rejectDialogVisible = false;
+    selectedSystem!: ISystem;
+    rejectForm = new FormGroup({
+        reason: new FormControl<string>('', Validators.required),
+    });
+    table!: Table;
 
     ngOnInit() {
         this.loading = true;
@@ -114,6 +122,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     }
 
     doAction(system: ISystem, action: string, table: Table): void {
+        this.selectedSystem = system;
+        this.table = table;
         switch (action) {
             case this.actions.approve:
                 this.confirmationService.confirm({
@@ -172,24 +182,54 @@ export class NotificationsComponent implements OnInit, OnDestroy {
                 });
                 break;
             case this.actions.reject:
-                this.confirmationService.confirm({
-                    rejectButtonStyleClass: 'p-button-danger',
-                    message: this.translocoService.translate('modules.notifications.txtRejectConfirm'),
-                    header: this.translocoService.translate('global.txtConfirmation'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.rejectSystemSubscription.add(
-                            this.notificationsClientService.rejectSystem(system.id).subscribe(() => {
-                                table.reset();
-                            })
-                        );
-                    },
-                    reject: () => {
-                        system.isDeleted = true;
-                    },
-                });
+                this.toggleRejectFormVisibility();
                 break;
         }
+    }
+
+    onRejectFormSubmit() {
+        this.rejectForm.markAllAsTouched();
+        this.rejectForm.controls.reason.markAsDirty();
+        if (this.rejectForm.valid) {
+            this.loading = true;
+            this.rejectSystemSubscription.add(
+                this.notificationsClientService
+                    .rejectSystem(this.selectedSystem.id, this.rejectForm.controls.reason.value as string)
+                    .subscribe({
+                        next: () => {
+                            this.toggleRejectFormVisibility();
+                            this.table.reset();
+                        },
+                        error: error => {
+                            switch (error.status) {
+                                case 400:
+                                    this.showErrorToast(this.translocoService.translate('global.txtInvalidDataError'));
+                                    break;
+                                default:
+                                    this.showErrorToast(this.translocoService.translate('global.txtUnexpectedError'));
+                                    break;
+                            }
+                            this.toggleRejectFormVisibility();
+                            this.loading = false;
+                            this.table.reset();
+                        },
+                    })
+            );
+        }
+    }
+    toggleRejectFormVisibility() {
+        this.rejectForm.reset();
+        this.rejectDialogVisible = !this.rejectDialogVisible;
+    }
+
+    showErrorToast(translation: string) {
+        this.messageService.clear();
+        this.messageService.add({
+            key: 'toast',
+            severity: 'error',
+            summary: this.translocoService.translate('global.txtErrorTitle'),
+            detail: translation,
+        });
     }
 
     getEventTranslation(event: INotificationEvent): string {
@@ -204,5 +244,20 @@ export class NotificationsComponent implements OnInit, OnDestroy {
             (sys: any) => sys.language === this.translocoService.getActiveLang()
         );
         return foundTranslation ? foundTranslation.name : system.name;
+    }
+
+    get modifiedOnColumnLabel() {
+        switch (this.activeItem) {
+            case 'approved':
+                return this.translocoService.translate('modules.notifications.txtActiveChannelsModifiedOnTitle');
+            case 'pending':
+                return this.translocoService.translate('modules.notifications.txtAwaitingChannelsModifiedOnTitle');
+            case 'archived':
+                return this.translocoService.translate('modules.notifications.txtInactiveChannelsModifiedOnTitle');
+            case 'rejected':
+                return this.translocoService.translate('modules.notifications.txtRejectedChannelsModifiedOnTitle');
+            default:
+                return '';
+        }
     }
 }

@@ -1,0 +1,34 @@
+schemas:
+  EidManagerFrontOfficeDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      location:
+        type: string
+      region:
+        type: string
+      contact:
+        type: string
+#        x-field-extra-annotation: '@jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.PHONE_NUMBER_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.PHONE_NUMBER_NOT_VALID)'
+      code:
+        type: string
+      isActive:
+        type: boolean
+      longitude:
+        type: string
+      latitude:
+        type: string
+      workingHours:
+        type: array
+        items:
+          type: string
+      email:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.EMAIL_CANNOT_BE_BLANK) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.EMAIL_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.EMAIL_NOT_VALID)'
+      description:
+        type: string

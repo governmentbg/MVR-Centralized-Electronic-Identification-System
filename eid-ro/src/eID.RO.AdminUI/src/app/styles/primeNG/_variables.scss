@@ -247,7 +247,7 @@ $colorPickerHandleColor: $shade000 !default;
 
 //togglebutton
 $toggleButtonBg: $inputBg !default;
-$toggleButtonBorder: 1px solid $theme-primary-light !default;
+$toggleButtonBorder: 1px solid $shade400 !default;
 $toggleButtonTextColor: $shade700 !default;
 $toggleButtonIconColor: $shade600 !default;
 $toggleButtonHoverBg: $shade200 !default;
@@ -435,7 +435,7 @@ $cardSubTitleFontWeight: 400 !default;
 $cardSubTitleColor: $shade600 !default;
 $cardContentPadding: 1.25rem 0 !default;
 $cardFooterPadding: 1.25rem 0 0 0 !default;
-$cardShadow: 0px 0px 20px -5px rgba(62, 86, 111, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04) !default;
+$cardShadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04) !default;
 
 //editor
 $editorToolbarBg: $panelHeaderBg !default;

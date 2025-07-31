@@ -24,4 +24,8 @@ public interface DisagreeEmpowerment : CorrelatedBy<Guid>
     /// Disagree reason
     /// </summary>
     string Reason { get; }
+    /// <summary>
+    /// User name got from token
+    /// </summary>
+    string Name { get; }
 }

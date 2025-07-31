@@ -1,0 +1,132 @@
+{
+	"index_patterns": [
+		"eid-audit*"
+	],
+  "template": {
+    "aliases": {
+      "audt_logs": {}
+    },
+    "settings": {
+      "number_of_shards": 2,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "event_payload_keywords": {
+            "path_match": "eventPayload.*Id",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "eventId": {
+          "type": "keyword"
+        },
+        "systemId": {
+          "type": "keyword"
+        },
+        "eventDate": {
+          "type": "date"
+        },
+        "checksum": {
+          "type": "keyword"
+        },
+        "sourceFile": {
+          "type": "keyword"
+        },
+        "eventType": {
+          "type": "keyword"
+        },
+        "correlationId": {
+          "type": "keyword"
+        },
+        "message": {
+          "type": "text"
+        },
+        "requesterUserId": {
+          "type": "keyword"
+        },
+        "requesterSystemId": {
+          "type": "keyword"
+        },
+        "targetUserId": {
+          "type": "keyword"
+        },
+        "moduleId": {
+          "type": "keyword"
+        },
+        "eventPayload": {
+          "type": "object",
+          "properties": {
+            "AdministrationId": {
+              "type": "keyword"
+            },
+            "AdministratorId": {
+              "type": "keyword"
+            },
+            "AuthorizerUid": {
+              "type": "keyword"
+            },
+            "AuthorizerUidType": {
+              "type": "keyword"
+            },
+            "Eik": {
+              "type": "keyword"
+            },
+            "EmpoweredUid": {
+              "type": "keyword"
+            },
+            "EmpoweredUidType": {
+              "type": "keyword"
+            },
+            "EmpowermentId": {
+              "type": "keyword"
+            },
+            "ProviderId": {
+              "type": "keyword"
+            },
+            "ProviderName": {
+              "type": "text"
+            },
+            "Reason": {
+              "type": "text"
+            },
+            "RequestBody": {
+              "type": "text"
+            },
+            "RequesterUid": {
+              "type": "keyword"
+            },
+            "RequesterUidType": {
+              "type": "keyword"
+            },
+            "TargetUid": {
+              "type": "keyword"
+            },
+            "TargetUidType": {
+              "type": "keyword"
+            },
+            "TargetName": {
+              "type": "text"
+            },
+            "RequesterUserId": {
+              "type": "keyword"
+            },
+            "ServiceName": {
+              "type": "text"
+            },
+            "SupplierId": {
+              "type": "keyword"
+            },
+            "SupplierName": {
+              "type": "text"
+            }
+          }
+        }
+      }
+    }
+  }
+}

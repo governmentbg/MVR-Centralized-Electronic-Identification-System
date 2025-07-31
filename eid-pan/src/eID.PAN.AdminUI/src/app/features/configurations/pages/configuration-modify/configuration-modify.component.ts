@@ -34,7 +34,7 @@ export class ConfigurationModifyComponent implements OnInit {
     });
     configuration: IConfiguration | null = null;
     getConfigurationsSubscription: Subscription = new Subscription();
-    loading!: boolean;
+    loading = false;
     securityProtocol = securityProtocol;
     requestInProgress = false;
 
@@ -43,8 +43,8 @@ export class ConfigurationModifyComponent implements OnInit {
     }
 
     loadConfiguration() {
-        this.loading = true;
         if (this.configurationId) {
+            this.loading = true;
             this.getConfigurationsSubscription.add(
                 this.configurationsClientService
                     .getConfigurationById(this.configurationId)
@@ -97,9 +97,21 @@ export class ConfigurationModifyComponent implements OnInit {
                                 this.showErrorToast(this.translocoService.translate('global.txtInvalidDataError'));
                                 break;
                             case 409:
-                                this.showErrorToast(
-                                    this.translocoService.translate('modules.configurations.txtErrorNameAlreadyExists')
-                                );
+                                if (error.errors) {
+                                    if (error.errors.Server) {
+                                        this.showErrorToast(
+                                            this.translocoService.translate(
+                                                'modules.configurations.txtErrorNameAlreadyExists'
+                                            )
+                                        );
+                                    } else if (error.errors.smtpConfiguration) {
+                                        this.showErrorToast(
+                                            this.translocoService.translate(
+                                                'modules.configurations.txtErrorNoConnectionToServer'
+                                            )
+                                        );
+                                    }
+                                }
                                 break;
                             default:
                                 this.showErrorToast(this.translocoService.translate('global.txtUnexpectedError'));
@@ -120,9 +132,21 @@ export class ConfigurationModifyComponent implements OnInit {
                                 this.showErrorToast(this.translocoService.translate('global.txtInvalidDataError'));
                                 break;
                             case 409:
-                                this.showErrorToast(
-                                    this.translocoService.translate('modules.configurations.txtErrorNameAlreadyExists')
-                                );
+                                if (error.errors) {
+                                    if (error.errors.Server) {
+                                        this.showErrorToast(
+                                            this.translocoService.translate(
+                                                'modules.configurations.txtErrorNameAlreadyExists'
+                                            )
+                                        );
+                                    } else if (error.errors.smtpConfiguration) {
+                                        this.showErrorToast(
+                                            this.translocoService.translate(
+                                                'modules.configurations.txtErrorNoConnectionToServer'
+                                            )
+                                        );
+                                    }
+                                }
                                 break;
                             default:
                                 this.showErrorToast(this.translocoService.translate('global.txtUnexpectedError'));

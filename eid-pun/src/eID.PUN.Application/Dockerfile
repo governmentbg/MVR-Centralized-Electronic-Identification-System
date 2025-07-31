@@ -30,4 +30,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "eID.PUN.Application.dll"]
+ENTRYPOINT ["sh", "-c", "update-ca-certificates && exec dotnet eID.PUN.Application.dll"]

@@ -1,0 +1,63 @@
+<section *transloco="let t" class="file-details-container h-100 d-flex flex-column">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+    <h4 class="text-uppercase">{{ t('modules.journalLogs.txtPreviewFile') }}</h4>
+
+    <div class="p-card p-4 mb-4 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <label> {{ t('modules.journalLogs.txtLogFile') }}:</label>
+                <span class="text-text-active fw-500" *ngIf="selectedFile && selectedFile.sourceFile">
+                    {{ selectedFile?.sourceFile }}
+                </span>
+            </div>
+            <p-button
+                (click)="getFile()"
+                icon="pi pi-refresh"
+                styleClass="p-button-rounded p-button-text text-active"></p-button>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+
+        <div *ngIf="loading" class="text-center">
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+        <div *ngIf="!loading && fileData.length > 0" class="file-data-container">
+            <span class="bracket">{{ '[' }}</span>
+
+            <div class="scroll" *ngFor="let file of fileData; let i = index">
+                <span class="bracket">{{ '{' }}</span>
+                <span *ngFor="let item of file | keyvalue; let j = index; last as isLast">
+                    <span class="key">"{{ item.key }}"</span>:<span class="value">
+                        <span *ngIf="isObject(item.value) && item.value !== undefined; else elseBlock">
+                            <span class="bracket">{{ '{' }}</span>
+                            <span *ngFor="let innerItem of item.value | keyvalue; last as isLastInner">
+                                <span class="key">"{{ innerItem.key }}"</span>:<span class="value">
+                                    "{{ innerItem.value }}"
+                                </span>
+                                <span class="bracket" *ngIf="!isLastInner">{{ ', ' }}</span>
+                            </span>
+                            <span class="bracket">{{ '}' }} </span>
+                        </span>
+                        <ng-template #elseBlock>"{{ item.value }}"</ng-template>
+                    </span>
+                    <span class="bracket" *ngIf="!isLast">{{ ', ' }}</span>
+                </span>
+                <span class="bracket">{{ '}' }}</span>
+                <span class="bracket" *ngIf="fileData.length - 1 !== i">{{ ', ' }}</span>
+            </div>
+            <span class="bracket">{{ ']' }}</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p-button
+                (click)="navigateBack()"
+                icon="pi pi-angle-left"
+                iconPos="left"
+                [label]="t('modules.journalLogs.txtBack')"
+                styleClass="p-button-outlined p-button-sm"></p-button>
+        </div>
+    </div>
+    <p-toast key="toast" position="bottom-right"></p-toast>
+</section>

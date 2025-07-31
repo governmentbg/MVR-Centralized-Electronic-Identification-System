@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Castle.Core.Configuration;
 using eID.RO.Contracts.Commands;
 using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
@@ -7,6 +8,7 @@ using eID.RO.Service.Responses;
 using eID.RO.UnitTests.Generic;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -14,6 +16,7 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace eID.RO.UnitTests;
 
@@ -23,6 +26,7 @@ internal class VerificationServiceTests : BaseTest
     private IDistributedCache _cache;
     private Mock<HttpMessageHandler> _mockHttpMessageHandler;
     private HttpClient _httpClient;
+    private Mock<IMpozeiCaller> _mockMpozeiCaller;
     private VerificationService _sut;
 
     private string _originalFile = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String("77u/PEVtcG93ZXJtZW50U3RhdGVtZW50SXRlbT4NCiAgPElkPmZhYTZlMzcxLWEyYjEtNDE2Yy1hMWNhLTZjYzg0OTJmMDgyNzwvSWQ+DQogIDxPbkJlaGFsZk9mPkluZGl2aWR1YWw8L09uQmVoYWxmT2Y+DQogIDxVaWQ+MDAwMDAwMDAwMDwvVWlkPg0KICA8TmFtZT5UZXN0IFVzZXIgRnVsbCBOYW1lPC9OYW1lPg0KICA8QXV0aG9yaXplclVpZHM+DQogICAgPFVpZD4wMDAwMDAwMDAwPC9VaWQ+DQogIDwvQXV0aG9yaXplclVpZHM+DQogIDxFbXBvd2VyZWRVaWRzPg0KICAgIDxVaWQ+MDAwMDAwMDAwMDwvVWlkPg0KICA8L0VtcG93ZXJlZFVpZHM+DQogIDxTdXBwbGllcklkPjAwMDAwMDAwNjE8L1N1cHBsaWVySWQ+DQogIDxTdXBwbGllck5hbWU+0JzQuNC90LjRgdGC0LXRgNGB0YLQstC+INC90LAg0L/RgNCw0LLQvtGB0YrQtNC40LXRgtC+PC9TdXBwbGllck5hbWU+DQogIDxTZXJ2aWNlSWQ+OTU1PC9TZXJ2aWNlSWQ+DQogIDxTZXJ2aWNlTmFtZT7Qn9GA0L7QtNGK0LvQttCw0LLQsNC90LUg0L3QsCDRgNCw0LfRgNC10YjQtdC90LjQtSDQt9CwINC40LfQstGK0YDRiNCy0LDQvdC1INC90LAg0LTQtdC50L3QvtGB0YIg0YEg0L3QtdGB0YLQvtC/0LDQvdGB0LrQsCDRhtC10Lsg0L7RgiDRh9GD0LbQtNC10L3QtdGGINCyINCg0LXQv9GD0LHQu9C40LrQsCDQkdGK0LvQs9Cw0YDQuNGPPC9TZXJ2aWNlTmFtZT4NCiAgPFR5cGVPZkVtcG93ZXJtZW50PlNlcGFyYXRlbHk8L1R5cGVPZkVtcG93ZXJtZW50Pg0KICA8Vm9sdW1lT2ZSZXByZXNlbnRhdGlvbj4NCiAgICA8SXRlbT4NCiAgICAgIDxDb2RlPjY5PC9Db2RlPg0KICAgICAgPE5hbWU+0JLRgdC40YfQutC+PC9OYW1lPg0KICAgIDwvSXRlbT4NCiAgPC9Wb2x1bWVPZlJlcHJlc2VudGF0aW9uPg0KICA8Q3JlYXRlZE9uPjIwMjMtMDktMThUMTI6MTk6MTguNTg1MTcyMlo8L0NyZWF0ZWRPbj4NCiAgPFN0YXJ0RGF0ZT4yMDIzLTA5LTE3VDIxOjAwOjAwWjwvU3RhcnREYXRlPg0KICA8RXhwaXJ5RGF0ZSBwMjpuaWw9InRydWUiIHhtbG5zOnAyPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgLz4NCjwvRW1wb3dlcm1lbnRTdGF0ZW1lbnRJdGVtPg=="));
@@ -42,7 +46,18 @@ internal class VerificationServiceTests : BaseTest
         _httpClient = new HttpClient(_mockHttpMessageHandler.Object);
         _httpClient.BaseAddress = new Uri("http://local");
 
-        _sut = new VerificationService(_logger, _cache, _httpClient);
+        _mockMpozeiCaller = new Mock<IMpozeiCaller>();
+        var configuration = new Mock<IConfiguration>();
+        var configurationSectionMock = new Mock<IConfigurationSection>();
+
+        configuration
+            .Setup(c => c.GetSection(It.IsAny<string>()))
+            .Returns(configurationSectionMock.Object);
+
+        configurationSectionMock
+            .Setup(s => s.Value)
+            .Returns("false");
+        _sut = new VerificationService(_logger, _cache, _httpClient, _mockMpozeiCaller.Object, configuration.Object);
     }
 
     [Test]
@@ -76,13 +91,40 @@ internal class VerificationServiceTests : BaseTest
         string signature = string.Empty;
         string uid = string.Empty;
         // Act
-        var result = await _sut.VerifySignatureAsync(originalFile, signature, uid, IdentifierType.EGN, Contracts.Enums.SignatureProvider.KEP);
+        var result = await _sut.VerifySignatureAsync(Guid.NewGuid(), originalFile, signature, uid, IdentifierType.EGN, Contracts.Enums.SignatureProvider.KEP);
 
         //Assert
         Assert.Multiple(() =>
         {
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Error, Is.Not.Empty);
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        });
+    }
+
+    [Test]
+    public async Task VerifySignatureAsync_PIVRReturnBadRequestWithCertProblem_ShouldReturnBadRequestAsync()
+    {
+        // Arrange
+        string uid = "0000000000";
+        _mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Content = new StringContent("{\"errors\":{\"certificate.Subject\":[\"Certificate subject is missing uid information.\"]},\"type\":\"RFC 7231: Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"traceId\":\"|01000000-7b5a-6256-0e14-08dd54ad6e6a.d4f6ab7f_\"}")
+            });
+
+        // Act
+        var result = await _sut.VerifySignatureAsync(Guid.NewGuid(), _originalFile, _signature, uid, IdentifierType.EGN, Contracts.Enums.SignatureProvider.Evrotrust);
+
+        //Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Errors, Is.Not.Empty);
+            Assert.That(result.Errors?[0].Key, Is.EqualTo("certificate.Subject"));
+            Assert.That(result.Errors?[0].Value, Is.EqualTo("Certificate subject is missing uid information."));
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         });
     }
@@ -100,7 +142,7 @@ internal class VerificationServiceTests : BaseTest
             });
 
         // Act
-        var result = await _sut.VerifySignatureAsync(_originalFile, _signature, uid, IdentifierType.EGN, Contracts.Enums.SignatureProvider.Evrotrust);
+        var result = await _sut.VerifySignatureAsync(Guid.NewGuid(), _originalFile, _signature, uid, IdentifierType.EGN, Contracts.Enums.SignatureProvider.Evrotrust);
 
         //Assert
         Assert.Multiple(() =>
@@ -151,74 +193,9 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.BelowLawfulAge));
         });
-    }
-
-    [Test]
-    public async Task CheckAuthorizersForRestrictionsAsync_CheckDateOfDeathThrowException_InternalServerErrorAsync()
-    {
-        // Arrange
-        //var egn = EgnGenerator.GenerateEgn(DateTime.UtcNow.AddYears(-32).Year);
-        var egn = "9006110819";
-
-        var message = CreateInterface<CheckUidsRestrictions>(new
-        {
-            CorrelationId = Guid.NewGuid(),
-            Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } },
-            RapidRetries = true
-        });
-
-        _mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(x =>
-                x.RequestUri.AbsolutePath.Contains("/api/v1/dateofdeath")), ItExpr.IsAny<CancellationToken>())
-            .Throws<Exception>()
-            .Verifiable();
-
-        // Act
-        var result = await _sut.CheckUidsRestrictionsAsync(message);
-
-        //Assert
-        CheckServiceResult(result, HttpStatusCode.InternalServerError);
-        VerifyDateOfDeatCalls();
-    }
-
-    [Test]
-    public async Task CheckAuthorizersForRestrictionsAsync_CheckDateOfDeathUnsuccessfulStatusCode_OKWithErrorAsync()
-    {
-        // Arrange
-        //var egn = EgnGenerator.GenerateEgn(DateTime.UtcNow.AddYears(-32).Year);
-        var egn = "9006110819";
-
-        var message = CreateInterface<CheckUidsRestrictions>(new
-        {
-            CorrelationId = Guid.NewGuid(),
-            Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
-        });
-
-        _mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(x =>
-                    x.RequestUri.AbsolutePath.Contains("/api/v1/dateofdeath")), ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.BadRequest
-            })
-            .Verifiable();
-
-        // Act
-        var result = await _sut.CheckUidsRestrictionsAsync(message);
-
-        //Assert
-        CheckServiceResult(result, HttpStatusCode.OK);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
-            Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.UnsuccessfulRestrictionsCheck));
-        });
-        VerifyDateOfDeatCalls();
     }
 
     [Test]
@@ -253,81 +230,10 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.DeceasedUid));
         });
         VerifyDateOfDeatCalls();
-    }
-
-    [Test]
-    public async Task CheckAuthorizersForRestrictionsAsync_DateOfProhibitionThrowException_InternalServerErrorAsync()
-    {
-        // Arrange
-        //var egn = EgnGenerator.GenerateEgn(DateTime.UtcNow.AddYears(-32).Year);
-        var egn = "9006110819";
-
-        var message = CreateInterface<CheckUidsRestrictions>(new
-        {
-            CorrelationId = Guid.NewGuid(),
-            Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } },
-            RapidRetries = true
-        });
-
-        AddDateOfDeatSuccessfulResponse();
-
-        _mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(x =>
-                x.RequestUri.AbsolutePath.Contains("/api/v1/dateofprohibition")), ItExpr.IsAny<CancellationToken>())
-            .Throws<Exception>()
-            .Verifiable();
-
-        // Act
-        var result = await _sut.CheckUidsRestrictionsAsync(message);
-
-        //Assert
-        CheckServiceResult(result, HttpStatusCode.InternalServerError);
-        VerifyDateOfDeatCalls();
-        VerifyDateOfProhibitionCalls();
-    }
-
-    [Test]
-    public async Task CheckAuthorizersForRestrictionsAsync_CheckDateOfProhibitionUnsuccessfulStatusCode_OKWithErrorAsync()
-    {
-        // Arrange
-        //var egn = EgnGenerator.GenerateEgn(DateTime.UtcNow.AddYears(-32).Year);
-        var egn = "9006110819";
-
-        var message = CreateInterface<CheckUidsRestrictions>(new
-        {
-            CorrelationId = Guid.NewGuid(),
-            Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
-        });
-
-        AddDateOfDeatSuccessfulResponse();
-
-        _mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(x =>
-                    x.RequestUri.AbsolutePath.Contains("/api/v1/dateofprohibition")), ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.BadRequest
-            })
-            .Verifiable();
-
-        // Act
-        var result = await _sut.CheckUidsRestrictionsAsync(message);
-
-        //Assert
-        CheckServiceResult(result, HttpStatusCode.OK);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
-            Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.UnsuccessfulRestrictionsCheck));
-        });
-        VerifyDateOfDeatCalls();
-        VerifyDateOfProhibitionCalls();
     }
 
     [Test]
@@ -343,7 +249,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         _mockHttpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(x =>
@@ -364,7 +270,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.ProhibitedUid));
         });
         VerifyDateOfDeatCalls();
@@ -385,7 +291,7 @@ internal class VerificationServiceTests : BaseTest
             RapidRetries = true
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -419,7 +325,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -441,7 +347,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.UnsuccessfulRestrictionsCheck));
         });
 
@@ -463,7 +369,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -486,7 +392,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.UnsuccessfulRestrictionsCheck));
         });
 
@@ -506,7 +412,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = lnch, UidType = IdentifierType.LNCh } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -529,7 +435,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.UnsuccessfulRestrictionsCheck));
         });
 
@@ -549,7 +455,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = lnch, UidType = IdentifierType.LNCh } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -572,7 +478,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.NoPermit));
         });
 
@@ -592,7 +498,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = lnch, UidType = IdentifierType.LNCh } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -615,7 +521,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.DeceasedUid));
         });
 
@@ -635,7 +541,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = lnch, UidType = IdentifierType.LNCh } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -658,7 +564,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(false));
+            Assert.That(result.Result?.Successful, Is.EqualTo(false));
             Assert.That(result.Result?.DenialReason, Is.EqualTo(EmpowermentsDenialReason.BelowLawfulAge));
         });
 
@@ -678,7 +584,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = lnch, UidType = IdentifierType.LNCh } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -701,7 +607,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(true));
+            Assert.That(result.Result?.Successful, Is.EqualTo(true));
         });
 
         VerifyDateOfDeatCalls();
@@ -722,7 +628,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -745,12 +651,63 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(true));
+            Assert.That(result.Result?.Successful, Is.EqualTo(true));
         });
 
         VerifyDateOfDeatCalls();
         VerifyDateOfProhibitionCalls();
         VerifyGetForeignIdentityCalls();
+    }
+
+    [Test]
+    public async Task VerifyUidsRegistrationStatusAsync_NullMpozeiResponse_BadRequestAsync()
+    {
+        // Arrange
+        var message = CreateInterface<VerifyUidsRegistrationStatus>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            EmpowermentId = Guid.NewGuid(),
+            Uids = new List<UserIdentifier>
+                {
+                    new UserIdentifierData() { Uid = "9006110819", UidType = IdentifierType.EGN },
+                }
+        });
+
+        _mockMpozeiCaller
+            .Setup(x => x.FetchUserProfileAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IdentifierType>()))
+            .ReturnsAsync(() => null);
+
+        // Act
+        var result = await _sut.VerifyUidsRegistrationStatusAsync(message);
+
+        //Assert
+        CheckServiceResult(result, HttpStatusCode.BadRequest, "Result Status was not BadRequest");
+        Assert.That(result.Result, Is.EqualTo(false), "VerifyUidsRegistrationStatusAsync result was true");
+    }
+    [Test]
+    public async Task VerifyUidsRegistrationStatusAsync_CorrectMpozeiResponse_OKAsync()
+    {
+        // Arrange
+        var message = CreateInterface<VerifyUidsRegistrationStatus>(new
+        {
+            CorrelationId = Guid.NewGuid(),
+            EmpowermentId = Guid.NewGuid(),
+            Uids = new List<UserIdentifier>
+                {
+                    new UserIdentifierData() { Uid = "9006110819", UidType = IdentifierType.EGN, Name = "Test UseR" }, // Last capital case is intentional for case-insensitive check
+                }
+        });
+
+        _mockMpozeiCaller
+            .Setup(x => x.FetchUserProfileAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IdentifierType>()))
+            .ReturnsAsync(() => new MpozeiUserProfile { Active = true, CitizenProfileId = "valid-citizen-id", FirstName = "Test", SecondName = "", LastName = "User"});
+
+        // Act
+        var result = await _sut.VerifyUidsRegistrationStatusAsync(message);
+
+        //Assert
+        CheckServiceResult(result, HttpStatusCode.OK, "Result Status was not OK");
+        Assert.That(result.Result, Is.EqualTo(true), "VerifyUidsRegistrationStatusAsync result was false");
     }
 
     [Test]
@@ -766,7 +723,7 @@ internal class VerificationServiceTests : BaseTest
             Uids = new UserIdentifierData[] { new() { Uid = egn, UidType = IdentifierType.EGN } }
         });
 
-        AddDateOfDeatSuccessfulResponse();
+        AddDateOfDeathSuccessfulResponse();
 
         AddDateOfProhibitionSuccessfulResponse();
 
@@ -789,7 +746,7 @@ internal class VerificationServiceTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(result.Result, Is.Not.Null);
-            Assert.That(result.Result?.Successfull, Is.EqualTo(true));
+            Assert.That(result.Result?.Successful, Is.EqualTo(true));
         });
 
         VerifyDateOfDeatCalls();
@@ -1023,7 +980,7 @@ internal class VerificationServiceTests : BaseTest
             }
         });
 
-    private void AddDateOfDeatSuccessfulResponse()
+    private void AddDateOfDeathSuccessfulResponse()
     {
         _mockHttpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is<HttpRequestMessage>(x =>

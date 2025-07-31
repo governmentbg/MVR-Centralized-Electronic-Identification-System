@@ -6,6 +6,7 @@ using eID.PAN.Service.Database;
 using eID.PAN.Service.Entities;
 using eID.PAN.Service.Options;
 using eID.PAN.UnitTests.Generic;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,7 @@ public class SmtpConfigurationsServiceTests : BaseTest
     private IDistributedCache _cache;
     private ApplicationDbContext _dbContext;
     private SmtpConfigurationsService _sut;
+    private Mock<ISmtpClient> _smtpClientMock;
 
     [SetUp]
     public void Init()
@@ -34,8 +36,10 @@ public class SmtpConfigurationsServiceTests : BaseTest
         var aesOptionsMock = new Mock<IOptions<AesOptions>>();
         aesOptionsMock.Setup(x => x.Value).Returns(() => new AesOptions { Key = "MyTestkey1234567", Vector = "MyTestVector1234" });
 
+        _smtpClientMock = new Mock<ISmtpClient>();
+        _smtpClientMock.Setup(x => x.IsConnected).Returns(() => true);
         _dbContext = GetTestDbContext();
-        _sut = new SmtpConfigurationsService(_logger, _cache, _dbContext, aesOptionsMock.Object);
+        _sut = new SmtpConfigurationsService(_logger, _cache, _dbContext, aesOptionsMock.Object, _smtpClientMock.Object);
     }
 
     [Test]
@@ -215,19 +219,67 @@ public class SmtpConfigurationsServiceTests : BaseTest
 
         // Act
         var result = await _sut.UpdateAsync(updateSmtpConfiguration);
-        Assert.That(_cache.Get($"eID:PAN:SmtpConfiguration:{id1}"), Is.Null);
 
         // Assert
         CheckServiceResult(result, HttpStatusCode.NoContent);
+        Assert.That(_cache.Get($"eID:PAN:SmtpConfiguration:{id1}"), Is.Null, "Cache for id is not null.");
 
         var resultAfterUpdate = await _sut.GetByIdAsync(getSmtpConfigurationById);
         CheckServiceResult(resultAfterUpdate, HttpStatusCode.OK);
         Assert.Multiple(() =>
         {
-            Assert.That(id1, Is.EqualTo(resultAfterUpdate?.Result?.Id));
-            Assert.That(updateSmtpConfiguration.Server, Is.EqualTo(resultAfterUpdate?.Result?.Server));
-            Assert.That(updateSmtpConfiguration.Port, Is.EqualTo(resultAfterUpdate?.Result?.Port));
-            Assert.That(updateSmtpConfiguration.UserName, Is.EqualTo(resultAfterUpdate?.Result?.UserName));
+            Assert.That(id1, Is.EqualTo(resultAfterUpdate?.Result?.Id), "Id mismatch after update.");
+            Assert.That(updateSmtpConfiguration.Server, Is.EqualTo(resultAfterUpdate?.Result?.Server), "Server mismatch after update.");
+            Assert.That(updateSmtpConfiguration.Port, Is.EqualTo(resultAfterUpdate?.Result?.Port), "Port mismatch after update.");
+            Assert.That(updateSmtpConfiguration.UserName, Is.EqualTo(resultAfterUpdate?.Result?.UserName), "Username mismatch after update.");
+        });
+    }
+
+    [Test]
+    public async Task UpdateAsync_WhenCalledWithValidData_ButSMTPFails_ShouldReturnConflictAsync()
+    {
+        // Arrange
+        var id1 = Guid.NewGuid();
+        var id2 = Guid.NewGuid();
+        var id3 = Guid.NewGuid();
+
+        await SeedTestSmtpConfigurationsAsync(id1, id2, id3);
+
+        var updateSmtpConfiguration = CreateInterface<UpdateSmtpConfiguration>(new
+        {
+            Id = id1,
+            Server = "UpdatedServer",
+            Port = 1234,
+            SecurityProtocol = SmtpSecurityProtocol.SSL,
+            UserName = "UpdatedUserName",
+            Password = "UpdatedPassword",
+            UserId = "UpdatedUser"
+        });
+
+        var getSmtpConfigurationById = CreateInterface<GetSmtpConfigurationById>(new
+        {
+            Id = id1
+        });
+
+        // Getting the record by Id in order to populate the cache
+        await _sut.GetByIdAsync(getSmtpConfigurationById);
+
+        // Act
+        _smtpClientMock.Setup(x => x.IsConnected).Returns(() => false); // Simulating failing SMTP connection
+        var result = await _sut.UpdateAsync(updateSmtpConfiguration);
+        _smtpClientMock.Setup(x => x.IsConnected).Returns(() => true); // Returning the flag to the original state
+
+        // Assert
+        CheckServiceResult(result, HttpStatusCode.Conflict);
+
+        var resultAfterUpdate = await _sut.GetByIdAsync(getSmtpConfigurationById);
+        CheckServiceResult(resultAfterUpdate, HttpStatusCode.OK);
+        Assert.Multiple(() =>
+        {
+            Assert.That(id1, Is.EqualTo(resultAfterUpdate?.Result?.Id), "Id mismatch after update.");
+            Assert.That(updateSmtpConfiguration.Server, Is.Not.EqualTo(resultAfterUpdate?.Result?.Server), "Server was updated.");
+            Assert.That(updateSmtpConfiguration.Port, Is.Not.EqualTo(resultAfterUpdate?.Result?.Port), "Port was updated.");
+            Assert.That(updateSmtpConfiguration.UserName, Is.Not.EqualTo(resultAfterUpdate?.Result?.UserName), "Username was updated.");
         });
     }
 

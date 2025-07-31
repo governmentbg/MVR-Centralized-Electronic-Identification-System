@@ -1,9 +1,8 @@
-﻿using eID.RO.Contracts.Commands;
+﻿using System.Text.RegularExpressions;
+using eID.RO.Contracts.Commands;
 using eID.RO.Contracts.Events;
 using eID.RO.Contracts.Results;
-using eID.RO.Service;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 
 namespace eID.RO.Application.StateMachines;
 
@@ -14,6 +13,7 @@ public class SignaturesCollectionStateMachine :
 
     public Event<CollectAuthorizerSignatures> InitiateSignatureCollectionProcess { get; }
     public Event<EmpowermentSigned> EmpowermentSigned { get; }
+    public Event<EmpowermentIsWithdrawn> EmpowermentIsWithdrawn { get; }
     public State CollectingSignatures { get; }
     public Schedule<SignaturesCollectionState, SignatureCollectionTimedOut> SignatureCollectionTimedOut { get; }
 
@@ -58,6 +58,11 @@ public class SignaturesCollectionStateMachine :
             x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
             x.OnMissingInstance(m => m.Discard());
         });
+        Event(() => EmpowermentIsWithdrawn, x =>
+        {
+            x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
+            x.OnMissingInstance(m => m.Discard());
+        });
 
         Initially(
                 When(InitiateSignatureCollectionProcess)
@@ -76,7 +81,7 @@ public class SignaturesCollectionStateMachine :
                 .PublishAsync(ctx => ctx.Init<NotifyUids>(new
                 {
                     CorrelationId = ctx.Saga.OriginCorrelationId,
-                    Uids = ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+                    Uids = ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
                     ctx.Saga.EmpowermentId,
                     EventCode = Service.EventsRegistration.Events.EmpowermentNeedsSignature.Code,
                     Service.EventsRegistration.Events.EmpowermentNeedsSignature.Translations
@@ -91,23 +96,28 @@ public class SignaturesCollectionStateMachine :
                 {
                     if (ctx.Saga.AuthorizerUids.Any(au => au.Uid == ctx.Message.SignerUid && au.UidType == ctx.Message.SignerUidType))
                     {
-                        ctx.Saga.SignedUids.Add(new UserIdentifierWithNameData { Name = ctx.Message.SignerName, Uid = ctx.Message.SignerUid, UidType = ctx.Message.SignerUidType });
+                        ctx.Saga.SignedUids.Add(new AuthorizerIdentifierData { Name = ctx.Message.SignerName, Uid = ctx.Message.SignerUid, UidType = ctx.Message.SignerUidType });
+                    }
+                    else
+                    {
+                        var maskedUid = Regex.Replace(ctx.Message.SignerUid, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
+                        _logger.LogWarning("{StateMachineName} Authorizer with Uid:{Uid} and UidType: {UidType} does not exist for Empowerment {EmpowermentId}",
+                            nameof(SignaturesCollectionStateMachine), maskedUid, ctx.Message.SignerUidType, ctx.Message.EmpowermentId);
                     }
                 })
                 .PublishAsync(ctx => ctx.Init<NotifyUids>(new
                 {
                     CorrelationId = ctx.Saga.OriginCorrelationId,
-                    Uids = ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+                    Uids = ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
                     ctx.Saga.EmpowermentId,
                     EventCode = Service.EventsRegistration.Events.EmpowermentSigned.Code,
                     Service.EventsRegistration.Events.EmpowermentSigned.Translations
                 }))
                 .If(
-                    check => !check.Saga.AuthorizerUids.Except(check.Saga.SignedUids, new UserIdentifierWithNamesEqualityComparer()).Any(),
+                    check => check.Saga.AuthorizerUids.All(au => check.Saga.SignedUids.Any(su => su.Uid == au.Uid && su.UidType == au.UidType)),
                     allSignaturesCollected => allSignaturesCollected.Finalize()
                 )
         );
-
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         DuringAny(
@@ -115,33 +125,44 @@ public class SignaturesCollectionStateMachine :
             .PublishAsync(ctx => ctx.Init<NotifyUids>(new
             {
                 CorrelationId = ctx.Saga.OriginCorrelationId,
-                Uids = ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType }),
+                Uids = ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType, Name = x.Name }),
                 ctx.Saga.EmpowermentId,
                 EventCode = Service.EventsRegistration.Events.EmpowermentTimeout.Code,
                 Service.EventsRegistration.Events.EmpowermentTimeout.Translations
             }))
-            .Finalize()
+            .Finalize(),
+            When(EmpowermentIsWithdrawn)
+                .Then(ctx =>
+                {
+                    ctx.Saga.IsEmpowermentWithdrawn = true;
+                })
+                .Finalize()
             );
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         BeforeEnter(Final,
-                binder => binder
-                    .IfElse(
-                        check => !check.Saga.AuthorizerUids.Except(check.Saga.SignedUids, new UserIdentifierWithNamesEqualityComparer()).Any(),
-                        everyoneSigned => everyoneSigned
-                                .PublishAsync(ctx => ctx.Init<SignaturesCollected>(new
-                                {
-                                    CorrelationId = ctx.Saga.OriginCorrelationId,
-                                    ctx.Saga.EmpowermentId
-                                })),
-                        missingSignatures => missingSignatures
-                                .PublishAsync(ctx => ctx.Init<SignatureCollectionFailed>(new
-                                {
-                                    CorrelationId = ctx.Saga.OriginCorrelationId,
-                                    ctx.Saga.EmpowermentId
-                                }))
-                    )
-            );
+            binder => binder
+                .If(
+                    // If IsEmpowermentWithdrawn is sent any further action will be skipped.
+                    check => !check.Saga.IsEmpowermentWithdrawn,
+                    wasNotWithdrawn => wasNotWithdrawn
+                        .IfElse(
+                            check => check.Saga.AuthorizerUids.All(au => check.Saga.SignedUids.Any(su => su.Uid == au.Uid && su.UidType == au.UidType)),
+                            everyoneSigned => everyoneSigned
+                                    .PublishAsync(ctx => ctx.Init<SignaturesCollected>(new
+                                    {
+                                        CorrelationId = ctx.Saga.OriginCorrelationId,
+                                        ctx.Saga.EmpowermentId
+                                    })),
+                            missingSignatures => missingSignatures
+                                    .PublishAsync(ctx => ctx.Init<SignatureCollectionFailed>(new
+                                    {
+                                        CorrelationId = ctx.Saga.OriginCorrelationId,
+                                        ctx.Saga.EmpowermentId
+                                    }))
+                        )
+                )
+        );
 
         WhenEnter(Final,
             binder => binder
@@ -168,5 +189,6 @@ public class SignatureCollectionStateMachineDefinition :
         var partition = endpointConfigurator.CreatePartitioner(ConcurrentMessageLimit ?? 16);
         sagaConfigurator.Message<CollectAuthorizerSignatures>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
         sagaConfigurator.Message<EmpowermentSigned>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
+        sagaConfigurator.Message<EmpowermentIsWithdrawn>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
     }
 }

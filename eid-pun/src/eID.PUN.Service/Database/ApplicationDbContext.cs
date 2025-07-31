@@ -38,8 +38,6 @@ public class ApplicationDbContext : DbContext
             entity.Property(h => h.Type).IsRequired().HasMaxLength(100);
             entity.Property(h => h.CertificateId).IsRequired();
             entity.Property(h => h.EId).IsRequired();
-            entity.Property(h => h.UserId);
-            entity.Property(f => f.ModifiedBy).HasMaxLength(64);
         });
     }
 }

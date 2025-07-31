@@ -1,0 +1,5 @@
+ALTER TABLE raeicei.eid_manager
+    ADD COLUMN IF NOT EXISTS logo CHARACTER VARYING (255);
+
+ALTER TABLE raeicei.eid_manager_aud
+    ADD COLUMN IF NOT EXISTS logo CHARACTER VARYING (255);

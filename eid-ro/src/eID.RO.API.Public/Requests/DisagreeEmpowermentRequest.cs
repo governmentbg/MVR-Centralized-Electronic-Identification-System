@@ -26,6 +26,7 @@ public class DisagreeEmpowermentRequest : IValidatableRequest
     /// Disagreement reason
     /// </summary>
     public string? Reason { get; set; }
+    public string Name { get; set; }
 }
 
 internal class DisagreeEmpowermentRequestValidator : AbstractValidator<DisagreeEmpowermentRequest>
@@ -50,6 +51,7 @@ internal class DisagreeEmpowermentRequestValidator : AbstractValidator<DisagreeE
                 .NotEmpty()
                 .MaximumLength(256);
         });
+        RuleFor(r => r.Name).NotEmpty();
     }
 }
 

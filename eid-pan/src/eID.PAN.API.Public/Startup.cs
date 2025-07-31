@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using eID.PAN.Contracts;
 using eID.PJS.AuditLogging;
 using Hellang.Middleware.ProblemDetails;
 using MassTransit;
@@ -35,8 +36,6 @@ public class Startup
             .AddJwtBearer(options =>
             {
                 Configuration.Bind(nameof(JwtBearerOptions), options);
-                // TODO: DO NOT LEAVE IT IN PROD
-                options.BackchannelHttpHandler = new HttpClientHandler { ServerCertificateCustomValidationCallback = delegate { return true; } };
             });
 
         services
@@ -67,9 +66,9 @@ public class Startup
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "eID - PAN HTTP API",
+                Title = "eID - PAN Public HTTP API",
                 Version = "v1",
-                Description = "Подсистема за автоматични нотификации (ПАН)"
+                Description = "Подсистема за автоматични нотификации (ПАН) Публична"
             });
 
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -145,12 +144,37 @@ public class Startup
         {
             options.SerializerSettings.Converters.Add(new StringEnumConverter());
         });
+
         // In case of unhandled exception this service adds in response an error as ProblemDetails structure. See more: https://tools.ietf.org/html/rfc7231
         services.AddProblemDetails(opts =>
         {
             // Set up our RequestId as "traceId"
             opts.GetTraceId = (ctx) =>
                 ctx.Request?.Headers?.RequestId;
+
+            opts.OnBeforeWriteDetails = (ctx, details) =>
+            {
+                if (ctx.Items.ContainsKey(nameof(LogEventCode))
+                    && ctx.Items.ContainsKey("Payload"))
+                {
+                    var _auditLogger = ctx.RequestServices.GetRequiredService<AuditLogger>();
+                    var logEventCode = (LogEventCode)ctx.Items[nameof(LogEventCode)];
+                    var eventPayload = ctx.Items["Payload"] as SortedDictionary<string, object>;
+                    eventPayload.Add("ResponseStatusCode", ctx.Response.StatusCode);
+                    eventPayload.Add("Reason", "Unhandled exception");
+                    _auditLogger.LogEvent(new AuditLogEvent
+                    {
+                        CorrelationId = ctx.Request?.Headers?.RequestId.ToString(),
+                        RequesterSystemId = ctx.User.Claims.FirstOrDefault(d => string.Equals(d.Type, "SystemId", StringComparison.InvariantCultureIgnoreCase))?.Value,
+                        RequesterSystemName = ctx.User.Claims.FirstOrDefault(d => string.Equals(d.Type, "SystemName", StringComparison.InvariantCultureIgnoreCase))?.Value,
+                        RequesterUserId = ctx.User.Claims.FirstOrDefault(d => d.Type == Claims.CitizenProfileId)?.Value ?? "Unknown user",
+                        TargetUserId = ctx.Items["TargetUserId"]?.ToString(),
+                        EventType = $"{logEventCode}_{LogEventLifecycle.FAIL}",
+                        Message = LogEventMessages.GetLogEventMessage(logEventCode, LogEventLifecycle.FAIL),
+                        EventPayload = eventPayload
+                    });
+                }
+            };
 
             opts.IncludeExceptionDetails = (ctx, ex) =>
             {

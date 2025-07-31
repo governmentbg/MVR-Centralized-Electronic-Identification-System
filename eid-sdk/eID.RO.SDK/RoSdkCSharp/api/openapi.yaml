@@ -1,0 +1,1453 @@
+openapi: 3.0.1
+info:
+  description: Регистър на овластяванията (РО)
+  title: eID - RO HTTP API
+  version: v1
+servers:
+- url: /
+security:
+- Bearer: []
+paths:
+  /api/v1/Deau/empowerments:
+    post:
+      operationId: GetEmpowermentsByDeauAsync
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/GetEmpowermentsByDeauRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetEmpowermentsByDeauRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/GetEmpowermentsByDeauRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/GetEmpowermentsByDeauRequest'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpowermentStatementResultIPaginatedData'
+          description: Success
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpowermentStatementResultIPaginatedData'
+          description: Accepted
+      summary: "This endpoint will validate Deau and search for a Empowerments based\
+        \ on filter.\r\nIt may return either a 200 OK or 202 Accepted response.\r\n\
+        \r\n- 202 Accepted: Indicates that validation checks for legal representation\
+        \ are still in progress. \r\n  The response will contain an empty list. You\
+        \ should retry the request after a short interval.\r\n\r\n- 200 OK: All checks\
+        \ have been successfully completed. The response will contain the list of\
+        \ empowerments.\r\n\r\nClients integrating with this endpoint must handle\
+        \ both 202 and 200 status codes appropriately. \r\nIf a 202 is received, implement\
+        \ retry logic (e.g., with a delay or exponential backoff) \r\nuntil a 200\
+        \ OK is returned with the final data."
+      tags:
+      - Deau
+  /api/v1/Deau/deny-empowerment:
+    post:
+      operationId: DenyEmpowermentByDeauAsync
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/DenyEmpowermentByDeauRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DenyEmpowermentByDeauRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/DenyEmpowermentByDeauRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/DenyEmpowermentByDeauRequest'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                format: uuid
+                type: string
+          description: Success
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Not Found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Conflict
+      summary: Deny both Active and Unconfirmed empowerments
+      tags:
+      - Deau
+  /api/v1/Deau/approve-empowerment:
+    post:
+      operationId: ApproveEmpowermentByDeauAsync
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/ApproveEmpowermentByDeauRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveEmpowermentByDeauRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ApproveEmpowermentByDeauRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ApproveEmpowermentByDeauRequest'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                format: uuid
+                type: string
+          description: Success
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Not Found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Conflict
+      summary: Approve Unconfirmed empowerment
+      tags:
+      - Deau
+components:
+  schemas:
+    AddEmpowermentStatementsRequest:
+      additionalProperties: false
+      description: Used for creating new empowerment statements
+      properties:
+        onBehalfOf:
+          $ref: '#/components/schemas/OnBehalfOf'
+        name:
+          description: Name of legal entity. When OnBehalfOf.Individual this is taken
+            from the token.
+          nullable: true
+          type: string
+        uid:
+          description: Uid of legal entity. When OnBehalfOf.Individual this is taken
+            from the token.
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        empoweredUids:
+          description: List of EGNs or LNCHs of empowered people
+          items:
+            $ref: '#/components/schemas/UserIdentifierData'
+          nullable: true
+          type: array
+        typeOfEmpowerment:
+          $ref: '#/components/schemas/TypeOfEmpowerment'
+        providerId:
+          description: Representation of provider - extended reference
+          nullable: true
+          type: string
+        providerName:
+          description: "Provider name, collected and stored in the moment of execution"
+          nullable: true
+          type: string
+        serviceId:
+          description: "Numeric representation of service, depends on selected provider\
+            \ - extended reference"
+          format: int32
+          type: integer
+        serviceName:
+          description: "Service Name, collected and stored in the moment of execution"
+          nullable: true
+          type: string
+        issuerPosition:
+          description: Name of the position the issuer has in the legal entity
+          nullable: true
+          type: string
+        volumeOfRepresentation:
+          description: "List of all selected actions, that can be performed over selected\
+            \ service"
+          items:
+            $ref: '#/components/schemas/VolumeOfRepresentationRequest'
+          nullable: true
+          type: array
+        startDate:
+          description: "UTC. On this date, once verified and signed, the empowerment\
+            \ can be considered active.\r\nIf not provided, the empowerment will become\
+            \ immediately active after signing.\r\nDefault: DateTime.UtcNow"
+          format: date-time
+          type: string
+        expiryDate:
+          description: "UTC. Empowerment statement will be active before this moment.\
+            \ Must be at least 1 hour after current time.\r\nEndless empowerment if\
+            \ this date is null"
+          format: date-time
+          nullable: true
+          type: string
+        authorizerUids:
+          description: List of EGNs or LNCHs of Authorizer people
+          items:
+            $ref: '#/components/schemas/AuthorizerIdentifierData'
+          nullable: true
+          type: array
+      type: object
+    ApproveEmpowermentByDeauRequest:
+      additionalProperties: false
+      description: Approve Unconfirmed empowerment by DEAU
+      example:
+        empowermentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        empowermentId:
+          description: "EmpowermentId : the unconfirmed empowerment to approve"
+          format: uuid
+          type: string
+      type: object
+    AuthorizerIdentifierData:
+      additionalProperties: false
+      properties:
+        uid:
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        name:
+          nullable: true
+          type: string
+        isIssuer:
+          type: boolean
+      type: object
+    CalculatedEmpowermentStatus:
+      enum:
+      - None
+      - CollectingAuthorizerSignatures
+      - Active
+      - Created
+      - Denied
+      - DisagreementDeclared
+      - Withdrawn
+      - Expired
+      - UpComing
+      - Unconfirmed
+      type: string
+    DenyEmpowermentByDeauRequest:
+      additionalProperties: false
+      description: Deny Unconfirmed or Active empowerment by DEAU
+      example:
+        denialReasonComment: denialReasonComment
+        empowermentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        empowermentId:
+          description: "EmpowermentId : the unconfirmed empowerment to deny"
+          format: uuid
+          type: string
+        denialReasonComment:
+          description: The reason for denying the empowerment application by DEAU
+          nullable: true
+          type: string
+      type: object
+    DisagreeEmpowermentRequestPayload:
+      additionalProperties: false
+      description: All user-provided necessary data for empowerment disagreement process
+      properties:
+        reason:
+          description: The reason for the initialization of the disagreement process
+          nullable: true
+          type: string
+      type: object
+    EmpowermentDisagreementReasonResult:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          readOnly: true
+          type: string
+        translations:
+          items:
+            $ref: '#/components/schemas/EmpowermentDisagreementReasonTranslationResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    EmpowermentDisagreementReasonTranslationResult:
+      additionalProperties: false
+      properties:
+        language:
+          nullable: true
+          readOnly: true
+          type: string
+        name:
+          nullable: true
+          readOnly: true
+          type: string
+      type: object
+    EmpowermentDisagreementResult:
+      additionalProperties: false
+      example:
+        activeDateTime: 2000-01-23T04:56:07.000+00:00
+        reason: reason
+        issuerUidType: null
+        issuerUid: issuerUid
+      properties:
+        activeDateTime:
+          format: date-time
+          type: string
+        issuerUid:
+          nullable: true
+          type: string
+        issuerUidType:
+          $ref: '#/components/schemas/IdentifierType'
+        reason:
+          nullable: true
+          type: string
+      type: object
+    EmpowermentSignatureResult:
+      additionalProperties: false
+      properties:
+        dateTime:
+          format: date-time
+          readOnly: true
+          type: string
+        signerUid:
+          nullable: true
+          readOnly: true
+          type: string
+        signature:
+          nullable: true
+          readOnly: true
+          type: string
+      type: object
+    EmpowermentStatementFromMeResult:
+      additionalProperties: false
+      properties:
+        empowermentSignatures:
+          items:
+            $ref: '#/components/schemas/EmpowermentSignatureResult'
+          nullable: true
+          readOnly: true
+          type: array
+        id:
+          format: uuid
+          type: string
+        number:
+          nullable: true
+          type: string
+        startDate:
+          format: date-time
+          type: string
+        expiryDate:
+          format: date-time
+          nullable: true
+          type: string
+        status:
+          $ref: '#/components/schemas/EmpowermentStatementStatus'
+        uid:
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        name:
+          nullable: true
+          type: string
+        onBehalfOf:
+          $ref: '#/components/schemas/OnBehalfOf'
+        authorizerUids:
+          items:
+            $ref: '#/components/schemas/UidResult'
+          nullable: true
+          type: array
+        empoweredUids:
+          items:
+            $ref: '#/components/schemas/UidResult'
+          nullable: true
+          type: array
+        providerId:
+          nullable: true
+          type: string
+        providerName:
+          nullable: true
+          type: string
+        serviceId:
+          format: int32
+          type: integer
+        serviceName:
+          nullable: true
+          type: string
+        volumeOfRepresentation:
+          items:
+            $ref: '#/components/schemas/VolumeOfRepresentationResult'
+          nullable: true
+          type: array
+        createdOn:
+          format: date-time
+          nullable: true
+          type: string
+        createdBy:
+          nullable: true
+          type: string
+        issuerPosition:
+          nullable: true
+          type: string
+        xmlRepresentation:
+          nullable: true
+          type: string
+        denialReason:
+          $ref: '#/components/schemas/EmpowermentsDenialReason'
+        empowermentWithdrawals:
+          items:
+            $ref: '#/components/schemas/EmpowermentWithdrawResult'
+          nullable: true
+          type: array
+        empowermentDisagreements:
+          items:
+            $ref: '#/components/schemas/EmpowermentDisagreementResult'
+          nullable: true
+          type: array
+        statusHistory:
+          items:
+            $ref: '#/components/schemas/StatusHistoryResult'
+          nullable: true
+          type: array
+        calculatedStatusOn:
+          $ref: '#/components/schemas/CalculatedEmpowermentStatus'
+      type: object
+    EmpowermentStatementFromMeResultIPaginatedData:
+      additionalProperties: false
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/EmpowermentStatementFromMeResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    EmpowermentStatementResult:
+      additionalProperties: false
+      example:
+        issuerPosition: issuerPosition
+        onBehalfOf: Empty
+        volumeOfRepresentation:
+        - name: name
+        - name: name
+        createdOn: 2000-01-23T04:56:07.000+00:00
+        empowermentWithdrawals:
+        - activeDateTime: 2000-01-23T04:56:07.000+00:00
+          reason: reason
+          startDateTime: 2000-01-23T04:56:07.000+00:00
+          issuerUidType: null
+          issuerUid: issuerUid
+          status: None
+        - activeDateTime: 2000-01-23T04:56:07.000+00:00
+          reason: reason
+          startDateTime: 2000-01-23T04:56:07.000+00:00
+          issuerUidType: null
+          issuerUid: issuerUid
+          status: None
+        expiryDate: 2000-01-23T04:56:07.000+00:00
+        number: number
+        uid: uid
+        empoweredUids:
+        - uid: uid
+          uidType: null
+          name: name
+        - uid: uid
+          uidType: null
+          name: name
+        providerId: providerId
+        xmlRepresentation: xmlRepresentation
+        denialReason: None
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        serviceId: 5
+        providerName: providerName
+        uidType: NotSpecified
+        calculatedStatusOn: None
+        authorizerUids:
+        - uid: uid
+          uidType: null
+          name: name
+        - uid: uid
+          uidType: null
+          name: name
+        serviceName: serviceName
+        statusHistory:
+        - dateTime: 2000-01-23T04:56:07.000+00:00
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          status: null
+        - dateTime: 2000-01-23T04:56:07.000+00:00
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          status: null
+        empowermentDisagreements:
+        - activeDateTime: 2000-01-23T04:56:07.000+00:00
+          reason: reason
+          issuerUidType: null
+          issuerUid: issuerUid
+        - activeDateTime: 2000-01-23T04:56:07.000+00:00
+          reason: reason
+          issuerUidType: null
+          issuerUid: issuerUid
+        createdBy: createdBy
+        name: name
+        startDate: 2000-01-23T04:56:07.000+00:00
+        status: None
+      properties:
+        id:
+          format: uuid
+          type: string
+        number:
+          nullable: true
+          type: string
+        startDate:
+          format: date-time
+          type: string
+        expiryDate:
+          format: date-time
+          nullable: true
+          type: string
+        status:
+          $ref: '#/components/schemas/EmpowermentStatementStatus'
+        uid:
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        name:
+          nullable: true
+          type: string
+        onBehalfOf:
+          $ref: '#/components/schemas/OnBehalfOf'
+        authorizerUids:
+          items:
+            $ref: '#/components/schemas/UidResult'
+          nullable: true
+          type: array
+        empoweredUids:
+          items:
+            $ref: '#/components/schemas/UidResult'
+          nullable: true
+          type: array
+        providerId:
+          nullable: true
+          type: string
+        providerName:
+          nullable: true
+          type: string
+        serviceId:
+          format: int32
+          type: integer
+        serviceName:
+          nullable: true
+          type: string
+        volumeOfRepresentation:
+          items:
+            $ref: '#/components/schemas/VolumeOfRepresentationResult'
+          nullable: true
+          type: array
+        createdOn:
+          format: date-time
+          nullable: true
+          type: string
+        createdBy:
+          nullable: true
+          type: string
+        issuerPosition:
+          nullable: true
+          type: string
+        xmlRepresentation:
+          nullable: true
+          type: string
+        denialReason:
+          $ref: '#/components/schemas/EmpowermentsDenialReason'
+        empowermentWithdrawals:
+          items:
+            $ref: '#/components/schemas/EmpowermentWithdrawResult'
+          nullable: true
+          type: array
+        empowermentDisagreements:
+          items:
+            $ref: '#/components/schemas/EmpowermentDisagreementResult'
+          nullable: true
+          type: array
+        statusHistory:
+          items:
+            $ref: '#/components/schemas/StatusHistoryResult'
+          nullable: true
+          type: array
+        calculatedStatusOn:
+          $ref: '#/components/schemas/CalculatedEmpowermentStatus'
+      type: object
+    EmpowermentStatementResultIPaginatedData:
+      additionalProperties: false
+      example:
+        totalItems: 5
+        data:
+        - issuerPosition: issuerPosition
+          onBehalfOf: Empty
+          volumeOfRepresentation:
+          - name: name
+          - name: name
+          createdOn: 2000-01-23T04:56:07.000+00:00
+          empowermentWithdrawals:
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            startDateTime: 2000-01-23T04:56:07.000+00:00
+            issuerUidType: null
+            issuerUid: issuerUid
+            status: None
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            startDateTime: 2000-01-23T04:56:07.000+00:00
+            issuerUidType: null
+            issuerUid: issuerUid
+            status: None
+          expiryDate: 2000-01-23T04:56:07.000+00:00
+          number: number
+          uid: uid
+          empoweredUids:
+          - uid: uid
+            uidType: null
+            name: name
+          - uid: uid
+            uidType: null
+            name: name
+          providerId: providerId
+          xmlRepresentation: xmlRepresentation
+          denialReason: None
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          serviceId: 5
+          providerName: providerName
+          uidType: NotSpecified
+          calculatedStatusOn: None
+          authorizerUids:
+          - uid: uid
+            uidType: null
+            name: name
+          - uid: uid
+            uidType: null
+            name: name
+          serviceName: serviceName
+          statusHistory:
+          - dateTime: 2000-01-23T04:56:07.000+00:00
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            status: null
+          - dateTime: 2000-01-23T04:56:07.000+00:00
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            status: null
+          empowermentDisagreements:
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            issuerUidType: null
+            issuerUid: issuerUid
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            issuerUidType: null
+            issuerUid: issuerUid
+          createdBy: createdBy
+          name: name
+          startDate: 2000-01-23T04:56:07.000+00:00
+          status: None
+        - issuerPosition: issuerPosition
+          onBehalfOf: Empty
+          volumeOfRepresentation:
+          - name: name
+          - name: name
+          createdOn: 2000-01-23T04:56:07.000+00:00
+          empowermentWithdrawals:
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            startDateTime: 2000-01-23T04:56:07.000+00:00
+            issuerUidType: null
+            issuerUid: issuerUid
+            status: None
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            startDateTime: 2000-01-23T04:56:07.000+00:00
+            issuerUidType: null
+            issuerUid: issuerUid
+            status: None
+          expiryDate: 2000-01-23T04:56:07.000+00:00
+          number: number
+          uid: uid
+          empoweredUids:
+          - uid: uid
+            uidType: null
+            name: name
+          - uid: uid
+            uidType: null
+            name: name
+          providerId: providerId
+          xmlRepresentation: xmlRepresentation
+          denialReason: None
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          serviceId: 5
+          providerName: providerName
+          uidType: NotSpecified
+          calculatedStatusOn: None
+          authorizerUids:
+          - uid: uid
+            uidType: null
+            name: name
+          - uid: uid
+            uidType: null
+            name: name
+          serviceName: serviceName
+          statusHistory:
+          - dateTime: 2000-01-23T04:56:07.000+00:00
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            status: null
+          - dateTime: 2000-01-23T04:56:07.000+00:00
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            status: null
+          empowermentDisagreements:
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            issuerUidType: null
+            issuerUid: issuerUid
+          - activeDateTime: 2000-01-23T04:56:07.000+00:00
+            reason: reason
+            issuerUidType: null
+            issuerUid: issuerUid
+          createdBy: createdBy
+          name: name
+          startDate: 2000-01-23T04:56:07.000+00:00
+          status: None
+        pageIndex: 1
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/EmpowermentStatementResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    EmpowermentStatementStatus:
+      enum:
+      - None
+      - CollectingAuthorizerSignatures
+      - CollectingWithdrawalSignatures
+      - Active
+      - Created
+      - Denied
+      - DisagreementDeclared
+      - Withdrawn
+      - Unconfirmed
+      type: string
+    EmpowermentWithdrawResult:
+      additionalProperties: false
+      example:
+        activeDateTime: 2000-01-23T04:56:07.000+00:00
+        reason: reason
+        startDateTime: 2000-01-23T04:56:07.000+00:00
+        issuerUidType: null
+        issuerUid: issuerUid
+        status: None
+      properties:
+        startDateTime:
+          format: date-time
+          readOnly: true
+          type: string
+        activeDateTime:
+          format: date-time
+          nullable: true
+          readOnly: true
+          type: string
+        issuerUid:
+          nullable: true
+          readOnly: true
+          type: string
+        issuerUidType:
+          $ref: '#/components/schemas/IdentifierType'
+        reason:
+          nullable: true
+          readOnly: true
+          type: string
+        status:
+          $ref: '#/components/schemas/EmpowermentWithdrawalStatus'
+      type: object
+    EmpowermentWithdrawalReasonResult:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          readOnly: true
+          type: string
+        translations:
+          items:
+            $ref: '#/components/schemas/EmpowermentWithdrawalReasonTranslationResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    EmpowermentWithdrawalReasonTranslationResult:
+      additionalProperties: false
+      properties:
+        language:
+          nullable: true
+          readOnly: true
+          type: string
+        name:
+          nullable: true
+          readOnly: true
+          type: string
+      type: object
+    EmpowermentWithdrawalStatus:
+      enum:
+      - None
+      - InProgress
+      - Completed
+      - Denied
+      - Timeout
+      type: string
+    EmpowermentsByDeauSortBy:
+      enum:
+      - None
+      - Name
+      - ServiceName
+      - ExpiryDate
+      type: string
+    EmpowermentsByEikFilterStatus:
+      enum:
+      - Created
+      - CollectingAuthorizerSignatures
+      - Active
+      - Denied
+      - DisagreementDeclared
+      - Withdrawn
+      - Expired
+      - Unconfirmed
+      type: string
+    EmpowermentsByEikSortBy:
+      enum:
+      - None
+      - Name
+      - ProviderName
+      - ServiceName
+      - Uid
+      - Status
+      - CreatedOn
+      type: string
+    EmpowermentsDenialReason:
+      enum:
+      - None
+      - DeceasedUid
+      - ProhibitedUid
+      - NTRCheckFailed
+      - TimedOut
+      - BelowLawfulAge
+      - NoPermit
+      - LawfulAgeInfoNotAvailable
+      - UnsuccessfulRestrictionsCheck
+      - LegalEntityNotActive
+      - LegalEntityRepresentationNotMatch
+      - UnsuccessfulLegalEntityCheck
+      - EmpowermentStatementNotFound
+      - BulstatCheckFailed
+      - ReregisteredInNTR
+      - ArchivedInBulstat
+      - InInsolvencyProceedingsInBulstat
+      - InsolventInBulstat
+      - InLiquidationInBulstat
+      - InactiveInBulstat
+      - ClosedInBulstat
+      - TerminatedThroughMergerInBulstat
+      - TerminatedThroughIncorporationInBulstat
+      - TerminatedThroughDivisionInBulstat
+      - DeletedFromJudicialRegister
+      - DeletedFromBTPPRegister
+      - RegistrationAnnulledInBulstat
+      - TerminatedDueToEnterpriseTransactionInBulstat
+      - DeregisteredInBulstat
+      - SignatureCollectionTimeOut
+      - UnsuccessfulTimestamping
+      - DeniedByDeauAdministrator
+      - InvalidUidRegistrationStatusDetected
+      - UidsRegistrationStatusInfoNotAvailable
+      - RegistrationStatusUnavailable
+      - InactiveProfile
+      - NoBaseProfile
+      - NameMismatch
+      - NoRegistration
+      type: string
+    EmpowermentsFromMeFilterStatus:
+      enum:
+      - Created
+      - Verified
+      - CollectingAuthorizerSignatures
+      - Active
+      - Denied
+      - DisagreementDeclared
+      - CollectingWithdrawalSignatures
+      - Withdrawn
+      - Expired
+      - Unconfirmed
+      type: string
+    EmpowermentsFromMeSortBy:
+      enum:
+      - None
+      - Name
+      - ProviderName
+      - ServiceName
+      - Uid
+      - Status
+      - CreatedOn
+      type: string
+    EmpowermentsToMeFilterStatus:
+      enum:
+      - Active
+      - Denied
+      - DisagreementDeclared
+      - Withdrawn
+      - Expired
+      - Unconfirmed
+      type: string
+    EmpowermentsToMeSortBy:
+      enum:
+      - Id
+      - Authorizer
+      - ProviderName
+      - ServiceName
+      - Status
+      - CreatedOn
+      type: string
+    GetEmpowermentsByDeauRequest:
+      additionalProperties: false
+      description: Get empowerments by DEAU
+      example:
+        authorizerUidType: NotSpecified
+        sortDirection: Asc
+        pageIndex: 1
+        authorizerUid: authorizerUid
+        onBehalfOf: Empty
+        statusOn: 2000-01-23T04:56:07.000+00:00
+        pageSize: 6
+        volumeOfRepresentation:
+        - volumeOfRepresentation
+        - volumeOfRepresentation
+        sortBy: None
+        serviceId: 0
+        empoweredUidType: null
+        empoweredUid: empoweredUid
+      properties:
+        onBehalfOf:
+          $ref: '#/components/schemas/OnBehalfOf'
+        authorizerUid:
+          description: Authorizer Eik/Egn/Lnch
+          nullable: true
+          type: string
+        authorizerUidType:
+          $ref: '#/components/schemas/IdentifierType'
+        empoweredUid:
+          description: Empowered person Egn/Lnch
+          nullable: true
+          type: string
+        empoweredUidType:
+          $ref: '#/components/schemas/IdentifierType'
+        serviceId:
+          description: Service Id
+          format: int32
+          type: integer
+        volumeOfRepresentation:
+          description: "Volume of representation.\r\nOptional"
+          items:
+            type: string
+          nullable: true
+          type: array
+        statusOn:
+          description: Status on date time
+          format: date-time
+          type: string
+        pageSize:
+          description: Page size
+          format: int32
+          type: integer
+        pageIndex:
+          description: Page index
+          format: int32
+          type: integer
+        sortBy:
+          $ref: '#/components/schemas/EmpowermentsByDeauSortBy'
+        sortDirection:
+          $ref: '#/components/schemas/SortDirection'
+      type: object
+    GetEmpowermentsByEikFilterRequest:
+      additionalProperties: false
+      properties:
+        eik:
+          nullable: true
+          type: string
+        status:
+          $ref: '#/components/schemas/EmpowermentsByEikFilterStatus'
+        providerName:
+          nullable: true
+          type: string
+        serviceName:
+          nullable: true
+          type: string
+        validToDate:
+          format: date-time
+          nullable: true
+          type: string
+        showOnlyNoExpiryDate:
+          nullable: true
+          type: boolean
+        authorizerUids:
+          items:
+            $ref: '#/components/schemas/UserIdentifierData'
+          nullable: true
+          type: array
+        sortBy:
+          $ref: '#/components/schemas/EmpowermentsByEikSortBy'
+        sortDirection:
+          $ref: '#/components/schemas/SortDirection'
+        pageSize:
+          format: int32
+          type: integer
+        pageIndex:
+          format: int32
+          type: integer
+      type: object
+    GetEmpowermentsFromMeByFilterRequest:
+      additionalProperties: false
+      properties:
+        number:
+          description: "Empowerment number. Template: РОx/dd.mm.yyyy. x is a integer,\
+            \ dd.mm.yyyy the date of action."
+          nullable: true
+          type: string
+        status:
+          $ref: '#/components/schemas/EmpowermentsFromMeFilterStatus'
+        authorizer:
+          description: Empowerment Authorizer name - contains
+          nullable: true
+          type: string
+        providerName:
+          description: Empowerment provider name
+          nullable: true
+          type: string
+        serviceName:
+          description: Empowerment Service name or Service code - contains
+          nullable: true
+          type: string
+        validToDate:
+          description: Empowerment Valid to Date filter
+          format: date-time
+          nullable: true
+          type: string
+        showOnlyNoExpiryDate:
+          description: Filter to show only never expiring empowerments
+          nullable: true
+          type: boolean
+        empoweredUids:
+          description: Filter to show only never expiring empowerments
+          items:
+            $ref: '#/components/schemas/UidAndUidTypeData'
+          nullable: true
+          type: array
+        sortBy:
+          $ref: '#/components/schemas/EmpowermentsFromMeSortBy'
+        sortDirection:
+          $ref: '#/components/schemas/SortDirection'
+        onBehalfOf:
+          $ref: '#/components/schemas/OnBehalfOf'
+        pageSize:
+          format: int32
+          type: integer
+        pageIndex:
+          format: int32
+          type: integer
+      type: object
+    IdentifierType:
+      enum:
+      - NotSpecified
+      - LNCh
+      - EGN
+      type: string
+    LanguageType:
+      enum:
+      - Bg
+      - En
+      type: string
+    OnBehalfOf:
+      enum:
+      - Empty
+      - Individual
+      - LegalEntity
+      type: string
+    ProblemDetails:
+      additionalProperties: {}
+      example:
+        instance: instance
+        detail: detail
+        type: type
+        title: title
+        status: 6
+      properties:
+        type:
+          nullable: true
+          type: string
+        title:
+          nullable: true
+          type: string
+        status:
+          format: int32
+          nullable: true
+          type: integer
+        detail:
+          nullable: true
+          type: string
+        instance:
+          nullable: true
+          type: string
+      type: object
+    ProviderDetailsStatus:
+      enum:
+      - None
+      - Active
+      type: string
+    ProviderListResult:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          nullable: true
+          type: string
+      type: object
+    ProviderListResultIPaginatedData:
+      additionalProperties: false
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/ProviderListResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    ProviderServiceResult:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          type: string
+        serviceNumber:
+          format: int64
+          type: integer
+        name:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+        paymentInfoNormalCost:
+          format: double
+          nullable: true
+          type: number
+        isEmpowerment:
+          type: boolean
+        isExternal:
+          readOnly: true
+          type: boolean
+        isDeleted:
+          type: boolean
+        providerDetailsId:
+          format: uuid
+          readOnly: true
+          type: string
+        providerSectionId:
+          format: uuid
+          readOnly: true
+          type: string
+      type: object
+    ProviderServiceResultIPaginatedData:
+      additionalProperties: false
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/ProviderServiceResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    ServiceScopeResult:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          type: string
+        code:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+      type: object
+    SignEmpowermentPayload:
+      additionalProperties: false
+      description: All user-provided necessary data for empowerment signing
+      properties:
+        signatureProvider:
+          $ref: '#/components/schemas/SignatureProvider'
+        detachedSignature:
+          description: Base64 encoded detached signature
+          nullable: true
+          type: string
+      type: object
+    SignatureProvider:
+      enum:
+      - NotSpecified
+      - KEP
+      - Evrotrust
+      - Borica
+      type: string
+    SortDirection:
+      enum:
+      - Asc
+      - Desc
+      type: string
+    StatusHistoryResult:
+      additionalProperties: false
+      example:
+        dateTime: 2000-01-23T04:56:07.000+00:00
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        status: null
+      properties:
+        id:
+          format: uuid
+          type: string
+        dateTime:
+          format: date-time
+          type: string
+        status:
+          $ref: '#/components/schemas/EmpowermentStatementStatus'
+      type: object
+    TypeOfEmpowerment:
+      enum:
+      - Separately
+      - Together
+      type: string
+    UidAndUidTypeData:
+      additionalProperties: false
+      properties:
+        uid:
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        name:
+          nullable: true
+          type: string
+      type: object
+    UidResult:
+      additionalProperties: false
+      example:
+        uid: uid
+        uidType: null
+        name: name
+      properties:
+        uid:
+          nullable: true
+          readOnly: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        name:
+          nullable: true
+          readOnly: true
+          type: string
+      type: object
+    UserIdentifierData:
+      additionalProperties: false
+      properties:
+        uid:
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+        name:
+          nullable: true
+          type: string
+      type: object
+    ValidationProblemDetails:
+      additionalProperties: {}
+      example:
+        instance: instance
+        detail: detail
+        type: type
+        title: title
+        errors:
+          key:
+          - errors
+          - errors
+        status: 0
+      properties:
+        errors:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          nullable: true
+          type: object
+        type:
+          nullable: true
+          type: string
+        title:
+          nullable: true
+          type: string
+        status:
+          format: int32
+          nullable: true
+          type: integer
+        detail:
+          nullable: true
+          type: string
+        instance:
+          nullable: true
+          type: string
+      type: object
+    VolumeOfRepresentationRequest:
+      additionalProperties: false
+      properties:
+        name:
+          nullable: true
+          type: string
+      type: object
+    VolumeOfRepresentationResult:
+      additionalProperties: false
+      example:
+        name: name
+      properties:
+        name:
+          nullable: true
+          type: string
+      type: object
+    WithdrawEmpowermentRequestPayload:
+      additionalProperties: false
+      description: All user-provided necessary data for empowerment withdrawal process
+      properties:
+        reason:
+          description: The reason for the initialization of the withdrawal process
+          nullable: true
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      bearerFormat: JWT
+      description: Please enter token
+      scheme: Bearer
+      type: http
+

@@ -2,6 +2,14 @@
 using FluentValidation;
 
 namespace eID.PAN.API.Requests;
+public class UpdateSmtpConfigurationPayload
+{
+    public string? Server { get; set; }
+    public int Port { get; set; }
+    public SmtpSecurityProtocol SecurityProtocol { get; set; }
+    public string? UserName { get; set; }
+    public string? Password { get; set; }
+}
 
 public class UpdateSmtpConfigurationRequest : IValidatableRequest
 {

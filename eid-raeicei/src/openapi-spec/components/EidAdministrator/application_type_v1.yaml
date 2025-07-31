@@ -1,0 +1,8 @@
+schemas:
+  ApplicationType:
+    type: string
+    enum:
+      - REGISTER
+      - RESUME
+      - REVOKE
+      - STOP

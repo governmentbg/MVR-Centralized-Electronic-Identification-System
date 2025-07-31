@@ -7,6 +7,8 @@ public class ApplicationUrls
     public string PivrHostUrl { get; set; } = string.Empty;
     public string IntegrationsHostUrl { get; set; } = string.Empty;
     public string KeycloakHostUrl { get; set; } = string.Empty;
+    public string MpozeiHostUrl { get; set; } = string.Empty;
+    public string SigningHostUrl { get; set; } = string.Empty;
 
     public void Validate()
     {
@@ -33,6 +35,16 @@ public class ApplicationUrls
         if (string.IsNullOrWhiteSpace(KeycloakHostUrl))
         {
             throw new ArgumentNullException(nameof(KeycloakHostUrl));
+        }
+
+        if (string.IsNullOrWhiteSpace(MpozeiHostUrl))
+        {
+            throw new ArgumentNullException(nameof(MpozeiHostUrl));
+        }
+
+        if (string.IsNullOrWhiteSpace(SigningHostUrl))
+        {
+            throw new ArgumentNullException(nameof(SigningHostUrl));
         }
     }
 }

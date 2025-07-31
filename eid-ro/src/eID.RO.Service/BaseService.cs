@@ -41,6 +41,22 @@ public class BaseService
         };
     }
 
+    protected static ServiceResult BadRequest(IDictionary<string, string[]> errors)
+    {
+        if (errors is null)
+        {
+            throw new ArgumentNullException(nameof(errors));
+        }
+
+        return new ServiceResult
+        {
+            StatusCode = HttpStatusCode.BadRequest,
+            Errors = errors
+                .SelectMany(kvp => kvp.Value.Select(msg => new KeyValuePair<string, string>(kvp.Key, msg)))
+                .ToList()
+        };
+    }
+
     protected static ServiceResult BadRequest(string fieldName, string problem)
     {
         if (string.IsNullOrWhiteSpace(fieldName))
@@ -122,6 +138,28 @@ public class BaseService
         return new ServiceResult<T> { Result = result, StatusCode = HttpStatusCode.NotModified };
     }
 
+    protected static ServiceResult<T> BadRequest<T>(string fieldName, string problem)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException($"'{nameof(fieldName)}' cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (string.IsNullOrWhiteSpace(problem))
+        {
+            throw new ArgumentException($"'{nameof(problem)}' cannot be null or whitespace.", nameof(problem));
+        }
+
+        return new ServiceResult<T>
+        {
+            StatusCode = HttpStatusCode.BadRequest,
+            Errors = new List<KeyValuePair<string, string>>
+            {
+                new (fieldName, problem)
+            }
+        };
+    }
+
     protected static ServiceResult<T> BadRequest<T>(List<ValidationFailure> errors)
     {
         if (errors is null)
@@ -200,6 +238,16 @@ public class BaseService
         }
 
         return new ServiceResult<T> { StatusCode = HttpStatusCode.InternalServerError, Error = error };
+    }
+
+    protected static ServiceResult<T> BadGateway<T>(string error)
+    {
+        if (string.IsNullOrWhiteSpace(error))
+        {
+            throw new ArgumentException($"'{nameof(error)}' cannot be null or whitespace.", nameof(error));
+        }
+
+        return new ServiceResult<T> { StatusCode = HttpStatusCode.BadGateway, Error = error };
     }
 
     protected static ServiceResult<T> NoContent<T>()

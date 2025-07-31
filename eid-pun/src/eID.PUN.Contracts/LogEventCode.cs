@@ -3,6 +3,6 @@
 public enum LogEventCode
 {
     None = 0,
-    RegisterCarrier = 10,
-    GetCarriersBy = 20
+    REGISTER_CARRIER = 10,
+    GET_CARRIERS_BY = 20
 }

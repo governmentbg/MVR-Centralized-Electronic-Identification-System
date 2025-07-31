@@ -1,0 +1,12 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+custom:
+  rabbitmq:
+    queue-prefix: raeicei.rpcqueue.
+    routing-key-prefix: raeicei.routingkey.
+    rpc-exchange: raeicei.rpc.exchange
+    reply-exchange: raeicei.reply.exchange
+    reply-queue: raeicei.reply.rpcqueue

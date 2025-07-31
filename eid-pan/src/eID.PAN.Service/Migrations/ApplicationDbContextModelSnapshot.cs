@@ -60,15 +60,22 @@ namespace eID.PAN.Service.Migrations
 
                     b.Property<string>("CallbackUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("InfoUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<bool>("IsBuiltIn")
                         .HasColumnType("boolean");
@@ -88,8 +95,10 @@ namespace eID.PAN.Service.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("SystemId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("SystemName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<ICollection<NotificationChannelTranslation>>("Translations")
                         .IsRequired()
@@ -150,6 +159,11 @@ namespace eID.PAN.Service.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("RejectedBy")
                         .HasMaxLength(64)
@@ -321,6 +335,11 @@ namespace eID.PAN.Service.Migrations
             modelBuilder.Entity("eID.PAN.Service.Entities.NotificationChannelRejected", b =>
                 {
                     b.HasBaseType("eID.PAN.Service.Entities.NotificationChannel");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.ToTable("NotificationChannels.Rejected", (string)null);
                 });
