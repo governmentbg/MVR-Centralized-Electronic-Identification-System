@@ -1,0 +1,58 @@
+schemas:
+  ApplicationDTO:
+    properties:
+      id:
+        type: string
+        format: uuid
+      status:
+        $ref: './application_status_v1.yaml#/schemas/ApplicationStatus'
+      createDate:
+        type: string
+        format: date-time
+      employees:
+        type: array
+        items:
+          $ref: '../common/employee.yaml#/schemas/EmployeeDTO'
+      eidManagerFrontOffices:
+        type: array
+        items:
+          $ref: '../EidAdministrator/eid_manager_front_office.yaml#/schemas/EidManagerFrontOfficeDTO'
+      authorizedPersons:
+        type: array
+        items:
+          $ref: '../common/contact.yaml#/schemas/ContactDTO'
+      applicant:
+        $ref: '../common/contact.yaml#/schemas/ContactDTO'
+      authorizedApplicant:
+        type: boolean
+      applicationType:
+        $ref: '../EidAdministrator/application_type_v1.yaml#/schemas/ApplicationType'
+      attachments:
+        type: array
+        items:
+          $ref: '../common/document.yaml#/schemas/DocumentDTO'
+      notes:
+        type: array
+        items:
+          $ref: '../common/note.yaml#/schemas/NoteDTO'
+      homePage:
+        type: string
+      companyName:
+        type: string
+      companyNameLatin:
+        type: string
+      eikNumber:
+        type: string
+      address:
+        type: string
+      email:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.EMAIL_CANNOT_BE_BLANK) 
+        @jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.EMAIL_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.EMAIL_NOT_VALID)'
+      phone:
+        type: string
+#        x-field-extra-annotation: '@jakarta.validation.constraints.Pattern(regexp = bg.bulsi.mvr.common.util.RegexUtil.PHONE_NUMBER_REGEX, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.PHONE_NUMBER_NOT_VALID)'
+      description:
+        type: string
+      logoUrl:
+        type: string

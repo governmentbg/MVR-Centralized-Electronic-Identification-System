@@ -1,0 +1,11 @@
+schemas:
+  EidServiceTypeDTO:
+    type: string
+    x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.APPLICATION_TYPE_CANNOT_BE_NULL)'
+    enum:
+      - ISSUE_EID
+      - RESUME_EID
+      - REVOKE_EID
+      - STOP_EID
+      - IDENTIFICATION
+      - EXTENDED_IDENTIFICATION

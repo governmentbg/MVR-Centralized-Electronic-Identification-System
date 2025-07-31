@@ -1,0 +1,47 @@
+methods:
+  get:
+    tags:
+      - Device
+    summary: Get Devices for Administrator id
+    operationId: getDevices4AdministratorId
+    parameters:
+      - name: aeiId
+        in: path
+        description: 'Administrator ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                $ref: '../../components/EidAdministrator/device.yaml#/schemas/DeviceDTO'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

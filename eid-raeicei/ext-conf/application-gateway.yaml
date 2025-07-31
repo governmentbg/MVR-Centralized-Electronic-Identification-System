@@ -1,0 +1,32 @@
+server:
+  port: 8097
+  ssl:
+    enabled: false
+    trust-store:
+    trust-store-password:
+    trust-store-type: PKCS12
+logging:
+  secret-key:
+spring:
+  rabbitmq:
+    host:
+    username:
+    password:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri:
+          audiences:
+            - eid_raeicei
+keycloak:
+  auth-server-url:
+  realm:
+  oauth-scheme-name: keycloak
+custom:
+  rabbitmq:
+    queue-prefix: raeicei.rpcqueue.
+    routing-key-prefix: raeicei.routingkey.
+    rpc-exchange: raeicei.rpc.exchange
+    reply-exchange: raeicei.reply.exchange
+    reply-queue: raeicei.reply.rpcqueue

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
+    <artifactId>raeicei-model</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>bg.bulsi</groupId>
+        <artifactId>raeicei</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <dependencies>
+        <dependency>
+            <groupId>bg.bulsi.mvr</groupId>
+            <artifactId>mvr-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-envers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>bg.bulsi</groupId>
+            <artifactId>raeicei-contract</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>bg.bulsi.mvr</groupId>
+        	<artifactId>pan-client</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

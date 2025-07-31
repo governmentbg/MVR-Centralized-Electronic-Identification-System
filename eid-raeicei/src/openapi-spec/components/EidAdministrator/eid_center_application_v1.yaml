@@ -1,0 +1,5 @@
+schemas:
+  EidCenterApplicationDTO:
+    allOf:
+      - $ref: '../application/application_v1.yaml#/schemas/ApplicationDTO'
+    type: object

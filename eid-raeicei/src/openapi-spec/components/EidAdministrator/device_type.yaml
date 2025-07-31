@@ -1,0 +1,7 @@
+schemas:
+  DeviceType:
+    type: string
+    enum:
+      - CHIP_CARD
+      - MOBILE
+      - OTHER

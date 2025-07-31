@@ -1,0 +1,59 @@
+methods:
+  get:
+    tags:
+      - EmployeeService
+      - EidCenter
+    summary: Check employee for Provider
+    operationId: checkEmployee4CenterId
+    parameters:
+      - name: id
+        in: path
+        description: 'System ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: Uid
+        in: query
+        description: 'Employee Citizen ID '
+        required: true
+        schema:
+          type: string
+      - name: UidType
+        in: query
+        description: 'Employee Citizen ID'
+        required: true
+        schema:
+          $ref: '../../components/common/identifier_type_v1.yaml#/schemas/IdentifierTypeDTO'
+          description: 'Employee Citizen ID Type'
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "../../components/common/employee.yaml#/schemas/EmployeeByUidResult"
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

@@ -1,0 +1,44 @@
+FROM alpine:edge
+
+LABEL authors="Strahil vitkov <strahil.vitkov@bul-si.bg>"
+
+RUN apk --no-cache add bash openjdk17 curl ttf-dejavu
+#openjdk17-jre
+
+RUN set -x \
+    && addgroup raeicei \
+    && adduser -S -G raeicei -h /home/raeicei -s /bin/false raeicei \
+    && mkdir -p /home/raeicei/logs \
+    && mkdir -p /home/raeicei/logs/raeicei-gateway \
+    && mkdir -p /home/raeicei/logs/audit/unsigned \
+    && chown -R raeicei:raeicei /home/raeicei
+
+WORKDIR /home/raeicei
+ENV JAVA_HOME=/usr/lib/jvm/default-jvm
+ENV PATH /home/raeicei:$PATH
+
+COPY src/raeicei-gateway/target/raeicei-gateway.jar /home/raeicei/
+#COPY infra/dev/certs/server_cacerts /home/raeicei/certs/server_cacerts
+#COPY infra/dev/certs/server_keystore /home/raeicei/certs/server_keystore
+COPY ext-conf/application-gateway.yaml /home/raeicei/config/application-gateway.yaml
+#COPY infra/dev/certs/dev.mvreid.local.cer /home/raeicei/certs/dev.mvreid.local.cer
+
+USER root
+#COPY infra/dev/certs/server_certificate.crt $JAVA_HOME/jre/lib/security
+
+#RUN \
+#    cd $JAVA_HOME/jre/lib/security \
+#    && keytool -keystore cacerts -storepass changeit -noprompt -trustcacerts -importcert -alias mrveid.local -file server_certificate.crt \
+#    && keytool -keystore cacerts -storepass changeit -noprompt -trustcacerts -importcert -alias keyclock -file /home/raeicei/certs/dev.mvreid.local.cer
+
+# The actions below are in Jenkinsfile
+#RUN ["mvnw", "clean"]
+#RUN ["mvnw", "test"]
+#RUN ["mvnw", "package", "-DskipTests"]
+
+EXPOSE 8096
+
+ENTRYPOINT ["/usr/bin/java"]
+
+ENV SPRING_PROFILES_ACTIVE=logging-dev,logging-test,logging-audit,rabbitmq,keycloak
+CMD ["-jar", "-ea", "--add-opens", "java.base/java.time=ALL-UNNAMED", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-Dspring.config.additional-location=file:/home/raeicei/config/application-gateway.yaml", "raeicei-gateway.jar"]

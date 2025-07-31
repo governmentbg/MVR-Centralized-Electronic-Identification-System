@@ -1,0 +1,19 @@
+schemas:
+  ProvidedServiceRequestDTO:
+    type: object
+    properties:
+      name:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank()'
+      nameLatin:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank()'
+#      applicaitonType:
+#        type: string
+#        enum:
+#          - "ISSUE_EID"
+#          - "RESUME_EID"
+#          - "REVOKE_EID"
+#          - "STOP_EID"  
+      serviceType:
+        $ref: ../common/service_type.yaml#/schemas/ServiceType 

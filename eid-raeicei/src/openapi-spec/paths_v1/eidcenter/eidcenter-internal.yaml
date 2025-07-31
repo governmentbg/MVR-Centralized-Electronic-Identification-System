@@ -1,0 +1,103 @@
+methods:
+  put:
+    tags:
+      - EidCenter
+    summary: Updates Eid Center by id
+    operationId: updateEidCenter
+    parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      description: ''
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: "../../components/EidAdministrator/eid_center.yaml#/schemas/EidCenterDTO"
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "../../components/EidAdministrator/eid_center.yaml#/schemas/EidCenterDTO"
+      '204':
+        description: No Content
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+  get:
+    tags:
+      - EidCenter
+    summary: Get Eid Center by id
+    operationId: getEidCenter
+    parameters:
+      - name: id
+        in: path
+        description: 'Eid Center ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "../../components/EidAdministrator/eid_center.yaml#/schemas/EidCenterDTO"
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

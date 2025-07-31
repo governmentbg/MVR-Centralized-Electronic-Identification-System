@@ -1,0 +1,17 @@
+schemas:
+  DeviceExtRequestDTO:
+    type: object
+    properties:
+     id:
+      type: string
+      format: uuid
+     name:
+      type: string
+     description:
+       type: string
+     authorizationLink:
+       type: string
+     backchannelAuthorizationLink:
+       type: string
+     isActive:
+       type: boolean

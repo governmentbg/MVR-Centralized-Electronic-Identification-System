@@ -1,0 +1,26 @@
+schemas:
+  TariffResponseDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      startDate:
+        type: string
+        format: date
+      price:
+        type: number
+        format: double
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull()'
+      eidManagerId:
+        type: string
+        format: uuid
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank()'
+      providedServiceId:
+        type: string
+        format: uuid
+      currency:
+        type: string
+        enum:
+          - BGN
+          - EUR

@@ -1,0 +1,9 @@
+schemas:
+  ServiceType:
+    type: string
+    enum:
+    - EID_CENTER
+    - EID_ADMINISTRATOR
+    x-enum-varnames:
+     - EID_CENTER
+     - EID_ADMINISTRATOR

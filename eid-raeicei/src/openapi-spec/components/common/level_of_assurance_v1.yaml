@@ -1,0 +1,6 @@
+schemas:
+  LevelOfAssurance:
+    type: string
+    enum:
+      - SUBSTANTIAL
+      - HIGH

@@ -1,0 +1,59 @@
+schemas:
+  EidCenterAuthorizedDTO:
+    type: object
+    properties:
+     id:
+      type: string
+      format: uuid
+     name:
+      type: string
+     nameLatin:
+      type: string
+     eikNumber:
+      type: string
+     homePage:
+       type: string
+     logoUrl:
+       type: string
+     address:
+       type: string
+     email:
+       type: string
+     code:
+       type: string
+     serviceType:
+       $ref: '../common/service_type.yaml#/schemas/ServiceType'
+     managerStatus:
+      $ref: './eid_manager_status.yaml#/schemas/EidManagerStatus'
+     authorizedPersons:
+       type: array
+       items:
+         $ref: '../common/contact.yaml#/schemas/ContactDTO'
+     employeeIds:
+       type: array
+       items:
+         type: string
+         format: uuid
+     eidManagerFrontOfficeIds:
+       type: array
+       items:
+         type: string
+         format: uuid
+     attachmentIds:
+       type: array
+       items:
+         type: string
+         format: uuid
+     noteIds:
+       items:
+         type: string
+         format: uuid
+     providedServiceIds:
+       items:
+         type: string
+         format: uuid
+     clientId:
+       type: string
+     clientSecret:
+       type: string
+       format: password

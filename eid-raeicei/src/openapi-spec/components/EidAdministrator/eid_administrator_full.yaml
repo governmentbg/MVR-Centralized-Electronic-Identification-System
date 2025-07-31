@@ -1,0 +1,57 @@
+schemas:
+  EidAdministratorFullDTO:
+    type: object
+    properties:
+     id:
+      type: string
+      format: uuid
+     name:
+      type: string
+     nameLatin:
+      type: string
+     eikNumber:
+      type: string
+     homePage:
+       type: string
+     logoUrl:
+       type: string
+     downloadUrl:
+       type: string
+     address:
+       type: string
+     email:
+       type: string
+     code:
+       type: string
+     serviceType:
+       $ref: '../common/service_type.yaml#/schemas/ServiceType'
+     managerStatus:
+      $ref: './eid_manager_status.yaml#/schemas/EidManagerStatus'
+     authorizedPersons:
+       type: array
+       items:
+         $ref: '../common/contact.yaml#/schemas/ContactDTO'
+     employees:
+       type: array
+       items:
+         $ref: '../common/employee.yaml#/schemas/EmployeeDTO'
+     eidManagerFrontOffices:
+       type: array
+       items:
+         $ref: './eid_manager_front_office_response.yaml#/schemas/EidManagerFrontOfficeResponseDTO'
+     devices:
+       type: array
+       items:
+         $ref: './device.yaml#/schemas/DeviceDTO'
+     attachments:
+       type: array
+       items:
+         $ref: '../common/document_response.yaml#/schemas/DocumentResponseDTO'
+     notes:
+       type: array
+       items:
+         $ref: '../common/note_response.yaml#/schemas/NoteResponseDTO'
+     providedServices:
+       type: array
+       items:
+         $ref: './provided_service_response.yaml#/schemas/ProvidedServiceResponseDTO'

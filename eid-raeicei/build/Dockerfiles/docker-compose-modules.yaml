@@ -1,0 +1,62 @@
+version: "3.4"
+services:
+  raeicei-gateway:
+    container_name: mvr-raeicei-gateway
+    image: mvr-raeicei-gateway:latest
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-raeicei-gateway
+    restart: always
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/raeicei/logs/raeicei-gateway"
+      - "../../logs:/home/raeicei/logs/audit"
+      - "../../logs:/home/raeicei/logs/audit/unsigned"
+    ports:
+      - "8096:8096"
+  raeicei-ext-gateway:
+    container_name: mvr-raeicei-ext-gateway
+    image: mvr-raeicei-ext-gateway:latest
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-raeicei-ext-gateway
+    restart: always
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/raeicei/logs/raeicei-ext-gateway"
+      - "../../logs:/home/raeicei/logs/audit"
+      - "../../logs:/home/raeicei/logs/audit/unsigned"
+    ports:
+      - "8097:8097"
+  raeicei-backend:
+    container_name: mvr-raeicei-backend
+    image: mvr-raeicei-backend:latest
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-raeicei-backend
+    restart: always
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/raeicei/logs/raeicei-backend"
+      - "../../logs:/home/raeicei/logs/audit"
+      - "../../logs:/home/raeicei/logs/audit/unsigned"
+    ports:
+      - "8098:8098"

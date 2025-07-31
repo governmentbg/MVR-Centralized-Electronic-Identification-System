@@ -1,0 +1,8 @@
+schemas:
+  HttpResponse:
+    type: object
+    properties:
+      message:
+        type: string
+      statusCode:
+        type: integer

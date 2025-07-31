@@ -1,0 +1,18 @@
+schemas:
+  AuthorizedPersonel:
+    type: object
+    properties:
+      firstName:
+        type: string
+      secondName:
+        type: string
+      lastName:
+        type: string
+      citizenIdentifierNumber:
+        type: string
+      citizenIdentifierType:
+        $ref: '../common/identifier_type_v1.yaml'
+      citizenship:
+        type: string
+      personalIdentityDocument:
+        $ref: './personal_identity_document_v1.yaml'

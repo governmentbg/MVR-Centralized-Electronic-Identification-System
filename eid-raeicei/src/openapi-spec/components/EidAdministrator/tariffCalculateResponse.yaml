@@ -1,0 +1,24 @@
+schemas:
+  CalculateTariffResultDTO:
+    type: object
+    properties:
+      primaryPrice:
+        type: number
+        format: double
+      primaryCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      secondaryPrice:
+        type: number
+        format: double
+      secondaryCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      devicePrimaryPrice:
+        type: number
+        format: double
+      devicePrimaryCurrency:
+        $ref: './currency.yaml#/schemas/Currency'
+      deviceSecondaryPrice:
+        type: number
+        format: double
+      deviceSecondaryCurrency:
+        $ref: './currency.yaml#/schemas/Currency'

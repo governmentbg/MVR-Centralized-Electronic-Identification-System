@@ -1,0 +1,53 @@
+methods:
+  post:
+    summary: Upload Document For Eid Manager
+    operationId: uploadDocumentForEidManager
+    tags:
+      - FileUpload
+    requestBody:
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/common/document.yaml#/schemas/DocumentDTO'
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                $ref: '../../components/common/document.yaml#/schemas/DocumentDTO'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Time Out
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

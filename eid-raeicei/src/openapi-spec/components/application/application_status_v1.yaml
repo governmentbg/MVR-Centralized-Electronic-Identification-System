@@ -1,0 +1,9 @@
+schemas:
+  ApplicationStatus:
+    type: string
+    enum:
+      - IN_REVIEW
+      - ACTIVE
+      - DENIED
+      - RETURNED_FOR_CORRECTION
+      - ACCEPTED

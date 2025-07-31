@@ -1,0 +1,47 @@
+methods:
+  get:
+      tags:
+        - Tariff
+      summary: Get All Tariffs by eidManagerId
+      operationId: getAllTariffs
+      parameters:
+        - name: eidManagerId
+          in: path
+          required: true
+          description: The eidManagerId for which to fetch the tariffs
+          schema:
+            type: string
+            format: UUID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: '../../components/EidAdministrator/tariff_double_currency_response.yaml#/schemas/TariffDoubleCurrencyResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+        '500':
+          description: Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+        '504':
+          description: Gateway Timeout
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

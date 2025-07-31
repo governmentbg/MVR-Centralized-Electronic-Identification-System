@@ -1,0 +1,17 @@
+schemas:
+  DocumentDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      fileName:
+        type: string
+      content:
+        type: string
+        format: byte
+      documentType:
+        type: string
+        format: uuid
+      isOutgoing:
+        type: boolean

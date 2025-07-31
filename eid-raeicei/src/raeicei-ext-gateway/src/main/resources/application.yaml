@@ -1,0 +1,37 @@
+server:
+  port: ${RAEICEI_EGW_SERVER_PORT}
+  ssl:
+    enabled: false
+    trust-store: ${RAEICEI_EGW_TRUST_STORE}
+    trust-store-password: ${RAEICEI_EGW_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
+logging:
+  level:
+    org.springframework:
+      security: DEBUG
+      web: DEBUG
+  secret-key: ${RAEICEI_EGW_AUDIT_LOGGING_SECRET_KEY}
+  encryption-key:
+  module-id: raeicei-ext-gateway
+  system-id: raeicei
+  file-name-pattern-audit: ${RAEICEI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${RAEICEI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${RAEICEI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${RAEICEI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${RAEICEI_EGW_LOG_FILE_NAME}
+springdoc:
+  swagger-ui:
+    enabled: ${RAEICEI_SWAGGER_ENABLED}
+    disable-swagger-default-url: true
+    path: /docs
+spring:
+  main:
+    web-application-type: reactive
+  codec:
+    max-in-memory-size: 10MB
+  profiles:
+    active: ${RAEICEI_EGW_SPRING_ACTIVE_PROFILES}
+    group:
+      test: test,logging-test
+mvr:
+  external-service: true

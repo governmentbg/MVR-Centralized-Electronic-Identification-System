@@ -1,0 +1,24 @@
+schemas:
+  ConfigurationResultDTO:
+    type: object
+    properties:
+      key:
+        type: string
+        nullable: true
+      data:
+        type: string
+        nullable: true
+      modifiedOn:
+        type: string
+        format: date-time
+        nullable: true
+      modifiedBy:
+        type: string
+        nullable: true
+  UpdateConfigurationRequest:
+    type: object
+    properties:
+      data:
+        type: string
+        nullable: true
+    additionalProperties: false

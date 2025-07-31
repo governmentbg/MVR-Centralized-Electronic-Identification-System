@@ -1,0 +1,51 @@
+methods:
+  get:
+    tags:
+      - ApproveNewCircumstances
+    summary: Get Full Eid Administrator by id
+    operationId: getFullEidAdministratorById
+    parameters:
+    - name: id
+      in: path
+      description: 'Eid Administrator ID'
+      required: true
+      schema:
+        type: string
+        format: uuid
+    - name: onlyActiveElements
+      in: query
+      description: 'Only Active Collection Elements'
+      required: false
+      schema:
+        type: boolean
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/EidAdministrator/eid_administrator_full.yaml#/schemas/EidAdministratorFullDTO'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Time Out
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

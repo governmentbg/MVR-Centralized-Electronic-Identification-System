@@ -1,0 +1,125 @@
+version: '3.4'
+services:
+  mvr_db:
+    container_name: mvr_db
+    image: postgres:14.1-alpine
+    restart: always
+    extra_hosts:
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+    environment:
+      - POSTGRES_DB=mvr_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - mvr_db_volume:/var/lib/postgresql/data
+      - ../../infra/dev/db/db-init.sql:/docker-entrypoint-initdb.d/create_schemas.sql
+  mvr_redis_cache:
+    image: redis:7.2-rc1-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    extra_hosts:
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+    command: redis-server --save 20 1 --loglevel warning --requirepass hCYfjc56yFCK63456zmIYsjs8X5s825m
+    volumes:
+      - mvr_redis_volume:/data
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    command: start --import-realm --optimized
+    extra_hosts:
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    environment:
+      KC_DB_URL_DATABASE: jdbc:postgresql://${DB_DOMAIN_NAME}:5432/mvr_db
+      KC_DB_SCHEMA: public
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      KC_HTTPS_PROTOCOLS: TLSv1.3
+      KC_HTTPS_PORT: 8443
+      KC_HOSTNAME_URL: https://${KEYCLOAK_DOMAIN_NAME}:8443
+      KC_HOSTNAME_STRICT: "false"
+
+      KC_HTTPS_CERTIFICATE_FILE: /etc/certs/server_certificate.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/certs/server_private.key
+
+      KC_HTTPS_CLIENT_AUTH: request
+      KC_HTTPS_TRUST_STORE_FILE: /etc/certs/server_cacerts
+      KC_HTTPS_TRUST_STORE_PASSWORD: changeit
+      KC_HTTPS_TRUST_STORE_TYPE: PKCS12
+      JAVA_OPTS: -Djavax.net.debug=ssl
+    volumes:
+      - ../../infra/dev/certs/server_certificate.crt:/etc/certs/server_certificate.crt
+      - ../../infra/dev/certs/server_private.key:/etc/certs/server_private.key
+      - ../../infra/dev/certs/server_cacerts:/etc/certs/server_cacerts
+      - ./keycloak-imports/dev-realm.json:/opt/keycloak/data/import/dev-realm.json
+      - ./keycloak-imports/dev-users-0.json:/opt/keycloak/data/import/dev-users-0.json
+      - keycloak_volume:/data
+    depends_on:
+      - mvr_db
+    ports:
+      - "8443:8443"
+  opensearch-node: # This is also the hostname of the container within the Docker network (i.e. https://opensearch-node1/)
+    image: opensearchproject:latest # Specifying the latest available image - modify if you want a specific version
+    build:
+      dockerfile: Dockerfile-opensearch
+    environment:
+      - discovery.type=single-node
+#      - cluster.name=opensearch-cluster # Name the cluster
+      - node.name=opensearch-node # Name the node that will run in this container
+#      - discovery.seed_hosts=opensearch-node # Nodes to look for when discovering the cluster
+#      - cluster.initial_cluster_manager_nodes=opensearch-node # Nodes eligible to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Afhg$567SD!!  # Sets the demo admin user password when using demo configuration, required for OpenSearch 2.12 and later
+      - DISABLE_SECURITY_PLUGIN=true
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
+    ports:
+      - "9200:9200" # REST API
+      - "9600:9600" # Performance Analyzer
+    networks:
+      - opensearch-net # All of the containers will join the same Docker bridge network
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.16.0 # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601" # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch-node:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+    networks:
+      - opensearch-net
+volumes:
+  mvr_db_volume:
+    name: mvr_db_volume
+    driver: local
+  mvr_redis_volume:
+    name: mvr_redis_volume
+    driver: local
+  keycloak_volume:
+    name: keycloak_volume
+    driver: local
+  opensearch-data1:
+networks:
+  opensearch-net:

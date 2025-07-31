@@ -1,0 +1,10 @@
+schemas:
+  NoteAndDocumentsDTO:
+    type: object
+    properties:
+      note:
+        $ref: '../../components/common/note.yaml#/schemas/NoteDTO'
+      documents:
+        type: array
+        items:
+          $ref: '../../components/common/document.yaml#/schemas/DocumentDTO'

@@ -1,0 +1,18 @@
+schemas:
+  EidCenterApplicationShortDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      applicationNumber:
+        type: string
+      eidName:
+        type: string
+      applicationType:
+        $ref: './application_type_v1.yaml#/schemas/ApplicationType'
+      status:
+        $ref: '../application/application_status_v1.yaml#/schemas/ApplicationStatus'
+      createDate:
+        type: string
+        format: date

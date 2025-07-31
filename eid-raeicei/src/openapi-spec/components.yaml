@@ -1,0 +1,134 @@
+openapi: 3.0.1
+info:
+  title: RAEICEI HTTP API
+  description: Регистър на администраторите на електронна идентичност и центровете за електронна идентификация(РАЕИЦЕИ)
+  version: '1.0'
+paths: { }
+components:
+  schemas:
+    ApplicationType:
+     $ref: 'components/EidAdministrator/application_type_v1.yaml#/schemas/ApplicationType'
+    EidServiceTypeDTO:
+     $ref: 'components/common/eid_service_type_v1.yaml#/schemas/EidServiceTypeDTO'
+    EidCenterDTO:
+     $ref: 'components/EidAdministrator/eid_center.yaml#/schemas/EidCenterDTO'
+    EidCenterHistoryDTO:
+      $ref: 'components/EidAdministrator/eid_center_history.yaml#/schemas/EidCenterHistoryDTO'
+    EidCenterAuthorizedDTO:
+      $ref: 'components/EidAdministrator/eid_center_with_authorized_persons.yaml#/schemas/EidCenterAuthorizedDTO'
+    EidCenterFullDTO:
+      $ref: 'components/EidAdministrator/eid_center_full.yaml#/schemas/EidCenterFullDTO'
+    EidAdministratorDTO:
+     $ref: 'components/EidAdministrator/eid_administrator.yaml#/schemas/EidAdministratorDTO'
+    EidAdministratorHistoryDTO:
+      $ref: 'components/EidAdministrator/eid_administrator_history.yaml#/schemas/EidAdministratorHistoryDTO'
+    EidAdministratorAuthorizedDTO:
+      $ref: 'components/EidAdministrator/eid_administrator_with_authorized_persons.yaml#/schemas/EidAdministratorAuthorizedDTO'
+    EidAdministratorFullDTO:
+      $ref: 'components/EidAdministrator/eid_administrator_full.yaml#/schemas/EidAdministratorFullDTO'
+    EidManagerFrontOfficeDTO:
+     $ref: 'components/EidAdministrator/eid_manager_front_office.yaml#/schemas/EidManagerFrontOfficeDTO'
+    EidManagerFrontOfficeResponseDTO:
+     $ref: 'components/EidAdministrator/eid_manager_front_office_response.yaml#/schemas/EidManagerFrontOfficeResponseDTO'
+    Device:
+     $ref: 'components/EidAdministrator/device.yaml#/schemas/DeviceDTO'
+    DeviceExtRequestDTO:
+      $ref: 'components/EidAdministrator/device_ext_request.yaml#/schemas/DeviceExtRequestDTO'
+    Tariff:
+     $ref: 'components/EidAdministrator/tariff.yaml#/schemas/TariffDTO'
+    TariffResponseDTO:
+      $ref: 'components/EidAdministrator/tariff_response.yaml#/schemas/TariffResponseDTO'
+    TariffDoubleCurrencyResponseDTO:
+      $ref: 'components/EidAdministrator/tariff_double_currency_response.yaml#/schemas/TariffDoubleCurrencyResponseDTO'
+    TariffDateDTO:
+      $ref: 'components/EidAdministrator/tariff-date.yaml#/schemas/TariffDateDTO'
+    Discount:
+      $ref: 'components/EidAdministrator/discount.yaml#/schemas/DiscountDTO'
+    DiscountResponseDTO:
+      $ref: 'components/EidAdministrator/discount_response.yaml#/schemas/DiscountResponseDTO'
+    DiscountDoubleCurrencyResponseDTO:
+      $ref: 'components/EidAdministrator/discount_double_currency_response.yaml#/schemas/DiscountDoubleCurrencyResponseDTO'
+    DiscountDateDTO:
+      $ref: 'components/EidAdministrator/discount-date.yaml#/schemas/DiscountDateDTO'
+    DeviceTariffDTO:
+      $ref: 'components/EidAdministrator/deviceTariff.yaml#/schemas/DeviceTariffDTO'
+    CalculateTariffDTO:
+      $ref: 'components/EidAdministrator/tariffCalculate.yaml#/schemas/CalculateTariffDTO'
+    CalculateTariffResultDTO:
+      $ref: 'components/EidAdministrator/tariffCalculateResponse.yaml#/schemas/CalculateTariffResultDTO'
+    HttpResponse:
+      $ref: 'components/common/http_response_v1.yaml#/schemas/HttpResponse'
+    ConfigurationResult:
+      $ref: 'components/common/configuration_v1.yaml#/schemas/ConfigurationResultDTO'
+    DocumentDTO:
+      $ref: 'components/common/document.yaml#/schemas/DocumentDTO'
+    DocumentResponseDTO:
+      $ref: 'components/common/document_response.yaml#/schemas/DocumentResponseDTO'
+    DocumentTypeDTO:
+      $ref: 'components/common/document_type_v1.yaml#/schemas/DocumentTypeDTO'
+    DocumentTypeResponseDTO:
+      $ref: 'components/common/document_type_v1.yaml#/schemas/DocumentTypeResponseDTO'
+    UpdateConfigurationRequest:
+      $ref: 'components/common/configuration_v1.yaml#/schemas/UpdateConfigurationRequest'
+    ProblemDetails:
+      $ref: 'components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+    ValidationProblemDetails:
+      $ref: 'components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+    OfficesByRegionDTO:
+      $ref: 'components/EidAdministrator/eid_manager_offices_by_region_v1.yaml#/schemas/OfficesByRegionDTO'
+    ProvidedServiceRequestDTO:
+      $ref: 'components/EidAdministrator/provided_service_request.yaml#/schemas/ProvidedServiceRequestDTO'
+    ProvidedServiceResponseDTO:
+      $ref: 'components/EidAdministrator/provided_service_response.yaml#/schemas/ProvidedServiceResponseDTO'
+    IdentifierType:
+      $ref: 'components/common/identifier_type_v1.yaml#/schemas/IdentifierTypeDTO'
+    LevelOfAssurance:
+      $ref: 'components/common/level_of_assurance_v1.yaml#/schemas/LevelOfAssurance'
+    ApplicationDTO:
+      $ref: 'components/application/application_v1.yaml#/schemas/ApplicationDTO'
+    ApplicationResponseDTO:
+      $ref: 'components/application/application_v1_response.yaml#/schemas/ApplicationResponseDTO'
+    ApplicationStatus:
+      $ref: 'components/application/application_status_v1.yaml#/schemas/ApplicationStatus'
+    ApplicationNumberDTO:
+      $ref: 'components/application/application_number.yaml#/schemas/ApplicationNumberDTO'
+    AuthorizedPersonel:
+      $ref: 'components/application/authorized_personel_v1.yaml#/schemas/AuthorizedPersonel'
+    EmployeeDTO:
+      $ref: 'components/common/employee.yaml#/schemas/EmployeeDTO'
+    EmployeeByUidResult:
+       $ref: 'components/common/employee.yaml#/schemas/EmployeeByUidResult'
+    ContactDTO:
+      $ref: 'components/common/contact.yaml#/schemas/ContactDTO'
+    EidAdministratorApplicationDTO:
+      $ref: 'components/EidAdministrator/eid_administrator_application_v1.yaml#/schemas/EidAdministratorApplicationDTO'
+    EidAdministratorApplicationResponseDTO:
+      $ref: 'components/EidAdministrator/eid_administrator_application_v1_response.yaml#/schemas/EidAdministratorApplicationResponseDTO'
+    EidAdministratorApplicationShortDTO:
+      $ref: 'components/EidAdministrator/eid_administrator_application_short.yaml#/schemas/EidAdministratorApplicationShortDTO'
+    EidCenterApplicationDTO:
+      $ref: 'components/EidAdministrator/eid_center_application_v1.yaml#/schemas/EidCenterApplicationDTO'
+    EidCenterApplicationResponseDTO:
+      $ref: 'components/EidAdministrator/eid_center_application_v1_response.yaml#/schemas/EidCenterApplicationResponseDTO'
+    EidCenterApplicationShortDTO:
+      $ref: 'components/EidAdministrator/eid_center_application_short.yaml#/schemas/EidCenterApplicationShortDTO'
+    ServiceType:
+      $ref: 'components/common/service_type.yaml#/schemas/ServiceType'
+    RegionDTO:
+      $ref: 'components/common/region.yaml#/schemas/RegionDTO'
+    NoteDTO:
+      $ref: 'components/common/note.yaml#/schemas/NoteDTO'
+    NoteAndDocumentsDTO:
+      $ref: 'components/common/note_documents.yaml#/schemas/NoteAndDocumentsDTO'
+    NoteResponseDTO:
+      $ref: 'components/common/note_response.yaml#/schemas/NoteResponseDTO'
+    EidManagerStatus:
+      $ref: 'components/EidAdministrator/eid_manager_status.yaml#/schemas/EidManagerStatus'
+    Currency:
+      $ref: 'components/EidAdministrator/currency.yaml#/schemas/Currency'
+    NewCircumstancesStatus:
+      $ref: 'components/EidAdministrator/new_circumstances_status.yaml#/schemas/NewCircumstancesStatus'
+    DocumentNoteDTO:
+      $ref: 'components/EidAdministrator/documents-notes.yaml#/schemas/DocumentNoteDTO'
+    DeviceType:
+      $ref: 'components/EidAdministrator/device_type.yaml#/schemas/DeviceType'

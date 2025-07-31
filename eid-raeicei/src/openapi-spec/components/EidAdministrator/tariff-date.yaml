@@ -1,0 +1,13 @@
+schemas:
+  TariffDateDTO:
+    type: object
+    properties:
+      eidManagerId:
+        type: string
+        format: uuid
+      date:
+        type: string
+        format: date
+#      providedServiceId:
+#        type: string
+#        format: uuid

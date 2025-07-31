@@ -1,0 +1,44 @@
+methods:
+  get:
+    tags:
+      - ProvidedService
+    summary: Get ProvidedService by Application Type
+    operationId: getProvidedServiceByApplicationType
+    parameters:
+      - name: type
+        in: path
+        description: 'ProvidedProvided Application Type'
+        required: true
+        schema:
+          $ref: '../../components/common/eid_service_type_v1.yaml#/schemas/EidServiceTypeDTO'
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "../../components/EidAdministrator/provided_service_response.yaml#/schemas/ProvidedServiceResponseDTO"
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetailsDTO'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetailsDTO'

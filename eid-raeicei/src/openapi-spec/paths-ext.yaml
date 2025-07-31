@@ -1,0 +1,176 @@
+openapi: 3.0.1
+info:
+  description: API reference documentation for Register of administrators of electronic identity and electronic identity Centers
+  version: '1.0'
+  title: RAEICEI REST Interface
+paths:
+
+# EidAdministrator
+  "/raeicei/external/api/v1/eidadministrator/{id}":
+    $ref: 'paths_v1/eidadministrator/eidadministrator-external.yaml#/methods'
+  "/raeicei/external/api/v1/eidadministrator/getAll":
+    $ref: 'paths_v1/eidadministrator/eidadministrator_list.yaml#/methods'
+  "/raeicei/external/api/v1/eidadministrator/history/getAll":
+    $ref: 'paths_v1/eidadministrator/eidadministrator_history_list.yaml#/methods'
+
+# EidCenter
+  "/raeicei/external/api/v1/eidcenter/{id}":
+    $ref: 'paths_v1/eidcenter/eidcenter-external.yaml#/methods'
+  "/raeicei/external/api/v1/eidcenter/getAll":
+    $ref: 'paths_v1/eidcenter/eidcenter_list.yaml#/methods'
+  "/raeicei/external/api/v1/eidcenter/history/getAll":
+    $ref: 'paths_v1/eidcenter/eidcenter_history_list.yaml#/methods'
+
+# Device
+  "/raeicei/external/api/v1/device/{id}":
+    $ref: 'paths_v1/device/device-get-by-id.yaml#/methods'
+  "/raeicei/external/api/v1/device":
+    $ref: 'paths_v1/device/device-type.yaml#/methods'
+  "/raeicei/external/api/v1/device/getAll":
+    $ref: 'paths_v1/device/device_list.yaml#/methods'
+
+# CalculateTariff
+  "/raeicei/external/api/v1/calculateTariff":
+    $ref: 'paths_v1/calculate-tariff/calculate-tariff.yaml#/methods'
+
+# EidManagerFrontOffice
+  "/raeicei/external/api/v1/eidmanagerfrontoffice/{id}":
+    $ref: 'paths_v1/eidmanagerfrontoffice/eidmanagerfrontoffice-get-by-id.yaml#/methods'
+  "/raeicei/external/api/v1/eidmanagerfrontoffice":
+    $ref: 'paths_v1/eidmanagerfrontoffice/eidmanagerfrontoffice-name.yaml#/methods'
+  "/raeicei/external/api/v1/eidmanagerfrontoffice/getAll/{eidManagerId}":
+    $ref: 'paths_v1/eidmanagerfrontoffice/eidmanagerfrontoffice_list.yaml#/methods'
+
+# ProvidedService
+  "/raeicei/external/api/v1/providedservice/get/{id}":
+    $ref: 'paths_v1/provided-service/provided-service-get-by-id.yaml#/methods'
+  "/raeicei/external/api/v1/providedservice/getAll":
+    $ref: 'paths_v1/provided-service/provided-service-list.yaml#/methods'
+
+# Attachment
+  "/raeicei/external/api/v1/application/document/upload/{id}":
+    $ref: 'paths_v1/document/upload-document-for-application.yaml#/methods'
+  "/raeicei/external/api/v1/eidmanager/document/upload":
+    $ref: 'paths_v1/document/upload-document-for-eid-manager.yaml#/methods'
+  "/raeicei/external/api/v1/document/get/{id}":
+    $ref: 'paths_v1/document/document-by-id.yaml#/methods'
+#  "/raeicei/external/api/v1/document/delete/{id}":
+#    $ref: 'paths_v1/document/delete-document.yaml#/methods'
+
+# Document Type
+  "/raeicei/external/api/v1/document-type/create":
+    $ref: 'paths_v1/document/document_type-create.yaml#/methods'
+  "/raeicei/external/api/v1/document-type/update":
+    $ref: 'paths_v1/document/document_type-update.yaml#/methods'
+  "/raeicei/external/api/v1/document-type/{id}":
+    $ref: 'paths_v1/document/document_type-by-id.yaml#/methods'
+  "/raeicei/external/api/v1/document-type/list":
+    $ref: 'paths_v1/document/document_type-list.yaml#/methods'
+  "/raeicei/external/api/v1/document-type/delete/{id}":
+    $ref: 'paths_v1/document/document_type-delete.yaml#/methods'
+
+# EidAdministratorApplication
+  "/raeicei/external/api/v1/eidadministratorapplication/create":
+    $ref: 'paths_v1/eidadministrator/create-eid-administrator-application.yaml#/methods'
+  "/raeicei/external/api/v1/eidadministratorapplication/list":
+    $ref: 'paths_v1/eidadministrator/eid-administrator-application-list.yaml#/methods'
+  "/raeicei/external/api/v1/eidadministratorapplication/{id}":
+    $ref: 'paths_v1/eidadministrator/eid-administrator-application-by-id.yaml#/methods'
+
+# EidCenterApplication
+  "/raeicei/external/api/v1/eidcenterapplication/create":
+    $ref: 'paths_v1/eidcenter/create-eid-center-application.yaml#/methods'
+  "/raeicei/external/api/v1/eidcenterapplication/list":
+    $ref: 'paths_v1/eidcenter/eid-center-application-list.yaml#/methods'
+  "/raeicei/external/api/v1/eidcenterapplication/{id}":
+    $ref: 'paths_v1/eidcenter/eid-center-application-by-id.yaml#/methods'
+
+# EmployeeService
+  "/raeicei/external/api/v1/employee/{id}":
+    $ref: 'paths_v1/employee/employee-by-id.yaml#/methods'
+
+# Region
+  "/raeicei/external/api/v1/region/list":
+    $ref: 'paths_v1/region/region-list.yaml#/methods'
+
+# ChangeApplicationStatus
+  "/raeicei/external/api/v1/application-status/change/{id}":
+    $ref: 'paths_v1/status/change-application-status.yaml#/methods'
+  "/raeicei/external/api/v1/application-status/documentsnotes/{id}":
+    $ref: 'paths_v1/status/documents-notes-for-application.yaml#/methods'
+
+# Tariff
+  "/raeicei/external/api/v1/tariff/getByDate":
+    $ref: 'paths_v1/tariff/tariff-getByDate.yaml#/methods'
+  "/raeicei/external/api/v1/tariff/getAll/{eidManagerId}":
+    $ref: 'paths_v1/tariff/tariff-getAll.yaml#/methods'
+  "/raeicei/external/api/v1/tariff/{id}":
+    $ref: 'paths_v1/tariff/tariff-by-id.yaml#/methods'
+
+# Discount
+  "/raeicei/external/api/v1/discount/getAll/{eidManagerId}":
+    $ref: 'paths_v1/discount/discount-getAll.yaml#/methods'
+  "/raeicei/external/api/v1/discount/getByDate":
+    $ref: 'paths_v1/discount/discount-getByDate.yaml#/methods'
+  "/raeicei/external/api/v1/discount/{id}":
+    $ref: 'paths_v1/discount/discount-by-id.yaml#/methods'
+
+# AuthorizedPerson
+  "/raeicei/external/api/v1/authorizedperson/{id}":
+    $ref: 'paths_v1/authorizedperson/authorizedperson-by-id.yaml#/methods'
+
+# EmployeeOfEidManager
+  "/raeicei/external/api/v1/employee/device/aei":
+    $ref: 'paths_v1/employee-of-eidmanager/device-administrator.yaml#/methods'
+  "/raeicei/external/api/v1/employee/employee/list":
+    $ref: 'paths_v1/employee-of-eidmanager/employee-list.yaml#/methods'
+  "/raeicei/external/api/v1/employee/eidmanagerfrontoffice/getAll":
+    $ref: 'paths_v1/employee-of-eidmanager/eidmanagerfrontoffice_list.yaml#/methods'
+  "/raeicei/external/api/v1/employee/eidadministrator":
+    $ref: 'paths_v1/employee-of-eidmanager/eidadministrator-with-authorized-persons-by-id.yaml#/methods'
+  "/raeicei/external/api/v1/employee/eidcenter":
+    $ref: 'paths_v1/employee-of-eidmanager/eidcenter-with-authorized-persons-by-id.yaml#/methods'
+    
+# ChangeCircumstances
+  "/raeicei/external/api/v1/circs/device/create":
+    $ref: 'paths_v1/change-circumstances/device-ext-create.yaml#/methods'
+  "/raeicei/external/api/v1/circs/device/update":
+    $ref: 'paths_v1/change-circumstances/device-ext-update.yaml#/methods'
+  "/raeicei/external/api/v1/circs/device/delete/{id}":
+    $ref: 'paths_v1/change-circumstances/device-delete.yaml#/methods'
+  "/raeicei/external/api/v1/circs/eidmanagerfrontoffice/create":
+    $ref: 'paths_v1/change-circumstances/eidmanagerfrontoffice-create.yaml#/methods'
+  "/raeicei/external/api/v1/circs/eidmanagerfrontoffice/update":
+    $ref: 'paths_v1/change-circumstances/eidmanagerfrontoffice-update.yaml#/methods'
+  "/raeicei/external/api/v1/circs/eidmanagerfrontoffice/delete/{id}":
+    $ref: 'paths_v1/change-circumstances/eidmanagerfrontoffice-delete.yaml#/methods'
+  "/raeicei/external/api/v1/circs/employee/create":
+    $ref: 'paths_v1/change-circumstances/employee-create.yaml#/methods'
+  "/raeicei/external/api/v1/circs/employee/update/{id}":
+    $ref: 'paths_v1/change-circumstances/employee-update.yaml#/methods'
+  "/raeicei/external/api/v1/circs/employee/delete/{id}":
+    $ref: 'paths_v1/change-circumstances/employee-delete.yaml#/methods'
+  "/raeicei/external/api/v1/circs/tariff/create":
+    $ref: 'paths_v1/change-circumstances/tariff-create.yaml#/methods'
+  "/raeicei/external/api/v1/circs/tariff/update/{id}":
+    $ref: 'paths_v1/change-circumstances/tariff-update.yaml#/methods'
+  "/raeicei/external/api/v1/circs/tariff/delete/{id}":
+    $ref: 'paths_v1/change-circumstances/tariff-delete.yaml#/methods'
+  "/raeicei/external/api/v1/circs/discount/create":
+    $ref: 'paths_v1/change-circumstances/discount-create.yaml#/methods'
+  "/raeicei/external/api/v1/circs/discount/update/{id}":
+    $ref: 'paths_v1/change-circumstances/discount-update.yaml#/methods'
+  "/raeicei/external/api/v1/circs/discount/delete/{id}":
+    $ref: 'paths_v1/change-circumstances/discount-delete.yaml#/methods'
+  "/raeicei/external/api/v1/circs/authorizedperson/create":
+    $ref: 'paths_v1/change-circumstances/authorizedperson-create.yaml#/methods'
+  "/raeicei/external/api/v1/circs/authorizedperson/update/{id}":
+    $ref: 'paths_v1/change-circumstances/authorizedperson-update.yaml#/methods'
+  "/raeicei/external/api/v1/circs/authorizedperson/delete/{id}":
+    $ref: 'paths_v1/change-circumstances/authorizedperson-delete.yaml#/methods'
+  "/raeicei/external/api/v1/circs/eidmanager/documentsnotes":
+    $ref: 'paths_v1/change-circumstances/documents-notes-for-eid-manager.yaml#/methods'
+
+# Code
+  "/raeicei/external/api/v1/checkcode/{code}":
+    $ref: 'paths_v1/code/check-code.yaml#/methods'

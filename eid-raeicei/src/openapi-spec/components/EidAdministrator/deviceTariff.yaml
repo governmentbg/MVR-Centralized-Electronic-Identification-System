@@ -1,0 +1,19 @@
+schemas:
+  DeviceTariffDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      startDate:
+        type: string
+        format: date
+      deviceId:
+        type: string
+        format: uuid
+      price:
+        type: number
+        format: double
+      eidAdministratorId:
+        type: string
+        format: uuid

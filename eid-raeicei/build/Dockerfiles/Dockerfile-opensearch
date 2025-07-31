@@ -1,0 +1,16 @@
+# Use the official OpenSearch image as the base image
+FROM opensearchproject/opensearch:2.16.0
+
+# Install the ingest-attachment plugin
+RUN opensearch-plugin install --batch ingest-attachment
+
+# Expose necessary ports (optional, adjust according to your needs)
+#EXPOSE 9200 9600/
+
+# Set environment variables (optional, adjust according to your needs)
+#ENV discovery.type=single-node
+
+ENTRYPOINT ["./opensearch-docker-entrypoint.sh"]
+
+# Start OpenSearch
+CMD ["opensearch"]

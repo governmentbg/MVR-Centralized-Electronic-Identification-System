@@ -1,0 +1,11 @@
+schemas:
+  FrontOfficeShortDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      region:
+        type: string

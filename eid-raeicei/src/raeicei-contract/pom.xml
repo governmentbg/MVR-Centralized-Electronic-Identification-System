@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>bg.bulsi</groupId>
+        <artifactId>raeicei</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>raeicei-contract</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+        </dependency>
+       <!-- <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>bg.bulsi.mvr</groupId>
+            <artifactId>mvr-common</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.parent.basedir}/openapi-spec/components.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <generateApis>false</generateApis>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModels>true</generateModels>
+                            <generateModelTests>false</generateModelTests>
+                            <output>${project.build.directory}/generated-sources/raeiceicontract</output>
+                            <modelPackage>bg.bulsi.mvr.raeicei.contract.dto</modelPackage>
+                            <invokerPackage>bg.bulsi.mvr.raeicei.contract</invokerPackage>
+                            <apiPackage>bg.bulsi.mvr.raeicei.contract.api</apiPackage>
+                            <modelNameSuffix></modelNameSuffix>
+                            <templateDirectory>${project.parent.basedir}/openapi-spec/templates</templateDirectory>
+                            <library>spring-boot</library>
+                            <ignoreFileOverride>${project.parent.basedir}/.openapi-generator-ignore</ignoreFileOverride>
+                            <generateApiDocumentation>true</generateApiDocumentation>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <additionalProperties>
+						      <additionalProperty>removeEnumValuePrefix=false</additionalProperty>
+						   </additionalProperties>
+                            <configOptions>
+                                <reactive>true</reactive>
+                                <useJakartaEe>true</useJakartaEe>
+                                <delegatePattern>true</delegatePattern>
+                                <interfaceOnly>false</interfaceOnly>
+                                <serializableModel>true</serializableModel>
+                                <dateLibrary>java8</dateLibrary>
+                                <java8>true</java8>
+                                <configPackage>bg.bulsi.mvr.raeicei.contract.config</configPackage>
+                                <sourceFolder>src/main/java</sourceFolder>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <additionalModelTypeAnnotations>@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-antrun-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>process-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>run</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <target>-->
+<!--                                 remove the unwanted generated testcases by the spring generator of openapi -->
+<!--                                <delete dir="${project.build.directory}/generated-sources/reicontract/src/test" />-->
+<!--                            </target>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+        </plugins>
+    </build>
+</project>

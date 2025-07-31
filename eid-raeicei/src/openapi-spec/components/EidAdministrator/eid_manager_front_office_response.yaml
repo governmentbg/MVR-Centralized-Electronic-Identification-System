@@ -1,0 +1,9 @@
+schemas:
+  EidManagerFrontOfficeResponseDTO:
+    allOf:
+      - $ref: './eid_manager_front_office.yaml#/schemas/EidManagerFrontOfficeDTO'
+    type: object
+    properties:
+      eidManagerId:
+        type: string
+        format: uuid
