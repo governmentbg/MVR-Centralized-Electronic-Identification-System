@@ -16,6 +16,7 @@ import { DatasetFormComponent } from './pages/dataset-form/dataset-form.componen
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbComponent } from 'src/app/shared/components/breadcrumb/breadcrumb.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 @NgModule({
     declarations: [DatasetsComponent, DatasetFormComponent, BreadcrumbComponent],
@@ -35,6 +36,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ConfirmDialogModule,
         SharedModule,
         TranslocoRootModule,
+        InputTextareaModule,
     ],
 })
 export class DatasetsModule {}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IBreadCrumbItems } from '../../interfaces/IBreadCrumbItems';
 import { DatasetsService } from '../../services/datasets.service';
 import { TranslocoService } from '@ngneat/transloco';
@@ -17,7 +17,7 @@ import { URLValidator } from 'src/app/shared/validators/url';
     styleUrls: ['./dataset-form.component.scss'],
     providers: [ConfirmationService],
 })
-export class DatasetFormComponent {
+export class DatasetFormComponent implements OnDestroy {
     constructor(
         private datasetsService: DatasetsService,
         public translateService: TranslocoService,
@@ -34,11 +34,26 @@ export class DatasetFormComponent {
             ];
         });
 
+        this.formChangeSubscription = this.form.controls.isActive.valueChanges.subscribe(value => {
+            if (value) {
+                this.form.controls.cronPeriod.setValidators([Validators.required]);
+                this.form.controls.cronPeriod.patchValue(CronPeriods.Monthly);
+                this.form.controls.cronPeriod.updateValueAndValidity();
+                this.form.controls.cronPeriod.enable();
+            } else {
+                this.form.controls.cronPeriod.setValidators([]);
+                this.form.controls.cronPeriod.patchValue('');
+                this.form.controls.cronPeriod.updateValueAndValidity();
+                this.form.controls.cronPeriod.disable();
+            }
+        });
+
         const navigation = this.router.getCurrentNavigation();
         if (navigation) {
             this.state = navigation.extras.state as any;
             if (this.state) {
                 this.isEditMode = this.state.isEditMode;
+                this.isPreviewMode = this.state.isPreviewMode;
                 this.breadcrumbItems = [
                     { label: this.translateService.translate('modules.datasets.txtOpenData'), routerLink: '/datasets' },
                     {
@@ -58,16 +73,24 @@ export class DatasetFormComponent {
                     dataSource: this.state.dataset.dataSource,
                     cronPeriod: this.state.dataset.cronPeriod,
                     isActive: this.state.dataset.isActive,
+                    description: this.state.dataset.description,
                 });
+
+                if (this.isPreviewMode) {
+                    this.form.disable();
+                }
             }
         }
     }
 
     isEditMode = false;
+    isPreviewMode = false;
     languageChangeSubscription: Subscription;
     breadcrumbItems: IBreadCrumbItems[] = this._initialBreadcrumbs;
     isLoading = false;
     state: any = {};
+    formChangeSubscription: Subscription;
+
     get breadcrumbTitle() {
         return this.isEditMode ? 'txtChange' : 'txtAddNew';
     }
@@ -84,8 +107,9 @@ export class DatasetFormComponent {
     form = new FormGroup({
         datasetName: new FormControl<string | null>(null, Validators.required),
         dataSource: new FormControl<string | null>('', [Validators.required, URLValidator()]),
-        cronPeriod: new FormControl<string | null>(null, Validators.required),
+        cronPeriod: new FormControl<string | null>(CronPeriods.Monthly, Validators.required),
         isActive: new FormControl<boolean | null>(true),
+        description: new FormControl<string>(''),
     });
 
     cronPeriodTypes = [
@@ -110,6 +134,7 @@ export class DatasetFormComponent {
             cronPeriod: this.form.controls.cronPeriod.value as string,
             dataSource: this.form.controls.dataSource.value as string,
             isActive: this.form.controls.isActive.value as boolean,
+            description: this.form.controls.description.value as string,
         };
         this.datasetsService.createDataset(payload).subscribe({
             next: (response: any) => {
@@ -155,6 +180,7 @@ export class DatasetFormComponent {
             cronPeriod: this.form.controls.cronPeriod.value as string,
             dataSource: this.form.controls.dataSource.value as string,
             isActive: this.form.controls.isActive.value as boolean,
+            description: this.form.controls.description.value as string,
         };
         this.datasetsService.editDataset(payload).subscribe({
             next: (response: any) => {
@@ -177,6 +203,15 @@ export class DatasetFormComponent {
     }
 
     onSubmit() {
+        Object.keys(this.form.controls).forEach(key => {
+            if (
+                (this.form.get(key) && typeof this.form.get(key)?.value === 'string') ||
+                this.form.get(key)?.value instanceof String
+            ) {
+                this.form.get(key)?.setValue(this.form.get(key)?.value.trim());
+            }
+            this.form.get(key)?.markAsDirty();
+        });
         this.form.markAllAsTouched();
         if (this.form.valid) {
             if (this.isEditMode) {
@@ -193,5 +228,10 @@ export class DatasetFormComponent {
 
     showSuccessToast(message: string) {
         this.toastService.showSuccessToast(this.translateService.translate('global.txtSuccessTitle'), message);
+    }
+
+    ngOnDestroy() {
+        this.languageChangeSubscription.unsubscribe();
+        this.formChangeSubscription.unsubscribe();
     }
 }

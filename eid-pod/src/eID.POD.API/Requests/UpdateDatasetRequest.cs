@@ -6,6 +6,7 @@ public class UpdateDatasetRequest : IValidatableRequest
 {
     public Guid Id { get; set; }
     public string DatasetName { get; set; }
+    public string Description { get; set; }
     public string CronPeriod { get; set; }
     public string DataSource { get; set; }
     public bool IsActive { get; set; }
@@ -18,11 +19,13 @@ public class UpdateDatasetRequestValidator : AbstractValidator<UpdateDatasetRequ
     {
         RuleFor(r => r.Id).NotEmpty();
         RuleFor(r => r.DatasetName).NotEmpty();
-        RuleFor(r => r.CronPeriod)
-            .NotEmpty()
-            .Must(s => ValidatorHelpers.IsValidCronExpression(s))
-            .WithMessage("Invalid Cron Expression provided");
-
+        RuleFor(r => r.Description).MaximumLength(5000);
+        When(r => r.IsActive, () => {
+            RuleFor(r => r.CronPeriod)
+                .NotEmpty()
+                .Must(s => ValidatorHelpers.IsValidCronExpression(s))
+                .WithMessage("Invalid Cron Expression provided");
+        });
         RuleFor(r => r.DataSource)
             .NotEmpty()
             .Must(s => ValidatorHelpers.IsValidAbsoluteUrl(s))

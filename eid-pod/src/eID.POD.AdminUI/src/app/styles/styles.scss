@@ -82,8 +82,10 @@ p-calendar {
 }
 
 .validation-text {
-    position: absolute;
-    font-size: 0.75rem;
+    font-size: 12px;
+    margin-top: 0.5rem;
+    line-height: 1;
+    min-height: 1rem;
 }
 
 // Multi line truncation

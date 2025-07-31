@@ -15,7 +15,8 @@
         "txtUnexpectedError": "Неочаквана грешка",
         "txtInvalidDataError": "Невалидни данни",
         "txtAction": "Действие",
-        "txtNoRecordsFound": "Няма намерени записи"
+        "txtNoRecordsFound": "Няма намерени записи",
+        "txtBack": "Назад"
     },
     "navbar": {
         "title": "Подсистема за отворени данни",
@@ -27,7 +28,8 @@
         "txtSidebarTitle": "Заглавие на сайдбара",
         "txtJournals": "Журнали",
         "txtIntegrity": "Интегритет",
-        "txtLocalJournals": "Локални журнали"
+        "txtLocalJournals": "Локални журнали",
+        "txtSystemProcesses": "Системни процеси"
     },
     "footer": {
         "txtMainText": "Министерство на вътрешните работи"
@@ -36,6 +38,10 @@
         "txtPageNotFoundTitle": "Страницата не е намерена.",
         "txtPageNotFoundInformationText": "Страницата, която търсите, не съществува",
         "txtPageNotFoundGoHome": "Върнете се към началната страница"
+    },
+    "pageUnauthorized": {
+        "txtPageUnauthorizedTitle": "Unauthorized",
+        "txtPageUnauthorizedInformationText": "Нямате права да достъпите тази страница"
     },
     "modules": {
         "authentication": {
@@ -91,7 +97,9 @@
             "txtYes": "Да",
             "txtNo": "Не",
             "txtConfirm": "Потвърди",
-            "txtDeleteIt": "Изтрий"
+            "txtDeleteIt": "Изтрий",
+            "txtDescription": "Описание",
+            "txtFieldMaxCharacterCount": "Максимален брой символи на полето"
         },
         "journalLogs": {
             "txtLogFiles": "Лог файлове",
@@ -163,8 +171,8 @@
             "txtSystemJournalsIntegrity": "Интегритет на журналите в системата",
             "txtPeriod": "Период",
             "txtIntegrityStatus": "Статус на интегритет",
-            "txtDataIntegrityIsNotCompromised": "Интегритета на данните не е нарушен",
-            "txtDataIntegrityIsCompromised": "Интегритета на данните е нарушен",
+            "txtDataIntegrityIsNotCompromised": "Интегритетът на данните не е нарушен",
+            "txtDataIntegrityIsCompromised": "Интегритетът на данните е нарушен",
             "txtSubSystemJournalsIntegrity": "Интегритет на журналите в подсистемата",
             "txtLastLaunched": "Последно стартирана",
             "txtSystemIdentifier": "Идентификатор на системата",
@@ -182,6 +190,7 @@
             "txtCompromised": "Нарушен",
             "txtNotCompromised": "Ненарушен",
             "txtUnableToVisualize": "Невъзможна визуализация",
+            "txtCheckIntegrityLastStateUnknown": "Няма информация за интегритета на журналите в системата",
             "periods": {
                 "Disabled": "Неактивен",
                 "All": "Всички",
@@ -206,6 +215,21 @@
             "txtDaysWithoutLogs": "дни без данни",
             "txtDaysThatDoesntHaveLogFile": "Дни за които няма логове",
             "txtNoLogsDateBefore": "Няма данни преди"
+        },
+        "systemProcesses": {
+            "txtStatusOfInternalSystems": "Статус на вътрешни услуги",
+            "txtConfigurationsAndLimits": "Конфигурации и лимити",
+            "txtAddress": "Адрес",
+            "txtDescription": "Описание",
+            "descriptions": {
+                "Prometheus": "Инструмент за мониторинг и известяване, предназначен за събиране на данни в реално време от приложенията.",
+                "Grafana": "Инструмент за визуално представяне на метрики в реално време.",
+                "DDOSProtectionServer1": "Лозенец (Primary) - инструмент за защита от злонамерен трафик и конфигурация на лимит на заявки.",
+                "DDOSProtectionServer2": "Банкя - инструмент за защита от злонамерен трафик и конфигурация на лимит на заявки.",
+                "keycloak_internal": "Система за управление на идентичност за потребители и системи във вътрешна среда на ЦСЕИ",
+                "keycloak_external": "Система за управление на идентичност за граждани и външни системи"
+            },
+            "txtMissingConfig": "Липсваща конфигурация"
         }
     },
     "validations": {
@@ -220,9 +244,33 @@
         "choose": "Избор",
         "upload": "Качване",
         "cancel": "Отказ",
-        "dayNames": ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"],
-        "dayNamesShort": ["Нед", "Пон", "Вто", "Сря", "Чет", "Пет", "Съб"],
-        "dayNamesMin": ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+        "dayNames": [
+            "Неделя",
+            "Понеделник",
+            "Вторник",
+            "Сряда",
+            "Четвъртък",
+            "Петък",
+            "Събота"
+        ],
+        "dayNamesShort": [
+            "Нед",
+            "Пон",
+            "Вто",
+            "Сря",
+            "Чет",
+            "Пет",
+            "Съб"
+        ],
+        "dayNamesMin": [
+            "Нд",
+            "Пн",
+            "Вт",
+            "Ср",
+            "Чт",
+            "Пт",
+            "Сб"
+        ],
         "monthNames": [
             "Януари",
             "Февруари",
@@ -237,7 +285,20 @@
             "Ноември",
             "Декември"
         ],
-        "monthNamesShort": ["Яну", "Фев", "Мар", "Апр", "Май", "Юни", "Юли", "Авг", "Сеп", "Окт", "Ное", "Дек"],
+        "monthNamesShort": [
+            "Яну",
+            "Фев",
+            "Мар",
+            "Апр",
+            "Май",
+            "Юни",
+            "Юли",
+            "Авг",
+            "Сеп",
+            "Окт",
+            "Ное",
+            "Дек"
+        ],
         "today": "Днес",
         "clear": "Изчистване",
         "weekHeader": "Сд",

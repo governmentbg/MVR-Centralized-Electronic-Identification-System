@@ -49,6 +49,10 @@ namespace eID.POD.Service.Migrations
                     b.Property<string>("DatasetUri")
                         .HasColumnType("text");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 

@@ -61,7 +61,8 @@ public class DatasetsServiceTests : BaseTest
             CronPeriod = "0 0/3 * * * ? *",
             DataSource = "https://google.com",
             CreatedBy = "test",
-            IsActive = true
+            IsActive = true,
+            Description = "TestDescription1"
         });
 
         // Act
@@ -219,7 +220,8 @@ public class DatasetsServiceTests : BaseTest
             CronPeriod = "0 0/3 * * * ? *",
             DataSource = "https://google.com",
             CreatedBy = "test",
-            IsActive = true
+            IsActive = true,
+            Description = "TestDescription2"
         });
 
         // Act
@@ -498,7 +500,8 @@ public class DatasetsServiceTests : BaseTest
             CronPeriod = "0 0/3 * * * ? *",
             DataSource = "https://test.something",
             IsActive = true,
-            LastModifiedBy = "Test1"
+            LastModifiedBy = "Test1",
+            Description = "Description"
         });
 
         // Act 
@@ -531,7 +534,8 @@ public class DatasetsServiceTests : BaseTest
             CronPeriod = updatedCronPeriod,
             DataSource = updatedAbsoluteUrl,
             IsActive = true,
-            LastModifiedBy = lastModifiedBy
+            LastModifiedBy = lastModifiedBy,
+            Description = "Description"
         });
 
         // Act 
@@ -667,7 +671,8 @@ public class DatasetsServiceTests : BaseTest
                 CreatedBy = "TestUser2",
                 IsDeleted = false,
                 LastModifiedBy = "TestUser2",
-                LastRun = null
+                LastRun = null,
+                Description = "TestDescription1"
             },
             new Dataset
             {
@@ -680,7 +685,8 @@ public class DatasetsServiceTests : BaseTest
                 CreatedBy = "TestUser2",
                 IsDeleted = false,
                 LastModifiedBy = "TestUser2",
-                LastRun = null
+                LastRun = null,
+                Description = "TestDescription2"
             },
             new Dataset
             {
@@ -693,7 +699,8 @@ public class DatasetsServiceTests : BaseTest
                 CreatedBy = "TestUser3",
                 IsDeleted = false,
                 LastModifiedBy = "TestUser3",
-                LastRun = null
+                LastRun = null,
+                Description = "TestDescription3"
             },
             new Dataset
             {
@@ -706,7 +713,8 @@ public class DatasetsServiceTests : BaseTest
                 CreatedBy = "TestUser4",
                 IsDeleted = false,
                 LastModifiedBy = "TestUser4",
-                LastRun = null
+                LastRun = null,
+                Description = "TestDescription4"
             },
             new Dataset
             {
@@ -719,7 +727,8 @@ public class DatasetsServiceTests : BaseTest
                 CreatedBy = "TestUser5",
                 IsDeleted = true,
                 LastModifiedBy = "TestUser5",
-                LastRun = null
+                LastRun = null,
+                Description = "TestDescription5"
             },
             new Dataset
             {
@@ -732,7 +741,8 @@ public class DatasetsServiceTests : BaseTest
                 CreatedBy = "TestUser6",
                 IsDeleted = true,
                 LastModifiedBy = "TestUser6",
-                LastRun = null
+                LastRun = null,
+                Description = "TestDescription6"
             }
         };
 

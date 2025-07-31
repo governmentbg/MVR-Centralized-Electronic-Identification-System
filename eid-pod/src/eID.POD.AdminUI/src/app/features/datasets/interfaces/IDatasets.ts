@@ -4,6 +4,7 @@ export interface IDatasetRequestPayload {
     cronPeriod: string;
     dataSource: string;
     isActive: boolean;
+    description: string;
 }
 
 export interface IDataset {
@@ -16,6 +17,7 @@ export interface IDataset {
     isDeleted?: true;
     lastRun?: string;
     createdBy?: string;
+    description: string;
 }
 
 export interface IDatasets {

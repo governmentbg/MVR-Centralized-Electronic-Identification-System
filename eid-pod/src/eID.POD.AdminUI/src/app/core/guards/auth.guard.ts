@@ -1,21 +1,24 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
-import { KeycloakAuthGuard, KeycloakService } from 'keycloak-angular';
+import { CanActivateFn, Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { inject } from '@angular/core';
+import { UserService } from '../services/user.service';
 
-@Injectable({
-    providedIn: 'root',
-})
-export class AuthGuard extends KeycloakAuthGuard {
-    constructor(protected override readonly router: Router, protected readonly keycloak: KeycloakService) {
-        super(router, keycloak);
-    }
+export const AuthGuard: CanActivateFn = (route, state) => {
+    const oauthService = inject(OAuthService);
+    const userService = inject(UserService);
+    const router = inject(Router);
+    const hasValidAccessToken = oauthService.hasValidAccessToken();
 
-    async isAccessAllowed(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
-        if (!this.authenticated) {
-            await this.keycloak.login({
-                redirectUri: window.location.origin + state.url,
-            });
+    const requiredRoles = (route.data['roles'] as string[]) || [];
+    const userRoles = userService.getUserRoles();
+
+    if (requiredRoles.length > 0) {
+        if (userRoles.some(role => requiredRoles.includes(role))) {
+            return true;
+        } else {
+            return router.createUrlTree(['/unauthorized']);
         }
-        return this.authenticated;
+    } else {
+        return hasValidAccessToken;
     }
-}
+};

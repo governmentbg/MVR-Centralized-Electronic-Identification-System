@@ -32,7 +32,8 @@
                             "flat",
                             "base64-js",
                             "js-sha256",
-                            "moment"
+                            "moment",
+                            "jsrsasign"
                         ]
                     },
                     "configurations": {

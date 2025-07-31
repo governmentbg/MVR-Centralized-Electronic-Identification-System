@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using Asp.Versioning;
 using eID.PJS.AuditLogging;
+using eID.POD.API.Authorization;
 using eID.POD.API.Requests;
 using eID.POD.Contracts;
+using eID.POD.Contracts.Enums;
 using eID.POD.Contracts.Results;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
@@ -10,11 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Net.Http.Headers;
 
 namespace eID.POD.API.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = UserRoles.AllAdmins)]
 [Produces("application/json")]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
@@ -24,10 +27,9 @@ namespace eID.POD.API.Controllers;
 [SetRequestId]
 public class BaseV1Controller : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-    private readonly AuditLogger _auditLogger;
-
     internal ILogger Logger { get; private set; }
+    private readonly AuditLogger _auditLogger;
+    private readonly IConfiguration _configuration;
 
     public BaseV1Controller(IConfiguration configuration, ILogger logger, AuditLogger auditLogger)
     {
@@ -37,6 +39,11 @@ public class BaseV1Controller : ControllerBase
     }
 
     public Guid RequestId { get; set; }
+
+    protected void SetRequestIdDefaultHeader(HttpClient httpClient)
+    {
+        httpClient.DefaultRequestHeaders.TryAddWithoutValidation(HeaderNames.RequestId, RequestId.ToString());
+    }
 
     protected IActionResult Result<T>(ServiceResult<T> data)
     {
@@ -192,27 +199,312 @@ public class BaseV1Controller : ControllerBase
         }
     }
 
-    protected string GetUserId() =>
-        HttpContext.User.Claims.FirstOrDefault(d => d.Type == "USERID")?.Value ?? "Unknown user";
-    protected string? GetUserUid() =>
-        HttpContext.User.Claims.FirstOrDefault(d => d.Type == "EGN")?.Value;
-    protected void AddAuditLog(LogEventCode logEvent, string? message = default, SortedDictionary<string, object>? payload = default)
+    protected void AddLog(LogEventCode logEvent, Dictionary<string, object>? customFields, LogLevel logLevel = LogLevel.Information)
+    {
+        var userId = GetUid();
+
+        var message = "{Id} {EventCode} {UserId}";
+        var parameters = new List<object> {
+            Guid.NewGuid(),
+            logEvent,
+            userId
+        };
+
+        if (customFields?.Any() ?? false)
+        {
+            message = $"{message} {string.Join(',', customFields.Keys.Select(k => string.Concat("{", k, "}")))}";
+            parameters.AddRange(customFields.Values);
+        }
+
+        Logger.Log(logLevel, message, parameters.ToArray());
+    }
+
+    protected string GetUid() =>
+        HttpContext.User.Claims.FirstOrDefault(d => d.Type == Claims.CitizenIdentifier)?.Value ?? string.Empty;
+
+    protected IdentifierType GetUidType()
+    {
+        var str = HttpContext.User.Claims.FirstOrDefault(d => d.Type == Claims.CitizenIdentifierType)?.Value;
+        if (!Enum.TryParse<IdentifierType>(str, true, out var result))
+        { return IdentifierType.NotSpecified; }
+        return result;
+    }
+
+    protected string GetUserFullName()
+    {
+        var givenName = HttpContext.User.Claims.FirstOrDefault(d => d.Type == Claims.GivenNameCyrillic)?.Value;
+        var middleName = HttpContext.User.Claims.FirstOrDefault(d => d.Type == Claims.MiddleNameCyrillic)?.Value;
+        var familyName = HttpContext.User.Claims.FirstOrDefault(d => d.Type == Claims.FamilyNameCyrillic)?.Value;
+        return string.Join(" ", new[] { givenName, middleName, familyName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+    }
+
+    protected void AddAuditLog(
+        LogEventCode logEvent,
+        LogEventLifecycle suffix,
+        string? targetUserId = default,
+        SortedDictionary<string, object>? payload = default)
     {
         if (_configuration.GetValue<bool>("SkipAuditLogging"))
         {
             return;
         }
-        //TODO: Define proper values when the new logger version is available
+
         _auditLogger.LogEvent(new AuditLogEvent
         {
-            CorrelationId = Guid.NewGuid().ToString(),
-            RequesterSystemId = GetUserId(),
-            RequesterUserId = GetUserId(),
-            TargetUserId = GetUserId(),
-            EventType = logEvent.ToString(),
-            Message = message,
+            CorrelationId = RequestId.ToString(),
+            RequesterSystemId = HttpContext.User.Claims.FirstOrDefault(d => string.Equals(d.Type, Claims.SystemId, StringComparison.InvariantCultureIgnoreCase))?.Value,
+            RequesterSystemName = HttpContext.User.Claims.FirstOrDefault(d => string.Equals(d.Type, Claims.SystemName, StringComparison.InvariantCultureIgnoreCase))?.Value,
+            RequesterUserId = GetUid(),
+            TargetUserId = targetUserId,
+            EventType = $"{logEvent}_{suffix}",
+            Message = LogEventMessages.GetLogEventMessage(logEvent, suffix),
             EventPayload = payload
         });
+    }
+
+    protected IActionResult BadRequestWithAuditLog(IValidatableRequest request, LogEventCode logEventCode, SortedDictionary<string, object> eventPayload, string? targetUserId = null)
+    {
+        if (request is null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
+        if (eventPayload is null)
+        {
+            throw new ArgumentNullException(nameof(eventPayload));
+        }
+
+        var validationResult = request.GetValidationResult();
+
+        var msd = new ModelStateDictionary();
+
+        validationResult?.Errors?.ForEach(error =>
+        {
+            msd.AddModelError(error.PropertyName, error.ErrorMessage);
+        });
+
+        eventPayload.Add("Reason", string.Join(",", validationResult.GetValidationErrorList()));
+        eventPayload.Add("ResponseStatusCode", HttpStatusCode.BadRequest);
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, targetUserId: targetUserId, payload: eventPayload);
+
+        return ValidationProblem(msd);
+    }
+
+    protected IActionResult Result(ServiceResult data, Action<string?, LogEventLifecycle, HttpStatusCode?> auditLog)
+    {
+        if (data is null)
+        {
+            auditLog("Argument null exception", LogEventLifecycle.FAIL, null);
+            throw new ArgumentNullException(nameof(data));
+        }
+
+        // < 400
+        if (data.StatusCode < HttpStatusCode.BadRequest)
+        {
+            auditLog(null, LogEventLifecycle.SUCCESS, null);
+            return StatusCode((int)data.StatusCode);
+        }
+
+        // 400 to < 500
+        if (data.StatusCode >= HttpStatusCode.BadRequest && data.StatusCode < HttpStatusCode.InternalServerError)
+        {
+            var messages = new ModelStateDictionary();
+
+            data.Errors?.ForEach(error =>
+            {
+                messages.AddModelError(error.Key, error.Value);
+            });
+
+            auditLog(string.Join(",", data?.Errors?.ToArray() ?? Array.Empty<KeyValuePair<string, string>>()), LogEventLifecycle.FAIL, data.StatusCode);
+            return ValidationProblem(
+                statusCode: (int)data.StatusCode,
+                modelStateDictionary: messages);
+        }
+
+        // >= 500
+        auditLog(data.Error, LogEventLifecycle.FAIL, data.StatusCode);
+        return Problem(
+            statusCode: (int)data.StatusCode,
+            detail: data.Error
+            );
+    }
+
+    protected IActionResult Result<T>(ServiceResult<T> data, Action<string?, LogEventLifecycle, HttpStatusCode?> auditLog)
+    {
+        if (data is null)
+        {
+            auditLog("Argument null exception", LogEventLifecycle.FAIL, null);
+            throw new ArgumentNullException(nameof(data));
+        }
+
+        // < 400
+        if (data.StatusCode < HttpStatusCode.BadRequest)
+        {
+            auditLog(null, LogEventLifecycle.SUCCESS, null);
+            return StatusCode((int)data.StatusCode, data.Result);
+        }
+
+        // 400 to < 500
+        if (data.StatusCode >= HttpStatusCode.BadRequest && data.StatusCode < HttpStatusCode.InternalServerError)
+        {
+            var messages = new ModelStateDictionary();
+
+            data.Errors?.ForEach(error =>
+            {
+                messages.AddModelError(error.Key, error.Value);
+            });
+
+            auditLog(string.Join(",", data?.Errors?.ToArray() ?? Array.Empty<KeyValuePair<string, string>>()), LogEventLifecycle.FAIL, data.StatusCode);
+            return ValidationProblem(
+                statusCode: (int)data.StatusCode,
+                modelStateDictionary: messages);
+        }
+
+        // >= 500
+        auditLog(data.Error, LogEventLifecycle.FAIL, data.StatusCode);
+        return Problem(
+            statusCode: (int)data.StatusCode,
+            detail: data.Error
+            );
+    }
+
+    protected IActionResult ResultWithAuditLog(ServiceResult data, LogEventCode logEventCode, SortedDictionary<string, object> eventPayload, string? targetUserId = null)
+    {
+        if (data is null)
+        {
+            eventPayload["Reason"] = "Argument null exception";
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+
+            throw new ArgumentNullException(nameof(data));
+        }
+
+        if (eventPayload is null)
+        {
+            eventPayload["Reason"] = "Argument null exception";
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+            throw new ArgumentNullException(nameof(eventPayload));
+        }
+
+        // < 400
+        if (data.StatusCode < HttpStatusCode.BadRequest)
+        {
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.SUCCESS, payload: eventPayload, targetUserId: targetUserId);
+            return StatusCode((int)data.StatusCode);
+        }
+
+        // 400 to < 500
+        if (data.StatusCode >= HttpStatusCode.BadRequest && data.StatusCode < HttpStatusCode.InternalServerError)
+        {
+            var messages = new ModelStateDictionary();
+
+            data.Errors?.ForEach(error =>
+            {
+                messages.AddModelError(error.Key, error.Value);
+            });
+
+            eventPayload["Reason"] = string.Join(",", data?.Errors?.ToArray() ?? Array.Empty<KeyValuePair<string, string>>());
+            eventPayload["ResponseStatusCode"] = data.StatusCode;
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+            return ValidationProblem(
+                statusCode: (int)data.StatusCode,
+                modelStateDictionary: messages);
+        }
+
+        // >= 500
+        eventPayload["Reason"] = data.Error;
+        eventPayload["ResponseStatusCode"] = data.StatusCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+        return Problem(
+            statusCode: (int)data.StatusCode,
+            detail: data.Error
+            );
+    }
+
+    protected IActionResult ResultWithAuditLog<T>(ServiceResult<T> data, LogEventCode logEventCode, SortedDictionary<string, object> eventPayload, string? targetUserId = null)
+    {
+        if (data is null)
+        {
+            eventPayload["Reason"] = "Argument null exception";
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+
+            throw new ArgumentNullException(nameof(data));
+        }
+
+        if (eventPayload is null)
+        {
+            eventPayload["Reason"] = "Argument null exception";
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+            throw new ArgumentNullException(nameof(eventPayload));
+        }
+
+        // < 400
+        if (data.StatusCode < HttpStatusCode.BadRequest)
+        {
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.SUCCESS, payload: eventPayload, targetUserId: targetUserId);
+            return StatusCode((int)data.StatusCode, data.Result);
+        }
+
+        // 400 to < 500
+        if (data.StatusCode >= HttpStatusCode.BadRequest && data.StatusCode < HttpStatusCode.InternalServerError)
+        {
+            var messages = new ModelStateDictionary();
+
+            data.Errors?.ForEach(error =>
+            {
+                messages.AddModelError(error.Key, error.Value);
+            });
+
+            eventPayload["Reason"] = string.Join(",", data?.Errors?.ToArray() ?? Array.Empty<KeyValuePair<string, string>>());
+            eventPayload["ResponseStatusCode"] = data.StatusCode;
+            AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+            return ValidationProblem(
+                statusCode: (int)data.StatusCode,
+                modelStateDictionary: messages);
+        }
+
+        // >= 500
+        eventPayload["Reason"] = data.Error;
+        eventPayload["ResponseStatusCode"] = data.StatusCode;
+        AddAuditLog(logEventCode, suffix: LogEventLifecycle.FAIL, payload: eventPayload, targetUserId: targetUserId);
+        return Problem(
+            statusCode: (int)data.StatusCode,
+            detail: data.Error
+            );
+    }
+    protected SortedDictionary<string, object> BeginAuditLog(LogEventCode logEventCode, params (string Key, object Value)[] additionalEventPayloadData)
+        => BeginAuditLog(logEventCode, null, null, additionalEventPayloadData);
+
+    protected SortedDictionary<string, object> BeginAuditLog(LogEventCode logEventCode, object? request, params (string Key, object Value)[] additionalEventPayloadData)
+        => BeginAuditLog(logEventCode, request, null, additionalEventPayloadData);
+
+    protected SortedDictionary<string, object> BeginAuditLog(LogEventCode logEventCode, object? request, string? targetUserId, params (string Key, object Value)[] additionalEventPayloadData)
+    {
+        var eventPayload = new SortedDictionary<string, object>
+        {
+            { AuditLoggingKeys.RequesterUid, GetUid() },
+            { AuditLoggingKeys.RequesterUidType, GetUidType().ToString() },
+            { AuditLoggingKeys.RequesterName, GetUserFullName() }
+        };
+
+        if (request != null)
+        {
+            eventPayload[AuditLoggingKeys.Request] = request;
+        }
+
+        if (additionalEventPayloadData != null)
+        {
+            foreach (var (Key, Value) in additionalEventPayloadData)
+            {
+                eventPayload[Key] = Value;
+            }
+        }
+
+        HttpContext.Items["Payload"] = eventPayload;
+        HttpContext.Items[nameof(LogEventCode)] = logEventCode;
+        HttpContext.Items["TargetUserId"] = targetUserId;
+        AddAuditLog(logEventCode, LogEventLifecycle.REQUEST, targetUserId, payload: eventPayload);
+
+        return eventPayload;
     }
 }
 

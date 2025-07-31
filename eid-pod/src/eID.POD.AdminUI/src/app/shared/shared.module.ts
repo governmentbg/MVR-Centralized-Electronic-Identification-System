@@ -13,6 +13,8 @@ import { LanguageSelectorComponent } from './components/language-selector/langua
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { HasRoleDirective } from './directives/has-role.directive';
+import { PageUnauthorizedComponent } from './components/page-unauthorized/page-unauthorized.component';
 
 @NgModule({
     declarations: [
@@ -24,9 +26,11 @@ import { ToastModule } from 'primeng/toast';
         ShellComponent,
         FooterComponent,
         LanguageSelectorComponent,
+        HasRoleDirective,
+        PageUnauthorizedComponent,
     ],
     imports: [CommonModule, RouterModule, TranslocoRootModule, FormsModule, ToastModule],
-    exports: [NavbarComponent, PageNotFoundComponent, InputComponent, TranslocoRootModule],
+    exports: [NavbarComponent, PageNotFoundComponent, InputComponent, TranslocoRootModule, HasRoleDirective],
     providers: [MessageService],
 })
 export class SharedModule {}

@@ -32,12 +32,16 @@ public class DatasetsController : BaseV1Controller
         [FromBody] CreateDatasetRequest request,
         CancellationToken cancellationToken)
     {
+        var userId = GetUid();
+
+        var logEventCode = LogEventCode.CREATE_DATASET;
+        var eventPayload = BeginAuditLog(logEventCode, request, userId,
+            (nameof(request.DatasetName), request.DatasetName));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
-
-        var userId = GetUserId();
 
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
@@ -49,18 +53,16 @@ public class DatasetsController : BaseV1Controller
                     request.DataSource,
                     request.IsActive,
                     CreatedBy = userId,
+                    request.Description
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.CreateDataset, userId);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
     /// Get all datasets
     /// </summary>
     /// <param name="client"></param>
-    /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>List of all datasets</returns>
     [HttpGet(Name = nameof(GetAllDatasetsAsync))]
@@ -69,6 +71,9 @@ public class DatasetsController : BaseV1Controller
         [FromServices] IRequestClient<GetAllDatasets> client,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.GET_ALL_DATASETS;
+        var eventPayload = BeginAuditLog(logEventCode, null, GetUid());
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<IEnumerable<DatasetResult>>>(
                 new
@@ -76,9 +81,7 @@ public class DatasetsController : BaseV1Controller
                     CorrelationId = RequestId,
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetAllDatasets, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -97,13 +100,16 @@ public class DatasetsController : BaseV1Controller
         CancellationToken cancellationToken)
     {
         request.Id = id;
+        var userId = GetUid();
+
+        var logEventCode = LogEventCode.UPDATE_DATASET;
+        var eventPayload = BeginAuditLog(logEventCode, request, userId,
+            ("DatasetId", request.Id));
 
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
-
-        var userId = GetUserId();
 
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult>(
@@ -112,15 +118,14 @@ public class DatasetsController : BaseV1Controller
                     CorrelationId = RequestId,
                     request.Id,
                     request.DatasetName,
+                    request.Description,
                     request.CronPeriod,
                     request.DataSource,
                     request.IsActive,
                     LastModifiedBy = userId
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.UpdateDataset, userId);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -136,12 +141,16 @@ public class DatasetsController : BaseV1Controller
         [FromRoute] DeleteDatasetRequest request,
         CancellationToken cancellationToken)
     {
+        var userId = GetUid();
+
+        var logEventCode = LogEventCode.DELETE_DATASET;
+        var eventPayload = BeginAuditLog(logEventCode, request, userId,
+            ("DatasetId", request.Id));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
-
-        var userId = GetUserId();
 
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult>(
@@ -152,9 +161,7 @@ public class DatasetsController : BaseV1Controller
                     LastModifiedBy = userId
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.DeleteDataset, userId);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -172,9 +179,15 @@ public class DatasetsController : BaseV1Controller
         [FromRoute] ManualUploadDatasetRequest request,
         CancellationToken cancellationToken)
     {
+        var userId = GetUid();
+
+        var logEventCode = LogEventCode.MANUAL_UPLOAD_DATASET;
+        var eventPayload = BeginAuditLog(logEventCode, request, userId,
+            ("DatasetId", request.Id));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -185,8 +198,6 @@ public class DatasetsController : BaseV1Controller
                     request.Id,
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ManualUploadDataset, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 }
