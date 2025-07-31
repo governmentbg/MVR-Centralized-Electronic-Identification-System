@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "eID.Signing.API.Public": {
+      "commandName": "Project",
+      //"launchBrowser": true,
+      //"launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:60111"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      //"launchBrowser": true,
+      //"launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}

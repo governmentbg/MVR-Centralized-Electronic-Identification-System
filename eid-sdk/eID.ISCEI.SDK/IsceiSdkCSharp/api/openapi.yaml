@@ -1,0 +1,722 @@
+openapi: 3.0.1
+info:
+  description: ""
+  title: ISCEI HTTP API
+  version: "1.0"
+servers:
+- description: Generated server url
+  url: https://isceigwext.sandbox.bgeid.bg
+security:
+- ISCEI: []
+paths:
+  /api/v1/code-flow/auth:
+    post:
+      operationId: codeFlowAuth
+      parameters:
+      - explode: true
+        in: query
+        name: client_id
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: response_type
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: state
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          default: []
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        style: form
+      - explode: true
+        in: query
+        name: redirect_uri
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: code_challenge
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: code_challenge_method
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignedChallenge'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      tags:
+      - x-509-certificate-code-flow-controller
+  /api/v1/auth/verify-otp:
+    post:
+      operationId: verifyOtp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpDto'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      tags:
+      - common-login-controller
+  /api/v1/auth/mobile/certificate-login:
+    post:
+      operationId: mobileX509CertificateLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MobileSignedChallenge'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      tags:
+      - mobile-controller
+  /api/v1/auth/generate-authentication-challenge:
+    post:
+      operationId: generateAuthenticationChallenge
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/X509CertAuthenticationRequestDto'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationRequestChallengeResponse'
+          description: OK
+      tags:
+      - common-login-controller
+  /api/v1/auth/basic:
+    post:
+      operationId: basicLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicLoginRequestDto'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonNode'
+          description: OK
+      tags:
+      - common-login-controller
+  /api/v1/auth/associate-profiles:
+    post:
+      operationId: associateEidWithCitizenProfile
+      parameters:
+      - explode: true
+        in: query
+        name: client_id
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignedChallenge'
+        required: true
+      responses:
+        "200":
+          description: OK
+      tags:
+      - common-login-controller
+  /api/v1/approval-request/token:
+    post:
+      operationId: approvalRequestToken
+      parameters:
+      - explode: true
+        in: query
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalRequestToken'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      tags:
+      - approval-request-controller
+  /api/v1/approval-request/rely-party:
+    post:
+      operationId: cibaRelyParty
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelyPartyRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                format: date-time
+                type: string
+          description: OK
+      tags:
+      - approval-request-controller
+  /api/v1/approval-request/outcome:
+    post:
+      operationId: evaluateRequestOutcome
+      parameters:
+      - explode: true
+        in: query
+        name: approvalRequestId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOutcome'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      tags:
+      - approval-request-controller
+  /api/v1/approval-request/auth/citizen:
+    post:
+      operationId: approvalRequestAuth
+      parameters:
+      - explode: true
+        in: query
+        name: clientId
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          default: []
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalAuthenticationRequestDto'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: OK
+      tags:
+      - approval-request-controller
+  /api/v1/statistics/report/requests-total:
+    get:
+      operationId: reportRequestsTotal
+      parameters:
+      - explode: true
+        in: query
+        name: year
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  items:
+                    type: string
+                  type: array
+                type: array
+          description: OK
+      tags:
+      - statistics-controller
+  /api/v1/statistics/report/requests-count:
+    get:
+      operationId: reportRequestsCount
+      parameters:
+      - explode: true
+        in: query
+        name: createDateFrom
+        required: true
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: createDateTo
+        required: true
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: systemType
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: clientId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  items:
+                    type: string
+                  type: array
+                type: array
+          description: OK
+      tags:
+      - statistics-controller
+  /api/v1/statistics/report/detailed:
+    get:
+      operationId: reportDetailed
+      parameters:
+      - explode: true
+        in: query
+        name: createDateFrom
+        required: true
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: createDateTo
+        required: true
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: systemType
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: clientId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: isEmployee
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - explode: true
+        in: query
+        name: success
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  items:
+                    type: string
+                  type: array
+                type: array
+          description: OK
+      tags:
+      - statistics-controller
+  /api/v1/code-flow/token:
+    get:
+      operationId: codeFlowToken
+      parameters:
+      - explode: true
+        in: query
+        name: client_id
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: grant_type
+        required: true
+        schema:
+          enum:
+          - AUTHORIZATION_CODE
+          - REFRESH_TOKEN
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: code
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: redirect_uri
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: code_verifier
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: refresh_token
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      tags:
+      - x-509-certificate-code-flow-controller
+  /api/v1/approval-request/user:
+    get:
+      operationId: getUserApprovalRequests
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ApprovalRequestResponse'
+                type: array
+          description: OK
+      tags:
+      - approval-request-controller
+components:
+  schemas:
+    SignedChallenge:
+      example:
+        certificateChain:
+        - certificateChain
+        - certificateChain
+        signature: signature
+        certificate: certificate
+        challenge: challenge
+      properties:
+        signature:
+          type: string
+        challenge:
+          type: string
+        certificate:
+          type: string
+        certificateChain:
+          items:
+            type: string
+          type: array
+      type: object
+    VerifyOtpDto:
+      example:
+        otp: otp
+        sessionId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        sessionId:
+          format: uuid
+          type: string
+        otp:
+          type: string
+      required:
+      - otp
+      - sessionId
+      type: object
+    MobileSignedChallenge:
+      example:
+        signedChallenge:
+          certificateChain:
+          - certificateChain
+          - certificateChain
+          signature: signature
+          certificate: certificate
+          challenge: challenge
+        client_id: client_id
+      properties:
+        signedChallenge:
+          $ref: '#/components/schemas/SignedChallenge'
+        client_id:
+          type: string
+      type: object
+    X509CertAuthenticationRequestDto:
+      example:
+        levelOfAssurance: LOW
+        requestFrom: requestFrom
+      properties:
+        levelOfAssurance:
+          enum:
+          - LOW
+          - SUBSTANTIAL
+          - HIGH
+          type: string
+        requestFrom:
+          type: string
+      type: object
+    AuthenticationRequestChallengeResponse:
+      example:
+        challenge: challenge
+      properties:
+        challenge:
+          type: string
+      type: object
+    BasicLoginRequestDto:
+      example:
+        password: password
+        client_id: client_id
+        email: email
+      properties:
+        client_id:
+          type: string
+        email:
+          pattern: "^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+      type: object
+    JsonNode:
+      type: object
+    ApprovalRequestToken:
+      example:
+        auth_req_id: auth_req_id
+      properties:
+        auth_req_id:
+          type: string
+      type: object
+    RelyPartyRequest:
+      example:
+        login_hint: login_hint
+        scope: scope
+        acr_values: acr_values
+        is_consent_required: true
+        binding_message: binding_message
+      properties:
+        login_hint:
+          type: string
+        scope:
+          type: string
+        is_consent_required:
+          type: boolean
+        binding_message:
+          type: string
+        acr_values:
+          type: string
+      type: object
+    RequestOutcome:
+      example:
+        clientId: clientId
+        approvalRequestStatus: SUCCEED
+        signedChallenge:
+          certificateChain:
+          - certificateChain
+          - certificateChain
+          signature: signature
+          certificate: certificate
+          challenge: challenge
+      properties:
+        signedChallenge:
+          $ref: '#/components/schemas/SignedChallenge'
+        clientId:
+          type: string
+        approvalRequestStatus:
+          enum:
+          - SUCCEED
+          - UNAUTHORIZED
+          - CANCELLED
+          type: string
+      type: object
+    ApprovalAuthenticationRequestDto:
+      example:
+        phoneNumber: phoneNumber
+        citizenNumber: citizenNumber
+        levelOfAssurance: LOW
+        type: EGN
+        requestFrom:
+          system:
+            key: system
+          type: AUTH
+      properties:
+        levelOfAssurance:
+          enum:
+          - LOW
+          - SUBSTANTIAL
+          - HIGH
+          type: string
+        citizenNumber:
+          type: string
+        type:
+          enum:
+          - EGN
+          - LNCh
+          type: string
+        phoneNumber:
+          pattern: "^(?:\\+\\d{3}\\d{9}|0\\d{9})?$|^$"
+          type: string
+        requestFrom:
+          $ref: '#/components/schemas/RequestFromDto'
+      required:
+      - citizenNumber
+      - type
+      type: object
+    RequestFromDto:
+      example:
+        system:
+          key: system
+        type: AUTH
+      properties:
+        type:
+          enum:
+          - AUTH
+          type: string
+        system:
+          additionalProperties:
+            type: string
+          type: object
+      type: object
+    ApprovalRequestResponse:
+      example:
+        expiresIn: 6
+        maxTtl: 0
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        levelOfAssurance: LOW
+        username: username
+        requestFrom:
+          system:
+            key: system
+          type: AUTH
+        createDate: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          format: uuid
+          type: string
+        username:
+          type: string
+        levelOfAssurance:
+          enum:
+          - LOW
+          - SUBSTANTIAL
+          - HIGH
+          type: string
+        requestFrom:
+          $ref: '#/components/schemas/RequestFromDto'
+        createDate:
+          format: date-time
+          type: string
+        maxTtl:
+          format: int64
+          type: integer
+        expiresIn:
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    ISCEI:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+

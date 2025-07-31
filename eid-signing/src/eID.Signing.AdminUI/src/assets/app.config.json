@@ -1,0 +1,32 @@
+{
+    "journals": {
+        "folders": [
+            "/app/logs/eid-signing/audit"
+        ],
+        "fileExtensionFilter": "*.audit"
+    },
+    "integrity": {
+        "systemId": "signing",
+        "poolingRequestInterval": 5000,
+        "poolingTimeout": 600000,
+        "downloadBytesFileSize": 500000
+    },
+    "systemProcesses": {
+        "prometheus": "http://monitoring.mvreid.local:9090",
+        "grafana": "http://monitoring.mvreid.local:3000",
+        "ddosSystem1": "https://10.253.254.140",
+        "ddosSystem2": "https://10.253.254.140",
+        "keycloak_internal": "https://keycloak-dev.mvreid.local",
+        "keycloak_external": "http://keycloak-ext-dev.mvreid.local/"
+    },
+    "oauth": {
+        "clientId": "eid_mvr_auth_client",
+        "issuer": "https://keycloak-dev.mvreid.local/realms/eid_internal",
+        "redirectUri": "https://localhost:4200/",
+        "responseType": "code",
+        "requireHttps": true,
+        "scope": "openid profile email offline_access",
+        "useSilentRefresh": true,
+        "timeoutFactor": 0.75
+    }
+}

@@ -1,0 +1,1237 @@
+openapi: 3.0.1
+info:
+  description: Подсистема за автоматични нотификации (ПАН) Публична
+  title: eID - PAN Public HTTP API
+  version: v1
+servers:
+- url: /
+security:
+- Bearer: []
+paths:
+  /api/v1/NotificationChannels:
+    get:
+      parameters:
+      - description: ""
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 100
+          format: int32
+          type: integer
+        style: form
+      - description: ""
+        explode: true
+        in: query
+        name: pageIndex
+        required: false
+        schema:
+          default: 1
+          format: int32
+          type: integer
+        style: form
+      - description: ""
+        explode: true
+        in: query
+        name: channelName
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotificationChannelResultIPaginatedData'
+          description: Success
+      summary: Get all notification channels
+      tags:
+      - NotificationChannels
+      x-accepts:
+      - application/json
+    post:
+      operationId: RegisterAsync
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/RegisterNotificationChannelRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterNotificationChannelRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterNotificationChannelRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterNotificationChannelRequest'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                format: uuid
+                type: string
+          description: Returns the Id of the created notification channel.
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Conflict
+      summary: Add new notification channel in Pending table. Name must be unique
+        against approved channels.
+      tags:
+      - NotificationChannels
+      x-content-type: application/json-patch+json
+      x-accepts:
+      - application/json
+  /api/v1/NotificationChannels/selected:
+    get:
+      parameters:
+      - description: ""
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 1000
+          format: int32
+          type: integer
+        style: form
+      - description: ""
+        explode: true
+        in: query
+        name: pageIndex
+        required: false
+        schema:
+          default: 1
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuidIPaginatedData'
+          description: Success
+      summary: Get user selected notification channels
+      tags:
+      - NotificationChannels
+      x-accepts:
+      - application/json
+  /api/v1/NotificationChannels/selection:
+    post:
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+          application/json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+          text/json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+          application/*+json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "204":
+          description: No Content
+      summary: Register selection of user notification channels
+      tags:
+      - NotificationChannels
+      x-content-type: application/json-patch+json
+      x-accepts:
+      - application/json
+  /api/v1/NotificationChannels/{id}:
+    put:
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannelPayload'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannelPayload'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannelPayload'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/NotificationChannelPayload'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          description: Success
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Not Found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Conflict
+      summary: "Update existing approved notification channel. \r\nNew version is\
+        \ added in Pending table. Name must be unique against approved channels."
+      tags:
+      - NotificationChannels
+      x-content-type: application/json-patch+json
+      x-accepts:
+      - application/json
+  /api/v1/Notifications:
+    get:
+      parameters:
+      - description: ""
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 50
+          format: int32
+          type: integer
+        style: form
+      - description: ""
+        explode: true
+        in: query
+        name: pageIndex
+        required: false
+        schema:
+          default: 1
+          format: int32
+          type: integer
+        style: form
+      - description: ""
+        explode: true
+        in: query
+        name: systemName
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredSystemResultIPaginatedData'
+          description: Success
+      summary: Get all Systems and notifications
+      tags:
+      - Notifications
+      x-accepts:
+      - application/json
+  /api/v1/Notifications/deactivated:
+    get:
+      parameters:
+      - description: ""
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 1000
+          format: int32
+          type: integer
+        style: form
+      - description: ""
+        explode: true
+        in: query
+        name: pageIndex
+        required: false
+        schema:
+          default: 1
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuidIPaginatedData'
+          description: Success
+      summary: Get deactivated user notifications
+      tags:
+      - Notifications
+      x-accepts:
+      - application/json
+  /api/v1/Notifications/deactivate:
+    post:
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+          application/json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+          text/json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+          application/*+json:
+            schema:
+              items:
+                format: uuid
+                type: string
+              type: array
+              uniqueItems: true
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "204":
+          description: No Content
+      summary: Register deactivated user events
+      tags:
+      - Notifications
+      x-content-type: application/json-patch+json
+      x-accepts:
+      - application/json
+  /api/v1/Notifications/systems:
+    post:
+      operationId: RegisterOrUpdateSystemAsync
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/RegisterSystemRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterSystemRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterSystemRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterSystemRequest'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "200":
+          content:
+            application/json:
+              schema:
+                format: uuid
+                type: string
+          description: Returns id of the newly registered or updated system
+      summary: Register or update a system with its events.
+      tags:
+      - Notifications
+      x-content-type: application/json-patch+json
+      x-accepts:
+      - application/json
+  /api/v1/Notifications/send:
+    post:
+      operationId: SendNotificationAsync
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequestInput'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequestInput'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequestInput'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequestInput'
+        description: ""
+      responses:
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Server Error
+        "202":
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: Returns true if the system managed to queue the notification
+            for sending
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Conflict
+      summary: Send notification to a user via users' selected channels or fallback
+        to default(SMTP) channel.
+      tags:
+      - Notifications
+      x-content-type: application/json-patch+json
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    GuidIPaginatedData:
+      additionalProperties: false
+      example:
+        totalItems: 6
+        data:
+        - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        pageIndex: 0
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            format: uuid
+            type: string
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    IdentifierType:
+      enum:
+      - NotSpecified
+      - LNCh
+      - EGN
+      type: string
+    NotificationChannelPayload:
+      additionalProperties: false
+      example:
+        infoUrl: infoUrl
+        translations:
+        - name: name
+          description: description
+          language: language
+        - name: name
+          description: description
+          language: language
+        name: name
+        description: description
+        callbackUrl: callbackUrl
+        email: email
+      properties:
+        name:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+        email:
+          nullable: true
+          type: string
+        callbackUrl:
+          nullable: true
+          type: string
+        infoUrl:
+          nullable: true
+          type: string
+        translations:
+          items:
+            $ref: '#/components/schemas/NotificationChannelTranslationRequest'
+          nullable: true
+          type: array
+      type: object
+    NotificationChannelTranslationRequest:
+      additionalProperties: false
+      example:
+        name: name
+        description: description
+        language: language
+      properties:
+        language:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+      type: object
+    NotificationChannelTranslationResult:
+      additionalProperties: false
+      example:
+        name: name
+        description: description
+        language: language
+      properties:
+        language:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+      type: object
+    ProblemDetails:
+      additionalProperties: {}
+      example:
+        instance: instance
+        detail: detail
+        type: type
+        title: title
+        status: 6
+      properties:
+        type:
+          nullable: true
+          type: string
+        title:
+          nullable: true
+          type: string
+        status:
+          format: int32
+          nullable: true
+          type: integer
+        detail:
+          nullable: true
+          type: string
+        instance:
+          nullable: true
+          type: string
+      type: object
+    RegisterNotificationChannelRequest:
+      additionalProperties: false
+      example:
+        infoUrl: infoUrl
+        translations:
+        - name: name
+          description: description
+          language: language
+        - name: name
+          description: description
+          language: language
+        name: name
+        description: description
+        callbackUrl: callbackUrl
+        email: email
+      properties:
+        name:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+        email:
+          nullable: true
+          type: string
+        callbackUrl:
+          nullable: true
+          type: string
+        infoUrl:
+          nullable: true
+          type: string
+        translations:
+          items:
+            $ref: '#/components/schemas/NotificationChannelTranslationRequest'
+          nullable: true
+          type: array
+      type: object
+    RegisterSystemRequest:
+      additionalProperties: false
+      example:
+        systemName: systemName
+        translations:
+        - name: name
+          language: language
+        - name: name
+          language: language
+        events:
+        - code: code
+          translations:
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          isMandatory: true
+        - code: code
+          translations:
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          isMandatory: true
+      properties:
+        systemName:
+          nullable: true
+          type: string
+        translations:
+          items:
+            $ref: '#/components/schemas/RegisteredSystemTranslationRequest'
+          nullable: true
+          type: array
+        events:
+          items:
+            $ref: '#/components/schemas/SystemEventRequest'
+          nullable: true
+          type: array
+      type: object
+    RegisteredSystemResult:
+      additionalProperties: false
+      example:
+        modifiedOn: 2000-01-23T04:56:07.000+00:00
+        isDeleted: true
+        translations:
+        - name: name
+          language: language
+        - name: name
+          language: language
+        name: name
+        modifiedBy: modifiedBy
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        isApproved: true
+        events:
+        - modifiedOn: 2000-01-23T04:56:07.000+00:00
+          code: code
+          isDeleted: true
+          translations:
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          modifiedBy: modifiedBy
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isMandatory: true
+        - modifiedOn: 2000-01-23T04:56:07.000+00:00
+          code: code
+          isDeleted: true
+          translations:
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          - description: description
+            language: language
+            shortDescription: shortDescription
+          modifiedBy: modifiedBy
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isMandatory: true
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          nullable: true
+          type: string
+        modifiedOn:
+          format: date-time
+          nullable: true
+          type: string
+        modifiedBy:
+          nullable: true
+          type: string
+        isApproved:
+          type: boolean
+        isDeleted:
+          type: boolean
+        translations:
+          items:
+            $ref: '#/components/schemas/RegisteredSystemTranslationResult'
+          nullable: true
+          type: array
+        events:
+          items:
+            $ref: '#/components/schemas/SystemEventResult'
+          nullable: true
+          type: array
+      type: object
+    RegisteredSystemResultIPaginatedData:
+      additionalProperties: false
+      example:
+        totalItems: 6
+        data:
+        - modifiedOn: 2000-01-23T04:56:07.000+00:00
+          isDeleted: true
+          translations:
+          - name: name
+            language: language
+          - name: name
+            language: language
+          name: name
+          modifiedBy: modifiedBy
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isApproved: true
+          events:
+          - modifiedOn: 2000-01-23T04:56:07.000+00:00
+            code: code
+            isDeleted: true
+            translations:
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            modifiedBy: modifiedBy
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            isMandatory: true
+          - modifiedOn: 2000-01-23T04:56:07.000+00:00
+            code: code
+            isDeleted: true
+            translations:
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            modifiedBy: modifiedBy
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            isMandatory: true
+        - modifiedOn: 2000-01-23T04:56:07.000+00:00
+          isDeleted: true
+          translations:
+          - name: name
+            language: language
+          - name: name
+            language: language
+          name: name
+          modifiedBy: modifiedBy
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isApproved: true
+          events:
+          - modifiedOn: 2000-01-23T04:56:07.000+00:00
+            code: code
+            isDeleted: true
+            translations:
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            modifiedBy: modifiedBy
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            isMandatory: true
+          - modifiedOn: 2000-01-23T04:56:07.000+00:00
+            code: code
+            isDeleted: true
+            translations:
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            - description: description
+              language: language
+              shortDescription: shortDescription
+            modifiedBy: modifiedBy
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            isMandatory: true
+        pageIndex: 0
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/RegisteredSystemResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    RegisteredSystemTranslationRequest:
+      additionalProperties: false
+      example:
+        name: name
+        language: language
+      properties:
+        language:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+      type: object
+    RegisteredSystemTranslationResult:
+      additionalProperties: false
+      example:
+        name: name
+        language: language
+      properties:
+        language:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+      type: object
+    SendNotificationRequestInput:
+      additionalProperties: false
+      example:
+        eventCode: eventCode
+        eId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        uid: uid
+        uidType: NotSpecified
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        eventCode:
+          nullable: true
+          type: string
+        userId:
+          format: uuid
+          nullable: true
+          type: string
+        eId:
+          format: uuid
+          nullable: true
+          type: string
+        uid:
+          nullable: true
+          type: string
+        uidType:
+          $ref: '#/components/schemas/IdentifierType'
+      type: object
+    SystemEventRequest:
+      additionalProperties: false
+      example:
+        code: code
+        translations:
+        - description: description
+          language: language
+          shortDescription: shortDescription
+        - description: description
+          language: language
+          shortDescription: shortDescription
+        isMandatory: true
+      properties:
+        code:
+          nullable: true
+          type: string
+        isMandatory:
+          type: boolean
+        translations:
+          items:
+            $ref: '#/components/schemas/TranslationRequest'
+          nullable: true
+          type: array
+      type: object
+    SystemEventResult:
+      additionalProperties: false
+      example:
+        modifiedOn: 2000-01-23T04:56:07.000+00:00
+        code: code
+        isDeleted: true
+        translations:
+        - description: description
+          language: language
+          shortDescription: shortDescription
+        - description: description
+          language: language
+          shortDescription: shortDescription
+        modifiedBy: modifiedBy
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        isMandatory: true
+      properties:
+        id:
+          format: uuid
+          type: string
+        code:
+          nullable: true
+          type: string
+        modifiedOn:
+          format: date-time
+          nullable: true
+          type: string
+        modifiedBy:
+          nullable: true
+          type: string
+        isMandatory:
+          type: boolean
+        isDeleted:
+          type: boolean
+        translations:
+          items:
+            $ref: '#/components/schemas/TranslationResult'
+          nullable: true
+          type: array
+      type: object
+    TranslationRequest:
+      additionalProperties: false
+      example:
+        description: description
+        language: language
+        shortDescription: shortDescription
+      properties:
+        language:
+          nullable: true
+          type: string
+        shortDescription:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+      type: object
+    TranslationResult:
+      additionalProperties: false
+      example:
+        description: description
+        language: language
+        shortDescription: shortDescription
+      properties:
+        language:
+          nullable: true
+          type: string
+        shortDescription:
+          nullable: true
+          type: string
+        description:
+          nullable: true
+          type: string
+      type: object
+    UserNotificationChannelResult:
+      additionalProperties: false
+      example:
+        infoUrl: infoUrl
+        price: 5.637376656633329
+        translations:
+        - name: name
+          description: description
+          language: language
+        - name: name
+          description: description
+          language: language
+        name: name
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          nullable: true
+          type: string
+        price:
+          format: double
+          type: number
+        infoUrl:
+          nullable: true
+          type: string
+        translations:
+          items:
+            $ref: '#/components/schemas/NotificationChannelTranslationResult'
+          nullable: true
+          type: array
+      type: object
+    UserNotificationChannelResultIPaginatedData:
+      additionalProperties: false
+      example:
+        totalItems: 5
+        data:
+        - infoUrl: infoUrl
+          price: 5.637376656633329
+          translations:
+          - name: name
+            description: description
+            language: language
+          - name: name
+            description: description
+            language: language
+          name: name
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - infoUrl: infoUrl
+          price: 5.637376656633329
+          translations:
+          - name: name
+            description: description
+            language: language
+          - name: name
+            description: description
+            language: language
+          name: name
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        pageIndex: 1
+      properties:
+        pageIndex:
+          format: int32
+          readOnly: true
+          type: integer
+        totalItems:
+          format: int32
+          readOnly: true
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/UserNotificationChannelResult'
+          nullable: true
+          readOnly: true
+          type: array
+      type: object
+    ValidationProblemDetails:
+      additionalProperties: {}
+      example:
+        instance: instance
+        detail: detail
+        type: type
+        title: title
+        errors:
+          key:
+          - errors
+          - errors
+        status: 0
+      properties:
+        errors:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          nullable: true
+          type: object
+        type:
+          nullable: true
+          type: string
+        title:
+          nullable: true
+          type: string
+        status:
+          format: int32
+          nullable: true
+          type: integer
+        detail:
+          nullable: true
+          type: string
+        instance:
+          nullable: true
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      bearerFormat: JWT
+      description: Please enter token
+      scheme: Bearer
+      type: http
+
