@@ -1,0 +1,42 @@
+@import "../../styles/variables.scss";
+
+.file-details-container {
+    .fw-500 {
+        font-weight: 500;
+    }
+
+    .file-data-container {
+        overflow: auto;
+        min-height: 300px;
+        height: calc(100vh - 500px);
+
+        div.scroll {
+            margin: 4px;
+            padding: 4px;
+            width: 100%;
+            white-space: nowrap;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            letter-spacing: 0px;
+            text-align: left;
+
+            .key {
+                color: #0c53b2;
+            }
+
+            .value {
+                color: #018930;
+            }
+
+            .bracket {
+                color: #1c3050;
+            }
+        }
+    }
+
+    ::ng-deep .header-divider .p-divider.p-divider-horizontal:before {
+        border-color: $theme-primary-light;
+    }
+}

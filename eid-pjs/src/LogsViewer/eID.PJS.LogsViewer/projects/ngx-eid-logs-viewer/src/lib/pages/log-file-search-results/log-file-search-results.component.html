@@ -1,0 +1,80 @@
+<section *transloco="let t" class="log-file-search-results-container h-100 d-flex flex-column">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-uppercase">{{ t('modules.journalLogs.txtSearchResults') }}</h4>
+    </div>
+    <div class="p-card p-4 flex-grow-1">
+        <h6 class="sub-title" *ngIf="loading">{{ t('modules.journalLogs.txtSearching') }}...</h6>
+        <h6 class="sub-title" *ngIf="!loading">
+            {{ t('modules.journalLogs.txtSearchFound', { value: recordsCount }) }}:
+        </h6>
+        <div class="details-container d-flex justify-content-between">
+            <div class="d-flex flex-column">
+                <div class="d-flex">
+                    <label> {{ t('modules.journalLogs.txtPeriod') }}: </label>
+                    <span>
+                        {{ formatWholeDate(searchedCriteria.fromDate, searchedCriteria.toDate) }}
+                    </span>
+                </div>
+                <div class="d-flex">
+                    <label> {{ t('modules.journalLogs.txtConfigurator') }}:</label>
+                    <span *ngFor="let property of searchedCriteria.properties">
+                        {{ property.field }} - {{ t('modules.journalLogs.operators.txt' + property.operator) }} -
+                        {{ property.value }};
+                    </span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <p-button
+                    (click)="navigateToSearchLogFilesForm()"
+                    [label]="t('modules.journalLogs.txtChangeSearch')"
+                    styleClass="p-button-sm"></p-button>
+            </div>
+        </div>
+
+        <div class="file-data-container position-relative" style="height: calc(100vh - 450px)">
+            <div
+                class="p-component-overlay position-absolute d-flex align-items-center justify-content-center"
+                *ngIf="loading">
+                <i class="p-datatable-loading-icon pi pi-spin pi-spinner"></i>
+            </div>
+            <p-virtualScroller
+                [value]="logs"
+                [style]="{ width: '100%' }"
+                scrollHeight="calc(100vh - 450px)"
+                [itemSize]="112">
+                <ng-template pTemplate="item" let-item>
+                    <div class="scroll" (click)="openFileDetails(item)">
+                        <p class="text-text-default fw-500">
+                            {{ item?.sourceFile }}
+                        </p>
+
+                        <div *ngFor="let currentLog of item.logs">
+                            <div class="object-container">
+                                <span class="bracket">{{ '{' }}</span>
+                                <span *ngFor="let log of currentLog | keyvalue; last as isLast">
+                                    <span class="key">"{{ log.key }}"</span>:<span class="value">
+                                        <span *ngIf="isObject(log.value) && log.value !== undefined; else elseBlock">
+                                            <span *ngFor="let innerItem of log.value | keyvalue">
+                                                <span class="bracket">{{ '{' }}</span>
+                                                <span class="key">"{{ innerItem.key }}"</span>:<span class="value">
+                                                    "{{ innerItem.value }}"
+                                                </span>
+                                                <span class="bracket">{{ '}' }} </span>
+                                            </span>
+                                        </span>
+                                        <ng-template #elseBlock>"{{ log.value }}"</ng-template>
+                                    </span>
+                                    <span class="bracket" *ngIf="!isLast">{{ ', ' }}</span>
+                                </span>
+                                <span class="bracket">{{ '}' }}</span>
+                            </div>
+                        </div>
+                        <p-divider class="header-divider" type="solid"></p-divider>
+                    </div>
+                </ng-template>
+            </p-virtualScroller>
+        </div>
+    </div>
+    <p-toast key="toast" position="bottom-right"></p-toast>
+</section>

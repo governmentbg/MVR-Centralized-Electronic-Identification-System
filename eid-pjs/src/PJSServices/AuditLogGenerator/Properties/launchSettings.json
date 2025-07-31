@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AuditLogGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "eid-test"
+    }
+  }
+}

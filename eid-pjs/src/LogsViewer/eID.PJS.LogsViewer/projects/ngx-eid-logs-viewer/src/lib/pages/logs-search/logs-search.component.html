@@ -1,0 +1,374 @@
+<section *transloco="let t" class="log-file-search-container">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+    <h4 class="text-uppercase">
+        {{ t("modules.journalLogs.txtSearchingOfLogFile") }}
+    </h4>
+
+    <div class="p-card p-4 col-11 mb-4">
+        <div class="row">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="row mb-4">
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="w-100" for="fromDate">
+                                    {{ t("modules.journalLogs.txtStartDate") }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <p-calendar
+                                    styleClass="w-100"
+                                    formControlName="fromDate"
+                                    inputId="fromDate"
+                                    label="fromDate"
+                                    ariaLabelledBy="fromDate"
+                                    name="fromDate"
+                                    [showIcon]="true"
+                                    [showTime]="true"
+                                    dateFormat="yy-mm-dd"
+                                    iconAriaLabel="calendar"
+                                    [placeholder]="
+                                        t(
+                                            'modules.journalLogs.txtStartDatePlaceholder'
+                                        )
+                                    "
+                                    (onSelect)="validateToDate()"
+                                    appendTo="body"
+                                    [baseZIndex]="1045"
+                                >
+                                </p-calendar>
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="
+                                        form.controls.fromDate.errors?.['required'] &&
+                                        (form.controls.fromDate.dirty
+                                        || form.controls.fromDate.touched)
+                                    "
+                                        >{{
+                                            t(
+                                                "modules.journalLogs.validationForm.txtPleaseChoose",
+                                                {
+                                                    field: t(
+                                                        "modules.journalLogs.txtStartDate"
+                                                    )
+                                                }
+                                            )
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label class="w-100" for="toDate">
+                                    {{ t("modules.journalLogs.txtEndDate") }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <p-calendar
+                                    styleClass="w-100"
+                                    formControlName="toDate"
+                                    inputId="toDate"
+                                    label="toDate"
+                                    ariaLabelledBy="toDate"
+                                    name="toDate"
+                                    [showIcon]="true"
+                                    [showTime]="true"
+                                    dateFormat="yy-mm-dd"
+                                    iconAriaLabel="calendar"
+                                    [placeholder]="
+                                        t(
+                                            'modules.journalLogs.txtEndDatePlaceholder'
+                                        )
+                                    "
+                                    appendTo="body"
+                                    [baseZIndex]="1045"
+                                >
+                                </p-calendar>
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="
+                                        form.controls.toDate.errors?.['required'] &&
+                                        (form.controls.toDate.dirty
+                                        || form.controls.toDate.touched)
+                                    "
+                                        >{{
+                                            t(
+                                                "modules.journalLogs.validationForm.txtPleaseChoose",
+                                                {
+                                                    field: t(
+                                                        "modules.journalLogs.txtEndDate"
+                                                    )
+                                                }
+                                            )
+                                        }}
+                                    </span>
+                                    <span
+                                        *ngIf="
+                                        form.controls.toDate.errors?.['dateMoreThanValid'] &&
+                                        (form.controls.toDate.dirty || form.controls.toDate.touched)
+                                    "
+                                    >
+                                        {{
+                                            t(
+                                                "modules.journalLogs.validationForm.txtLaterThenStartDate"
+                                            )
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-container formArrayName="properties">
+                    <ng-container
+                        *ngFor="
+                            let propertiesForm of properties.controls;
+                            let i = index
+                        "
+                    >
+                        <div class="row mb-4" [formGroupName]="i">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label
+                                            [for]="'field-' + i"
+                                            [attr.ariaLabelledBy]="'field-' + i"
+                                            class="form-label"
+                                            >{{
+                                                t("modules.journalLogs.txtKey")
+                                            }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            [attr.aria-label]="'field-' + i"
+                                            [attr.ariaLabelledBy]="'field-' + i"
+                                            pInputText
+                                            id="field"
+                                            type="text"
+                                            formControlName="field"
+                                            autocomplete="off"
+                                            class="w-100"
+                                        />
+                                        <div
+                                            class="text-danger validation-text"
+                                        >
+                                            <span
+                                                class="d-block"
+                                                *ngIf="propertiesForm.get('field')?.errors?.['required'] && (propertiesForm.dirty || propertiesForm.touched)"
+                                            >
+                                                {{
+                                                    t(
+                                                        "modules.journalLogs.validationForm.txtPleaseEnterField",
+                                                        {
+                                                            field: t(
+                                                                "modules.journalLogs.txtKey"
+                                                            )
+                                                        }
+                                                    )
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="value" class="form-label"
+                                            >{{
+                                                t(
+                                                    "modules.journalLogs.txtOperator"
+                                                )
+                                            }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <p-dropdown
+                                            formControlName="operator"
+                                            [options]="operatorsOptions"
+                                            optionLabel="name"
+                                            optionValue="code"
+                                            styleClass="w-100"
+                                            inputId="operator"
+                                            ariaLabelledBy="dropdown"
+                                            [placeholder]="
+                                                t(
+                                                    'modules.journalLogs.txtOperatorPlaceholder'
+                                                )
+                                            "
+                                        >
+                                        </p-dropdown>
+                                        <div
+                                            class="text-danger validation-text"
+                                        >
+                                            <span
+                                                class="d-block"
+                                                *ngIf="propertiesForm.get('operator')?.errors?.['required'] && (propertiesForm.dirty || propertiesForm.touched)"
+                                            >
+                                                {{
+                                                    t(
+                                                        "modules.journalLogs.validationForm.txtPleaseChoose",
+                                                        {
+                                                            field: t(
+                                                                "modules.journalLogs.txtOperator"
+                                                            )
+                                                        }
+                                                    )
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label
+                                            [for]="'value-' + i"
+                                            [attr.ariaLabelledBy]="'value-' + i"
+                                            class="form-label"
+                                            >{{
+                                                t(
+                                                    "modules.journalLogs.txtValue"
+                                                )
+                                            }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            [attr.aria-label]="'value-' + i"
+                                            [attr.ariaLabelledBy]="'value-' + i"
+                                            pInputText
+                                            id="value"
+                                            type="text"
+                                            formControlName="value"
+                                            autocomplete="off"
+                                            class="w-100"
+                                        />
+                                        <div
+                                            class="text-danger validation-text"
+                                        >
+                                            <span
+                                                class="d-block"
+                                                *ngIf="propertiesForm.get('value')?.errors?.['required'] && (propertiesForm.dirty || propertiesForm.touched)"
+                                            >
+                                                {{
+                                                    t(
+                                                        "modules.journalLogs.validationForm.txtPleaseEnterField",
+                                                        {
+                                                            field: t(
+                                                                "modules.journalLogs.txtValue"
+                                                            )
+                                                        }
+                                                    )
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="col-2 d-flex align-items-center gap-3 justify-content-end"
+                            >
+                                <p-button
+                                    *ngIf="properties.controls.length > 1"
+                                    [ariaLabel]="t('ariaLabels.txtRemove')"
+                                    icon="pi pi-times"
+                                    styleClass="p-button-danger p-button-text border-light border"
+                                    (click)="removeProperty(i)"
+                                ></p-button>
+
+                                <p-button
+                                    *ngIf="
+                                        i === properties.controls.length - 1 &&
+                                        properties.controls.length <
+                                            maxPropertyFieldsNumbers
+                                    "
+                                    [ariaLabel]="t('ariaLabels.txtAdd')"
+                                    icon="pi pi-plus"
+                                    styleClass="p-button-success"
+                                    (click)="addProperty()"
+                                ></p-button>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+                <div class="d-flex gap-3">
+                    <p-button
+                        (click)="cancel()"
+                        [label]="t('modules.journalLogs.txtReject')"
+                        [disabled]="requestInProgress"
+                        styleClass="p-button-sm p-button-danger"
+                    ></p-button>
+
+                    <p-button
+                        [label]="t('modules.journalLogs.txtSearch')"
+                        type="submit"
+                        [disabled]="requestInProgress"
+                        styleClass="p-button-sm me-3 p-button-primary"
+                    ></p-button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="information col-11 p-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="title mb-4">
+                    <i class="material-icons-outlined me-3">&#xe88e;</i>
+                    {{ t("modules.journalLogs.txtOperators") }}
+                </div>
+                <ul class="text-container">
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtEqualDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtGreaterThanDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtLessThanDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtGreaterThanOrEqualDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtLessThanOrEqualDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtContainsDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtStartsWithDescription"
+                            )
+                        }}
+                    </li>
+                    <li>
+                        {{
+                            t(
+                                "modules.journalLogs.descriptionTexts.txtEndsWithDescription"
+                            )
+                        }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

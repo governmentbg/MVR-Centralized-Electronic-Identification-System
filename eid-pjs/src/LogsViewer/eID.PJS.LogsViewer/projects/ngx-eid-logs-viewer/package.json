@@ -1,0 +1,28 @@
+{
+    "name": "@eid/ngx-eid-logs-viewer",
+    "version": "1.0.8",
+    "peerDependencies": {
+        "@angular/common": "^15.2.0",
+        "@angular/core": "^15.2.0",
+        "@ngneat/transloco": "^4.2.2",
+        "bootstrap": "^5.2.3",
+        "moment": "^2.29.4",
+        "primeicons": "^6.0.1",
+        "primeng": "^15.3.0",
+        "jwt-decode": "^3.1.2",
+        "@ngneat/transloco-locale": "^4.1.0"
+    },
+    "dependencies": {
+        "tslib": "^2.3.0"
+    },
+    "devDependencies": {
+        "@ngneat/transloco": "^4.2.2",
+        "bootstrap": "^5.2.3",
+        "moment": "^2.29.4",
+        "primeicons": "^6.0.1",
+        "primeng": "^15.3.0",
+        "jwt-decode": "^3.1.2",
+        "@ngneat/transloco-locale": "^4.1.0"
+    },
+    "sideEffects": false
+}

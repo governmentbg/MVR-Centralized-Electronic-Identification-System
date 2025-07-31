@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="eID.PJS.AuditLogging" Version="1.0.14" />
+      <PackageReference Include="FluentValidation" Version="11.5.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.18">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18" />
+      <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+      <PackageReference Include="OpenSearch.Client" Version="1.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eID.PJS.Contracts\eID.PJS.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,26 @@
+﻿{
+    "aggs": {
+        "Distinct_Count": {
+            "scripted_metric": {
+                "params": {
+                    "fieldName": "brand"
+                },
+                "init_script": "state.list = []",
+                "map_script": "if(params['_source'][params.fieldName] != null) state.list.add(params['_source'][params.fieldName]);",
+                "combine_script": "return state.list;",
+                "reduce_script": "Map uniqueValueMap = new HashMap();int count = 0;for(shardList in states){if(shardList != null){for(key in shardList){if(!uniqueValueMap.containsKey(key)){count +=1;uniqueValueMap.put(key, key);}}}}return count;"
+            }
+        },
+        "Distinct_Values": {
+            "scripted_metric": {
+                "params": {
+                    "fieldName": "brand"
+                },
+                "init_script": "state.list = []",
+                "map_script": "if(params['_source'][params.fieldName] != null) state.list.add(params['_source'][params.fieldName]);",
+                "combine_script": "return state.list;",
+                "reduce_script": "Map uniqueValueMap = new HashMap();List uniqueValueList = new ArrayList();for(shardList in states){if(shardList != null){for(key in shardList){if(!uniqueValueMap.containsKey(key)){uniqueValueList.add(key);uniqueValueMap.put(key, key);}}}}return uniqueValueList;"
+            }
+        }
+    }
+}

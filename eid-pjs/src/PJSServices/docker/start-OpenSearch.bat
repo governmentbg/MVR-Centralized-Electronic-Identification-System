@@ -1,0 +1,1 @@
+docker compose -f docker-compose-openSearch-ext-volume.yml -p eid-audit-log up

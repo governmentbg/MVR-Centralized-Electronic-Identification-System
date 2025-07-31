@@ -1,0 +1,162 @@
+<div *ngIf="files.length > 0" class="pe-4">
+    <span class="bracket">{{ "[" }}</span>
+    <!-- First level system files iteration -->
+    <div *ngFor="let file of files; let i = index">
+        <div class="bracket ps-2">{{ "{" }}</div>
+        <!-- Iterate first level object key-values of files object -->
+        <div
+            class="ps-4"
+            *ngFor="let item of file | keyvalue; let j = index; last as isLast"
+        >
+            <span>"{{ item.key }}"</span>
+            :
+            <span
+                class="value"
+                *ngIf="item.key"
+                [ngClass]="pickUpRightColor(item.key, item.value)"
+            >
+                <!-- Check value data type -->
+                <span [ngSwitch]="checkDataType(item.value)">
+                    <!-- If it is object -->
+                    <div class="text-break ps-4" *ngSwitchCase="'object'">
+                        <div class="bracket">{{ "{" }}</div>
+                        <div
+                            *ngFor="
+                                let innerItem of $any(item.value) | keyvalue;
+                                let k = index;
+                                last as isInnerLast
+                            "
+                        >
+                            <span> "{{ innerItem.key }}" </span>
+                            :
+                            <span
+                                class="value"
+                                [ngClass]="
+                                    pickUpRightColor(
+                                        innerItem.key,
+                                        innerItem.value
+                                    )
+                                "
+                            >
+                                "{{ innerItem.value }}"
+                            </span>
+
+                            <span class="bracket" *ngIf="!isInnerLast">
+                                {{ ", " }}
+                            </span>
+                        </div>
+                        <div class="bracket">{{ "}" }}</div>
+                    </div>
+                    <!-- If it is array -->
+                    <div class="text-break ps-4" *ngSwitchCase="'array'">
+                        <!-- Inner Array iteration of inner value -->
+
+                        <div
+                            *ngFor="
+                                let innerArrayItem of $any(item).value;
+                                let i = index;
+                                last as isFirstLevelInnerLast
+                            "
+                        >
+                            <!-- Perform check if value is object or not -->
+                            <span
+                                *ngIf="
+                                    isObject(innerArrayItem) &&
+                                        innerArrayItem !== undefined;
+                                    else innerElseBlock
+                                "
+                            >
+                                <span class="bracket">
+                                    {{ "{" }}
+                                </span>
+                                <div
+                                    class="ps-4"
+                                    *ngFor="
+                                        let secondLevelInnerItem of innerArrayItem
+                                            | keyvalue;
+                                        let f = index;
+                                        last as isSecondLevelInnerLast
+                                    "
+                                >
+                                    <span>
+                                        "{{ secondLevelInnerItem.key }}"
+                                    </span>
+                                    :
+                                    <span
+                                        class="value"
+                                        [ngClass]="
+                                            pickUpRightColor(
+                                                secondLevelInnerItem.key,
+                                                secondLevelInnerItem.value
+                                            )
+                                        "
+                                    >
+                                        "{{ secondLevelInnerItem.value }}"
+                                    </span>
+
+                                    <span
+                                        class="bracket"
+                                        *ngIf="!isSecondLevelInnerLast"
+                                    >
+                                        {{ ", " }}
+                                    </span>
+                                </div>
+                                <span class="bracket">
+                                    {{ "}" }}
+                                </span>
+                            </span>
+
+                            <ng-template #innerElseBlock>
+                                "{{ innerArrayItem.value }}"</ng-template
+                            >
+
+                            <span
+                                class="bracket"
+                                *ngIf="!isFirstLevelInnerLast"
+                            >
+                                {{ ", " }}
+                            </span>
+
+                            <!-- End of inner iteration of inner value -->
+                        </div>
+                    </div>
+                    <!-- Else print the value -->
+                    <span class="text-break" *ngSwitchDefault>
+                        <div
+                            class="ps-4"
+                            *ngIf="isArray(item.value); else outerElseBlock"
+                        >
+                            [
+                            <div
+                                class="ps-4"
+                                *ngFor="
+                                    let outerItem of $any(item).value;
+                                    let i = index;
+                                    last as isOuterLast
+                                "
+                            >
+                                "{{ outerItem }}"
+                                <span class="bracket" *ngIf="!isOuterLast">
+                                    {{ ", " }}
+                                </span>
+                            </div>
+                            ]
+                        </div>
+                        <ng-template #outerElseBlock>
+                            "{{ item.value }}"
+                        </ng-template>
+                    </span>
+                </span>
+            </span>
+            <span class="bracket" *ngIf="!isLast">
+                {{ ", " }}
+            </span>
+        </div>
+        <div class="bracket ps-2">{{ "}" }}</div>
+        <span class="bracket" *ngIf="files.length - 1 !== i">
+            {{ ", " }}
+        </span>
+    </div>
+    <!-- End of first level system files iteration -->
+    <span class="bracket">{{ "]" }}</span>
+</div>
