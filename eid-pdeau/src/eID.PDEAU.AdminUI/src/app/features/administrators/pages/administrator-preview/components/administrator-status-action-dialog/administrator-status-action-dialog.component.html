@@ -1,0 +1,107 @@
+<ng-container *transloco="let t">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <p-dialog
+            [(visible)]="showDialog"
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [style]="{ width: '50vw', maxWidth: '700px' }"
+            [styleClass]="dialogStyleClass">
+            <ng-template pTemplate="header">
+                <h3 class="text-white">{{ titleTranslation }}</h3>
+            </ng-template>
+            <div class="pt-4 d-flex flex-column gap-2" formGroupName="note">
+                <h5>{{ descriptionTranslation }}</h5>
+                <textarea
+                    [placeholder]="t('global.txtInputPlaceholder')"
+                    class="w-100 p-2"
+                    rows="5"
+                    pInputTextarea
+                    formControlName="content"></textarea>
+                <app-error-field
+                    [formControlInstance]="form.controls.note.controls.content"
+                    translationPrefix="modules.administrators.administrator-preview.return-dialog.errors" />
+            </div>
+            <div>
+                <div class="d-flex align-items-end gap-3">
+                    <div>
+                        <label for="document">{{ t('modules.administrators.register.files') }}</label>
+                        <p-dropdown
+                            inputId="document"
+                            [options]="documentTypes"
+                            optionLabel="name"
+                            optionValue="id"
+                            [(ngModel)]="documentType"
+                            [ngModelOptions]="{ standalone: true }"
+                            styleClass="w-100"
+                            appendTo="body"></p-dropdown>
+                    </div>
+                    <p-button
+                        [label]="t('modules.administrators.register.txtAddFile')"
+                        icon="pi pi-plus"
+                        (onClick)="addFile($event)"></p-button>
+                </div>
+
+                <p-fileUpload
+                    styleClass="d-none"
+                    #documentComponent
+                    [showUploadButton]="false"
+                    [customUpload]="true"
+                    [multiple]="false"
+                    [previewWidth]="1"
+                    (onSelect)="onFileChange($event)"
+                    accept=".pdf">
+                    <ng-template let-file pTemplate="file">
+                        <div class="d-flex gap-2">
+                            {{ file.name }}
+                        </div>
+                    </ng-template>
+                </p-fileUpload>
+
+                <ul class="mt-4 list-unstyled">
+                    <li *ngFor="let attachment of form.controls.documents.controls; let i = index">
+                        <i class="material-icons-outlined">&#xe873;</i> {{ attachment.getRawValue().fileName }}
+                    </li>
+                </ul>
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button
+                    styleClass="p-button-primary"
+                    [label]="t('global.txtCancel')"
+                    [ariaLabel]="t('global.txtCancel')"
+                    (click)="hide()"></p-button>
+                <p-button
+                    [disabled]="actionMutation.isLoading"
+                    [loading]="actionMutation.isLoading"
+                    [label]="titleTranslation"
+                    [ariaLabel]="titleTranslation"
+                    [styleClass]="buttonStyleClass"
+                    type="submit"></p-button>
+            </ng-template>
+        </p-dialog>
+    </form>
+    <div class="d-flex gap-4">
+        <ng-container *ngIf="managerStatus === EidManagerStatus.ACTIVE || managerStatus === EidManagerStatus.SUSPENDED">
+            <button
+                pButton
+                type="button"
+                class="p-button p-button-danger"
+                [label]="t('modules.administrators.applications.applicationTypeRevoke')"
+                (click)="show(CircumstanceStatus.STOPPED)"></button>
+            <button
+                *ngIf="managerStatus === EidManagerStatus.ACTIVE"
+                pButton
+                type="button"
+                class="p-button p-button-warning"
+                [label]="t('modules.administrators.applications.applicationTypeStop')"
+                (click)="show(CircumstanceStatus.SUSPENDED)"></button>
+            <button
+                *ngIf="managerStatus === EidManagerStatus.SUSPENDED"
+                pButton
+                type="button"
+                class="p-button p-button-success"
+                [label]="t('modules.administrators.applications.applicationTypeResume')"
+                (click)="show(CircumstanceStatus.ACTIVE)"></button>
+        </ng-container>
+    </div>
+</ng-container>

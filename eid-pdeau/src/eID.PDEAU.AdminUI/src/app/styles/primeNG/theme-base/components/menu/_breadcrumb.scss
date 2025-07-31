@@ -1,0 +1,49 @@
+@import '../../../../variables.scss';
+
+.p-breadcrumb {
+    background: $breadcrumbBg;
+    border: none;
+    border-radius: $borderRadius;
+    padding: $breadcrumbPadding;
+    font-size: 12px;
+    ul {
+        li {
+            .p-menuitem-link {
+                transition: $listItemTransition;
+                border-radius: $borderRadius;
+
+                &:focus {
+                    @include focused();
+                }
+
+                .p-menuitem-text {
+                    color: $text-default;
+                }
+
+                .p-menuitem-icon {
+                    color: $text-default;
+                }
+            }
+
+            &.p-breadcrumb-chevron {
+                margin: 0 $inlineSpacing 0 $inlineSpacing;
+                color: $breadcrumbSeparatorColor;
+            }
+
+            &:first-child {
+                .p-menuitem-text {
+                    color: $text-active;
+                }
+            }
+            &:last-child {
+                .p-menuitem-text {
+                    color: $breadcrumbLastItemTextColor;
+                }
+
+                .p-menuitem-icon {
+                    color: $breadcrumbLastItemIconColor;
+                }
+            }
+        }
+    }
+}

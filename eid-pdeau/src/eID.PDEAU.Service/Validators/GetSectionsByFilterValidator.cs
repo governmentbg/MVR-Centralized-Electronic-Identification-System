@@ -1,0 +1,16 @@
+﻿using eID.PDEAU.Contracts.Commands;
+using FluentValidation;
+
+namespace eID.PDEAU.Service.Validators;
+
+public class GetSectionsByFilterValidator : AbstractValidator<GetSectionsByFilter>
+{
+    public GetSectionsByFilterValidator()
+    {
+        RuleFor(r => r.CorrelationId).NotEmpty();
+        RuleFor(r => r.PageIndex).GreaterThanOrEqualTo(1);
+        RuleFor(r => r.PageSize).GreaterThanOrEqualTo(1).LessThanOrEqualTo(1000);
+        RuleFor(r => r.Name).MaximumLength(128)
+            .When(r => !string.IsNullOrEmpty(r.Name), ApplyConditionTo.CurrentValidator);
+    }
+}

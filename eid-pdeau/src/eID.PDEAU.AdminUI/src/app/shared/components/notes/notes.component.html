@@ -1,0 +1,30 @@
+<div class="status-history-container" *transloco="let t; read: 'modules.administrators.history'">
+    <h6 class="p-3 ps-0">
+        {{ t('txtTitle') }}
+    </h6>
+
+    <div class="flex flex-col" *ngFor="let statusHistory of notes || []; index as idx">
+        <div *ngIf="idx > 0" class="separator"></div>
+        <div class="col d-flex flex-column p-1 ps-0">
+            <label class="col-3">{{ t('txtDate') }}:</label>
+            <span class="">{{ statusHistory.createDate | translocoDate : { timeStyle: 'medium' } }}</span>
+        </div>
+        <div class="col d-flex flex-column p-1 ps-0">
+            <label class="col-3">{{ t('txtDirection') }}:</label>
+            <ng-container *ngIf="statusHistory.isOutgoing">
+                <p-tag icon="pi pi-arrow-up-right" [value]="t('txtOutgoing')"></p-tag>
+            </ng-container>
+            <ng-container *ngIf="!statusHistory.isOutgoing">
+                <p-tag icon="pi pi-arrow-down-left" [value]="t('txtIncoming')"></p-tag>
+            </ng-container>
+        </div>
+        <div class="col d-flex flex-column p-1 ps-0">
+            <label class="col-3">{{ t('txtUser') }}:</label>
+            <span class="">{{ statusHistory.authorsUsername }}</span>
+        </div>
+        <div class="col d-flex flex-column p-1 ps-0">
+            <label class="col-3">{{ t('txtComment') }}:</label>
+            <span class="">{{ statusHistory.content }}</span>
+        </div>
+    </div>
+</div>

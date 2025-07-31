@@ -1,0 +1,37 @@
+{
+    "/api": {
+        "target": "https://pdeauapi-dev.mvreid.local/",
+        "secure": false,
+        "pathRewrite": {},
+        "changeOrigin": true
+    },
+    "/logssearch/api": {
+        "target": "https://locallogsapi-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/logssearch": ""
+        },
+        "changeOrigin": true
+    },
+    "/pjsservices/api": {
+        "target": "https://pjsservices-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/pjsservices": ""
+        },
+        "changeOrigin": true
+    },
+    "/raeicei/api": {
+        "target": "http://raeicei-gateway.mvreid.local",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/iscei": {
+        "target": "http://isceigw.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/iscei": ""
+        },
+        "changeOrigin": true
+    }
+}

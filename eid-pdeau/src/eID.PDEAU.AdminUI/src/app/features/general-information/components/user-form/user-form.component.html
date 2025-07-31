@@ -1,0 +1,107 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *transloco="let t; read: 'modules.users.userForm'">
+    <!-- Uid -->
+    <div class="row mb-2">
+        <div class="col-lg-3">
+            <label for="uidType" class="form-label">
+                {{ t('uidType') }}
+            </label>
+            <p-dropdown
+                formControlName="uidType"
+                [options]="identifierTypes"
+                optionLabel="name"
+                optionValue="id"
+                styleClass="w-100"
+                inputId="uidType">
+            </p-dropdown>
+        </div>
+        <div class="col-lg-5">
+            <label for="uid" class="form-label">{{ t('uid') }} </label>
+            <span class="text-danger">*</span>
+            <input pInputText appDigitOnly id="uid" type="text" class="w-100" formControlName="uid" />
+            <app-error-field
+                [formControlInstance]="form.controls.uid"
+                translationPrefix="modules.users.userForm.errors"
+                [order]="['required', 'EgnError', 'EgnAdultError']" />
+        </div>
+    </div>
+    <!-- Name -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="name" class="form-label">
+                {{ t('name') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input (blur)="sanitizeNameInput()" pInputText id="name" type="text" class="w-100" formControlName="name" />
+        </div>
+        <app-error-field [formControlInstance]="form.controls.name" translationPrefix="modules.users.userForm.errors" />
+    </div>
+    <!-- Email -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="email" class="form-label">
+                {{ t('email') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="email" type="text" class="w-100" formControlName="email" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.email"
+            translationPrefix="modules.users.userForm.errors" />
+    </div>
+    <!-- Phone -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="phone" class="form-label">
+                {{ t('phone') }}
+                <!-- <span class="text-danger">*</span> -->
+            </label>
+            <input
+                pInputText
+                appDigitOnly
+                appPrefixPhoneInput
+                id="phone"
+                type="text"
+                class="w-100"
+                formControlName="phone" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.phone"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Roles -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="role" class="form-label">
+                {{ t('role') }}
+                <span class="text-danger">*</span>
+            </label>
+            <p-dropdown
+                formControlName="isAdministrator"
+                [options]="roles"
+                optionLabel="name"
+                optionValue="isAdministrator"
+                styleClass="w-100"
+                inputId="role">
+            </p-dropdown>
+        </div>
+    </div>
+
+    <p-divider class="header-divider mb-4" type="solid"></p-divider>
+    <div class="d-flex gap-3 mt-4">
+        <ng-container *ngIf="cancelEvent.observed">
+            <button
+                (click)="onCancel()"
+                pButton
+                type="button"
+                [disabled]="isLoading || false"
+                [label]="t('cancelBUtton')"
+                class="p-button me-3 p-button-danger"></button>
+        </ng-container>
+        <button
+            pButton
+            [loading]="isLoading || false"
+            [label]="t('submitButton')"
+            type="submit"
+            class="p-button me-3 p-button-primary"></button>
+    </div>
+</form>

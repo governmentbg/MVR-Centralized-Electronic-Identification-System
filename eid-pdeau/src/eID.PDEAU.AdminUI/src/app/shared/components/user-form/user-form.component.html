@@ -1,0 +1,158 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *transloco="let t; read: 'modules.users.userForm'">
+    <!-- Uid -->
+    <div class="row mb-2">
+        <div class="col-lg-3">
+            <label for="uidType" class="form-label">
+                {{ t('uidType') }}
+            </label>
+            <p-dropdown
+                *ngIf="!isEditMode"
+                formControlName="uidType"
+                [options]="identifierTypes"
+                optionLabel="name"
+                optionValue="id"
+                styleClass="w-100"
+                inputId="uidType">
+            </p-dropdown>
+            <ng-container *ngIf="isEditMode">
+                <p>{{ this.user?.uidType }}</p>
+            </ng-container>
+        </div>
+        <div class="col-lg-5">
+            <label for="uid" class="form-label">{{ t('uid') }} </label>
+            <span class="text-danger">*</span>
+            <input
+                *ngIf="!isEditMode"
+                pInputText
+                appDigitOnly
+                id="uid"
+                type="text"
+                class="w-100"
+                formControlName="uid" />
+            <ng-container *ngIf="isEditMode">
+                <p>{{ this.user?.uid }}</p>
+            </ng-container>
+            <app-error-field
+                [formControlInstance]="form.controls.uid"
+                translationPrefix="modules.users.userForm.errors"
+                [order]="['required', 'EgnError', 'EgnAdultError']" />
+        </div>
+    </div>
+    <!-- Name -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="name1" class="form-label">
+                {{ t('name') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                *ngIf="!isEditMode"
+                (blur)="sanitizeNameInput()"
+                pInputText
+                id="name1"
+                type="text"
+                class="w-100"
+                formControlName="name" />
+            <ng-container *ngIf="isEditMode">
+                <p>{{ this.user?.name }}</p>
+            </ng-container>
+        </div>
+        <app-error-field [formControlInstance]="form.controls.name" translationPrefix="modules.users.userForm.errors" />
+    </div>
+    <!-- Email -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="email" class="form-label">
+                {{ t('email') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input *ngIf="!isEditMode" pInputText id="email" type="text" class="w-100" formControlName="email" />
+            <ng-container *ngIf="isEditMode">
+                <p>{{ this.user?.email }}</p>
+            </ng-container>
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.email"
+            translationPrefix="modules.users.userForm.errors" />
+    </div>
+    <!-- Phone -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="phone" class="form-label">
+                {{ t('phone') }}
+                <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex" *ngIf="!isEditMode">
+                <input
+                    pInputText
+                    appDigitOnly
+                    appPrefixPhoneInput
+                    id="phone"
+                    type="text"
+                    class="w-100"
+                    formControlName="phone" />
+            </div>
+            <ng-container *ngIf="isEditMode">
+                <p>{{ this.user?.phone }}</p>
+            </ng-container>
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.phone"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Roles -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="role" class="form-label">
+                {{ t('role') }}
+                <span class="text-danger">*</span>
+            </label>
+            <p-dropdown
+                formControlName="isAdministrator"
+                [options]="roles"
+                optionLabel="name"
+                optionValue="isAdministrator"
+                styleClass="w-100"
+                inputId="role">
+            </p-dropdown>
+        </div>
+    </div>
+    <!-- Comment -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="comment" class="form-label">
+                {{ t('comment') }}
+                <span class="text-danger">*</span>
+            </label>
+            <textarea
+                id="comment"
+                [placeholder]="t('comment')"
+                class="w-100 p-2"
+                rows="5"
+                pInputTextarea
+                maxlength="1024"
+                formControlName="comment"></textarea>
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.comment"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+
+    <div class="d-flex gap-4 mt-4" *ngIf="showFormButtons">
+        <ng-container *ngIf="cancelEvent.observed">
+            <button
+                (click)="onCancel()"
+                pButton
+                type="button"
+                [disabled]="isLoading || false"
+                [label]="t('cancelBUtton')"
+                class="p-button p-button-danger"></button>
+        </ng-container>
+        <button
+            pButton
+            [loading]="isLoading || false"
+            [label]="t('submitButton')"
+            type="submit"
+            class="p-button p-button-primary"></button>
+    </div>
+</form>

@@ -1,0 +1,42 @@
+<ng-container *transloco="let t; read: translationScope">
+    <form [formGroup]="form" (ngSubmit)="denyProvider()">
+        <p-dialog
+            [(visible)]="showDialog"
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [style]="{ width: '50vw', maxWidth: '700px' }"
+            styleClass="error-dialog">
+            <ng-template pTemplate="header">
+                <h3 class="text-white">{{ t('txtTitle') }}</h3>
+            </ng-template>
+            <div class="pt-4 d-flex flex-column gap-2">
+                <h5>{{ t('txtDescription') }}</h5>
+                <textarea
+                    [placeholder]="t('txtInputPlaceholder')"
+                    class="w-100 p-2"
+                    rows="5"
+                    pInputTextarea
+                    formControlName="reason"></textarea>
+                <app-error-field
+                    [formControlInstance]="form.controls.reason"
+                    translationPrefix="modules.providers.application-preview.deny-dialog.errors" />
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button
+                    styleClass="p-button-primary"
+                    [label]="t('txtCancel')"
+                    [ariaLabel]="t('txtCancel')"
+                    (click)="hide()"></p-button>
+                <p-button
+                    [disabled]="denyMutation.isLoading"
+                    [loading]="denyMutation.isLoading"
+                    [label]="t('txtDeny')"
+                    [ariaLabel]="t('txtDeny')"
+                    styleClass="p-button-danger"
+                    type="submit"></p-button>
+            </ng-template>
+        </p-dialog>
+    </form>
+    <button pButton type="button" class="p-button p-button-danger" [label]="t('txtTitle')" (click)="show()"></button>
+</ng-container>

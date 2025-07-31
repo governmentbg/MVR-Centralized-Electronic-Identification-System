@@ -1,0 +1,1994 @@
+{
+    "global": {
+        "login": "Login",
+        "logout": "Logout",
+        "txtSave": "Save",
+        "txtCancel": "Cancel",
+        "txtAdd": "Add",
+        "txtEdit": "Edit",
+        "txtDelete": "Delete",
+        "txtConfirmation": "Confirmation",
+        "txtErrorTitle": "Error",
+        "txtSuccessTitle": "Success",
+        "txtDropdownPlaceholder": "Please select",
+        "txtUnsavedChangesConfirmation": "There are unsaved changes, do you wish to discard them?",
+        "txtUnexpectedError": "Unexpected error",
+        "txtInvalidDataError": "Invalid data",
+        "txtInputPlaceholder": "Start typing",
+        "txtTablePagination": "Showing {{first}} to {{last}} of {{totalRecords}} entries",
+        "txtClose": "Close",
+        "txtBack": "Back",
+        "txtNoPermissionsMessage": "You do not have permissions to perform the operation",
+        "txtNoData": "No data",
+        "txtNoRecordsFound": "No records found",
+        "txtSomethingWentWrong": "Something went wrong, please try again later",
+        "txtRefresh": "Refresh",
+        "txtContinue": "Continue",
+        "txtSubmit": "Submit",
+        "txtApplicationValidationError": "All required fields must be filled in. Please review the application and fill in the missing fields.",
+        "txtYes": "Yes",
+        "txtNo": "No"
+    },
+    "filters": {
+        "txtLabel": "Filters",
+        "txtFilterButton": "Filter",
+        "txtAll": "All",
+        "txtApply": "Apply Filters",
+        "txtCancel": "Cancel",
+        "txtClearAll": "Clear all"
+    },
+    "navbar": {
+        "title": "Portal for integration with a government electronic identification scheme"
+    },
+    "sidebar": {
+        "txtEmpowermentReference": "Empowerment reference",
+        "txtRegisterApplications": "Applications",
+        "txtSystemProcesses": "System processes",
+        "txtProviders": "Providers of electronic administrative services",
+        "txtCenters": "Centers for electronic identification",
+        "txtAdministrators": "Administrators of electronic identity",
+        "txtJournals": "Journals",
+        "txtLocalJournals": "Local journals",
+        "txtIntegrity": "Integrity",
+        "txtTariffs": "Tariffs",
+        "txtTariffsForServices": "Tariffs for Services",
+        "txtDiscounts": "Discounts",
+        "txtApplications": "Applications",
+        "txtRegistrations": "Registrations",
+        "txtDocuments": "Document types"
+    },
+    "footer": {
+        "txtMainText": "Ministry of Interior"
+    },
+    "pageNotFound": {
+        "txtPageNotFoundTitle": "Page not found.",
+        "txtPageNotFoundInformationText": "The page you're looking for doesn't exist.",
+        "txtPageNotFoundGoHome": "Go Home"
+    },
+    "pageUnauthorized": {
+        "txtPageUnauthorizedTitle": "Unauthorized",
+        "txtPageUnauthorizedInformationText": "You are not authorized to access this page"
+    },
+    "validations": {
+        "txtPleaseEnterField": "Please enter {{field}}",
+        "txtInvalidField": "Invalid data for {{field}}.",
+        "txtExceedingMaximumLength": "Field cannot exceed {{length}} characters"
+    },
+    "primeng": {
+        "startsWith": "Starts with",
+        "contains": "Contains",
+        "notContains": "Not contains",
+        "endsWith": "Ends with",
+        "equals": "Equals",
+        "notEquals": "Not equals",
+        "noFilter": "No Filter",
+        "filter": "Filter",
+        "lt": "Less than",
+        "lte": "Less than or equal to",
+        "gt": "Greater than",
+        "gte": "Greater than or equal to",
+        "dateIs": "Date is",
+        "dateIsNot": "Date is not",
+        "dateBefore": "Date is before",
+        "dateAfter": "Date is after",
+        "custom": "Custom",
+        "clear": "Clear",
+        "apply": "Apply",
+        "matchAll": "Match All",
+        "matchAny": "Match Any",
+        "addRule": "Add Rule",
+        "removeRule": "Remove Rule",
+        "accept": "Yes",
+        "reject": "No",
+        "choose": "Choose",
+        "upload": "Upload",
+        "cancel": "Cancel",
+        "completed": "Completed",
+        "pending": "Pending",
+        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        "monthNames": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ],
+        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "chooseYear": "Choose Year",
+        "chooseMonth": "Choose Month",
+        "chooseDate": "Choose Date",
+        "prevDecade": "Previous Decade",
+        "nextDecade": "Next Decade",
+        "prevYear": "Previous Year",
+        "nextYear": "Next Year",
+        "prevMonth": "Previous Month",
+        "nextMonth": "Next Month",
+        "prevHour": "Previous Hour",
+        "nextHour": "Next Hour",
+        "prevMinute": "Previous Minute",
+        "nextMinute": "Next Minute",
+        "prevSecond": "Previous Second",
+        "nextSecond": "Next Second",
+        "am": "am",
+        "pm": "pm",
+        "today": "Today",
+        "weekHeader": "Wk",
+        "firstDayOfWeek": 0,
+        "dateFormat": "mm/dd/yy",
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong",
+        "passwordPrompt": "Enter a password",
+        "emptyFilterMessage": "No results found",
+        "searchMessage": "{0} results are available",
+        "selectionMessage": "{0} items selected",
+        "emptySelectionMessage": "No selected item",
+        "emptySearchMessage": "No results found",
+        "emptyMessage": "No available options",
+        "aria": {
+            "trueLabel": "True",
+            "falseLabel": "False",
+            "nullLabel": "Not Selected",
+            "star": "1 star",
+            "stars": "{star} stars",
+            "selectAll": "All items selected",
+            "unselectAll": "All items unselected",
+            "close": "Close",
+            "previous": "Previous",
+            "next": "Next",
+            "navigation": "Navigation",
+            "scrollTop": "Scroll Top",
+            "moveTop": "Move Top",
+            "moveUp": "Move Up",
+            "moveDown": "Move Down",
+            "moveBottom": "Move Bottom",
+            "moveToTarget": "Move to Target",
+            "moveToSource": "Move to Source",
+            "moveAllToTarget": "Move All to Target",
+            "moveAllToSource": "Move All to Source",
+            "pageLabel": "{page}",
+            "firstPageLabel": "First Page",
+            "lastPageLabel": "Last Page",
+            "nextPageLabel": "Next Page",
+            "previousPageLabel": "Previous Page",
+            "rowsPerPageLabel": "Rows per page",
+            "jumpToPageDropdownLabel": "Jump to Page Dropdown",
+            "jumpToPageInputLabel": "Jump to Page Input",
+            "selectRow": "Row Selected",
+            "unselectRow": "Row Unselected",
+            "expandRow": "Row Expanded",
+            "collapseRow": "Row Collapsed",
+            "showFilterMenu": "Show Filter Menu",
+            "hideFilterMenu": "Hide Filter Menu",
+            "filterOperator": "Filter Operator",
+            "filterConstraint": "Filter Constraint",
+            "editRow": "Row Edit",
+            "saveEdit": "Save Edit",
+            "cancelEdit": "Cancel Edit",
+            "listView": "List View",
+            "gridView": "Grid View",
+            "slide": "Slide",
+            "slideNumber": "{slideNumber}",
+            "zoomImage": "Zoom Image",
+            "zoomIn": "Zoom In",
+            "zoomOut": "Zoom Out",
+            "rotateRight": "Rotate Right",
+            "rotateLeft": "Rotate Left"
+        }
+    },
+    "empowermentCheckModule": {
+        "txtMainModuleTitle": "PORTAL FOR PROVIDERS OF ELECTRONIC ADMINISTRATIVE SERVICES",
+        "txtEmpowermentReferenceTitle": "Empowerment Reference",
+        "txtEGN": "EGN/LNCH/EIC/Bulstat of the authorizer",
+        "txtService": "Service",
+        "txtCreateReference": "Make a reference",
+        "txtVolume": "Extent of representative authority",
+        "txtProxyPersonalNumber": "EGN/LNCH number of the authorized person",
+        "txtBulstat": "EIC/Bulstat of the legal entity",
+        "txtStatementFrom": "On behalf of",
+        "txtDateReference": "Date reference",
+        "txtOnBehalfOfDropdownPlaceholder": "Individual/Legal entity",
+        "txtDropdownPlaceholder": "Please select",
+        "txtReferences": "References",
+        "txtEmpowerment": "Empowerment",
+        "txtEmpoweredPerson": "Empowered person",
+        "txtEmpowerer": "Empowerer",
+        "txtEmpowermentNumber": "Empowerment Number",
+        "txtProvider": "Provider",
+        "txtFromTheNameOf": "From the name of",
+        "txtOtherEmpoweredPeople": "Other empowered people",
+        "txtValidTo": "Valid to",
+        "txtDetails": "Details",
+        "txtNewReference": "New reference",
+        "txtEmpowerments": "Empowerments",
+        "txtPreview": "Preview",
+        "txtNoEmpowermentsFound": "No empowerments found",
+        "txtNumber": "Number",
+        "txtBack": "Back",
+        "txtStatus": "Status",
+        "txtMoreThenOneEGN": "and {{value}} more persons",
+        "txtPreviewEmpowerment": "Preview empowerment",
+        "txtCurrentStatus": "Current status",
+        "txtStatusTo": "Status as of",
+        "txtCurrentInformation": "The information is current as of",
+        "txtToDate": "As of date {{value}}",
+        "statuses": {
+            "CollectingAuthorizerSignatures": "Collecting signatures",
+            "Active": "Active",
+            "Expired": "Expired",
+            "DisagreementDeclared": "Disagreement declared",
+            "Withdrawn": "Withdrawn",
+            "Created": "In progress",
+            "Denied": "Denied",
+            "UpComing": "Upcoming",
+            "Signed": "Signed",
+            "Unconfirmed": "Unconfirmed"
+        },
+        "detailsPage": {
+            "txtDetailsTitle": "Empowerment details",
+            "txtEmpowermentHistory": "Empowerment History",
+            "txtEmpoweredPersons": "EGN/LNCH of empowered persons",
+            "txtEmpowermentType": "Empowerment type",
+            "txtTogether": "Only together",
+            "txtTogetherAdditionalText": "The empowerment is valid only in the presence of all authorized persons!",
+            "txtFromTheNameOf": "On the behalf of",
+            "txtEmpowererEGN": "EGN/LNCH of empowerer",
+            "txtProvider": "Provider",
+            "txtLegalEntryName": "Name of the legal entity",
+            "txtIndividualEntryName": "Name",
+            "applicants": {
+                "LegalEntity": "Legal entity",
+                "Individual": "Individual"
+            },
+            "txtStatementPeriod": "Validity period",
+            "txtFrom": "From",
+            "txtTo": "To",
+            "txtSubmittedTo": "Submitted to",
+            "txtEffectiveOn": "Effective on",
+            "txtExpiresOn": "Expires on",
+            "txtWithdrawnOn": "Withdrawn on",
+            "txtDeclaredDisagreementOf": "Declared Disagreement on",
+            "txtDeniedOn": "Denied on",
+            "txtCollectingAuthorizerSignaturesOn": "Awaiting signature on",
+            "txtDenialReasonLabel": "Reasons for rejection",
+            "txtSignedOn": "Signed on",
+            "txtUnconfirmedOn": "Entered on",
+            "txtDenialReasons": {
+                "DeceasedUid": "The applicant or empowered person is deceased.",
+                "ProhibitedUid": "The applicant or empowered person is under prohibition.",
+                "NTRCheckFailed": "Discrepancy in the provided data with the Commercial Register.",
+                "TimedOut": "Unsuccessful check in the Commercial Register.",
+                "BelowLawfulAge": "The applicant or empowered person is under 18 years old.",
+                "NoPermit": "The authorized person or authorized representative does not have the right of residence.",
+                "LawfulAgeInfoNotAvailable": "Information about the lawful age is not available.",
+                "UnsuccessfulRestrictionsCheck": "Unsuccessful check for restrictions and encumbrances.",
+                "LegalEntityNotActive": "The legal entity is not active.",
+                "LegalEntityRepresentationNotMatch": "Discrepancy in the legal representatives.",
+                "UnsuccessfulLegalEntityCheck": "Unsuccessful check for the legal entity.",
+                "EmpowermentStatementNotFound": "The empowerment was not found.",
+                "BulstatCheckFailed": "BULSTAT check failed",
+                "ReregisteredInNTR": "Reregistered in NTR",
+                "ArchivedInBulstat": "Archived in BULSTAT",
+                "InInsolvencyProceedingsInBulstat": "In insolvency proceedings in BULSTAT",
+                "InsolventInBulstat": "Insolvent in BULSTAT",
+                "InLiquidationInBulstat": "In liquidation in BULSTAT",
+                "InactiveInBulstat": "Inactive in BULSTAT",
+                "ClosedInBulstat": "Closed in BULSTAT",
+                "TerminatedThroughMergerInBulstat": "Terminated through merger in BULSTAT",
+                "TerminatedThroughIncorporationInBulstat": "Terminated through incorporation in BULSTAT",
+                "TerminatedThroughDivisionInBulstat": "Terminated through division in BULSTAT",
+                "DeletedFromJudicialRegister": "Deleted from judicial register",
+                "DeletedFromBTPPRegister": "Deleted from BTPP register",
+                "RegistrationAnnulledInBulstat": "Registration annulled in BULSTAT",
+                "TerminatedDueToEnterpriseTransactionInBulstat": "Terminated due to enterprise transaction in BULSTAT",
+                "DeregisteredInBulstat": "Deregistered in BULSTAT",
+                "UnsuccessfulTimestamping": "Unsuccessful timestamping",
+                "SignatureCollectionTimeOut": "Unsuccessful signature collection",
+                "DeniedByDeauAdministrator": "Denied by electronic service provider"
+            },
+            "txtStartDate": "Start date",
+            "txtEndDate": "End date",
+            "txtWayOfRepresentation": "Type of representation",
+            "txtLegalEntityState": "State",
+            "txtLegalEntityRepresentatives": "Legal representatives",
+            "txtDenyEmpowerment": "Deny empowerment",
+            "txtApproveEmpowerment": "Approve empowerment",
+            "txtReasonForDenialTitle": "Please specify the reason for denying empowerment:",
+            "txtReasonForDenial": "Reason for denial",
+            "txtReason": "Reason",
+            "txtConfirmDenyEmpowerment": "Confirm denial",
+            "txtApplicationDenySuccess": "The empowerment was successfully denied.",
+            "txtApplicationApproveSuccess": "The empowerment was successfully approved.",
+            "txtConfirmApproveEmpowerment": "Confirm approval",
+            "txtConfirmApproveEmpowermentMessage": "Are you sure you want to approve the selected empowerment?"
+        },
+        "validationForm": {
+            "txtPleaseEnterField": "Please enter {{field}}",
+            "txtInvalidField": "Invalid data for {{field}}.",
+            "txtPleaseChooseDate": "Please choose date"
+        },
+        "txtIdentifier": "Identifier",
+        "EGN": "EGN",
+        "LNCh": "LNCH",
+        "NotSpecified": "EIK/Bulstat",
+        "txtLNCHInvalid": "Invalid LNCH",
+        "txtEGNInvalid": "Invalid EGN",
+        "txtBulstatInvalid": "Invalid EIK/Bulstat",
+        "txtEGNEmpoweredPerson": "EGN number of the empowered person",
+        "txtLNCHEmpoweredPerson": "LNCH number of the empowered person",
+        "txtEGNEmpowererPerson": "EGN number of the empowerer",
+        "txtLNCHEmpowererPerson": "LNCH number of the empowerer",
+        "txtEGNAdultError": "The authorized person must be at least 18 years old",
+        "txtCreateStatementIndividual": "Individual",
+        "txtCreateStatementEntity": "Legal Entity",
+        "txtReason": "Reason",
+        "txtIndefinitely": "Indefinitely"
+    },
+    "modules": {
+        "providers": {
+            "register": {
+                "title": "Register new provider",
+                "applicantData": "Applicant details",
+                "applicantUidType": "Identifier",
+                "applicantUid": "EGN/LNCH number of the applicant",
+                "applicantName": "Names of the applicant",
+                "EGN": "EGN",
+                "LNCh": "LNCH",
+                "administrativeBody": "Administrative body details",
+                "administrativeBodyName": "Name",
+                "administrativeBodyBulstat": "Bulstat",
+                "administrativeBodyIdentificationNumber": "Identification number",
+                "administrativeBodyHeadquarters": "Headquarters",
+                "administrativeBodyAddress": "Address",
+                "administrativeBodyEmail": "E-mail",
+                "administrativeBodyPhone": "Phone",
+                "administrator": "Administrator details",
+                "administratorUidType": "Identifier",
+                "administratorUid": "EGN/LNCH number of the administrator",
+                "administratorName": "Name",
+                "administratorEmail": "E-mail",
+                "administratorPhone": "Phone",
+                "privateLawSubject": "Private law subject",
+                "systemName": "System name",
+                "projectName": "Project name",
+                "sourceIp": "Source IP address",
+                "destinationIp": "Destination IP address",
+                "destinationIpType": "Destination IP address type",
+                "protocolPort": "Protocol / Port",
+                "terms": "Terms and conditions",
+                "oneway": "One way",
+                "twoway": "Two way",
+                "AIS": "AIS",
+                "webInterface": "Web interface",
+                "date": "Date",
+                "files": "Files",
+                "submitButton": "Submit",
+                "externalNumber": "The number of the application in the records system",
+                "errors": {
+                    "required": "Field is required",
+                    "bulstatError": "Invalid Bulstat",
+                    "email": "Invalid email",
+                    "EgnAdultError": "The authorized person must be at least 18 years old",
+                    "EgnError": "Invalid EGN",
+                    "PinError": "Invalid LNCH",
+                    "invalidIp": "Invalid IP address",
+                    "cyrillic": "Only cyrillic characters are allowed",
+                    "phone": "Invalid phone number",
+                    "maxlength": "Field cannot exceed {{requiredLength}} characters",
+                    "twoCyrillicNamesWithUppercase": "The field must contain at least two Cyrillic names",
+                    "pattern": "Invalid format"
+                },
+                "toasts": {
+                    "successfulRegistration": "Successful registration",
+                    "failedRegistration": "Something went wrong. Please try again later.",
+                    "failedRegistryCheck": "IISDA/BULSTAT registry check failed",
+                    "Eid": "The Administrator does not have a valid electronic identity",
+                    "EidInactive": "The Administrator has an inactive profile"
+                }
+            },
+            "applications": {
+                "txtTitle": "Applications",
+                "register": "Register application",
+                "table": {
+                    "columns": {
+                        "txtCreatedOn": "Submission date",
+                        "txtIssuer": "Issuer name",
+                        "txtProvider": "Provider",
+                        "txtStatus": "Status",
+                        "txtAction": "Action",
+                        "txtNumber": "Number"
+                    },
+                    "details": {
+                        "txtPreviewApplication": "Preview application"
+                    }
+                },
+                "filter": {
+                    "txtLabel": "Filters",
+                    "txtFilterButton": "Filters",
+                    "txtAll": "All",
+                    "txtChooseStatus": "Choose status",
+                    "txtProviderPlaceholder": "Provider Name",
+                    "txtIssuerPlaceholder": "Issuer Name",
+                    "number": "Number",
+                    "numberPlaceholder": "Application number",
+                    "txtApply": "Apply",
+                    "txtCancel": "Cancel",
+                    "txtClearAll": "Clear all",
+                    "enums": {
+                        "status": "Status",
+                        "providerName": "Provider",
+                        "issuer": "Issuer",
+                        "number": "Number"
+                    }
+                },
+                "statuses": {
+                    "denied": "Denied",
+                    "active": "Active",
+                    "inReview": "In review",
+                    "returnedForCorrection": "For Correction"
+                }
+            },
+            "application-preview": {
+                "txtTitle": "Application preview",
+                "txtStatus": "Status",
+                "tabs": {
+                    "txtDetails": "Details",
+                    "txtUsers": "Employees",
+                    "txtFiles": "Files",
+                    "txtHistory": "History",
+                    "txtStatistics": "Statistics"
+                },
+                "issuer": {
+                    "txtTitle": "Applicant details",
+                    "txtUid": "EGN/LNCH number of Issuer",
+                    "txtName": "Name"
+                },
+                "administrativeBody": {
+                    "txtAdministrationTitle": "Administrative body details",
+                    "txtPrivateLawSubjectTitle": "Private law subject details",
+                    "txtCorrectionComment": "Official information",
+                    "txtName": "Name",
+                    "txtBulstat": "Bulstat",
+                    "txtIdentificationNumber": "Identification number",
+                    "txtHeadquarters": "Headquarters",
+                    "txtAddress": "Address",
+                    "txtEmail": "E-mail",
+                    "txtPhone": "Phone",
+                    "txtApplicationData": "Application Details",
+                    "txtApplicationNumber": "Application Number",
+                    "txtApplicationNumberInRecordKeepingSystem": "Number of the application in the records system",
+                    "txtSystemId": "System code"
+                },
+                "administrator": {
+                    "txtTitle": "Administrator details",
+                    "txtUid": "EGN/LNCH number of Administrator",
+                    "txtName": "Name",
+                    "txtEmail": "E-mail",
+                    "txtPhone": "Phone"
+                },
+                "ais": {
+                    "txtTitle": "AIS",
+                    "txtSystemName": "System name",
+                    "txtProjectName": "Project name",
+                    "txtSourceIp": "Source IP address",
+                    "txtDestinationIp": "Destination IP address",
+                    "txtDestinationIpType": "Destination IP address type",
+                    "txtProtocolPort": "Protocol / Port"
+                },
+                "createdByAdmin": {
+                    "txtTitle": "Created by an employee:",
+                    "txtName": "Name",
+                    "txtId": "Identification"
+                },
+                "users-table": {
+                    "searchPlaceholder": "Search...",
+                    "txtName": "Name",
+                    "txtEmail": "Email",
+                    "txtPhone": "Phone",
+                    "txtRole": "Role",
+                    "txtAction": "Action"
+                },
+                "files-table": {
+                    "txtUploaderName": "Uploader name",
+                    "txtUploaderUid": "Uploader EGN/LNCH",
+                    "txtFileName": "File name",
+                    "txtUploadedOn": "Uploaded on"
+                },
+                "statistics": {
+                    "txtStartDatePlaceholder": "From date",
+                    "txtEndDatePlaceholder": "To date",
+                    "txtStartDate": "Start date",
+                    "txtEndDate": "End date",
+                    "txtSearch": "Search",
+                    "txtTotalRequests": "Number of authentications",
+                    "txtPleaseEnterField": "Please enter {{field}}",
+                    "txtLaterThenStartDate": "Please select a date and time after the start date",
+                    "txtDownload": "Download file",
+                    "txtAction": "Action"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Approve application",
+                    "txtDescription": "Are you sure you want to approve the application?",
+                    "txtInputPlaceholder": "Enter a comment",
+                    "txtApprove": "Approve",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The application was successfully approved.",
+                        "error": "An error occurred while approving the application.",
+                        "Id": "Provider is already register"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Deny application",
+                    "txtDescription": "Please indicate a reason for declining the registration!",
+                    "txtInputPlaceholder": "Enter a reason",
+                    "txtDeny": "Deny",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was successfully denied.",
+                        "error": "An error occurred while denying the application.",
+                        "Uid": "The user does not have a valid electronic identity",
+                        "Id": "Application is already in status Denied"
+                    }
+                },
+                "terminate-dialog": {
+                    "txtTitle": "Terminate application",
+                    "txtDescription": "Please indicate a reason for terminating the registration!",
+                    "txtInputPlaceholder": "Enter a reason",
+                    "txtDeny": "Terminate",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was successfully terminated.",
+                        "error": "An error occurred while denying the application.",
+                        "Uid": "The user does not have a valid electronic identity",
+                        "Id": "Application is already in status Denied"
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Return for correction",
+                    "txtDescription": "Please specify a reason for correction.",
+                    "txtInputPlaceholder": "Reason for correction",
+                    "txtReturn": "Confirm correction",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "The field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was returned for correction successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "errors": {
+                    "file-unavailable": "File is not available"
+                }
+            },
+            "provider-history": {
+                "txtTitle": "Application History",
+                "txtDate": "Date",
+                "txtStatus": "Status",
+                "txtComment": "Official information",
+                "txtUser": "User"
+            }
+        },
+        "services": {
+            "services-table": {
+                "title": "Services",
+                "addService": "Add service",
+                "table": {
+                    "columns": {
+                        "serviceNumber": "Service number",
+                        "name": "Name",
+                        "isEmpowerment": "Can be empowered",
+                        "assurance": "Assurance level",
+                        "action": "Action",
+                        "status": "Status",
+                        "isActive": "Active (Yes/No)",
+                        "administrator": "Administrator",
+                        "createdOn": "Created on"
+                    },
+                    "details": {
+                        "editService": "Edit service",
+                        "viewService": "Preview service"
+                    },
+                    "errors": {
+                        "general": "Something went wrong. Please try again later."
+                    }
+                },
+                "filter": {
+                    "yes": "Yes",
+                    "no": "No",
+                    "isEmpowerment": "Can be empowered",
+                    "isNotEmpowerment": "Is not Empowerment",
+                    "serviceNumber": "Service number",
+                    "serviceNumberPlaceholder": "Service number",
+                    "name": "Service name",
+                    "namePlaceholder": "Service name",
+                    "IncludeEmpowermentOnly": "Can be empowered",
+                    "chooseEmpowerment": "Choose Empowerment",
+                    "all": "All",
+                    "includeApprovedOnly": "Approved services only",
+                    "includeInactive": "Show inactive services",
+                    "includeEmpowermentOnly": "Only services subject to empowerment",
+                    "includeDeleted": "Show deleted",
+                    "includeWithoutScope": "Show services without scope of representative authority"
+                }
+            },
+            "service-preview": {
+                "title": "Service preview",
+                "name": "Name",
+                "description": "Description",
+                "serviceNumber": "Service number",
+                "isEmpowerment": "Can be empowered",
+                "assuranceLevel": "Assurance level",
+                "requiredPersonalInformation": "Required personal information",
+                "volume": "Extent of representative authority",
+                "add": "Add",
+                "submit": "Submit",
+                "backDialogTitle": "Are you sure you want to discard the changes?",
+                "editDialogTitle": "Are you sure you want to save the changes?",
+                "submitDialogButton": "Submit",
+                "cancelDialogButton": "Cancel",
+                "status": "Status",
+                "isActive": "Active",
+                "denialReason": "Denial reason",
+                "denialDate": "Date of denial",
+                "createdOn": "Created on",
+                "errors": {
+                    "duplicateScope": "The scope already exists",
+                    "required": "Field is required"
+                },
+                "toasts": {
+                    "defaultScopeFetchFail": "Failed to fetch default scope",
+                    "serviceScopeFetchFail": "Failed to fetch service scope",
+                    "serviceEditFail": "Failed to edit service",
+                    "serviceEditSuccess": "Service edited successfully"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Approve Service",
+                    "txtDescription": "Are you sure you want to approve the selected service?",
+                    "txtInputPlaceholder": "You can enter a comment...",
+                    "txtApprove": "Approve",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The service was approved successfully.",
+                        "error": "Something went wrong. Please try again.",
+                        "Id": "Service already registered"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Cancel Service",
+                    "txtDescription": "Please provide a reason for service denial",
+                    "txtInputPlaceholder": "Reason for denial",
+                    "txtDeny": "Confirm denial",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Field is required"
+                    },
+                    "toasts": {
+                        "success": "The service was successfully denied.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "toggle-dialog": {
+                    "txtConfirm": "Confirm",
+                    "txtCancel": "Close",
+                    "Activate": {
+                        "txtTitle": "Activate Service",
+                        "txtDescription": "Are you sure you want to activate the selected service?",
+                        "toasts": {
+                            "success": "The service was activated successfully.",
+                            "error": "Something went wrong. Please try again."
+                        }
+                    },
+                    "Deactivate": {
+                        "txtTitle": "Disable Service",
+                        "txtDescription": "Are you sure you want to deactivate the selected service?",
+                        "toasts": {
+                            "success": "The service was successfully disabled.",
+                            "error": "Something went wrong. Please try again."
+                        }
+                    }
+                }
+            },
+            "service-edit": {
+                "txtTitle": "Edit service",
+                "txtName": "Name",
+                "txtDescription": "Description",
+                "txtIsEmpowerment": "Can be empowered",
+                "txtAssuranceLevel": "Assurance level",
+                "txtPersonalInformation": "Required personal information",
+                "txtVolume": "Extent of representative authority",
+                "add": "Add",
+                "submit": "Submit",
+                "backDialogTitle": "Are you sure you want to discard the changes?",
+                "editDialogTitle": "Are you sure you want to save the changes?",
+                "submitDialogButton": "Submit",
+                "cancelDialogButton": "Cancel",
+
+                "errors": {
+                    "duplicateScope": "The scope already exists",
+                    "required": "Field is required",
+                    "invalidAssuranceLevel": "Please select a level of Assurance"
+                },
+                "toasts": {
+                    "defaultScopeFetchFail": "Failed to fetch default scope",
+                    "serviceScopeFetchFail": "Failed to fetch service scope",
+                    "serviceEditFail": "Failed to edit service",
+                    "serviceEditSuccess": "Service edited successfully"
+                }
+            },
+            "service-add": {
+                "txtTitle": "Add service",
+                "txtName": "Name",
+                "txtDescription": "Description",
+                "txtIsEmpowerment": "Can be empowered",
+                "txtAssuranceLevel": "Assurance level",
+                "txtPersonalInformation": "Required personal information",
+                "txtVolume": "Extent of representative authority",
+                "addButton": "Add",
+                "submitButton": "Submit",
+                "cancelButton": "Cancel",
+
+                "toasts": {
+                    "addSuccessful": "Service added successfully",
+                    "addFailed": "Failed to add service"
+                },
+                "errors": {
+                    "required": "Field is required",
+                    "duplicateScope": "The scope already exists"
+                }
+            },
+            "enums": {
+                "High": "High",
+                "Substantial": "Substantial",
+                "Low": "Low",
+                "None": "Undetermined",
+                "Uid": "Uid",
+                "Names": "Names",
+                "Denied": "Denied",
+                "Approved": "Approved",
+                "InReview": "In review"
+            }
+        },
+        "administrators": {
+            "register": {
+                "title": "Submit an application",
+                "applicantData": "Applicant details",
+                "applicantUidType": "Identifier",
+                "applicantUid": "EGN/LNCH number of the applicant",
+                "applicantName": "Name",
+                "EGN": "EGN",
+                "LNCh": "LNCH",
+                "administrativeBody": "Administrative body details",
+                "administrativeBodyName": "Name",
+                "administrativeBodyBulstat": "Bulstat",
+                "administrativeBodyIdentificationNumber": "Identification number",
+                "administrativeBodyHeadquarters": "Headquarters",
+                "administrativeBodyAddress": "Address",
+                "administrativeBodyEmail": "Email for correspondence with AEI",
+                "administrativeBodyPhone": "Phone number for correspondence with AEI",
+                "administrator": "Administrator details",
+                "administratorUidType": "Identifier",
+                "administratorUid": "EGN/LNCH number of the administrator",
+                "administratorName": "Name",
+                "administratorEmail": "E-mail",
+                "administratorPhone": "Phone",
+                "privateLawSubject": "Private law subject",
+                "systemName": "System name",
+                "projectName": "Project name",
+                "sourceIp": "Source IP address",
+                "destinationIp": "Destination IP address",
+                "destinationIpType": "Destination IP address type",
+                "protocolPort": "Protocol / Port",
+                "terms": "Terms and conditions",
+                "oneway": "One way",
+                "twoway": "Two way",
+                "AIS": "AIS",
+                "webInterface": "Web interface",
+                "date": "Date",
+                "files": "Documents",
+                "submitButton": "Submit",
+                "applicantLegalData": "Organization Data",
+                "applicantAdminData": "Administrator Data",
+                "addAdminData": "Add Administrator",
+                "as": "In the capacity of",
+                "addLegalRepresentativeData": "Add Representative",
+                "addDeviceData": "Add device",
+                "addEmployeeData": "Add employee",
+                "identifierNumber": "Identifier Number",
+                "deviceName": "Device name",
+                "levelOfAssurance": "Assurance Level",
+                "fee": "Fee in BGN",
+                "officeName": "Office Name",
+                "officeAddress": "Office address",
+                "officeCoordinates": "GPS Coordinates",
+                "officeGeneralInformation": "General Information",
+                "longitude": "Longitude",
+                "latitude": "Latitude",
+                "generalInfo": "General information",
+                "legalRepresentatives": "Legal representatives",
+                "devices": "Devices",
+                "offices": "Offices",
+                "employees": "Employees",
+                "documents": "Documents",
+                "preview": "Preview",
+                "generalInformation": "General Information",
+                "nameLatin": "Name in Latin",
+                "companyNameLatin": "Name in Latin",
+                "homePage": "Website",
+                "description": "Description",
+                "deviceType": "Device type",
+                "link": "Link",
+                "code": "Identification number",
+                "email": "Email",
+                "workingHours": "Working hours",
+                "region": "Region",
+                "contact": "Phone number",
+                "phoneNumber": "Phone number",
+                "authorizationLink": "Authorization link",
+                "backchannelAuthorizationLink": "Backchannel authorization link",
+                "details": "Details",
+                "txtAddOfficeBtn": "Add office",
+                "logo": "URL to organization logo",
+                "txtAddFile": "Add document",
+                "downloadUrl": "Download link for installers and drivers",
+                "errors": {
+                    "required": "Field is required",
+                    "bulstatError": "Invalid Bulstat",
+                    "email": "Invalid email",
+                    "EgnAdultError": "The authorized person must be at least 18 years old",
+                    "EgnError": "Invalid EGN",
+                    "PinError": "Invalid LNCH",
+                    "invalidIp": "Invalid IP address",
+                    "cyrillic": "Only cyrillic characters are allowed",
+                    "phone": "Invalid phone number",
+                    "maxlength": "Field cannot exceed {{requiredLength}} characters",
+                    "maxFileSize": "File size cannot exceed {{requiredLength}} MB",
+                    "pattern": "Invalid format",
+                    "codeExists": "This Identification number already exists"
+                },
+                "toasts": {
+                    "successfulRegistration": "Successful registration",
+                    "failedRegistration": "Something went wrong. Please try again later.",
+                    "failedRegistryCheck": "IISDA/BULSTAT registry check failed",
+                    "Uid": "The Administrator does not have a valid electronic identity",
+                    "fileNotSigned": "File {{fileName}} is not signed"
+                }
+            },
+            "administrator-preview": {
+                "txtTitle": "Application preview",
+                "txtEditButton": "Edit",
+                "txtStatus": "Status",
+                "tabs": {
+                    "txtDetails": "Details",
+                    "txtUsers": "Users",
+                    "txtFiles": "Documents",
+                    "txtHistory": "History"
+                },
+                "issuer": {
+                    "txtTitle": "Applicant details",
+                    "txtUid": "EGN/LNCH number of Issuer",
+                    "txtName": "Name"
+                },
+                "administrativeBody": {
+                    "txtCorrectionComment": "Official information",
+                    "txtName": "Name",
+                    "txtBulstat": "Bulstat",
+                    "txtIdentificationNumber": "Identification number",
+                    "txtHeadquarters": "Headquarters",
+                    "txtAddress": "Address",
+                    "txtEmail": "Email for correspondence with AEI",
+                    "txtPhone": "Phone number for correspondence with AEI",
+                    "txtApplicationData": "Application Details",
+                    "txtApplicationNumber": "Application Number",
+                    "txtApplicationNumberInRecordKeepingSystem": "Number of the application in the records system"
+                },
+                "administrator": {
+                    "txtTitle": "Administrator details",
+                    "txtUid": "EGN/LNCH number of Administrator",
+                    "txtName": "Name",
+                    "txtEmail": "E-mail",
+                    "txtPhone": "Phone"
+                },
+                "ais": {
+                    "txtTitle": "AIS",
+                    "txtSystemName": "System name",
+                    "txtProjectName": "Project name",
+                    "txtSourceIp": "Source IP address",
+                    "txtDestinationIp": "Destination IP address",
+                    "txtDestinationIpType": "Destination IP address type",
+                    "txtProtocolPort": "Protocol / Port"
+                },
+                "users-table": {
+                    "searchPlaceholder": "Search...",
+                    "txtName": "Names on personal document",
+                    "txtNameLatin": "Names in Latin",
+                    "txtEmail": "Email",
+                    "txtPhone": "Phone",
+                    "txtRole": "Role"
+                },
+                "files-table": {
+                    "txtFileName": "Document name",
+                    "txtUploadedOn": "Uploaded on",
+                    "txtType": "Type",
+                    "txtOutgoing": "Outgoing",
+                    "txtIncoming": "Incoming"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Enter in register",
+                    "txtDescription": "Are you sure you want to approve the application?",
+                    "txtInputPlaceholder": "Enter a comment",
+                    "txtApprove": "Approve",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The application was successfully approved.",
+                        "error": "An error occurred while approving the application."
+                    }
+                },
+                "activate-dialog": {
+                    "txtTitle": "Activate registration",
+                    "txtDescription": "Are you sure you want to activate the selected application?",
+                    "txtInputPlaceholder": "You can enter a comment...",
+                    "txtApprove": "Activate",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The application was successfully activated.",
+                        "error": "Something went wrong. Please try again.",
+                        "Id": "The provider is already registered"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Deny application",
+                    "txtDescription": "Please indicate a reason for declining the registration!",
+                    "txtInputPlaceholder": "Enter a reason",
+                    "txtDeny": "Deny",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was successfully denied.",
+                        "error": "An error occurred while denying the application."
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Return for correction",
+                    "txtDescription": "Please specify a reason for correction.",
+                    "txtInputPlaceholder": "Reason for correction",
+                    "txtReturn": "Confirm correction",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "The field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was returned for correction successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "stop-dialog": {
+                    "txtTitle": "Stop registration",
+                    "txtDescription": "Please provide a reason for stopping",
+                    "txtInputPlaceholder": "Reason for stopping",
+                    "txtDeny": "Confirm stopping",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Required field"
+                    },
+                    "toasts": {
+                        "success": "Registration was stopped successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "suspend-dialog": {
+                    "txtTitle": "Suspend registration",
+                    "txtDescription": "Please specify a reason for suspending registration",
+                    "txtInputPlaceholder": "Reason for suspension",
+                    "txtDeny": "Confirm suspension",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "The field is required"
+                    },
+                    "toasts": {
+                        "success": "Registration was suspended successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "resume-dialog": {
+                    "txtTitle": "Resume Registration",
+                    "txtDescription": "Please provide a reason for resuming registration",
+                    "txtInputPlaceholder": "Reason for resuming",
+                    "txtDeny": "Confirm resuming",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Required field"
+                    },
+                    "toasts": {
+                        "success": "Registration was successfully resumed.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "errors": {
+                    "file-unavailable": "File is not available, please contact an administrator"
+                },
+                "helpText": "<p><strong>There will be information here</strong></p>",
+                "txtScrollToHelpSection": "Navigate to the help section"
+            },
+            "applications": {
+                "title": "Applications",
+                "register": "Register application",
+                "applicationTypeStop": "Stop",
+                "applicationType Resume": "Resume",
+                "applicationTypeRevoke": "Revoke",
+                "downloadTechnicalCheckFile": "Download technical connectivity protocol",
+                "txtApplicationPreview": "Preview application for",
+                "txtApplicationData": "Application details",
+                "txtApplicationNumber": "Application number",
+                "txtApplicationType": "Application type",
+                "txtApplicationStatus": "Application status",
+                "table": {
+                    "columns": {
+                        "txtNumber": "Number",
+                        "txtType": "Type",
+                        "txtName": "Name",
+                        "txtStatus": "Status",
+                        "txtAction": "Action",
+                        "txtCreateDate": "Date of creation"
+                    },
+                    "details": {
+                        "txtPreviewApplication": "Preview application"
+                    }
+                },
+                "filter": {
+                    "label": "Filters",
+                    "filterButton": "Filter",
+                    "all": "All",
+                    "status": "Status",
+                    "chooseStatus": "Choose status",
+                    "eidName": "Name",
+                    "applicationNumber": "Number",
+                    "applicationType": "Type",
+                    "numberPlaceholder": "Application number",
+                    "typePlaceholder": "Application type",
+                    "namePlaceholder": "Name of administrator",
+                    "apply": "Apply",
+                    "cancel": "Cancel",
+                    "clearAll": "Clear all"
+                },
+                "statuses": {
+                    "denied": "Denied",
+                    "approved": "Approved",
+                    "active": "Active",
+                    "inReview": "In review",
+                    "returnedForCorrection": "Returned for Correction"
+                },
+                "types": {
+                    "REGISTER": "Register",
+                    "RESUME": "Resume",
+                    "REVOKE": "Revoke",
+                    "STOP": "Stop"
+                }
+            },
+            "circumstances": {
+                "txtTitle": "Change in circumstances",
+                "txtName": "Name",
+                "txtBulstat": "EIC/Bulstat",
+                "txtCode": "Identification number",
+                "txtStatus": "Status",
+                "txtApprove": "Approve change",
+                "txtDeny": "Deny change",
+                "txtActivate": "Activate",
+                "txtReturnForCorrection": "Return for correction",
+                "txtTechnicalChanges": "For technical review",
+                "statuses": {
+                    "ACTIVE": "Active",
+                    "SUSPENDED": "Suspended",
+                    "STOP": "Stopped",
+                    "IN_REVIEW": "In review",
+                    "PENDING_ATTACHMENTS": "Waiting for attachments",
+                    "TECHNICAL_CHECK": "For technical review"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Approve changes",
+                    "txtDescription": "Are you sure you want to approve the changes?",
+                    "txtInputPlaceholder": "You can enter a comment...",
+                    "txtApprove": "Approve",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The changes were approved successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Discard changes",
+                    "txtDescription": "Please provide a reason for discarding the changes.",
+                    "txtInputPlaceholder": "Reason for discarding",
+                    "txtDeny": "Confirm discard",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Required field"
+                    },
+                    "toasts": {
+                        "success": "The changes were successfully discarded.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Return for correction",
+                    "txtDescription": "Please specify a reason for correction.",
+                    "txtInputPlaceholder": "Reason for correction.",
+                    "txtReturn": "Confirm correction.",
+                    "txtCancel": "Close.",
+                    "errors": {
+                        "required": "The field is required."
+                    },
+                    "toasts": {
+                        "success": "The changes were returned for correction successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "active-dialog": {
+                    "txtTitle": "Activate",
+                    "txtDescription": "Are you sure you want to activate the registration?",
+                    "txtInputPlaceholder": "You can enter a comment...",
+                    "txtApprove": "Activate",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "Activation was successful.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                }
+            },
+            "registrations": {
+                "title": "Registrations",
+                "preview": "Registration Preview"
+            },
+            "history": {
+                "txtTitle": "Registration Progress",
+                "txtDate": "Date",
+                "txtDirection": "Direction",
+                "txtComment": "Official Information",
+                "txtUser": "User",
+                "txtOutgoing": "Outgoing",
+                "txtIncoming": "Incoming"
+            }
+        },
+        "centers": {
+            "register": {
+                "title": "Submit an application",
+                "applicantData": "Applicant details",
+                "applicantUidType": "Identifier",
+                "applicantUid": "EGN/LNCH number of the applicant",
+                "applicantName": "Name",
+                "EGN": "EGN",
+                "LNCh": "LNCH",
+                "administrativeBody": "Administrative body details",
+                "administrativeBodyName": "Name",
+                "administrativeBodyBulstat": "Bulstat",
+                "administrativeBodyIdentificationNumber": "Identification number",
+                "administrativeBodyHeadquarters": "Headquarters",
+                "administrativeBodyAddress": "Address",
+                "administrativeBodyEmail": "Email for correspondence with CEI",
+                "administrativeBodyPhone": "Phone number for correspondence with CEI",
+                "administrator": "Administrator details",
+                "administratorUidType": "Identifier",
+                "administratorUid": "EGN/LNCH number of the administrator",
+                "administratorName": "Name",
+                "administratorEmail": "E-mail",
+                "administratorPhone": "Phone",
+                "privateLawSubject": "Private law subject",
+                "systemName": "System name",
+                "projectName": "Project name",
+                "sourceIp": "Source IP address",
+                "destinationIp": "Destination IP address",
+                "destinationIpType": "Destination IP address type",
+                "protocolPort": "Protocol / Port",
+                "terms": "Terms and conditions",
+                "oneway": "One way",
+                "twoway": "Two way",
+                "AIS": "AIS",
+                "webInterface": "Web interface",
+                "date": "Date",
+                "files": "Documents",
+                "submitButton": "Submit",
+                "applicantLegalData": "Organization Data",
+                "applicantAdminData": "Administrator Data",
+                "addAdminData": "Add Administrator",
+                "as": "In the capacity of",
+                "addLegalRepresentativeData": "Add Representative",
+                "addDeviceData": "Add device",
+                "addEmployeeData": "Add employee",
+                "identifierNumber": "Identifier Number",
+                "deviceName": "Device name",
+                "levelOfAssurance": "Assurance Level",
+                "fee": "Fee in BGN",
+                "officeName": "Office Name",
+                "officeAddress": "Office address",
+                "officeCoordinates": "GPS Coordinates",
+                "officeGeneralInformation": "General Information",
+                "longitude": "Longitude",
+                "latitude": "Latitude",
+                "generalInfo": "General information",
+                "legalRepresentatives": "Legal representatives",
+                "devices": "Devices",
+                "offices": "Offices",
+                "employees": "Employees",
+                "documents": "Documents",
+                "preview": "Preview",
+                "generalInformation": "General Information",
+                "nameLatin": "Name in Latin",
+                "companyNameLatin": "Name in Latin",
+                "homePage": "Website",
+                "description": "Description",
+                "deviceType": "Device type",
+                "link": "Link",
+                "code": "Identification number",
+                "email": "Email",
+                "workingHours": "Working hours",
+                "region": "Region",
+                "contact": "Phone number",
+                "phoneNumber": "Phone number",
+                "authorizationLink": "Authorization link",
+                "backchannelAuthorizationLink": "Backchannel authorization link",
+                "details": "Details",
+                "logo": "URL to organization logo",
+                "txtAddFile": "Add document",
+                "errors": {
+                    "required": "Field is required",
+                    "bulstatError": "Invalid Bulstat",
+                    "email": "Invalid email",
+                    "EgnAdultError": "The authorized person must be at least 18 years old",
+                    "EgnError": "Invalid EGN",
+                    "PinError": "Invalid LNCH",
+                    "invalidIp": "Invalid IP address",
+                    "cyrillic": "Only cyrillic characters are allowed",
+                    "phone": "Invalid phone number",
+                    "maxlength": "Field cannot exceed {{requiredLength}} characters",
+                    "maxFileSize": "File size cannot exceed {{requiredLength}} MB",
+                    "pattern": "Invalid format",
+                    "codeExists": "This Identification number already exists"
+                },
+                "toasts": {
+                    "successfulRegistration": "Successful registration",
+                    "failedRegistration": "Something went wrong. Please try again later.",
+                    "failedRegistryCheck": "IISDA/BULSTAT registry check failed",
+                    "Uid": "The Administrator does not have a valid electronic identity",
+                    "fileNotSigned": "File {{fileName}} is not signed"
+                }
+            },
+            "center-preview": {
+                "txtTitle": "Application preview",
+                "txtEditButton": "Edit",
+                "txtStatus": "Status",
+                "tabs": {
+                    "txtDetails": "Details",
+                    "txtUsers": "Users",
+                    "txtFiles": "Documents",
+                    "txtHistory": "History"
+                },
+                "issuer": {
+                    "txtTitle": "Applicant details",
+                    "txtUid": "EGN/LNCH number of Issuer",
+                    "txtName": "Name"
+                },
+                "administrativeBody": {
+                    "txtCorrectionComment": "Official information",
+                    "txtName": "Name",
+                    "txtBulstat": "Bulstat",
+                    "txtIdentificationNumber": "Identification number",
+                    "txtHeadquarters": "Headquarters",
+                    "txtAddress": "Address",
+                    "txtEmail": "Email for correspondence with CEI",
+                    "txtPhone": "Phone number for correspondence with CEI",
+                    "txtApplicationData": "Application Details",
+                    "txtApplicationNumber": "Application Number",
+                    "txtApplicationNumberInRecordKeepingSystem": "Number of the application in the records system"
+                },
+                "administrator": {
+                    "txtTitle": "Administrator details",
+                    "txtUid": "EGN/LNCH number of Administrator",
+                    "txtName": "Name",
+                    "txtEmail": "E-mail",
+                    "txtPhone": "Phone"
+                },
+                "ais": {
+                    "txtTitle": "AIS",
+                    "txtSystemName": "System name",
+                    "txtProjectName": "Project name",
+                    "txtSourceIp": "Source IP address",
+                    "txtDestinationIp": "Destination IP address",
+                    "txtDestinationIpType": "Destination IP address type",
+                    "txtProtocolPort": "Protocol / Port"
+                },
+                "users-table": {
+                    "searchPlaceholder": "Search...",
+                    "txtName": "Names on personal document",
+                    "txtNameLatin": "Names in Latin",
+                    "txtEmail": "Email",
+                    "txtPhone": "Phone",
+                    "txtRole": "Role"
+                },
+                "files-table": {
+                    "txtFileName": "Document name",
+                    "txtUploadedOn": "Uploaded on",
+                    "txtType": "Type",
+                    "txtOutgoing": "Outgoing",
+                    "txtIncoming": "Incoming"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Enter in register",
+                    "txtDescription": "Are you sure you want to approve the application?",
+                    "txtInputPlaceholder": "Enter a comment",
+                    "txtApprove": "Approve",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The application was successfully approved.",
+                        "error": "An error occurred while approving the application."
+                    }
+                },
+                "activate-dialog": {
+                    "txtTitle": "Activate registration",
+                    "txtDescription": "Are you sure you want to activate the selected application?",
+                    "txtInputPlaceholder": "Enter a comment",
+                    "txtApprove": "Activate",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The application was successfully activated.",
+                        "error": "Something went wrong. Please try again.",
+                        "Id": "The provider is already registered"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Deny application",
+                    "txtDescription": "Please indicate a reason for declining the registration!",
+                    "txtInputPlaceholder": "Enter a reason",
+                    "txtDeny": "Deny",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was successfully denied.",
+                        "error": "An error occurred while denying the application."
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Return for correction",
+                    "txtDescription": "Please specify a reason for correction.",
+                    "txtInputPlaceholder": "Reason for correction",
+                    "txtReturn": "Confirm correction",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "The field is required"
+                    },
+                    "toasts": {
+                        "success": "The application was returned for correction successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "stop-dialog": {
+                    "txtTitle": "Stop registration",
+                    "txtDescription": "Please provide a reason for stopping",
+                    "txtInputPlaceholder": "Reason for stopping",
+                    "txtDeny": "Confirm stopping",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Required field"
+                    },
+                    "toasts": {
+                        "success": "Registration was stopped successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "suspend-dialog": {
+                    "txtTitle": "Suspend registration",
+                    "txtDescription": "Please specify a reason for suspending registration",
+                    "txtInputPlaceholder": "Reason for suspension",
+                    "txtDeny": "Confirm suspension",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "The field is required"
+                    },
+                    "toasts": {
+                        "success": "Registration was suspended successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "resume-dialog": {
+                    "txtTitle": "Resume Registration",
+                    "txtDescription": "Please provide a reason for resuming registration",
+                    "txtInputPlaceholder": "Reason for resuming",
+                    "txtDeny": "Confirm resuming",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Required field"
+                    },
+                    "toasts": {
+                        "success": "Registration was successfully resumed.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "errors": {
+                    "file-unavailable": "File is not available, please contact an administrator"
+                },
+                "helpText": "<p><strong>There will be information here</strong></p>",
+                "txtScrollToHelpSection": "Navigate to the help section"
+            },
+            "applications": {
+                "title": "Applications",
+                "register": "Register application",
+                "downloadTechnicalCheckFile": "Download technical connectivity protocol",
+                "txtApplicationPreview": "Preview application for",
+                "txtApplicationData": "Application details",
+                "txtApplicationNumber": "Application number",
+                "txtApplicationType": "Application type",
+                "txtApplicationStatus": "Application status",
+                "table": {
+                    "columns": {
+                        "txtNumber": "Number",
+                        "txtType": "Type",
+                        "txtName": "Name",
+                        "txtStatus": "Status",
+                        "txtAction": "Action",
+                        "txtCreateDate": "Date of creation"
+                    },
+                    "details": {
+                        "txtPreviewApplication": "Preview application"
+                    }
+                },
+                "filter": {
+                    "label": "Filters",
+                    "filterButton": "Filter",
+                    "all": "All",
+                    "status": "Status",
+                    "chooseStatus": "Choose status",
+                    "eidName": "Name",
+                    "applicationNumber": "Number",
+                    "applicationType": "Type",
+                    "numberPlaceholder": "Application number",
+                    "typePlaceholder": "Application type",
+                    "namePlaceholder": "Name of administrator",
+                    "apply": "Apply",
+                    "cancel": "Cancel",
+                    "clearAll": "Clear all"
+                },
+                "statuses": {
+                    "denied": "Denied",
+                    "approved": "Approved",
+                    "active": "Active",
+                    "inReview": "In review",
+                    "returnedForCorrection": "Returned for Correction"
+                },
+                "types": {
+                    "REGISTER": "Register",
+                    "RESUME": "Resume",
+                    "REVOKE": "Revoke",
+                    "STOP": "Stop"
+                }
+            },
+            "circumstances": {
+                "txtTitle": "Change in circumstances",
+                "txtName": "Name",
+                "txtBulstat": "EIC/Bulstat",
+                "txtCode": "Identification number",
+                "txtStatus": "Status",
+                "txtApprove": "Approve change",
+                "txtDeny": "Deny change",
+                "txtActivate": "Activate",
+                "txtReturnForCorrection": "Return for correction",
+                "txtTechnicalChanges": "For technical review",
+                "statuses": {
+                    "ACTIVE": "Active",
+                    "SUSPENDED": "Suspended",
+                    "STOP": "Stopped",
+                    "IN_REVIEW": "In review",
+                    "PENDING_ATTACHMENTS": "Waiting for attachments",
+                    "TECHNICAL_CHECK": "For technical review"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Approve changes",
+                    "txtDescription": "Are you sure you want to approve the changes?",
+                    "txtInputPlaceholder": "You can enter a comment...",
+                    "txtApprove": "Approve",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "The changes were approved successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Discard changes",
+                    "txtDescription": "Please provide a reason for discarding the changes.",
+                    "txtInputPlaceholder": "Reason for discarding",
+                    "txtDeny": "Confirm discard",
+                    "txtCancel": "Close",
+                    "errors": {
+                        "required": "Required field"
+                    },
+                    "toasts": {
+                        "success": "The changes were successfully discarded.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Return for correction",
+                    "txtDescription": "Please specify a reason for correction.",
+                    "txtInputPlaceholder": "Reason for correction.",
+                    "txtReturn": "Confirm correction.",
+                    "txtCancel": "Close.",
+                    "errors": {
+                        "required": "The field is required."
+                    },
+                    "toasts": {
+                        "success": "The changes were returned for correction successfully.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                },
+                "active-dialog": {
+                    "txtTitle": "Activate",
+                    "txtDescription": "Are you sure you want to activate the registration?",
+                    "txtInputPlaceholder": "You can enter a comment...",
+                    "txtApprove": "Activate",
+                    "txtCancel": "Close",
+                    "toasts": {
+                        "success": "Activation was successful.",
+                        "error": "Something went wrong. Please try again."
+                    }
+                }
+            },
+            "registrations": {
+                "title": "Registrations",
+                "preview": "Registration Preview"
+            },
+            "history": {
+                "txtTitle": "Application history",
+                "txtDate": "Date",
+                "txtDirection": "Direction",
+                "txtComment": "Official Information",
+                "txtUser": "User",
+                "txtOutgoing": "Outgoing",
+                "txtIncoming": "Incoming"
+            }
+        },
+        "users": {
+            "userForm": {
+                "uidType": "EGN/LNCH",
+                "uid": "Employee's EGN/LNCH",
+                "name": "Name",
+                "nameLatin": "Name in Latin",
+                "email": "Email",
+                "phone": "Phone",
+                "role": "Role",
+                "submitButton": "Submit",
+                "cancelBUtton": "Cancel",
+                "as": "As",
+                "comment": "Official information",
+                "errors": {
+                    "required": "Field is required",
+                    "email": "Invalid email",
+                    "EgnAdultError": "The employee must be 18 years of age or older",
+                    "EgnError": "Invalid EGN",
+                    "PinError": "Invalid LNCH",
+                    "cyrillic": "Only Cyrillic characters are allowed",
+                    "phone": "Invalid phone number",
+                    "maxlength": "Field cannot exceed {{requiredLength}} characters",
+                    "pattern": "Invalid format"
+                }
+            },
+            "userRegister": {
+                "title": "Register new employee",
+                "users": "Users",
+                "newUser": "New employee",
+                "editUser": "Edit employee",
+                "toasts": {
+                    "successfulRegistration": "Successful registration",
+                    "failedRegistration": "Something went wrong. Please try again later.",
+                    "Eid": "The employee does not have a valid electronic identity",
+                    "Uid": "Employee is already registered",
+                    "EidInactive": "Employee has an inactive profile"
+                }
+            },
+            "userEdit": {
+                "title": "Edit Employee",
+                "users": "Employees",
+                "toasts": {
+                    "successfulEdit": "Successful edit",
+                    "failedEdit": "Something went wrong. Please try again later.",
+                    "Id": "Downgrading the role of the sole administrator is not allowed"
+                }
+            },
+            "userPreview": {
+                "title": "Employee preview",
+                "users": "Employees",
+                "id": "ID",
+                "uidType": "EGN/LNCH",
+                "name": "Name",
+                "email": "Email",
+                "phone": "Phone",
+                "role": "Role",
+                "details": "Details"
+            },
+            "usersTable": {
+                "title": "Employees",
+                "register": "Register new employee",
+                "table": {
+                    "columns": {
+                        "createdOn": "Submission date",
+                        "name": "Name",
+                        "email": "Email",
+                        "phone": "Phone",
+                        "role": "Role",
+                        "action": "Action"
+                    },
+                    "details": {
+                        "history": "History of changes",
+                        "editUser": "Edit employee",
+                        "previewUser": "Preview"
+                    },
+                    "roles": {
+                        "admin": "Administrator",
+                        "user": "User"
+                    }
+                },
+                "filter": {
+                    "name": "Name",
+                    "namePlaceholder": "Employee name",
+                    "email": "Email",
+                    "emailPlaceholder": "Employee email",
+                    "isAdministrator": "Role"
+                }
+            },
+            "userHistory": {
+                "txtTitle": "History of changes",
+                "txtDate": "Date",
+                "txtComment": "Official information",
+                "txtUser": "User",
+                "txtUid": "Users EGN/LNCH"
+            }
+        },
+        "tariffs": {
+            "startDate": "Start date",
+            "price": "Price",
+            "serviceName": "Service",
+            "ageFrom": "Age from",
+            "ageUntil": "Age to",
+            "discount": "Discount",
+            "disability": "Disabled",
+            "confirmChange": "Do you want to save changes?",
+            "servicesTariffsTable": {
+                "title": "Service tariffs",
+                "register": "New tariff",
+                "table": {
+                    "columns": {
+                        "startDate": "Start date",
+                        "price": "Price",
+                        "serviceName": "Service"
+                    },
+                    "details": {
+                        "delete": "Delete",
+                        "edit": "Edit",
+                        "preview": "Preview"
+                    }
+                }
+            },
+            "discountsTable": {
+                "title": "Discounts",
+                "register": "New discount",
+                "table": {
+                    "columns": {
+                        "startDate": "Start Date",
+                        "discount": "Discount",
+                        "age": "Age Range"
+                    },
+                    "details": {
+                        "delete": "Delete",
+                        "edit": "Edit",
+                        "preview": "Preview"
+                    }
+                }
+            },
+            "tariffCreate": {
+                "title": "Create New Tariff",
+                "toasts": {
+                    "successfulCreation": "Successful Creation",
+                    "failedRegistration": "Something went wrong. Please try again"
+                },
+                "errors": {
+                    "required": "Field is required",
+                    "pattern": "Invalid format"
+                }
+            },
+            "tariffEdit": {
+                "title": "Tariff Edit",
+                "toasts": {
+                    "successfulEdit": "Successful Edit",
+                    "failedEdit": "Something went wrong. Please try again"
+                },
+                "errors": {
+                    "required": "Field is required",
+                    "pattern": "Invalid format"
+                }
+            },
+            "tariffDelete": {
+                "title": "Delete tariff",
+                "description": "Are you sure you want to delete the selected tariff?",
+                "toasts": {
+                    "successfulDelete": "Successful delete tariff",
+                    "failedDelete": "Something went wrong. Please try again"
+                }
+            },
+            "discountCreate": {
+                "title": "Create new discount",
+                "toasts": {
+                    "successfulCreation": "Successful creation",
+                    "failedRegistration": "Something went wrong. Please try again"
+                },
+                "errors": {
+                    "required": "Field is required",
+                    "pattern": "Invalid format",
+                    "moreThanOrEqualValid": "Invalid age range",
+                    "max": "Invalid range",
+                    "min": "Invalid range"
+                }
+            },
+            "discountEdit": {
+                "title": "Edit discount",
+                "toasts": {
+                    "successfulEdit": "Successful edit",
+                    "failedEdit": "Something went wrong. Please try again"
+                },
+                "errors": {
+                    "required": "Field is required",
+                    "pattern": "Invalid format",
+                    "moreThanOrEqualValid": "Invalid age range",
+                    "max": "Invalid range",
+                    "min": "Invalid range"
+                }
+            },
+            "discountDelete": {
+                "title": "Delete discount",
+                "description": "Are you sure you want to delete the selected discount?",
+                "toasts": {
+                    "successfulDelete": "Successful discount deletion",
+                    "failedDelete": "Something went wrong. Please try again"
+                }
+            }
+        },
+        "documentTypes": {
+            "title": "Document Types",
+            "register": "New Document",
+            "descriptionBG": "Description in Bulgarian",
+            "descriptionEN": "Description in English",
+            "table": {
+                "columns": {
+                    "name": "Name",
+                    "descriptions": "Description",
+                    "requiredForAdministrator": "Required for AEI",
+                    "requiredForCenter": "Required for CEI"
+                },
+                "details": {
+                    "delete": "Delete",
+                    "edit": "Edit",
+                    "preview": "Preview"
+                }
+            },
+            "create": {
+                "title": "Create a new document type",
+                "toasts": {
+                    "successfulCreation": "Successful creation",
+                    "failedRegistration": "Something went wrong. Please try again"
+                },
+                "errors": {
+                    "required": "The field is required",
+                    "pattern": "Invalid format"
+                }
+            },
+            "edit": {
+                "title": "Edit Document Type",
+                "toasts": {
+                    "successfulEdit": "Edit Successful",
+                    "failedEdit": "Something went wrong. Please try again"
+                },
+                "errors": {
+                    "required": "Field is required",
+                    "pattern": "Invalid format"
+                }
+            },
+            "delete": {
+                "title": "Delete Document Type",
+                "description": "Are you sure you want to delete the selected document type?",
+                "toasts": {
+                    "successfulDelete": "Delete Document Successfully",
+                    "failedDelete": "Something went wrong. Please try again"
+                }
+            }
+        },
+        "systemProcesses": {
+            "txtStatusOfInternalSystems": "Status of Internal Services",
+            "txtConfigurationsAndLimits": "Configurations and Limits",
+            "txtAddress": "Address",
+            "txtDescription": "Description",
+            "descriptions": {
+                "Prometheus": "Monitoring and alerting tool designed for real-time data collection from applications.",
+                "Grafana": "Tool for visualizing metrics in real-time.",
+                "DDOSProtectionServer1": "Lozenets (Primary) - a tool for protection against malicious traffic and request limit configuration.",
+                "DDOSProtectionServer2": "Bankya - a tool for protection against malicious traffic and request limit configuration.",
+                "keycloak_internal": "Identity management system for users and systems in the internal environment of CSEI",
+                "keycloak_external": "Identity management system for citizens and external systems"
+            },
+            "txtMissingConfig": "Missing configuration"
+        },
+        "journalLogs": {
+            "txtLogFiles": "Log files",
+            "txtLogFile": "Log file",
+            "txtDate": "Date",
+            "txtJournal": "Journal",
+            "txtSearchLogFilesInJournal": "Search a log file in journal",
+            "txtSearching": "Searching",
+            "txtSearchingOfLogFile": "Search log file",
+            "txtStartDate": "Start date",
+            "txtEndDate": "End date",
+            "txtStartDatePlaceholder": "Please choose start date",
+            "txtEndDatePlaceholder": "Please choose end date",
+            "txtRemove": "Remove",
+            "txtKey": "Key",
+            "txtValue": "Value",
+            "txtConfigurator": "Configurator",
+            "txtSearchResults": "Search results",
+            "txtResults": "Results",
+            "txtSearchFound": "{{value}} matches are found for",
+            "txtNoLogsFound": "No logs found",
+            "txtPreviewFile": "Preview file",
+            "txtReject": "Cancel",
+            "txtSearch": "Search",
+            "txtOperator": "Operator",
+            "txtOperatorPlaceholder": "Choose operator",
+            "txtPeriod": "Period",
+            "txtChangeSearch": "Change search",
+            "txtBack": "Back",
+            "txtOperators": "Operators",
+            "operators": {
+                "txtEqual": "Equal",
+                "txtLessThan": "Less than",
+                "txtGreaterThan": "Greater Than",
+                "txtGreaterThanOrEqual": "Greater than or equal",
+                "txtLessThanOrEqual": "Less than or equal",
+                "txtContains": "Contains",
+                "txtStartsWith": "Starts with",
+                "txtEndsWith": "Ends with"
+            },
+            "descriptionTexts": {
+                "txtEqualDescription": "Equal - operation equal to. Supports numeric, text, boolean data and date (with valid format [YYYY-MM-DD])",
+                "txtGreaterThanDescription": "Greater Than - operation greater than. Supports numeric, boolean data and date (with valid format [YYYY-MM-DD])",
+                "txtLessThanDescription": "LessThan - operation less than. Supports numeric, boolean data and date (with valid format [YYYY-MM-DD])",
+                "txtGreaterThanOrEqualDescription": "GreaterThanOrEqual - operation greater than or equal to. Supports numeric, boolean data and date (with valid format [YYYY-MM-DD])",
+                "txtLessThanOrEqualDescription": "LessThanOrEqual - operation less than or equal to. Supports numeric, boolean data and date (with valid format [YYYY-MM-DD])",
+                "txtContainsDescription": "Contains - operation contains subtext in the text. Supports text data",
+                "txtStartsWithDescription": "StartsWith - field value starts with. Supports text data",
+                "txtEndsWithDescription": "EndsWith - the field value ends with. Supports text data"
+            },
+            "validationForm": {
+                "txtPleaseEnterField": "Please enter {{field}}",
+                "txtPleaseChoose": "Please choose {{field}}",
+                "txtLaterThenStartDate": "Please choose date And time later then start date"
+            },
+            "errors": {
+                "txtError": "An error occurred, please contact an administrator",
+                "txtSpecifySearch": "Too much data found, please refine your search"
+            }
+        },
+        "integrity": {
+            "txtIntegrity": "Integrity",
+            "txtStartDatePlaceholder": "From date",
+            "txtEndDatePlaceholder": "To date",
+            "txtStartDate": "Start date",
+            "txtEndDate": "End date",
+            "txtCheckIntegrity": "Integrity check",
+            "txtCheckIntegrityProcessing": "In the process of checking the integrity of the logs in the system",
+            "txtSystemJournalsIntegrity": "Integrity of logs in the system",
+            "txtPeriod": "Period",
+            "txtIntegrityStatus": "Integrity Status",
+            "txtDataIntegrityIsNotCompromised": "Data integrity is not compromised",
+            "txtDataIntegrityIsCompromised": "Data integrity is violated",
+            "txtSubSystemJournalsIntegrity": "Integrity of subsystem logs",
+            "txtLastLaunched": "Last launched",
+            "txtSystemIdentifier": "System identifier",
+            "txtIndexName": "Index name",
+            "txtLocalLogsLocation": "Local Logs Location",
+            "txtSystemStatus": "System Status",
+            "txtSubSystemStatus": "Subsystem Status",
+            "txtRefresh": "Refresh",
+            "txtPleaseConfirmYourAction": "Please confirm the action. This process is time-consuming and may degrade system performance.",
+            "txtSubSystemName": "Subsystem name",
+            "txtSubSystemId": "Subsystem ID",
+            "txtDownload": "Download file",
+            "txtLoadingPleaseWait": "It will take time, please wait.",
+            "txtExpandCollapseLabel": "expand/collapse",
+            "txtCompromised": "Compromised",
+            "txtNotCompromised": "Not compromised",
+            "txtUnableToVisualize": "Unable to visualize",
+            "txtCheckIntegrityLastStateUnknown": "There is no information about the integrity of the logs in the system",
+            "periods": {
+                "Disabled": "Disabled",
+                "All": "All",
+                "Week": "Week",
+                "TwoWeeks": "Two weeks",
+                "Month": "Month",
+                "Quarter": "Quarter",
+                "Year": "Year",
+                "Day": "Day"
+            },
+            "validationForm": {
+                "txtPleaseChoose": "Please choose {{field}}",
+                "txtNotLaterThenEndDate": "The start date must be before the end date",
+                "txtNotMoreThanThreeMonths": "The maximum time interval should be 3 months"
+            },
+            "errors": {
+                "txtError": "An error occurred, please contact an administrator",
+                "txtTaskAlreadyInProgressError": "The system is processing data, please try again in a few minutes"
+            },
+            "txtHide": "Hide",
+            "txtShow": "Show",
+            "txtDaysWithoutLogs": "days without data",
+            "txtDaysThatDoesntHaveLogFile": "Days without log files",
+            "txtNoLogsDateBefore": "No data before"
+        }
+    },
+    "enums": {
+        "identifierType": {
+            "EGN": "EGN",
+            "LNCh": "LNCH"
+        },
+        "userRole": {
+            "administrator": "Administrator",
+            "user": "User",
+            "applicant": "Applicant",
+            "employee": "Employee"
+        },
+        "administratorsAndCentersRoles": {
+            "administrator": "User Administrator",
+            "user": "PIGEIS User"
+        }
+    },
+    "aria": {
+        "txtLogo": "Logo",
+        "txtTitle": "Title",
+        "txtSubTitle": "Sub title",
+        "txtNavigationButton": "Navigation button",
+        "txtBreadcrumb": "Breadcrumb"
+    }
+}

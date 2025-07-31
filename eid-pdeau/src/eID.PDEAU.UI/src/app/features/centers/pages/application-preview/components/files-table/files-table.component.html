@@ -1,0 +1,95 @@
+<div class="col" *transloco="let t; read: 'modules.centers.center-preview.files-table'">
+    <p-table
+        dataKey="id"
+        [value]="files"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        loadingIcon="pi pi-spin pi-spinner"
+        [sortOrder]="1"
+        [rowSelectable]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="fileName" class="text-nowrap">
+                    {{ t('txtFileName') }}
+                    <p-sortIcon field="fileName"></p-sortIcon>
+                </th>
+                <th class="text-nowrap">
+                    {{ t('txtType') }}
+                </th>
+                <th pSortableColumn="createDate" class="text-nowrap">
+                    {{ t('txtUploadedOn') }}
+                    <p-sortIcon field="createDate"></p-sortIcon>
+                </th>
+                <th class="text-nowrap"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-file>
+            <tr>
+                <td style="max-width: 18rem" [attr.aria-label]="file.fileName" [title]="file.fileName">
+                    <span class="multiline-ellipsis">
+                        {{ file.fileName }}
+                        <ng-container *ngIf="file.isOutgoing"
+                        ><p-tag icon="pi pi-arrow-up-right" [value]="t('txtOutgoing')"></p-tag
+                        ></ng-container>
+                        <ng-container *ngIf="!file.isOutgoing"
+                        ><p-tag icon="pi pi-arrow-down-left" [value]="t('txtIncoming')"></p-tag
+                        ></ng-container>
+                    </span>
+                </td>
+                <td
+                    style="max-width: 18rem"
+                    [attr.aria-label]="file.documentType.name"
+                    [title]="file.documentType.name">
+                    <span class="multiline-ellipsis">{{ file.documentType.name }}</span>
+                </td>
+                <td
+                    style="max-width: 18rem"
+                    [attr.aria-label]="file.createDate | translocoDate : { timeStyle: 'medium' }"
+                    [title]="file.createDate | translocoDate : { timeStyle: 'medium' }">
+                    <span class="multiline-ellipsis">
+                        {{ file.createDate | translocoDate : { timeStyle: 'medium' } }}
+                    </span>
+                </td>
+                <td style="width: 10rem">
+                    <div class="d-flex" *transloco="let globalT">
+                        <button
+                            (click)="downloadFile.execute(file.id)"
+                            pButton
+                            type="button"
+                            [title]="globalT('modules.centers.applications.table.details.txtPreviewApplication')"
+                            [attr.aria-label]="
+                                globalT('modules.centers.applications.table.details.txtPreviewApplication')
+                            "
+                            class="p-button-sm p-button-text">
+                            <i class="material-icons-outlined">&#xe2c4;</i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">
+                    <span
+                        *transloco="let globalT; read: ''"
+                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                        <img src="/assets/images/noresults.png" [alt]="globalT('aria.txtLogo')" />
+                        <span class="text-text-light" [attr.aria-label]="globalT('global.txtNoRecordsFound')">
+                            {{ globalT('global.txtNoRecordsFound') }}
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -1,0 +1,19 @@
+{
+    "oauth": {
+        "issuer": "https://isceigw.mvreid.local",
+        "tokenEndpoint": "https://isceigw.mvreid.local/code-flow/token",
+        "authUrl": "https://dev.iscei.mvreid.local",
+        "responseType": "code",
+        "requireHttps": true,
+        "scope": "openid profile email",
+        "realm": "eid_public",
+        "clientId": "eid_pdeau_app",
+        "provider": "MVR",
+        "accessTokenKey": "access_token",
+        "refreshTokenKey": "refresh_token",
+        "updateMinValidity": 120
+    },
+    "uiFeatures": {
+        "usefulInformationUrl": "https://dev.pg.mvreid.local/useful-information"
+    }
+}

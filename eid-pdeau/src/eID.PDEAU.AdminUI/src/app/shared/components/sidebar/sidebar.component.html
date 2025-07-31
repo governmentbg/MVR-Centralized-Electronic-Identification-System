@@ -1,0 +1,140 @@
+<aside class="d-sm-flex flex-column sidebar-menu h-100 flex-shrink-0" *transloco="let t">
+    <nav class="nav flex-column pt-3">
+        <ng-container *appHasRole="[RoleType.CIS_BACKOFFICE, RoleType.APP_ADMINISTRATOR]">
+            <a
+                routerLinkActive="active"
+                class="nav-link d-flex parent-link"
+                [routerLink]="['/administrators']"
+                #administrators="routerLinkActive">
+                <i class="material-icons-outlined">&#xe0ee;</i>
+                {{ t('sidebar.txtAdministrators') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/administrators/applications']"
+                routerLinkActive="active"
+                *ngIf="administrators && administrators.isActive"
+                #rla="routerLinkActive">
+                {{ t('sidebar.txtApplications') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/administrators/registrations']"
+                routerLinkActive="active"
+                *ngIf="administrators && administrators.isActive"
+                #rla="routerLinkActive">
+                {{ t('sidebar.txtRegistrations') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+
+            <a
+                routerLinkActive="active"
+                class="nav-link d-flex parent-link"
+                [routerLink]="['/centers']"
+                #centers="routerLinkActive">
+                <i class="material-icons-outlined">&#xe0ee;</i>
+                {{ t('sidebar.txtCenters') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/centers/applications']"
+                routerLinkActive="active"
+                *ngIf="centers && centers.isActive"
+                #rla="routerLinkActive">
+                {{ t('sidebar.txtApplications') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/centers/registrations']"
+                routerLinkActive="active"
+                *ngIf="centers && centers.isActive"
+                #rla="routerLinkActive">
+                {{ t('sidebar.txtRegistrations') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+        </ng-container>
+        <ng-container
+            *appHasRole="[
+                RoleType.PRIVATE_LEGAL_ENTITY_ADMINISTRATOR,
+                RoleType.CIS_BACKOFFICE,
+                RoleType.APP_ADMINISTRATOR
+            ]">
+            <a class="nav-link d-flex" [routerLink]="['providers']" routerLinkActive="active">
+                <i class="material-icons-outlined">&#xe0ee;</i>
+                {{ t('sidebar.txtProviders') }}
+            </a>
+        </ng-container>
+        <ng-container *appHasRole="[RoleType.APP_ADMINISTRATOR]">
+            <a class="nav-link" [routerLink]="['/document-types']" routerLinkActive="active">
+                <i class="material-icons-outlined">&#xe873;</i>
+                {{ t('sidebar.txtDocuments') }}
+            </a>
+            <a
+                routerLinkActive="active"
+                class="nav-link parent-link"
+                [routerLink]="['/tariffs']"
+                #tariffs="routerLinkActive">
+                <i class="material-icons-outlined pe-3">&#xf05b;</i>
+                {{ t('sidebar.txtTariffs') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/tariffs/services']"
+                routerLinkActive="active"
+                *ngIf="tariffs && tariffs.isActive"
+                #rla="routerLinkActive">
+                {{ t('sidebar.txtTariffsForServices') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/tariffs/discounts']"
+                routerLinkActive="active"
+                *ngIf="tariffs && tariffs.isActive"
+                #rla="routerLinkActive">
+                {{ t('sidebar.txtDiscounts') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+
+            <a
+                class="nav-link"
+                [routerLink]="['/system-processes']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <i class="material-icons-outlined">&#xe8b9;</i>
+                {{ t('sidebar.txtSystemProcesses') }}
+            </a>
+            <a
+                routerLinkActive="active"
+                class="nav-link parent-link"
+                (click)="toggleSubMenu(true)"
+                [routerLink]="['/logs-viewer']"
+                #logsViewer="routerLinkActive">
+                <i class="material-icons-outlined pe-3">&#xe241;</i>
+                {{ t('sidebar.txtJournals') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/logs-viewer/journals']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #journals="routerLinkActive"
+                *ngIf="logsViewer && logsViewer.isActive">
+                {{ t('sidebar.txtLocalJournals') }}
+                <i class="material-icons-outlined" *ngIf="journals.isActive">&#xe5cc;</i>
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/logs-viewer/integrity']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #integrity="routerLinkActive"
+                *ngIf="logsViewer && logsViewer.isActive">
+                {{ t('sidebar.txtIntegrity') }}
+                <i class="material-icons-outlined" *ngIf="integrity.isActive">&#xe5cc;</i>
+            </a>
+        </ng-container>
+    </nav>
+</aside>

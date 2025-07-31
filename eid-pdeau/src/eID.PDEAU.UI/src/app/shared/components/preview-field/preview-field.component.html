@@ -1,0 +1,9 @@
+<div class="row p-2 ps-0">
+    <label>{{ label }}</label>
+    <span *ngIf="!isNullOrUndefined(value) && !isLoading" class="col text-break">{{ value }}</span>
+    <ng-template [ngIf]="isLoading">
+        <p-skeleton class="col" *ngIf="isLoading" width="14rem">
+            <span>loading</span>
+        </p-skeleton>
+    </ng-template>
+</div>

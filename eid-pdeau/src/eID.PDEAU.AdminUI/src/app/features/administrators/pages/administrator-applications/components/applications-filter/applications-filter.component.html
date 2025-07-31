@@ -1,0 +1,136 @@
+<aside role="applications-filter" *transloco="let t" class="applications-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('filters.txtLabel') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="number" class="form-label">
+                            {{ t('modules.administrators.applications.filter.applicationNumber') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="number"
+                            type="text"
+                            class="w-100"
+                            formControlName="applicationNumber"
+                            [placeholder]="t('modules.administrators.applications.filter.numberPlaceholder')" />
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="type" class="form-label">
+                            {{ t('modules.administrators.applications.filter.applicationType') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="applicationType"
+                            [options]="applicationTypes"
+                            optionLabel="name"
+                            optionValue="id"
+                            styleClass="w-100"
+                            inputId="status"
+                            [placeholder]="t('modules.administrators.applications.filter.all')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="name" class="form-label">
+                            {{ t('modules.administrators.applications.filter.eidName') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="name"
+                            type="text"
+                            class="w-100"
+                            formControlName="eidName"
+                            [placeholder]="t('modules.administrators.applications.filter.namePlaceholder')" />
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="status" class="form-label">
+                            {{ t('modules.administrators.applications.filter.status') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="status"
+                            [options]="statuses"
+                            optionLabel="name"
+                            optionValue="code"
+                            styleClass="w-100"
+                            inputId="status"
+                            [placeholder]="t('modules.administrators.applications.filter.all')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <button
+                    type="button"
+                    pButton
+                    (click)="clearAllFilteredValues()"
+                    [label]="t('modules.administrators.applications.filter.cancel')"
+                    class="p-button p-button-danger me-3 app-button-small"></button>
+                <button
+                    pButton
+                    [label]="t('modules.administrators.applications.filter.apply')"
+                    type="submit"
+                    [disabled]="!filterForm.dirty"
+                    class="p-button me-3 p-button-primary app-button-small"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="applications-filter-choice">
+    <div class="row mb-4">
+        <div class="col">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('filters.txtFilterButton')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="chosenFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of chosenFilters">
+                <p-chip
+                    [label]="prepareFilteredValueLabel(filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="chosenFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearAllFilteredValues()"
+                [attr.aria-labelledby]="t('filters.txtClearAll')">
+                {{ t('filters.txtClearAll') }}
+            </button>
+        </div>
+    </div>
+</section>

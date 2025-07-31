@@ -1,0 +1,310 @@
+<div *transloco="let t">
+    <div>
+        <div class="row">
+            <div class="col">
+                <h6 class="text-text-default mb-4">
+                    {{ t('modules.centers.register.applicantData') }}
+                </h6>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg-3">
+                <app-preview-field
+                    [label]="t('modules.centers.register.applicantUidType')"
+                    [value]="applicantPersonalIdentifier" />
+            </div>
+            <div class="col-lg-5">
+                <app-preview-field
+                    [label]="t('modules.centers.register.applicantUid')"
+                    [value]="form.getRawValue().applicant.citizenIdentifierNumber" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg-8">
+                <app-preview-field
+                    [label]="t('modules.centers.register.applicantName')"
+                    [value]="form.getRawValue().applicant.name" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg-8">
+                <app-preview-field
+                    [label]="t('modules.centers.register.nameLatin')"
+                    [value]="form.getRawValue().applicant.nameLatin" />
+            </div>
+        </div>
+    </div>
+    <p-divider class="header-divider mb-4" type="solid"></p-divider>
+    <div class="row">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.centers.register.applicantLegalData') }}
+            </h6>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-lg-5">
+            <app-preview-field
+                [label]="t('modules.centers.register.administrativeBodyBulstat')"
+                [value]="form.value.eikNumber" />
+        </div>
+        <div class="col-lg-5">
+            <app-preview-field [label]="t('modules.centers.register.homePage')" [value]="form.value.homePage" />
+        </div>
+        <div class="col-lg-5">
+            <app-preview-field
+                [label]="t('modules.centers.register.administrativeBodyAddress')"
+                [value]="form.value.address" />
+        </div>
+        <div class="col-lg-5">
+            <app-preview-field
+                [label]="t('modules.centers.register.administrativeBodyEmail')"
+                [value]="form.value.email" />
+        </div>
+        <div class="col-lg-5">
+            <app-preview-field
+                [label]="t('modules.centers.register.administrativeBodyPhone')"
+                [value]="form.value.phone" />
+        </div>
+        <div class="col-lg-5">
+            <app-preview-field [label]="t('modules.centers.register.description')" [value]="form.value.description" />
+        </div>
+    </div>
+    <p-divider class="header-divider mb-4" type="solid"></p-divider>
+    <div class="row">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.centers.register.legalRepresentatives') }}
+            </h6>
+        </div>
+    </div>
+    <p-table
+        [value]="form.value.authorizedPersons || []"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        [rowSelectable]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.administratorUidType') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.identifierNumber') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtName') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtNameLatin') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtEmail') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtPhone') }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+            <tr>
+                <td
+                    style="max-width: 18rem"
+                    [attr.aria-label]="user.citizenIdentifierType"
+                    [title]="user.citizenIdentifierType">
+                    <span class="multiline-ellipsis">{{ user.citizenIdentifierType }}</span>
+                </td>
+                <td
+                    style="max-width: 18rem"
+                    [attr.aria-label]="user.citizenIdentifierNumber"
+                    [title]="user.citizenIdentifierNumber">
+                    <span class="multiline-ellipsis">{{ user.citizenIdentifierNumber }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.name" [title]="user.name">
+                    <span class="multiline-ellipsis">{{ user.name }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.nameLatin" [title]="user.nameLatin">
+                    <span class="multiline-ellipsis">{{ user.nameLatin }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.email" [title]="user.email">
+                    <span class="multiline-ellipsis">{{ user.email }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.phoneNumber" [title]="user.phoneNumber">
+                    <span class="multiline-ellipsis">{{ user.phoneNumber }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">
+                    <span
+                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                            {{ t('global.txtNoData') }}
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div class="row mt-4">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.centers.register.offices') }}
+            </h6>
+        </div>
+    </div>
+    <p-table
+        [value]="form.value.eidManagerFrontOffices || []"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        [rowSelectable]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.officeName') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.officeAddress') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.officeCoordinates') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.officeGeneralInformation') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.workingHours') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.contact') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.email') }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-office let-rowIndex="rowIndex">
+            <tr>
+                <td style="max-width: 18rem" [attr.aria-label]="office.name" [title]="office.name">
+                    <span class="multiline-ellipsis">{{ office.name }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.location" [title]="office.location">
+                    <span class="multiline-ellipsis">{{ office.location }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.longitude" [title]="office.longitude">
+                    <span class="multiline-ellipsis">{{ office.longitude }} {{ office.latitude }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.description" [title]="office.description">
+                    <span class="multiline-ellipsis">{{ office.description }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.workingHours" [title]="office.workingHours">
+                    <span class="multiline-ellipsis">{{ office.workingHours }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.contact" [title]="office.contact">
+                    <span class="multiline-ellipsis">{{ office.contact }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.email" [title]="office.email">
+                    <span class="multiline-ellipsis">{{ office.email }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7">
+                    <span
+                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                            {{ t('global.txtNoData') }}
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div class="row mt-4">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.centers.register.employees') }}
+            </h6>
+        </div>
+    </div>
+    <p-table
+        [value]="form.value.employees || []"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        [rowSelectable]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.administratorUidType') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.identifierNumber') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtName') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtNameLatin') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtEmail') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtPhone') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.center-preview.users-table.txtRole') }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+            <tr>
+                <td
+                    style="max-width: 18rem"
+                    [attr.aria-label]="user.citizenIdentifierType"
+                    [title]="user.citizenIdentifierType">
+                    <span class="multiline-ellipsis">{{ user.citizenIdentifierType }}</span>
+                </td>
+                <td
+                    style="max-width: 18rem"
+                    [attr.aria-label]="user.citizenIdentifierNumber"
+                    [title]="user.citizenIdentifierNumber">
+                    <span class="multiline-ellipsis">{{ user.citizenIdentifierNumber }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.name" [title]="user.name">
+                    <span class="multiline-ellipsis">{{ user.name }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.nameLatin" [title]="user.nameLatin">
+                    <span class="multiline-ellipsis">{{ user.nameLatin }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.email" [title]="user.email">
+                    <span class="multiline-ellipsis">{{ user.email }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.phoneNumber" [title]="user.phoneNumber">
+                    <span class="multiline-ellipsis">{{ user.phoneNumber }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="user.role" [title]="user.role">
+                    <span class="multiline-ellipsis">{{ user.role }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7">
+                    <span
+                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                            {{ t('global.txtNoData') }}
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

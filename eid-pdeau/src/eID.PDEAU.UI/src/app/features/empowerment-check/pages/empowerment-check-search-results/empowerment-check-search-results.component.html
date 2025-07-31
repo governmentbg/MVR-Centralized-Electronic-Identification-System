@@ -1,0 +1,268 @@
+<section class="container h-100 empowerment-check-section" *transloco="let t">
+    <div class="row">
+        <div class="col">
+            <app-empowerment-check-breadcrumb [items]="breadcrumbItems"></app-empowerment-check-breadcrumb>
+            <h4 class="text-uppercase">{{ t('empowermentCheckModule.txtEmpowermentReferenceTitle') }}</h4>
+            <div class="bg-theme-secondary-alert text-text-dark rounded p-2 d-inline-block mb-2">
+                {{ t('empowermentCheckModule.txtCurrentInformation') }}
+                {{ searchedEmpowerment.statusOn | translocoDate }}
+            </div>
+            <h6>
+                <span class="fw-normal me-5"> {{ t('empowermentCheckModule.txtEmpowerer') }}: </span>
+                {{ searchedEmpowerment.authorizerUid }}
+            </h6>
+            <h6 class="mb-4">
+                <span class="fw-normal me-3"> {{ t('empowermentCheckModule.txtEmpoweredPerson') }}: </span>
+                {{ searchedEmpowerment.empoweredUid }}
+            </h6>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col">
+            <p-card>
+                <p-table
+                    #dt
+                    [value]="empowerments"
+                    [tableStyle]="{ 'min-width': '100%' }"
+                    dataKey="uid"
+                    [loading]="loading"
+                    loadingIcon="pi pi-spin pi-spinner"
+                    [sortOrder]="1"
+                    [rowHover]="true"
+                    [lazy]="true"
+                    (onLazyLoad)="loadEmpowerments($event)"
+                    [totalRecords]="totalRecords"
+                    [rows]="pageSize"
+                    [paginator]="true"
+                    [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="[10, 25, 50]"
+                    [currentPageReportTemplate]="
+                        t('global.txtTablePagination', {
+                            first: '{first}',
+                            last: '{last}',
+                            totalRecords: '{totalRecords}'
+                        })
+                    "
+                    [rowSelectable]="false">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtEmpowermentNumber') }}
+                            <th pSortableColumn="serviceName" class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtService') }}
+                                <p-sortIcon field="serviceName"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="name" class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtFromTheNameOf') }}
+                                <p-sortIcon field="name"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtOtherEmpoweredPeople') }}
+                            </th>
+                            <th pSortableColumn="expiryDate" class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtValidTo') }}
+                                <p-sortIcon field="expiryDate"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtStatus') }}
+                            </th>
+                            <th class="text-nowrap">
+                                {{ t('empowermentCheckModule.txtDetails') }}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-empowerment>
+                        <tr>
+                            <td style="max-width: 18rem" [attr.aria-label]="empowerment.number">
+                                <span class="multiline-ellipsis">{{ empowerment.number }}</span>
+                            </td>
+                            <td
+                                style="max-width: 11rem"
+                                [attr.aria-label]="empowerment.serviceName"
+                                [title]="empowerment.serviceName">
+                                <span class="multiline-ellipsis">{{ empowerment.serviceName }}</span>
+                            </td>
+                            <td
+                                style="max-width: 18rem"
+                                [attr.aria-label]="empowerment.name"
+                                [title]="empowerment.name">
+                                <span class="multiline-ellipsis">{{ empowerment.name }}</span>
+                            </td>
+                            <td style="max-width: 18rem">
+                                <span
+                                    *ngIf="empowerment.empoweredUids.length !== 0"
+                                    class="text-break d-flex"
+                                    [title]="empowerment.empoweredUids[0].uid">
+                                    {{ empowerment.empoweredUids[0].uid }}
+                                </span>
+
+                                <span
+                                    *ngIf="empowerment.empoweredUids.length > 1"
+                                    class="text-break d-flex link-style"
+                                    [escape]="false"
+                                    [pTooltip]="getHtmlTooltipForExtraUids(empowerment.empoweredUids)"
+                                    [title]="getTooltipForExtraUids(empowerment.empoweredUids)"
+                                    tooltipPosition="top">
+                                    {{ t('empowermentCheckModule.txtMoreThenOneEGN', {
+                                        value: empowerment.empoweredUids.length - 1,
+                                    })}}
+                                </span>
+                            </td>
+                            <td
+                                style="max-width: 18rem"
+                                [attr.aria-label]="empowermentExpiryDate(empowerment.expiryDate)"
+                                [title]="empowermentExpiryDate(empowerment.expiryDate)">
+                                <span class="multiline-ellipsis">{{
+                                    empowermentExpiryDate(empowerment.expiryDate)
+                                }}</span>
+                            </td>
+
+                            <td
+                                [attr.aria-label]="searchedEmpowerment.statusOn | translocoDate"
+                                [escape]="false"
+                                [pTooltip]="t('empowermentCheckModule.txtToDate', {
+                                    value: searchedEmpowerment.statusOn | translocoDate,
+                                })"
+                                [title]="searchedEmpowerment.statusOn | translocoDate"
+                                tooltipPosition="top">
+                                <container-element [ngSwitch]="empowerment.calculatedStatusOn">
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.Active"
+                                        class="text-break active-confirm d-flex align-items-center">
+                                        <i class="material-icons-outlined align-self-center">&#xe877;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.Active') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.Expired"
+                                        class="text-break reject d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe644;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.Expired') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.DisagreementDeclared"
+                                        class="text-break reject d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe14b;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.DisagreementDeclared') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.Withdrawn"
+                                        class="text-break reject d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.Withdrawn') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.CollectingAuthorizerSignatures"
+                                        class="text-break danger d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.CollectingAuthorizerSignatures') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.Denied"
+                                        class="text-break reject d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe5cd;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.Denied') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.UpComing"
+                                        class="text-break text-active d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xf238;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.UpComing') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="empowermentStatus.Unconfirmed"
+                                        class="text-break danger d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe001;</i>
+                                        <span style="width: 7rem">
+                                            {{ t('empowermentCheckModule.statuses.Unconfirmed') }}
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchDefault></span>
+                                </container-element>
+                            </td>
+                            <td style="width: 10rem">
+                                <div class="d-flex">
+                                    <button
+                                        pButton
+                                        type="button"
+                                        [title]="t('empowermentCheckModule.txtPreviewEmpowerment')"
+                                        class="p-button-sm p-button-rounded p-button-text"
+                                        (click)="navigateToDetails(empowerment)">
+                                        <i class="material-icons-outlined">&#xf801;</i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">
+                                <span
+                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                    <img src="/assets/images/noresults.png" />
+                                    <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                        {{ t('global.txtNoRecordsFound') }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-card>
+        </div>
+    </div>
+    <div class="d-flex">
+        <button
+            pButton
+            type="button"
+            [label]="t('empowermentCheckModule.txtBack')"
+            [attr.aria-label]="t('empowermentCheckModule.txtBack')"
+            class="p-button-outlined me-4"
+            icon="pi pi-chevron-left"
+            (click)="navigateToSearch()"></button>
+        <button
+            pButton
+            type="button"
+            [label]="t('empowermentCheckModule.txtNewReference')"
+            [attr.aria-label]="t('empowermentCheckModule.txtNewReference')"
+            [routerLink]="['/empowerment-check']"></button>
+    </div>
+</section>

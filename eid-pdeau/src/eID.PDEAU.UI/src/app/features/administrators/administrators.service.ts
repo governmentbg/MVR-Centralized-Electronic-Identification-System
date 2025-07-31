@@ -1,0 +1,168 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map } from 'rxjs';
+import {
+    AdministratorApplication,
+    AdministratorsPageableSchema,
+    documentTypeListSchema,
+    ApplicationDetailsSchema,
+    AttachmentFullSchema,
+    RegionListSchema,
+    AdministratorSchema,
+    EmployeesPageableSchema,
+    AttachmentsWithNotesSchema,
+} from './administrators.dto';
+import { UserService } from '@app/core/services/user.service';
+
+const baseApiUrl = '/raeicei/external/api/v1';
+
+@Injectable({
+    providedIn: 'root',
+})
+export class AdministratorsService {
+    private apiUrl = baseApiUrl;
+
+    constructor(private http: HttpClient, private userService: UserService) {}
+
+    registerAdministrator = (data: AdministratorApplication) => {
+        return this.http.post(`${this.apiUrl}/eidadministratorapplication/create`, data, {});
+    };
+
+    fetchAdministrator = () => {
+        return this.http
+            .get(`${this.apiUrl}/employee/eidadministrator`)
+            .pipe(map(data => AdministratorSchema.parse(data)));
+    };
+
+    fetchApplications = (
+        payload: {
+            [key: string]: any;
+        } & {
+            page: number;
+            size: number;
+            sort: string;
+        }
+    ) => {
+        const queryParams = new HttpParams({ fromObject: payload as any });
+        return this.http
+            .get(`${this.apiUrl}/eidadministratorapplication/list`, { params: queryParams })
+            .pipe(map(data => AdministratorsPageableSchema.parse(data)));
+    };
+
+    fetchDocumentTypes = () => {
+        return this.http.get(`${this.apiUrl}/document-type/list`).pipe(map(data => documentTypeListSchema.parse(data)));
+    };
+
+    fetchApplicationDetails = (id: string) => {
+        return this.http
+            .get(`${this.apiUrl}/eidadministratorapplication/${id}`)
+            .pipe(map(data => ApplicationDetailsSchema.parse(data)));
+    };
+
+    downloadFile = (id: string) => {
+        return this.http.get(`${this.apiUrl}/document/get/${id}`).pipe(map(data => AttachmentFullSchema.parse(data)));
+    };
+
+    fetchRegions = () => {
+        return this.http.get(`${this.apiUrl}/region/list`).pipe(map(data => RegionListSchema.parse(data)));
+    };
+
+    fetchOffices = () => {
+        return this.http.get(`${this.apiUrl}/employee/eidmanagerfrontoffice/getAll`);
+    };
+
+    fetchDevices = () => {
+        return this.http.get(`${this.apiUrl}/employee/device/aei`);
+    };
+
+    fetchEmployees = (
+        payload: {
+            [key: string]: any;
+        } & {
+            page: number;
+            size: number;
+            sort: string;
+        }
+    ) => {
+        const queryParams = new HttpParams({ fromObject: payload as any });
+        return this.http
+            .get(`${this.apiUrl}/employee/employee/list`, { params: queryParams })
+            .pipe(map(data => EmployeesPageableSchema.parse(data)));
+    };
+
+    // Device
+    createDevice = (data: any) => {
+        return this.http.post(`${this.apiUrl}/circs/device/create`, data, {});
+    };
+
+    updateDeviceById = (data: any) => {
+        return this.http.put(`${this.apiUrl}/circs/device/update`, data, {});
+    };
+
+    deleteDeviceById = (id: string) => {
+        return this.http.delete(`${this.apiUrl}/circs/device/delete/${id}`);
+    };
+
+    // Office
+    createOffice = (data: any) => {
+        return this.http.post(`${this.apiUrl}/circs/eidmanagerfrontoffice/create`, data, {});
+    };
+
+    updateOfficeById = (data: any) => {
+        return this.http.put(`${this.apiUrl}/circs/eidmanagerfrontoffice/update`, data, {});
+    };
+
+    deleteOfficeById = (id: string) => {
+        return this.http.delete(`${this.apiUrl}/circs/eidmanagerfrontoffice/delete/${id}`);
+    };
+
+    // Employee
+    createEmployee = (data: any) => {
+        return this.http.post(`${this.apiUrl}/circs/employee/create`, data, {});
+    };
+
+    updateEmployeeById = (data: any, id: string) => {
+        return this.http.put(`${this.apiUrl}/circs/employee/update/${id}`, data, {});
+    };
+
+    deleteEmployeeById = (id: string) => {
+        return this.http.delete(`${this.apiUrl}/circs/employee/delete/${id}`);
+    };
+
+    // Authorized person
+    createAuthorizedPerson = (data: any) => {
+        return this.http.post(`${this.apiUrl}/circs/authorizedperson/create`, data, {});
+    };
+
+    updateAuthorizedPersonById = (data: any, id: string) => {
+        return this.http.put(`${this.apiUrl}/circs/authorizedperson/update/${id}`, data, {});
+    };
+
+    deleteAuthorizedPersonById = (id: string) => {
+        return this.http.delete(`${this.apiUrl}/circs/authorizedperson/delete/${id}`);
+    };
+
+    fetchAttachments = () => {
+        return this.http
+            .get(`${this.apiUrl}/circs/eidmanager/documentsnotes`)
+            .pipe(map(data => AttachmentsWithNotesSchema.parse(data)));
+    };
+
+    createDocument = (data: any) => {
+        return this.http.post(`${this.apiUrl}/eidmanager/document/upload`, data, {});
+    };
+
+    // Upload document to Application
+    uploadDocuments = (data: any, id: string) => {
+        return this.http.post(`${this.apiUrl}/application/document/upload/${id}`, data);
+    };
+
+    checkCode = (code: any, params: any) => {
+        const queryParams = new HttpParams({ fromObject: params as any });
+        return this.http.get(`${this.apiUrl}/checkcode/${code}`, { params: queryParams });
+    };
+
+    createApplication = (data: any) => {
+        return this.http.post(`${this.apiUrl}/eidadministratorapplication/create`, data, {});
+    };
+}

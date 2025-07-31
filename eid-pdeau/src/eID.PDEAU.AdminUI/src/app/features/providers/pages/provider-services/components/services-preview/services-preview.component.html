@@ -1,0 +1,106 @@
+<section class="h-100" *transloco="let t; read: 'modules.services'">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="d-flex mb-4 align-items-center">
+        <h4 class="text-text-default mb-0">
+            {{ t('service-preview.title') }}
+        </h4>
+    </div>
+    <p-card>
+        <div class="col-xl-8">
+            <div class="p-2 ps-0">
+                <span class="form-label">
+                    {{ t('service-preview.createdOn') }}
+                </span>
+                <div>
+                    {{ service.createdOn | translocoDate }}
+                </div>
+            </div>
+            <app-preview-field
+                *ngIf="service.serviceNumber"
+                [label]="t('service-preview.serviceNumber')"
+                [value]="service.serviceNumber"></app-preview-field>
+            <app-preview-field [label]="t('service-preview.name')" [value]="service.name"></app-preview-field>
+            <app-preview-field
+                [label]="t('service-preview.description')"
+                [value]="service.description || ''"></app-preview-field>
+            <div class="p-2 ps-0">
+                <span class="form-label">{{ t('service-preview.isEmpowerment') }}</span>
+                <div>
+                    {{ service.isEmpowerment ? t('services-table.filter.yes') : t('services-table.filter.no') }}
+                </div>
+            </div>
+            <app-preview-field
+                [label]="t('service-preview.assuranceLevel')"
+                [value]="t('enums.' + service.minimumLevelOfAssurance)"></app-preview-field>
+            <app-preview-field
+                [label]="t('service-preview.requiredPersonalInformation')"
+                [value]="personalInformation"></app-preview-field>
+            <div>
+                <span class="form-label">
+                    {{ t('service-preview.volume') }}
+                </span>
+                <div *ngIf="serviceScopeQuery.isLoading" class="d-flex flex-column gap-1">
+                    <p-skeleton></p-skeleton>
+                    <p-skeleton></p-skeleton>
+                    <p-skeleton></p-skeleton>
+                </div>
+                <ul *ngIf="!serviceScopeQuery.isLoading" class="ml-2">
+                    <li *ngFor="let scope of serviceScopeQuery.data">
+                        {{ scope.name }}
+                    </li>
+                </ul>
+            </div>
+            <div class="p-2 ps-0">
+                <span class="form-label">
+                    {{ t('service-preview.status') }}
+                </span>
+                <div>
+                    <app-service-status [status]="service.status"></app-service-status>
+                </div>
+            </div>
+            <div class="p-2 ps-0" *ngIf="service.denialReason">
+                <span class="form-label">
+                    {{ t('service-preview.denialReason') }}
+                </span>
+                <div>
+                    {{ service.denialReason }}
+                </div>
+            </div>
+            <div class="p-2 ps-0" *ngIf="service.deniedOn">
+                <span class="form-label">
+                    {{ t('service-preview.denialDate') }}
+                </span>
+                <div>
+                    {{ service.deniedOn | translocoDate : { timeStyle: 'medium' } }}
+                </div>
+            </div>
+            <div class="p-2 ps-0">
+                <span class="form-label">
+                    {{ t('service-preview.isActive') }}
+                </span>
+                <div>
+                    {{ service.isActive ? t('services-table.filter.yes') : t('services-table.filter.no') }}
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-4">
+            <p-button
+                styleClass="p-button-primary"
+                *transloco="let buttonT"
+                [label]="buttonT('global.txtBack')"
+                [ariaLabel]="buttonT('global.txtBack')"
+                (click)="onClosePreview()"></p-button>
+            <ng-container *ngIf="service.status === providerServiceStatusEnum.InReview">
+                <app-services-confirm-dialog
+                    [serviceId]="service.id"
+                    (successCallback)="onClosePreview()"></app-services-confirm-dialog>
+            </ng-container>
+            <ng-container *ngIf="service.status !== providerServiceStatusEnum.Denied">
+                <app-services-deny-dialog
+                    [serviceId]="service.id"
+                    (successCallback)="onClosePreview()"></app-services-deny-dialog>
+            </ng-container>
+        </div>
+    </p-card>
+</section>

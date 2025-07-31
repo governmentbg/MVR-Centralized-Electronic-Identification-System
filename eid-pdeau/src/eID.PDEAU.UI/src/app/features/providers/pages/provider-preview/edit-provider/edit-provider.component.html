@@ -1,0 +1,176 @@
+<ng-container *transloco="let t">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="d-flex mb-4 align-items-center">
+        <h4 class="text-text-default mb-0">
+            {{ t('modules.providers.provider-edit.txtTitle') }}
+        </h4>
+    </div>
+    <p-divider class="edit-divider header-divider mb-4" type="solid"></p-divider>
+    <div class="d-flex edit-provider row">
+        <div class="col-md-8 col">
+            <div class="row">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <!-- Applicant Data -->
+                    <div formGroupName="applicant">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="text-text-default mb-4">
+                                    {{ t('modules.providers.register.applicantData') }}
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-lg-3">
+                                <label for="applicantUidType" class="form-label">
+                                    {{ t('modules.providers.register.applicantUidType') }}
+                                </label>
+                                <input
+                                    pInputText
+                                    id="applicantUidType"
+                                    type="text"
+                                    class="w-100"
+                                    formControlName="uidType" />
+                            </div>
+                            <div class="col-lg-5">
+                                <label for="applicantUid" class="form-label"
+                                    >{{ t('modules.providers.register.applicantUid') }}
+                                </label>
+                                <input pInputText id="applicantUid" type="text" class="w-100" formControlName="uid" />
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-8">
+                                <label for="applicantName" class="form-label">
+                                    {{ t('modules.providers.register.applicantName') }}
+                                </label>
+                                <input pInputText id="applicantName" type="text" class="w-100" formControlName="name" />
+                            </div>
+                        </div>
+                    </div>
+                    <p-divider class="edit-divider header-divider mb-4" type="solid"></p-divider>
+                    <app-administrative-body-form
+                        [form]="form.controls.administrativeBody"
+                        mode="edit"
+                        [subjectType]="providerSubjectType" />
+                    <p-divider class="edit-divider header-divider mb-4" type="solid"></p-divider>
+                    <app-administrator-form [form]="form.controls.administrator" mode="edit" />
+
+                    <p-divider class="edit-divider header-divider mb-4" type="solid"></p-divider>
+                    <div class="row mb-2">
+                        <div class="col-md-8 d-flex flex-column gap-2">
+                            <h6 class="text-text-default">
+                                {{ t('modules.providers.register.files') }}
+                                <span class="text-danger">*</span>
+                            </h6>
+                            <div
+                                *ngFor="let file of this.provider.files"
+                                pTooltip="{{ file.fileName }}"
+                                class="static-file-name">
+                                {{ file.fileName }}
+                            </div>
+                            <p-fileUpload
+                                #fileInput
+                                id="files"
+                                [showUploadButton]="false"
+                                [customUpload]="true"
+                                (onSelect)="onFileChange($event)"
+                                (onClear)="onFileClear()"
+                                [multiple]="true"
+                                [previewWidth]="1"
+                                accept=".pdf">
+                                <ng-template let-file pTemplate="file">
+                                    <div class="d-flex gap-2">
+                                        {{ file.name }}
+                                        <i
+                                            (click)="onFileRemove(file.name)"
+                                            class="pi pi-trash text-danger"
+                                            style="cursor: pointer; font-size: 1.2rem"></i>
+                                    </div>
+                                </ng-template>
+                            </p-fileUpload>
+                            <app-error-field
+                                [formControlInstance]="form.controls.files"
+                                translationPrefix="modules.providers.provider-edit.errors" />
+                        </div>
+                    </div>
+                    <p-divider class="edit-divider header-divider mb-4" type="solid"></p-divider>
+
+                    <div class="row mb-2">
+                        <div class="col-md-8">
+                            <label class="form-label">
+                                {{ t('modules.providers.register.date') }}
+                            </label>
+                            <input pInputText [disabled]="true" type="text" class="w-100" [value]="currentDate" />
+                        </div>
+                    </div>
+                    <p-divider class="edit-divider header-divider mb-4" type="solid"></p-divider>
+                    <div class="d-flex gap-3 mt-4">
+                        <button
+                            *transloco="let buttonT"
+                            pButton
+                            type="button"
+                            class="p-button-danger"
+                            [label]="buttonT('global.txtBack')"
+                            [attr.aria-label]="buttonT('global.txtBack')"
+                            (click)="this.closeEdit.emit()"></button>
+                        <button
+                            pButton
+                            [loading]="updateMutation.isLoading"
+                            [disabled]="updateMutation.isLoading"
+                            [label]="t('modules.providers.register.submitButton')"
+                            type="submit"
+                            class="p-button me-3 p-button-warning"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <app-status-history [providerId]="provider.id" />
+        </div>
+    </div>
+    <p-toast key="edit-provider-file-upload" position="bottom-right" [baseZIndex]="5000">
+        <ng-template let-message pTemplate="message">
+            <div class="flex flex-column" style="flex: 1">
+                <div class="text-center">
+                    <h4>{{ t('global.txtErrorTitle') }}</h4>
+                    <h6>{{ t('modules.providers.provider-edit.toasts.txtFileUploadDetails') }}</h6>
+                    <div *ngFor="let item of message.detail">{{ item }}</div>
+                </div>
+            </div>
+        </ng-template>
+    </p-toast>
+    <form [formGroup]="commentForm" (ngSubmit)="onCommentFormSubmit()">
+        <p-dialog
+            [(visible)]="showDialog"
+            [modal]="true"
+            [draggable]="false"
+            [resizable]="false"
+            [style]="{ width: '50vw', maxWidth: '700px' }"
+            styleClass="confirm-edit-dialog">
+            <ng-template pTemplate="header">
+                <h3 class="text-white">{{ t('modules.providers.provider-edit.comment-modal.txtTitle') }}</h3>
+            </ng-template>
+            <div class="pt-4 d-flex flex-column gap-2">
+                <h5>{{ t('modules.providers.provider-edit.comment-modal.txtDescription') }}</h5>
+                <textarea class="w-100 p-2" rows="5" pInputTextarea formControlName="comment"></textarea>
+                <app-error-field
+                    [formControlInstance]="commentForm.controls.comment"
+                    translationPrefix="modules.providers.provider-edit.comment-modal.errors" />
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button
+                    styleClass="p-button-danger"
+                    [label]="t('modules.providers.provider-edit.comment-modal.txtCancel')"
+                    [ariaLabel]="t('modules.providers.provider-edit.comment-modal.txtCancel')"
+                    (click)="hideDialog()"></p-button>
+                <p-button
+                    [disabled]="updateMutation.isLoading"
+                    [loading]="updateMutation.isLoading"
+                    [label]="t('modules.providers.provider-edit.comment-modal.txtSend')"
+                    [ariaLabel]="t('modules.providers.provider-edit.comment-modal.txtSend')"
+                    styleClass="p-button-warning"
+                    type="submit"></p-button>
+            </ng-template>
+        </p-dialog>
+    </form>
+</ng-container>

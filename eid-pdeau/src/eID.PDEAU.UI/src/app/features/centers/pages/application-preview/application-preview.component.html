@@ -1,0 +1,538 @@
+<section class="h-100 provider-register-section" *transloco="let t">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-4 text-text-default">
+                {{ t('modules.centers.applications.txtApplicationPreview') }}
+                <span class="text-lowercase" *ngIf="!loading && application">{{
+                        getApplicationTypeText(application.applicationType)
+                    }}</span>
+            </h4>
+            <p-card>
+                <ng-container *ngIf="!loading && application; else elseBlock">
+                    <p-tabView>
+                        <p-tabPanel [header]="t('modules.centers.register.generalInformation')">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div>
+                                        <h6 class="text-text-default mb-4">
+                                            {{ t('modules.centers.applications.txtApplicationData') }}
+                                        </h6>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-5">
+                                                <app-preview-field
+                                                    [label]="t('modules.centers.applications.txtApplicationNumber')"
+                                                    [value]="application.applicationNumber.id" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-5">
+                                                <app-preview-field
+                                                    [label]="t('modules.centers.applications.txtApplicationType')"
+                                                    [value]="getApplicationTypeText(application.applicationType)" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-5">
+                                                <div class="form-label">
+                                                    {{ t('modules.centers.applications.txtApplicationStatus') }}
+                                                </div>
+                                                <app-application-status [status]="application.status"></app-application-status>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                                    <div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <h6 class="text-text-default mb-4">
+                                                    {{ t('modules.centers.register.applicantData') }}
+                                                </h6>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-3">
+                                                <app-preview-field
+                                                    [label]="t('modules.centers.register.applicantUidType')"
+                                                    [value]="applicantPersonalIdentifier" />
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <app-preview-field
+                                                    [label]="t('modules.centers.register.applicantUid')"
+                                                    [value]="application.applicant.citizenIdentifierNumber" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-8">
+                                                <app-preview-field
+                                                    [label]="t('modules.centers.register.applicantName')"
+                                                    [value]="application.applicant.name" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-lg-8">
+                                                <app-preview-field
+                                                    [label]="t('modules.centers.register.nameLatin')"
+                                                    [value]="application.applicant.nameLatin" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6 class="text-text-default mb-4">
+                                                {{ t('modules.centers.register.applicantLegalData') }}
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                         <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.administrativeBodyName')"
+                                                [value]="application.companyName" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.companyNameLatin')"
+                                                [value]="application.companyNameLatin" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.administrativeBodyBulstat')"
+                                                [value]="application.eikNumber" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.homePage')"
+                                                [value]="application.homePage" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.administrativeBodyAddress')"
+                                                [value]="application.address" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.administrativeBodyEmail')"
+                                                [value]="application.email" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.administrativeBodyPhone')"
+                                                [value]="application.phone" />
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <app-preview-field
+                                                [label]="t('modules.centers.register.generalInformation')"
+                                                [value]="application.description" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2" *ngIf="mode === 'edit'">
+                                        <div class="col col-xl-6">
+                                            <h6 class="text-text-default mb-4">
+                                                {{ t('modules.administrators.register.files') }}
+                                            </h6>
+                                            <span class="form-label">
+                                                {{ t('modules.providers.register.filesAdditionalText') }}
+                                            </span>
+                                            <div [formGroup]="documentForm">
+                                                <div
+                                                    *ngFor="
+                                                        let attachment of documentForm.controls.attachments.controls;
+                                                        let i = index
+                                                    ">
+                                                    <h6 class="text-text-default mt-4">
+                                                        {{ i + 1 }}.
+                                                        {{
+                                                            getDocumentTypeDescriptionById(
+                                                                attachment.controls['documentType'].value
+                                                            )
+                                                        }}
+                                                        <ng-container
+                                                            *ngIf="
+                                                                attachment.controls['files'].hasValidator(
+                                                                    Validators.required
+                                                                )
+                                                            "
+                                                        ><span class="text-danger">*</span></ng-container
+                                                        >
+                                                    </h6>
+                                                    <p-fileUpload
+                                                        #fileUpload
+                                                        [showUploadButton]="false"
+                                                        [customUpload]="true"
+                                                        (onSelect)="onFileChange($event, attachment)"
+                                                        (onClear)="onFileClear(attachment)"
+                                                        [multiple]="true"
+                                                        [previewWidth]="1"
+                                                        [maxFileSize]="10000000"
+                                                        accept=".pdf">
+                                                        <ng-template let-file pTemplate="file">
+                                                            <div class="d-flex gap-2">
+                                                                {{ file.name }}
+                                                                <i
+                                                                    (click)="
+                                                                        onFileRemove(file.name, attachment, fileUpload)
+                                                                    "
+                                                                    class="pi pi-trash text-danger"
+                                                                    style="cursor: pointer; font-size: 1.2rem"></i>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-fileUpload>
+                                                    <app-error-field
+                                                        [formControlInstance]="attachment.controls['files']"
+                                                        translationPrefix="modules.administrators.register.errors" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel [header]="t('modules.centers.register.legalRepresentatives')" *ngIf="mode === 'view'">
+                            <p-table
+                                [value]="application.authorizedPersons || []"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                [rowSelectable]="false">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pSortableColumn="citizenIdentifierType" class="text-nowrap">
+                                            {{ t('modules.centers.register.administratorUidType') }}
+                                            <p-sortIcon field="citizenIdentifierType"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="citizenIdentifierNumber" class="text-nowrap">
+                                            {{ t('modules.centers.register.identifierNumber') }}
+                                            <p-sortIcon field="citizenIdentifierNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="name" class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtName') }}
+                                            <p-sortIcon field="name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="nameLatin" class="text-nowrap">
+                                            {{
+                                                t(
+                                                    'modules.centers.center-preview.users-table.txtNameLatin'
+                                                )
+                                            }}
+                                            <p-sortIcon field="nameLatin"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="email" class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtEmail') }}
+                                            <p-sortIcon field="email"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="phoneNumber" class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtPhone') }}
+                                            <p-sortIcon field="phoneNumber"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.citizenIdentifierType"
+                                            [title]="user.citizenIdentifierType">
+                                            <span class="multiline-ellipsis">{{ user.citizenIdentifierType }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.citizenIdentifierNumber"
+                                            [title]="user.citizenIdentifierNumber">
+                                            <span class="multiline-ellipsis">{{ user.citizenIdentifierNumber }}</span>
+                                        </td>
+                                        <td style="max-width: 18rem" [attr.aria-label]="user.name" [title]="user.name">
+                                            <span class="multiline-ellipsis">{{ user.name }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.nameLatin"
+                                            [title]="user.nameLatin">
+                                            <span class="multiline-ellipsis">{{ user.nameLatin }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.email"
+                                            [title]="user.email">
+                                            <span class="multiline-ellipsis">{{ user.email }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.phoneNumber"
+                                            [title]="user.phoneNumber">
+                                            <span class="multiline-ellipsis">{{ user.phoneNumber }}</span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="6">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                                                    {{ t('global.txtNoData') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </p-tabPanel>
+
+                        <p-tabPanel [header]="t('modules.centers.register.offices')" *ngIf="mode === 'view'">
+                            <p-table
+                                [value]="application.eidManagerFrontOffices || []"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                [rowSelectable]="false">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pSortableColumn="name" class="text-nowrap">
+                                            {{ t('modules.centers.register.officeName') }}
+                                            <p-sortIcon field="name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="location" class="text-nowrap">
+                                            {{ t('modules.centers.register.officeAddress') }}
+                                            <p-sortIcon field="location"></p-sortIcon>
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.centers.register.officeCoordinates') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.centers.register.officeGeneralInformation') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.centers.register.workingHours') }}
+                                        </th>
+                                        <th pSortableColumn="contact" class="text-nowrap">
+                                            {{ t('modules.centers.register.contact') }}
+                                            <p-sortIcon field="contact"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="email" class="text-nowrap">
+                                            {{ t('modules.centers.register.email') }}
+                                            <p-sortIcon field="email"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-office let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.name"
+                                            [title]="office.name">
+                                            <span class="multiline-ellipsis">{{ office.name }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.location"
+                                            [title]="office.location">
+                                            <span class="multiline-ellipsis">{{ office.location }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.longitude"
+                                            [title]="office.longitude">
+                                            <span class="multiline-ellipsis"
+                                                >{{ office.longitude }} {{ office.latitude }}</span
+                                            >
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.description"
+                                            [title]="office.description">
+                                            <span class="multiline-ellipsis">{{ office.description }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.workingHours"
+                                            [title]="office.workingHours">
+                                            <span class="multiline-ellipsis">{{ office.workingHours }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.contact"
+                                            [title]="office.contact">
+                                            <span class="multiline-ellipsis">{{ office.contact }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="office.email"
+                                            [title]="office.email">
+                                            <span class="multiline-ellipsis">{{ office.email }}</span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="7">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                                                    {{ t('global.txtNoData') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </p-tabPanel>
+
+                        <p-tabPanel [header]="t('modules.centers.register.employees')" *ngIf="mode === 'view'">
+                            <p-table
+                                [value]="application.employees || []"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                [rowSelectable]="false">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pSortableColumn="citizenIdentifierType" class="text-nowrap">
+                                            {{ t('modules.centers.register.administratorUidType') }}
+                                            <p-sortIcon field="citizenIdentifierType"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="citizenIdentifierNumber" class="text-nowrap">
+                                            {{ t('modules.centers.register.identifierNumber') }}
+                                            <p-sortIcon field="citizenIdentifierNumber"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="name" class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtName') }}
+                                            <p-sortIcon field="name"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="nameLatin" class="text-nowrap">
+                                            {{
+                                                t(
+                                                    'modules.centers.center-preview.users-table.txtNameLatin'
+                                                )
+                                            }}
+                                            <p-sortIcon field="nameLatin"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="email" class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtEmail') }}
+                                            <p-sortIcon field="email"></p-sortIcon>
+                                        </th>
+                                        <th pSortableColumn="phoneNumber" class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtPhone') }}
+                                            <p-sortIcon field="phoneNumber"></p-sortIcon>
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.centers.center-preview.users-table.txtRole') }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.citizenIdentifierType"
+                                            [title]="user.citizenIdentifierType">
+                                            <span class="multiline-ellipsis">{{ user.citizenIdentifierType }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.citizenIdentifierNumber"
+                                            [title]="user.citizenIdentifierNumber">
+                                            <span class="multiline-ellipsis">{{ user.citizenIdentifierNumber }}</span>
+                                        </td>
+                                        <td style="max-width: 18rem" [attr.aria-label]="user.name" [title]="user.name">
+                                            <span class="multiline-ellipsis">{{ user.name }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.nameLatin"
+                                            [title]="user.nameLatin">
+                                            <span class="multiline-ellipsis">{{ user.nameLatin }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.email"
+                                            [title]="user.email">
+                                            <span class="multiline-ellipsis">{{ user.email }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="user.phoneNumber"
+                                            [title]="user.phoneNumber">
+                                            <span class="multiline-ellipsis">{{ user.phoneNumber }}</span>
+                                        </td>
+                                        <td style="max-width: 18rem" [attr.aria-label]="user.role" [title]="user.role">
+                                            <span class="multiline-ellipsis">{{ roleNames(user.roles) }}</span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="7">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                                                    {{ t('global.txtNoData') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </p-tabPanel>
+
+                        <p-tabPanel [header]="t('modules.administrators.history.txtTitle')">
+                            <app-notes [notes]="application.notes"></app-notes>
+                        </p-tabPanel>
+
+                        <p-tabPanel [header]="t('modules.centers.register.files')" *ngIf="mode === 'view'">
+                            <app-files-table [files]="application.attachments || []"></app-files-table>
+                        </p-tabPanel>
+                    </p-tabView>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <p-tabView>
+                        <p-tabPanel [header]="t('modules.centers.register.generalInformation')">
+                            <p-skeleton styleClass="mb-3" height="1rem" width="8rem"></p-skeleton>
+                            <p-skeleton styleClass="mb-3" height="1rem" width="16rem"></p-skeleton>
+
+                            <p-skeleton styleClass="mb-3" height="1rem" width="8rem"></p-skeleton>
+                            <p-skeleton styleClass="mb-3" height="1rem" width="16rem"></p-skeleton>
+
+                            <p-skeleton styleClass="mb-3" height="1rem" width="8rem"></p-skeleton>
+                            <p-skeleton styleClass="mb-3" height="1rem" width="16rem"></p-skeleton>
+                        </p-tabPanel>
+                    </p-tabView>
+                </ng-template>
+
+                <div class="mt-4 d-flex gap-2">
+                    <a [routerLink]="['/centers']">
+                        <button
+                            *transloco="let buttonT"
+                            pButton
+                            type="button"
+                            class="p-button-danger"
+                            [label]="buttonT('global.txtBack')"
+                            [attr.aria-label]="buttonT('global.txtBack')"></button>
+                    </a>
+                    <button
+                        *ngIf="
+                            application?.status === this.ApplicationStatus.RETURNED_FOR_CORRECTION && mode === 'view'
+                        "
+                        pButton
+                        type="button"
+                        class="p-button p-button-warning"
+                        [label]="t('modules.administrators.administrator-preview.txtEditButton')"
+                        (click)="this.changeMode('edit')"></button>
+                    <button
+                        *ngIf="
+                            application?.status === this.ApplicationStatus.RETURNED_FOR_CORRECTION && mode === 'edit'
+                        "
+                        pButton
+                        [loading]="uploadDocumentsQuery.isLoading"
+                        [disabled]="uploadDocumentsQuery.isLoading"
+                        [label]="t('modules.providers.register.submitButton')"
+                        (click)="onSubmit()"
+                        class="p-button me-3 p-button-warning"></button>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,16 @@
+@import '../../../../styles/variables.scss';
+
+.empowerment-check-section {
+    ::ng-deep p-calendar {
+        &.p-calendar-clearable .p-calendar-clear-icon {
+            right: 4rem;
+        }
+        &.ng-dirty.ng-invalid > .p-calendar > .p-button.p-datepicker-trigger {
+            border-color: $text-error;
+        }
+    }
+    h4,
+    p {
+        color: $text-default;
+    }
+}

@@ -1,0 +1,159 @@
+<section class="h-100 provider-register-section" *transloco="let t">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-4 text-text-default">
+                {{ t('modules.providers.register.title') }}
+            </h4>
+            <p-card>
+                <div class="row">
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-lg-8">
+                        <!-- Applicant Data -->
+                        <div formGroupName="applicant">
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="text-text-default mb-4">
+                                        {{ t('modules.providers.register.applicantData') }}
+                                    </h6>
+                                </div>
+                                <button
+                                    pButton
+                                    type="button"
+                                    icon="pi pi-question-circle"
+                                    class="d-lg-none p-button-text p-0"
+                                    [attr.aria-label]="t('help.txtScrollToHelpSection')"
+                                    (click)="scrollToHelpSection()"></button>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-lg-3">
+                                    <label for="applicantUidType" class="form-label">
+                                        {{ t('modules.providers.register.applicantUidType') }}
+                                    </label>
+                                    <input
+                                        pInputText
+                                        id="applicantUidType"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="uidType" />
+                                </div>
+                                <div class="col-lg-5">
+                                    <label for="applicantUid" class="form-label"
+                                        >{{ t('modules.providers.register.applicantUid') }}
+                                    </label>
+                                    <input
+                                        pInputText
+                                        id="applicantUid"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="uid" />
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-lg-8">
+                                    <label for="applicantName" class="form-label">
+                                        {{ t('modules.providers.register.applicantName') }}
+                                    </label>
+                                    <input
+                                        pInputText
+                                        id="applicantName"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="name" />
+                                </div>
+                            </div>
+                        </div>
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <div class="d-flex gap-2 mb-4">
+                            <div *ngFor="let subjectType of providerSubjectTypes" class="field-checkbox d-flex gap-2">
+                                <p-radioButton
+                                    [ngModelOptions]="{ standalone: true }"
+                                    [inputId]="subjectType.value.toString()"
+                                    name="category"
+                                    (ngModelChange)="onSubjectTypeChange($event)"
+                                    [value]="subjectType.value"
+                                    [(ngModel)]="selectedProviderSubject"></p-radioButton>
+                                <label [for]="subjectType.value">{{ subjectType.name }}</label>
+                            </div>
+                        </div>
+                        <app-administrative-body-form
+                            [form]="form.controls.administrativeBody"
+                            [subjectType]="selectedProviderSubject" />
+
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <app-administrator-form [form]="form.controls.administrator" />
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <div class="row mb-2">
+                            <div class="col-lg-8">
+                                <h6 class="text-text-default mb-4">
+                                    {{ t('modules.providers.register.files') }}
+                                    <span class="text-danger">*</span>
+                                </h6>
+                                <span class="form-label">
+                                    {{ t('modules.providers.register.filesAdditionalText') }}
+                                </span>
+                                <p-fileUpload
+                                    id="files"
+                                    [showUploadButton]="false"
+                                    [customUpload]="true"
+                                    (onSelect)="onFileChange($event)"
+                                    (onClear)="onFileClear()"
+                                    [multiple]="true"
+                                    [previewWidth]="1"
+                                    accept=".pdf">
+                                    <ng-template let-file pTemplate="file">
+                                        <div class="d-flex gap-2">
+                                            {{ file.name }}
+                                            <i
+                                                (click)="onFileRemove(file.name)"
+                                                class="pi pi-trash text-danger"
+                                                style="cursor: pointer; font-size: 1.2rem"></i>
+                                        </div>
+                                    </ng-template>
+                                </p-fileUpload>
+                                <app-error-field
+                                    [formControlInstance]="form.controls.files"
+                                    translationPrefix="modules.providers.register.errors" />
+                            </div>
+                        </div>
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+
+                        <div class="row mb-2">
+                            <div class="col-lg-8">
+                                <label class="form-label">
+                                    {{ t('modules.providers.register.date') }}
+                                </label>
+                                <input pInputText [disabled]="true" type="text" class="w-100" [value]="currentDate" />
+                            </div>
+                        </div>
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <div class="d-flex gap-3 mt-4">
+                            <button
+                                *transloco="let buttonT"
+                                pButton
+                                type="button"
+                                class="p-button-danger"
+                                [loading]="registerMutation.isLoading"
+                                [disabled]="registerMutation.isLoading"
+                                [label]="buttonT('global.txtBack')"
+                                [attr.aria-label]="buttonT('global.txtBack')"
+                                (click)="goBack()"></button>
+                            <button
+                                pButton
+                                [loading]="registerMutation.isLoading"
+                                [disabled]="registerMutation.isLoading"
+                                [label]="t('modules.providers.register.submitButton')"
+                                type="submit"
+                                class="p-button me-3 p-button-primary"></button>
+                        </div>
+                    </form>
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+                        <div
+                            #helpSection
+                            class="h-100 p-3 bg-background-light-grey text-theme-primary-medium rounded-4 help-section"
+                            [innerHTML]="t('modules.providers.register.helpText')"></div>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</section>

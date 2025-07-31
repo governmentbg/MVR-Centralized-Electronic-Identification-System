@@ -1,0 +1,108 @@
+<ng-container *transloco="let t" [formGroup]="form">
+    <div class="row">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.providers.register.AIS') }}
+            </h6>
+        </div>
+    </div>
+    <!-- System Name -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="systemName" class="form-label">
+                {{ t('modules.providers.register.systemName') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="systemName" type="text" class="w-100" formControlName="name" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.name"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Project Name -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="projectName" class="form-label">
+                {{ t('modules.providers.register.projectName') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="projectName" type="text" class="w-100" formControlName="project" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.project"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Source IP -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="sourceIp" class="form-label">
+                {{ t('modules.providers.register.sourceIp') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                id="sourceIp"
+                type="text"
+                class="w-100"
+                formControlName="sourceIp"
+                (input)="onSourceIpInput($event)" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.sourceIp"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Destination IP -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="destinationIp" class="form-label">
+                {{ t('modules.providers.register.destinationIp') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                id="destinationIp"
+                type="text"
+                class="w-100"
+                formControlName="destinationIp"
+                (input)="onDestinationIpInput($event)" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.destinationIp"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Destination IP Type -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="destinationIpType" class="form-label">
+                {{ t('modules.providers.register.destinationIpType') }}
+                <span class="text-danger">*</span>
+            </label>
+            <p-dropdown
+                formControlName="destinationIpType"
+                [options]="destinationIpTypes"
+                optionLabel="name"
+                optionValue="id"
+                styleClass="w-100"
+                inputId="destinationIpType">
+            </p-dropdown>
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.destinationIpType"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="protocolPort" class="form-label">
+                {{ t('modules.providers.register.protocolPort') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="protocolPort" type="text" class="w-100" formControlName="protocolPort" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.protocolPort"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <div>
+        {{ t('modules.providers.register.terms') }}
+    </div>
+</ng-container>

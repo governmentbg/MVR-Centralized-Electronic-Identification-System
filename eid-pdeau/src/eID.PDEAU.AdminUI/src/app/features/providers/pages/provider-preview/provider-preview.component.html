@@ -1,0 +1,67 @@
+<section class="h-100" *transloco="let t; read: 'modules.providers.application-preview'">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="d-flex mb-4 align-items-center">
+        <h4 class="text-uppercase mb-0">
+            {{ t('txtTitle') }}
+        </h4>
+    </div>
+    <p-card>
+        <p-tabView>
+            <p-tabPanel [header]="t('tabs.txtDetails')">
+                <app-provider-details
+                    [application]="providerQuery.data"
+                    [isLoading]="providerQuery.isLoading"></app-provider-details>
+            </p-tabPanel>
+            <p-tabPanel [disabled]="providerQuery.isLoading" [header]="t('tabs.txtUsers')">
+                <app-users-table
+                    [users]="providerQuery.data?.users || []"
+                    [providerId]="providerId"
+                    (refreshUsers)="refreshQuery()"
+                    [allowUsersModification]="allowUsersModification"></app-users-table>
+            </p-tabPanel>
+            <p-tabPanel [disabled]="providerQuery.isLoading" [header]="t('tabs.txtFiles')">
+                <app-files-table [files]="providerQuery.data?.files || []" [providerId]="providerId"></app-files-table>
+            </p-tabPanel>
+            <p-tabPanel [disabled]="providerQuery.isLoading" [header]="t('tabs.txtHistory')" *ngIf="providerId">
+                <app-status-history [providerId]="providerId"></app-status-history>
+            </p-tabPanel>
+
+            <ng-container
+                *ngIf="
+                    !providerQuery.isLoading &&
+                    providerQuery.data?.status !== ProviderStatus.enum.ReturnedForCorrection &&
+                    providerQuery.data?.status !== ProviderStatus.enum.InReview
+                ">
+                <p-tabPanel [disabled]="providerQuery.isLoading" [header]="t('tabs.txtStatistics')" *ngIf="providerId">
+                    <app-statistics-table [providerId]="providerId"></app-statistics-table>
+                </p-tabPanel>
+            </ng-container>
+        </p-tabView>
+        <div class="mt-4 d-flex gap-4">
+            <button
+                *transloco="let buttonT"
+                pButton
+                type="button"
+                class="p-button-primary"
+                [label]="buttonT('global.txtBack')"
+                [attr.aria-label]="buttonT('global.txtBack')"
+                (click)="onClosePreview()"></button>
+            <ng-container *ngIf="providerQuery.data && providerQuery.data.status === 'InReview'">
+                <app-provider-return-dialog
+                    [providerId]="providerId"
+                    (successCallback)="onClosePreview()"></app-provider-return-dialog>
+            </ng-container>
+            <ng-container *ngIf="providerQuery.data && providerQuery.data.status !== 'Denied'">
+                <app-provider-deny-dialog
+                    [providerId]="providerId"
+                    [actionType]="providerQuery.data.status === 'Active' ? 'Terminate' : 'Deny'"
+                    (successCallback)="onClosePreview()"></app-provider-deny-dialog>
+            </ng-container>
+            <ng-container *ngIf="providerQuery.data && providerQuery.data.status === 'InReview'">
+                <app-provider-confirm-dialog
+                    [providerId]="providerId"
+                    (successCallback)="onClosePreview()"></app-provider-confirm-dialog>
+            </ng-container>
+        </div>
+    </p-card>
+</section>

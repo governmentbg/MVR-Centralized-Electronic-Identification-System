@@ -1,0 +1,28 @@
+<ng-container *transloco="let t; read: 'modules.services.service-preview.toggle-dialog'">
+    <p-dialog
+        [(visible)]="showDialog"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [style]="{ width: '50vw', maxWidth: '700px' }"
+        [header]="titleTranslation"
+        styleClass="primary-dialog">
+        <span>
+            {{ descriptionTranslation }}
+        </span>
+        <ng-template pTemplate="footer">
+            <p-button
+                styleClass="p-button-danger"
+                [label]="t('txtCancel')"
+                [ariaLabel]="t('txtCancel')"
+                (click)="hide()"></p-button>
+            <p-button
+                [disabled]="activateMutation.isLoading || deactivateMutation.isLoading"
+                [loading]="activateMutation.isLoading || deactivateMutation.isLoading"
+                [label]="t('txtConfirm')"
+                [ariaLabel]="t('txtConfirm')"
+                (click)="toggleService()"></p-button>
+        </ng-template>
+    </p-dialog>
+    <button pButton type="button" class="p-button" [label]="titleTranslation" (click)="show()"></button>
+</ng-container>

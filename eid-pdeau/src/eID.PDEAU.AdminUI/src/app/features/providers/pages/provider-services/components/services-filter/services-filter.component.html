@@ -1,0 +1,163 @@
+<aside role="services-filter" *transloco="let t" class="services-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas1">
+            <div class="offcanvas-header">
+                <h4>{{ t('filters.txtLabel') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas1"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div
+                    class="row mb-4"
+                    *appHasRole="[RoleType.CIS_BACKOFFICE, RoleType.APP_ADMINISTRATOR, RoleType.OPERATOR]">
+                    <div class="col">
+                        <label for="serviceNumber" class="form-label">
+                            {{ t('modules.services.services-table.filter.serviceNumber') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="serviceNumber"
+                            type="text"
+                            class="w-100"
+                            formControlName="serviceNumber"
+                            [placeholder]="t('modules.services.services-table.filter.serviceNumberPlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="name" class="form-label">
+                            {{ t('modules.services.services-table.filter.name') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="name"
+                            type="text"
+                            class="w-100"
+                            formControlName="name"
+                            [placeholder]="t('modules.services.services-table.filter.namePlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="includeEmpowermentOnly" class="form-label"
+                            >{{ t('modules.services.services-table.filter.includeEmpowermentOnly') }}
+                        </label>
+                        <div>
+                            <p-inputSwitch
+                                inputId="includeEmpowermentOnly"
+                                formControlName="includeEmpowermentOnly"></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="includeDeleted" class="form-label"
+                            >{{ t('modules.services.services-table.filter.includeDeleted') }}
+                        </label>
+                        <div>
+                            <p-inputSwitch inputId="includeDeleted" formControlName="includeDeleted"></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="includeWithoutScope" class="form-label"
+                            >{{ t('modules.services.services-table.filter.includeWithoutScope') }}
+                        </label>
+                        <div>
+                            <p-inputSwitch
+                                inputId="includeWithoutScope"
+                                formControlName="includeWithoutScope"></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="includeInactive" class="form-label"
+                            >{{ t('modules.services.services-table.filter.includeInactive') }}
+                        </label>
+                        <div>
+                            <p-inputSwitch inputId="includeInactive" formControlName="includeInactive"></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="includeApprovedOnly" class="form-label"
+                            >{{ t('modules.services.services-table.filter.includeApprovedOnly') }}
+                        </label>
+                        <div>
+                            <p-inputSwitch
+                                inputId="includeApprovedOnly"
+                                formControlName="includeApprovedOnly"></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <p-button
+                    (click)="clearFilterValues()"
+                    [label]="t('filters.txtCancel')"
+                    styleClass="p-button p-button-danger me-3 app-button-small"></p-button>
+                <p-button
+                    [label]="t('filters.txtApply')"
+                    type="submit"
+                    [disabled]="!filterForm.dirty"
+                    styleClass="p-button me-3 p-button-primary app-button-small"
+                    data-bs-toggle="offcanvas1"
+                    data-bs-target="#offcanvas1"></p-button>
+            </div>
+        </div>
+        <div class="offcanvas-backdrop fade show" *ngIf="visible"></div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="services-filter-choice">
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-between">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas1"
+                data-bs-target="#offcanvas1"
+                (click)="openFilter()"
+                [label]="t('filters.txtFilterButton')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                icon="pi pi-refresh"
+                (click)="refreshData()"
+                [label]="t('global.txtRefresh')"></button>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="appliedFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of appliedFilters">
+                <p-chip
+                    [label]="t('modules.services.services-table.filter.' + filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="appliedFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearFilterValues()"
+                [attr.aria-labelledby]="t('filters.txtClearAll')">
+                {{ t('filters.txtClearAll') }}
+            </button>
+        </div>
+    </div>
+</section>

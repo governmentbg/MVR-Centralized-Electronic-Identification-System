@@ -1,0 +1,28 @@
+<aside class="d-sm-flex flex-column sidebar-menu h-100 flex-shrink-0" *transloco="let t">
+    <nav class="nav flex-column pt-3">
+        <a
+            class="nav-link"
+            [routerLink]="['empowerment-check']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <i class="material-icons-outlined pe-3">&#xe939;</i>
+            {{ t('empowermentCheckModule.sidebar.txtEmpowermentReference') }}
+        </a>
+        <a
+            class="nav-link"
+            [routerLink]="['provider-register']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <i class="material-icons-outlined pe-3">&#xe939;</i>
+            {{ t('empowermentCheckModule.sidebar.providerRegister') }}
+        </a>
+        <a
+            class="nav-link"
+            [routerLink]="['user-register']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <i class="material-icons-outlined pe-3">&#xe939;</i>
+            {{ t('empowermentCheckModule.sidebar.userRegister') }}
+        </a>
+    </nav>
+</aside>

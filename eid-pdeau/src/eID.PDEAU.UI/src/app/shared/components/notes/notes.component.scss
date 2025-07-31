@@ -1,0 +1,11 @@
+:host {
+    flex: 1;
+}
+.status-history-container {
+    .separator {
+        height: 2px;
+        background-color: #dcdcdc;
+        margin: 4px 0;
+        width: 100%;
+    }
+}

@@ -1,0 +1,291 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-4 text-text-default">
+                {{ t('modules.administrators.register.title') }}
+            </h4>
+            <p-card styleClass="mb-3">
+                <p-steps
+                    class="d-none d-lg-block"
+                    [model]="items"
+                    [readonly]="false"
+                    [activeIndex]="activeIndex"
+                    (activeIndexChange)="onActiveIndexChange($event)"></p-steps>
+                <p-dropdown
+                    class="d-lg-none"
+                    [options]="items"
+                    optionLabel="label"
+                    optionValue="id"
+                    [(ngModel)]="activeIndex"
+                    (onChange)="onActiveIndexChange($event.value)"
+                    styleClass="w-100"
+                    appendTo="body"></p-dropdown>
+            </p-card>
+            <p-card>
+                <div class="row">
+                    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="col">
+                        <!-- Applicant Data -->
+                        <ng-container *ngIf="activeIndex === 0">
+                            <div class="row">
+                                <div class="col-xl-6 col-xxl-5">
+                                    <label class="form-label">
+                                        {{ t('modules.providers.register.externalNumber') }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input pInputText formControlName="referenceNumber" type="text" class="w-100" />
+                                    <app-error-field
+                                        [formControlInstance]="applicationForm.controls.referenceNumber"
+                                        translationPrefix="modules.providers.register.errors" />
+                                </div>
+                            </div>
+                            <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                            <div formGroupName="applicant">
+                                <div class="row">
+                                    <div class="col">
+                                        <h6 class="text-text-default mb-4">
+                                            {{ t('modules.administrators.register.applicantData') }}
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-xl-3 col-xxl-2">
+                                        <label for="citizenIdentifierType" class="form-label">
+                                            {{ t('modules.administrators.register.applicantUidType') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <p-dropdown
+                                            formControlName="citizenIdentifierType"
+                                            [options]="identifierTypes"
+                                            optionLabel="name"
+                                            optionValue="id"
+                                            styleClass="w-100"
+                                            inputId="citizenIdentifierType">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-xl-3 col-xxl-3">
+                                        <label for="citizenIdentifierNumber" class="form-label"
+                                            >{{ t('modules.administrators.register.applicantUid') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            id="citizenIdentifierNumber"
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="citizenIdentifierNumber" />
+                                        <app-error-field
+                                            [formControlInstance]="
+                                                applicationForm.controls.applicant.controls.citizenIdentifierNumber
+                                            "
+                                            translationPrefix="modules.users.userForm.errors"
+                                            [order]="['required', 'EgnError', 'EgnAdultError']" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-xl-6 col-xxl-5">
+                                        <label for="applicantName" class="form-label">
+                                            {{ t('modules.administrators.register.applicantName') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            id="applicantName"
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="name" />
+                                        <app-error-field
+                                            [formControlInstance]="applicationForm.controls.applicant.controls.name"
+                                            translationPrefix="modules.providers.register.errors" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-xl-6 col-xxl-5">
+                                        <label for="nameLatin" class="form-label">
+                                            {{ t('modules.administrators.register.nameLatin') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            id="nameLatin"
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="nameLatin" />
+                                        <app-error-field
+                                            [formControlInstance]="
+                                                applicationForm.controls.applicant.controls.nameLatin
+                                            "
+                                            translationPrefix="modules.providers.register.errors" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-xl-6 col-xxl-5">
+                                        <label for="email" class="form-label">
+                                            {{ t('modules.administrators.register.email') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            id="email"
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="email" />
+                                        <app-error-field
+                                            [formControlInstance]="applicationForm.controls.applicant.controls.email"
+                                            translationPrefix="modules.providers.register.errors" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-xl-6 col-xxl-5">
+                                        <label for="phoneNumber" class="form-label">
+                                            {{ t('modules.administrators.register.phoneNumber') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            appDigitOnly
+                                            appPrefixPhoneInput
+                                            id="phoneNumber"
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="phoneNumber" />
+                                        <app-error-field
+                                            [formControlInstance]="
+                                                applicationForm.controls.applicant.controls.phoneNumber
+                                            "
+                                            translationPrefix="modules.providers.register.errors" />
+                                    </div>
+                                </div>
+                            </div>
+                            <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="text-text-default mb-4">
+                                        {{ t('modules.administrators.register.applicantLegalData') }}
+                                    </h6>
+                                </div>
+                            </div>
+                            <app-administrative-body-form [form]="applicationForm" />
+                        </ng-container>
+                        <ng-container *ngIf="activeIndex === 1">
+                            <app-legal-representatives-list
+                                [form]="applicationForm.controls.authorizedPersons"></app-legal-representatives-list>
+                        </ng-container>
+
+                        <ng-container *ngIf="activeIndex === 2">
+                            <app-devices-list [form]="applicationForm.controls.devices"></app-devices-list>
+                            <app-error-field
+                                [formControlInstance]="applicationForm.controls.devices"
+                                translationPrefix="modules.administrators.register.errors" />
+                        </ng-container>
+
+                        <ng-container *ngIf="activeIndex === 3">
+                            <app-offices-list
+                                [form]="applicationForm.controls.eidManagerFrontOffices"></app-offices-list>
+                            <app-error-field
+                                [formControlInstance]="applicationForm.controls.eidManagerFrontOffices"
+                                translationPrefix="modules.administrators.register.errors" />
+                        </ng-container>
+
+                        <ng-container *ngIf="activeIndex === 4">
+                            <app-employees-list [form]="applicationForm.controls.employees"></app-employees-list>
+                            <app-error-field
+                                [formControlInstance]="applicationForm.controls.employees"
+                                translationPrefix="modules.administrators.register.errors" />
+                        </ng-container>
+
+                        <div class="row mb-2" [hidden]="activeIndex !== 5">
+                            <div class="col col-xl-6 col-xxl-5">
+                                <h6 class="text-text-default mb-4">
+                                    {{ t('modules.administrators.register.files') }}
+                                </h6>
+                                <div [formGroup]="documentForm">
+                                    <div
+                                        *ngFor="
+                                            let attachment of documentForm.controls.attachments.controls;
+                                            let i = index
+                                        ">
+                                        <h6 class="text-text-default mt-4">
+                                            {{ i + 1 }}.
+                                            {{
+                                                getDocumentTypeDescriptionById(
+                                                    attachment.controls['documentType'].value
+                                                )
+                                            }}
+                                            <ng-container
+                                                *ngIf="attachment.controls['files'].hasValidator(Validators.required)"
+                                                ><span class="text-danger">*</span></ng-container
+                                            >
+                                        </h6>
+                                        <p-fileUpload
+                                            #fileUpload
+                                            [showUploadButton]="false"
+                                            [customUpload]="true"
+                                            (onSelect)="onFileChange($event, attachment)"
+                                            (onClear)="onFileClear(attachment)"
+                                            [multiple]="false"
+                                            [previewWidth]="1"
+                                            accept=".pdf">
+                                            <ng-template let-file pTemplate="file">
+                                                <div class="d-flex gap-2">
+                                                    {{ file.name }}
+                                                    <i
+                                                        (click)="onFileRemove(file.name, attachment, fileUpload)"
+                                                        class="pi pi-trash text-danger"
+                                                        style="cursor: pointer; font-size: 1.2rem"></i>
+                                                </div>
+                                            </ng-template>
+                                        </p-fileUpload>
+                                        <app-error-field
+                                            [formControlInstance]="attachment.controls['files']"
+                                            translationPrefix="modules.administrators.register.errors" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ng-container *ngIf="activeIndex === 6">
+                            <app-register-form-preview [form]="applicationForm"></app-register-form-preview>
+                        </ng-container>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button
+                                pButton
+                                type="button"
+                                class="p-button-danger"
+                                [label]="t('global.txtClose')"
+                                [attr.aria-label]="t('global.txtClose')"
+                                (click)="cancelRegister()"></button>
+                            <button
+                                *ngIf="activeIndex !== 0"
+                                pButton
+                                type="button"
+                                class="p-button-outlined"
+                                [label]="t('global.txtBack')"
+                                [attr.aria-label]="t('global.txtBack')"
+                                (click)="activeIndex = activeIndex - 1"></button>
+                            <button
+                                *ngIf="activeIndex !== items.length - 1"
+                                pButton
+                                type="button"
+                                class="p-button me-3 p-button-primary"
+                                [loading]="registerMutation.isLoading"
+                                [disabled]="registerMutation.isLoading"
+                                [label]="t('global.txtContinue')"
+                                (click)="activeIndex = activeIndex + 1"></button>
+                            <button
+                                *ngIf="activeIndex === items.length - 1"
+                                pButton
+                                [loading]="registerMutation.isLoading"
+                                [disabled]="registerMutation.isLoading"
+                                [label]="t('modules.administrators.register.submitButton')"
+                                type="submit"
+                                class="p-button me-3 p-button-primary"></button>
+                        </div>
+                    </form>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</section>

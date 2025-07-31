@@ -1,0 +1,82 @@
+@import '../../../../../../styles//variables.scss';
+.users-filter {
+    width: 435px;
+
+    .offcanvas-header {
+        background-color: $theme-secondary-light;
+        border-bottom: 1px solid $theme-primary-light;
+        padding: 1.125rem 1rem;
+
+        h4 {
+            color: $text-default;
+            text-transform: uppercase;
+            margin: 0;
+        }
+    }
+
+    ::ng-deep .offcanvas-body {
+        padding: 1.5rem;
+        border-bottom: 1px solid $theme-primary-light;
+
+        p {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: $text-default;
+            margin-bottom: 0.5rem;
+        }
+
+        label {
+            margin-bottom: 0.25rem;
+        }
+
+        p-chips {
+            width: 100%;
+
+            .p-chips.p-component {
+                display: flex;
+                width: 100%;
+
+                .p-chips-multiple-container {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    .offcanvas-footer {
+        padding: 1.5rem;
+        background-color: $theme-secondary-light;
+    }
+
+    .offcanvas:not(.show) > .offcanvas-footer {
+        display: none;
+    }
+
+    .field-spacer {
+        width: 48px;
+        min-width: 48px;
+    }
+}
+
+.users-filter-choice {
+    i {
+        margin-right: 0.625rem;
+    }
+
+    ::ng-deep p-chip .p-chip {
+        margin: 0.5rem;
+        background-color: 0.8;
+        border-radius: 0.25rem;
+
+        .p-chip-text,
+        .pi-chip-remove-icon {
+            color: $text-dark;
+        }
+    }
+
+    .btn-link {
+        color: $text-active;
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+}

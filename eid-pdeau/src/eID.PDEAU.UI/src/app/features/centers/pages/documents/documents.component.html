@@ -1,0 +1,206 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-text-default">{{ t('modules.centers.documents.txtTitle') }}</h4>
+            <p-button
+                (onClick)="add()"
+                styleClass="p-button-success"
+                [label]="t('global.txtAdd')"
+                icon="pi pi-plus"></p-button>
+        </div>
+        <p-card>
+            <div class="col" *transloco="let t; read: 'modules.centers.center-preview.files-table'">
+                <p-table
+                    dataKey="id"
+                    [value]="files"
+                    [tableStyle]="{ 'min-width': '100%' }"
+                    [rowHover]="true"
+                    loadingIcon="pi pi-spin pi-spinner"
+                    [loading]="fetchDocumentList.isLoading"
+                    [sortOrder]="1"
+                    [rowSelectable]="false">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="fileName" class="text-nowrap">
+                                {{ t('txtFileName') }}
+                                <p-sortIcon field="fileName"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap">
+                                {{ t('txtType') }}
+                            </th>
+                            <th pSortableColumn="createDate" class="text-nowrap">
+                                {{ t('txtUploadedOn') }}
+                                <p-sortIcon field="createDate"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-file>
+                        <tr>
+                            <td style="max-width: 18rem" [attr.aria-label]="file.fileName" [title]="file.fileName">
+                                <span class="multiline-ellipsis">{{ file.fileName }}</span>
+                            </td>
+                            <td
+                                style="max-width: 18rem"
+                                [attr.aria-label]="file.documentType.name"
+                                [title]="file.documentType.name">
+                                <span class="multiline-ellipsis">{{ file.documentType.name }}</span>
+                            </td>
+                            <td
+                                style="max-width: 18rem"
+                                [attr.aria-label]="file.createDate | translocoDate : { timeStyle: 'medium' }"
+                                [title]="file.createDate | translocoDate : { timeStyle: 'medium' }">
+                                <span class="multiline-ellipsis">
+                                    {{ file.createDate | translocoDate : { timeStyle: 'medium' } }}
+                                </span>
+                            </td>
+                            <td style="width: 10rem">
+                                <div class="d-flex" *transloco="let globalT">
+                                    <button
+                                        (click)="downloadFile.execute(file.id)"
+                                        pButton
+                                        type="button"
+                                        [title]="
+                                            globalT('modules.centers.applications.table.details.txtPreviewApplication')
+                                        "
+                                        [attr.aria-label]="
+                                            globalT('modules.centers.applications.table.details.txtPreviewApplication')
+                                        "
+                                        class="p-button-sm p-button-text">
+                                        <i class="material-icons-outlined">&#xe2c4;</i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="4">
+                                <span
+                                    *transloco="let globalT; read: ''"
+                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                    <img src="/assets/images/noresults.png" [alt]="globalT('aria.txtLogo')" />
+                                    <span
+                                        class="text-text-light"
+                                        [attr.aria-label]="globalT('global.txtNoRecordsFound')">
+                                        {{ globalT('global.txtNoRecordsFound') }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-card>
+        <p-dialog
+            header="Header"
+            [(visible)]="showDialog"
+            [style]="{ width: '50vw', maxWidth: '960px' }"
+            [breakpoints]="{ '1200px': '75vw' }"
+            [draggable]="false"
+            [resizable]="false"
+            [modal]="true">
+            <ng-template pTemplate="header">
+                <span class="text-xl font-bold text-uppercase">{{
+                    t('modules.centers.documents.txtAddDocuments')
+                }}</span>
+            </ng-template>
+            <form [formGroup]="documentForm" (ngSubmit)="onSubmit()">
+                <div class="row mb-2">
+                    <div class="col">
+                        <div>
+                            <div class="d-flex align-items-end gap-3">
+                                <div>
+                                    <label for="document">{{ t('modules.centers.register.files') }}</label>
+                                    <p-dropdown
+                                        inputId="document"
+                                        [options]="documentTypes"
+                                        optionLabel="name"
+                                        optionValue="id"
+                                        [(ngModel)]="documentType"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        styleClass="w-100"
+                                        appendTo="body"></p-dropdown>
+                                </div>
+                                <p-button
+                                    [label]="t('modules.centers.register.txtAddFile')"
+                                    icon="pi pi-plus"
+                                    (onClick)="addFile($event)"></p-button>
+                            </div>
+
+                            <p-fileUpload
+                                styleClass="d-none"
+                                #documentComponent
+                                [showUploadButton]="false"
+                                [customUpload]="true"
+                                [multiple]="false"
+                                [previewWidth]="1"
+                                (onSelect)="onFileChange($event)"
+                                accept=".pdf">
+                                <ng-template let-file pTemplate="file">
+                                    <div class="d-flex gap-2">
+                                        {{ file.name }}
+                                    </div>
+                                </ng-template>
+                            </p-fileUpload>
+
+                            <ul class="mt-4 list-unstyled">
+                                <li
+                                    class="d-flex align-items-center"
+                                    *ngFor="
+                                        let attachment of documentForm.controls.attachments.controls;
+                                        let i = index
+                                    ">
+                                    <i class="material-icons-outlined me-2">&#xe873;</i>
+                                    {{ attachment.getRawValue().fileName }}
+                                    <button
+                                        pButton
+                                        type="button"
+                                        class="p-button-sm p-button-text ms-2"
+                                        (click)="removeFile(i)">
+                                        <i class="pi pi-trash"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <p-divider type="solid"></p-divider>
+                <div class="d-flex gap-3 justify-content-center" *transloco="let tGlobal">
+                    <button
+                        pButton
+                        type="button"
+                        (click)="onClosePreview()"
+                        class="p-button p-button-danger"
+                        [disabled]="addDocumentQuery.isLoading">
+                        {{ tGlobal('global.txtClose') }}
+                    </button>
+                    <button
+                        pButton
+                        [label]="tGlobal('global.txtSubmit')"
+                        [loading]="addDocumentQuery.isLoading"
+                        type="submit"
+                        class="p-button me-3 p-button-primary"></button>
+                </div>
+            </form>
+        </p-dialog>
+    </div>
+</section>

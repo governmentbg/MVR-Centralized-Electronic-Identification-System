@@ -1,0 +1,18 @@
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
+@import '../../../styles/variables';
+
+.navbar {
+    height: auto;
+    flex-wrap: nowrap;
+
+    @include media-breakpoint-up(sm) {
+        height: $authorized-header-height;
+    }
+
+    .subtitle {
+        font-size: 0.75rem;
+        color: $text-active;
+    }
+}
