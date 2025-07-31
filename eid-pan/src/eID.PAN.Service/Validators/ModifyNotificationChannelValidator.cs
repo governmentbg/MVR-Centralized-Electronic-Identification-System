@@ -8,6 +8,8 @@ public class ModifyNotificationChannelValidator : AbstractValidator<ModifyNotifi
     public ModifyNotificationChannelValidator()
     {
         RuleFor(r => r.Name).NotEmpty().MinimumLength(2).MaximumLength(64);
+        RuleFor(r => r.SystemName).NotEmpty().MinimumLength(2).MaximumLength(1024);
+        RuleFor(r => r.Email).NotEmpty().EmailAddress();
         RuleFor(r => r.CallbackUrl).NotEmpty();
         RuleFor(r => r.InfoUrl).NotEmpty();
         RuleFor(r => r.Translations)

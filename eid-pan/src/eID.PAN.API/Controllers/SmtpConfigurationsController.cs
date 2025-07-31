@@ -10,10 +10,8 @@ namespace eID.PAN.API.Controllers;
 
 public class SmtpConfigurationsController : BaseV1Controller
 {
-    public SmtpConfigurationsController(
-        IConfiguration configuration,
-        ILogger<SmtpConfigurationsController> logger,
-        AuditLogger auditLogger) : base(configuration, logger, auditLogger)
+    public SmtpConfigurationsController(ILogger<SmtpConfigurationsController> logger, IConfiguration configuration, AuditLogger auditLogger)
+        : base(logger, configuration, auditLogger)
     {
 
     }
@@ -34,9 +32,13 @@ public class SmtpConfigurationsController : BaseV1Controller
         CancellationToken cancellationToken,
         [FromBody] CreateSmtpConfigurationRequest request)
     {
+        var logEventCode = LogEventCode.CREATE_SMTP_CONFIGURATION;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("UserId", GetUid()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -49,12 +51,10 @@ public class SmtpConfigurationsController : BaseV1Controller
                     request.SecurityProtocol,
                     request.UserName,
                     request.Password,
-                    UserId = GetUserId(),
+                    UserId = GetUid(),
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.CreateSmtpConfiguration);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -93,8 +93,6 @@ public class SmtpConfigurationsController : BaseV1Controller
                     request.PageIndex
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetSmtpConfigurationsByFilter);
-
         return Result(serviceResult);
     }
 
@@ -132,8 +130,6 @@ public class SmtpConfigurationsController : BaseV1Controller
                     request.Id
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetSmtpConfigurationById);
-
         return Result(serviceResult);
     }
 
@@ -143,7 +139,7 @@ public class SmtpConfigurationsController : BaseV1Controller
     /// <param name="client"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="id"></param>
-    /// <param name="request"></param>
+    /// <param name="payload"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -153,13 +149,26 @@ public class SmtpConfigurationsController : BaseV1Controller
         [FromServices] IRequestClient<UpdateSmtpConfiguration> client,
         CancellationToken cancellationToken,
         [FromRoute] string id,
-        [FromBody] UpdateSmtpConfigurationRequest request)
+        [FromBody] UpdateSmtpConfigurationPayload payload)
     {
-        request.Id = id;
+        var request = new UpdateSmtpConfigurationRequest
+        {
+            Id = id,
+            Server = payload.Server,
+            Port = payload.Port,
+            SecurityProtocol = payload.SecurityProtocol,
+            UserName = payload.UserName,
+            Password = payload.Password,
+        };
+
+        var logEventCode = LogEventCode.UPDATE_SMTP_CONFIGURATION;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("SmtpConfigurationId", request.Id),
+            ("UserId", GetUid()));
 
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -173,12 +182,10 @@ public class SmtpConfigurationsController : BaseV1Controller
                     request.SecurityProtocol,
                     request.UserName,
                     request.Password,
-                    UserId = GetUserId(),
+                    UserId = GetUid(),
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.UpdateSmtpConfiguration);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -194,16 +201,21 @@ public class SmtpConfigurationsController : BaseV1Controller
     public async Task<IActionResult> DeleteSmtpConfigurationAsync(
         [FromServices] IRequestClient<DeleteSmtpConfiguration> client,
         CancellationToken cancellationToken,
-        [FromRoute] string id)
+        [FromRoute] Guid id)
     {
         var request = new DeleteSmtpConfigurationRequest
         {
             Id = id,
         };
 
+        var logEventCode = LogEventCode.DELETE_SMTP_CONFIGURATION;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("SmtpConfigurationId", request.Id),
+            ("UserId", GetUid()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -214,8 +226,6 @@ public class SmtpConfigurationsController : BaseV1Controller
                     request.Id
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.DeleteSmtpConfiguration);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 }

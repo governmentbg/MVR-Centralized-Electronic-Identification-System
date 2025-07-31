@@ -2,7 +2,7 @@
 
 namespace eID.PAN.Contracts.Commands;
 
-public interface GetUserNotificationsByFilter : CorrelatedBy<Guid>
+public interface GetSystemsAndNotificationsByFilter : CorrelatedBy<Guid>
 {
     public int PageIndex { get; set; }
     public int PageSize { get; set; }

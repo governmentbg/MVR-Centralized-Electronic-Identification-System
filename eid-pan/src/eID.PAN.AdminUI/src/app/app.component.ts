@@ -2,8 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FilterMatchMode, PrimeNGConfig } from 'primeng/api';
 import { TranslocoService } from '@ngneat/transloco';
 import { Subscription } from 'rxjs';
-import { KeycloakEventType, KeycloakService } from 'keycloak-angular';
-import { AuthService } from './core/services/auth.service';
+import { OAuthErrorEvent, OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
     selector: 'app-root',
@@ -14,25 +13,25 @@ export class AppComponent implements OnInit, OnDestroy {
     constructor(
         private primengConfig: PrimeNGConfig,
         public translateService: TranslocoService,
-        private keycloakService: KeycloakService,
-        private authService: AuthService
+        private oAuthService: OAuthService
     ) {
         this.subscription = translateService.langChanges$.subscribe(() => {
             this.primengConfig.setTranslation(this.translateService.translateObject('primeng'));
         });
 
-        this.keycloakSubscription = keycloakService.keycloakEvents$.subscribe({
-            next(event) {
-                if (event.type == KeycloakEventType.OnTokenExpired) {
-                    authService.removeTokenData();
-                    keycloakService.logout();
+        this.oauthSubscription.add(
+            this.oAuthService.events.subscribe((event: OAuthEvent | OAuthErrorEvent) => {
+                if (event.type === 'token_expires') {
+                    // Handle token expiration event
+                    this.oauthSubscription.unsubscribe();
+                    this.oAuthService.revokeTokenAndLogout();
                 }
-            },
-        });
+            })
+        );
     }
 
     subscription: Subscription;
-    keycloakSubscription: Subscription;
+    oauthSubscription: Subscription = new Subscription();
     title = 'eID.PAN.AdminUI';
 
     ngOnInit() {
@@ -61,10 +60,14 @@ export class AppComponent implements OnInit, OnDestroy {
                 FilterMatchMode.DATE_AFTER,
             ],
         };
+        const activeLanguage = this.translateService.getActiveLang();
+        this.translateService.load(activeLanguage).subscribe(() => {
+            this.primengConfig.setTranslation(this.translateService.translateObject('primeng'));
+        });
     }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
-        this.keycloakSubscription.unsubscribe();
+        this.oauthSubscription.unsubscribe();
     }
 }

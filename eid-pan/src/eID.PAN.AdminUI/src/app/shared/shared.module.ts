@@ -11,6 +11,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { TranslocoRootModule } from '../transloco-root.module';
 import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
 import { FormsModule } from '@angular/forms';
+import { HasRoleDirective } from './directives/has-role.directive';
+import { PageUnauthorizedComponent } from './components/page-unauthorized/page-unauthorized.component';
 
 @NgModule({
     declarations: [
@@ -22,8 +24,10 @@ import { FormsModule } from '@angular/forms';
         ShellComponent,
         FooterComponent,
         LanguageSelectorComponent,
+        HasRoleDirective,
+        PageUnauthorizedComponent,
     ],
     imports: [CommonModule, RouterModule, TranslocoRootModule, FormsModule],
-    exports: [NavbarComponent, PageNotFoundComponent, InputComponent, TranslocoRootModule],
+    exports: [NavbarComponent, PageNotFoundComponent, InputComponent, TranslocoRootModule, HasRoleDirective],
 })
 export class SharedModule {}

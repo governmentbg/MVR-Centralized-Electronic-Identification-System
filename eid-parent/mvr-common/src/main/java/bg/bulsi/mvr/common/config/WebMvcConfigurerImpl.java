@@ -1,0 +1,32 @@
+//package bg.bulsi.mvr.common.config;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+//import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+//import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+//
+//import java.util.List;
+//
+//@Configuration
+//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+//public class WebMvcConfigurerImpl implements WebMvcConfigurer {
+//    private final ServletUserContextInterceptor requestInterceptor;
+//
+//    @Autowired
+//    public WebMvcConfigurerImpl(ServletUserContextInterceptor requestInterceptor) {
+//        this.requestInterceptor = requestInterceptor;
+//    }
+//
+//    @Override
+//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+//        resolvers.add(new PageableHandlerMethodArgumentResolver());
+//    }
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(requestInterceptor);
+//    }
+//}

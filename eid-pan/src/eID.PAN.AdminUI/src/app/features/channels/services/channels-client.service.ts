@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IChannelResponseData } from '../interfaces/ichannel';
+import { IChannelResponseData, IChannelTestResponseData } from '../interfaces/ichannel';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -23,11 +23,15 @@ export class ChannelsClientService {
         return this.http.put<any>(`${this.apiUrl}/${channelId}/restore`, {});
     }
 
-    rejectChannel(channelId: string): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${channelId}/reject`, {});
+    rejectChannel(channelId: string, reason: string): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/${channelId}/reject`, { reason: reason });
     }
 
     archiveChannel(channelId: string): Observable<any> {
         return this.http.put<any>(`${this.apiUrl}/${channelId}/archive`, {});
+    }
+
+    testChannel(channelId: string): Observable<IChannelTestResponseData> {
+        return this.http.get<IChannelTestResponseData>(`${this.apiUrl}/${channelId}/test`);
     }
 }

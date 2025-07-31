@@ -193,6 +193,13 @@ _HTTP Verb:_ `PUT`
 По тоя начин нямаме задължение данните които се изискват от `API` да са 1:1 с `Entity`.
 
 # Настройване на локална среда
+## Настройка на Git hook-ове
+
+За да активираш автоматичното управление на версиите, изпълни следната команда от **основната директория на проекта**:
+
+```bash
+./setup-hooks.sh
+
 ## Visual Studio 2022
 Visual Studio 2022 from [https://my.visualstudio.com](https://my.visualstudio.com).  
 
@@ -234,3 +241,7 @@ _По избор_ [Another Redis Desktop Manager](https://github.com/qishibo/Ano
 2. Отвори `\ServicePorts ExcluceAutoBindOurSrvPorts.txt`. Копирай съдържанието му.
 3. Отвори Command Prompt като администратор.
 4. Paste-ни копираното и го изпълни (натисни `Enter`)
+
+# Описание на APIs
+1. eID.PAN.API - за админинстраторите от МВР, Service to Service communication
+1. eID.PAN.API.Public - за граждани

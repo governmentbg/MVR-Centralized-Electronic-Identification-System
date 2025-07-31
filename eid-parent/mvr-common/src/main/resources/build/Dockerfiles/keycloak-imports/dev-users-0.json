@@ -1,0 +1,108 @@
+{
+  "realm" : "dev",
+  "users" : [ {
+    "id" : "186df427-b289-4c88-80bb-c611590215c4",
+    "createdTimestamp" : 1685108711353,
+    "username" : "admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Admin",
+    "lastName" : "Admin",
+    "email" : "admin@bul-si.bg",
+    "credentials" : [ {
+      "id" : "6a95e013-4ad9-4994-bc9e-7fc201108030",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685108727154,
+      "secretData" : "{\"value\":\"/=\",\"salt\":\"/==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "ROLE_ADMIN", "ROLE_USER", "default-roles-dev" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "3436eecb-803a-45d1-8cd5-14ec031985b6",
+    "createdTimestamp" : 1692604095896,
+    "username" : "service-account-mpozei",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "serviceAccountClientId" : "mpozei",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-dev" ],
+    "clientRoles" : {
+      "mpozei" : [ "uma_protection" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "8b98b56c-b22a-4eaa-afdf-5504d1af2595",
+    "createdTimestamp" : 1692604095896,
+    "username" : "service-account-mpozei-ext",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "serviceAccountClientId" : "mpozei-ext",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-dev" ],
+    "clientRoles" : {
+      "mpozei-ext" : [ "uma_protection" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "8d6c7304-7ee1-4ba4-ac25-09c38435c776",
+    "createdTimestamp" : 1685108625458,
+    "username" : "service-account-user-service",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "serviceAccountClientId" : "user-service",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-dev" ],
+    "clientRoles" : {
+      "user-service" : [ "uma_protection" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "43f43432-454c-4faa-bc8c-c2c4e1033213",
+    "createdTimestamp" : 1685108711353,
+    "username" : "user",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "User",
+    "lastName" : "User",
+    "email" : "user@bul-si.bg",
+    "attributes" : {
+      "USERID" : [ "eede5518-6f15-11ee-b962-0242ac120002" ],
+      "SUPPLIERID" : [ "EID_Administrator" ],
+      "eidadminfrontofficeid" : [ "e5c4b51f-8f78-479b-ae83-c9df4bbbfaa2" ],
+      "EGN" : [ "8888888888" ],
+      "eidadministratorid" : [ "9030e0ed-af59-444e-89e2-1ccda572c372" ]
+    },
+    "credentials" : [ {
+      "id" : "5f940e2c-875c-49b4-9189-b01637756e13",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685108727154,
+      "secretData" : "{\"value\":\"/=\",\"salt\":\"/==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "ROLE_USER", "default-roles-dev" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

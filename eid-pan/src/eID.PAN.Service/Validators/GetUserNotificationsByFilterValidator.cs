@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace eID.PAN.Service.Validators;
 
-public class GetUserNotificationsByFilterValidator : AbstractValidator<GetUserNotificationsByFilter>
+public class GetUserNotificationsByFilterValidator : AbstractValidator<GetSystemsAndNotificationsByFilter>
 {
     public GetUserNotificationsByFilterValidator()
     {

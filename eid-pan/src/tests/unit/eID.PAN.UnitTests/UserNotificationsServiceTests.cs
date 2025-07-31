@@ -52,7 +52,7 @@ public class UserNotificationsServiceTests : BaseTest
     public async Task GetByFilterAsync_WhenCalledWithInvalidFilterAsync()
     {
         // Arrange
-        var notificationFilter = CreateInterface<GetUserNotificationsByFilter>(new
+        var notificationFilter = CreateInterface<GetSystemsAndNotificationsByFilter>(new
         {
             PageIndex = 0,
             PageSize = 11,
@@ -70,7 +70,7 @@ public class UserNotificationsServiceTests : BaseTest
     public async Task GetByFilterAsync_WhenCalledWithInvalidMessage_ShouldReturnBadRequestServiceResultAsync()
     {
         // Arrange
-        var notificationFilter = CreateInterface<GetUserNotificationsByFilter>(new
+        var notificationFilter = CreateInterface<GetSystemsAndNotificationsByFilter>(new
         {
             PageIndex = 0,
             PageSize = 51
@@ -93,7 +93,7 @@ public class UserNotificationsServiceTests : BaseTest
     public async Task GetByFilterAsync_WhenCalledWithValidMessage_ShouldReturnOkAndEmptyServiceResultAsync()
     {
         // Arrange
-        var notificationFilter = CreateInterface<GetUserNotificationsByFilter>(new
+        var notificationFilter = CreateInterface<GetSystemsAndNotificationsByFilter>(new
         {
             PageIndex = 1,
             PageSize = 10,
@@ -133,7 +133,7 @@ public class UserNotificationsServiceTests : BaseTest
         _dbContext.RegisteredSystems.AddRange(registeredSystems);
         _dbContext.SaveChanges();
 
-        var notificationFilter = CreateInterface<GetUserNotificationsByFilter>(new
+        var notificationFilter = CreateInterface<GetSystemsAndNotificationsByFilter>(new
         {
             CorrelationId = Guid.NewGuid(),
             PageIndex = 2,

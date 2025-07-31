@@ -1,4 +1,5 @@
-﻿namespace eID.PAN.Service.Entities;
+﻿#nullable disable
+namespace eID.PAN.Service.Entities;
 
 public class UserNotificationChannel
 {
@@ -11,3 +12,4 @@ public class UserNotificationChannel
     public DateTime? ModifiedOn { get; set; }
     public string? ModifiedBy { get; set; }
 }
+#nullable restore

@@ -80,6 +80,28 @@ public class BaseService
         };
     }
 
+    protected static ServiceResult Conflict(string fieldName, object value, string message)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException($"'{nameof(fieldName)}' cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            throw new ArgumentException($"'{nameof(message)}' cannot be null or whitespace.", nameof(message));
+        }
+
+        return new ServiceResult
+        {
+            StatusCode = HttpStatusCode.Conflict,
+            Errors = new List<KeyValuePair<string, string>>
+            {
+                new (fieldName, $"'{value}' {message}")
+            }
+        };
+    }
+
     protected static ServiceResult NotFound(string fieldName, object value)
     {
         if (string.IsNullOrWhiteSpace(fieldName))

@@ -4,6 +4,7 @@ import { IChannel, IChannelResponseData } from '../../interfaces/ichannel';
 import { TranslocoService } from '@ngneat/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-channels',
@@ -23,7 +24,13 @@ export class ChannelsComponent implements OnInit, OnDestroy {
     selectedChannels: IChannel[] = [];
     value = 'approved';
     activeItem!: string;
-    actions = { approve: 'approve', deactivate: 'deactivate', reactivate: 'reactivate', reject: 'reject' };
+    actions = {
+        approve: 'approve',
+        deactivate: 'deactivate',
+        reactivate: 'reactivate',
+        reject: 'reject',
+        test: 'test',
+    };
     tabOptions: any[] = [];
     translocoSubscription!: Subscription;
     getChannelsSubscription: Subscription = new Subscription();
@@ -32,6 +39,11 @@ export class ChannelsComponent implements OnInit, OnDestroy {
     rejectChannelSubscription: Subscription = new Subscription();
     restoreChannelSubscription: Subscription = new Subscription();
     loading!: boolean;
+    rejectDialogVisible = false;
+    selectedChannel!: IChannel;
+    rejectForm = new FormGroup({
+        reason: new FormControl<string>('', Validators.required),
+    });
 
     ngOnInit() {
         this.loading = true;
@@ -105,6 +117,7 @@ export class ChannelsComponent implements OnInit, OnDestroy {
     }
 
     doAction(channel: IChannel, action: string): void {
+        this.selectedChannel = channel;
         switch (action) {
             case this.actions.approve:
                 this.confirmationService.confirm({
@@ -113,9 +126,28 @@ export class ChannelsComponent implements OnInit, OnDestroy {
                     header: this.translocoService.translate('global.txtConfirmation'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
+                        this.loading = true;
                         this.approveChannelSubscription.add(
-                            this.channelsClientService.approveChannel(channel.id).subscribe(() => {
-                                this.loadNotificationChannels();
+                            this.channelsClientService.approveChannel(channel.id).subscribe({
+                                next: () => {
+                                    this.loadNotificationChannels();
+                                },
+                                error: error => {
+                                    switch (error.status) {
+                                        case 400:
+                                            this.showErrorToast(
+                                                this.translocoService.translate('global.txtInvalidDataError')
+                                            );
+                                            break;
+                                        default:
+                                            this.showErrorToast(
+                                                this.translocoService.translate('global.txtUnexpectedError')
+                                            );
+                                            break;
+                                    }
+                                    this.loading = false;
+                                    this.loadNotificationChannels();
+                                },
                             })
                         );
                     },
@@ -131,9 +163,28 @@ export class ChannelsComponent implements OnInit, OnDestroy {
                     header: this.translocoService.translate('global.txtConfirmation'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
+                        this.loading = true;
                         this.archiveChannelSubscription.add(
-                            this.channelsClientService.archiveChannel(channel.id).subscribe(() => {
-                                this.loadNotificationChannels();
+                            this.channelsClientService.archiveChannel(channel.id).subscribe({
+                                next: () => {
+                                    this.loadNotificationChannels();
+                                },
+                                error: error => {
+                                    switch (error.status) {
+                                        case 400:
+                                            this.showErrorToast(
+                                                this.translocoService.translate('global.txtInvalidDataError')
+                                            );
+                                            break;
+                                        default:
+                                            this.showErrorToast(
+                                                this.translocoService.translate('global.txtUnexpectedError')
+                                            );
+                                            break;
+                                    }
+                                    this.loading = false;
+                                    this.loadNotificationChannels();
+                                },
                             })
                         );
                     },
@@ -149,15 +200,33 @@ export class ChannelsComponent implements OnInit, OnDestroy {
                     header: this.translocoService.translate('global.txtConfirmation'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
+                        this.loading = true;
                         this.restoreChannelSubscription.add(
                             this.channelsClientService.restoreChannel(channel.id).subscribe({
                                 next: () => {
                                     this.loadNotificationChannels();
                                 },
                                 error: error => {
-                                    if (error.status === 409) {
-                                        this.showErrorToast();
+                                    switch (error.status) {
+                                        case 400:
+                                            this.showErrorToast(
+                                                this.translocoService.translate('global.txtInvalidDataError')
+                                            );
+                                            break;
+                                        case 409:
+                                            this.showErrorToast(
+                                                this.translocoService.translate(
+                                                    'modules.channels.txtErrorNameAlreadyExists'
+                                                )
+                                            );
+                                            break;
+                                        default:
+                                            this.showErrorToast(
+                                                this.translocoService.translate('global.txtUnexpectedError')
+                                            );
+                                            break;
                                     }
+                                    this.loading = false;
                                     this.loadNotificationChannels();
                                 },
                             })
@@ -169,24 +238,10 @@ export class ChannelsComponent implements OnInit, OnDestroy {
                 });
                 break;
             case this.actions.reject:
-                this.confirmationService.confirm({
-                    rejectButtonStyleClass: 'p-button-danger',
-                    message: this.translocoService.translate('modules.channels.txtRejectConfirm'),
-                    header: this.translocoService.translate('global.txtConfirmation'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.rejectChannelSubscription.add(
-                            this.channelsClientService.rejectChannel(channel.id).subscribe({
-                                next: () => {
-                                    this.loadNotificationChannels();
-                                },
-                            })
-                        );
-                    },
-                    reject: () => {
-                        this.loadNotificationChannels();
-                    },
-                });
+                this.toggleRejectFormVisibility();
+                break;
+            case this.actions.test:
+                this.testChannel(channel.id);
                 break;
         }
     }
@@ -205,13 +260,101 @@ export class ChannelsComponent implements OnInit, OnDestroy {
         return foundTranslation ? foundTranslation.description : channel.description;
     }
 
-    showErrorToast() {
+    onRejectFormSubmit() {
+        this.rejectForm.markAllAsTouched();
+        this.rejectForm.controls.reason.markAsDirty();
+        if (this.rejectForm.valid) {
+            this.loading = true;
+            this.rejectChannelSubscription.add(
+                this.channelsClientService
+                    .rejectChannel(this.selectedChannel.id, this.rejectForm.controls.reason.value as string)
+                    .subscribe({
+                        next: () => {
+                            this.toggleRejectFormVisibility();
+                            this.loadNotificationChannels();
+                        },
+                        error: error => {
+                            switch (error.status) {
+                                case 400:
+                                    this.showErrorToast(this.translocoService.translate('global.txtInvalidDataError'));
+                                    break;
+                                default:
+                                    this.showErrorToast(this.translocoService.translate('global.txtUnexpectedError'));
+                                    break;
+                            }
+                            this.loading = false;
+                            this.loadNotificationChannels();
+                        },
+                    })
+            );
+        }
+    }
+
+    toggleRejectFormVisibility() {
+        this.rejectForm.reset();
+        this.rejectDialogVisible = !this.rejectDialogVisible;
+    }
+
+    showErrorToast(translation: string) {
         this.messageService.clear();
         this.messageService.add({
             key: 'toast',
             severity: 'error',
             summary: this.translocoService.translate('global.txtErrorTitle'),
-            detail: this.translocoService.translate('modules.channels.txtErrorNameAlreadyExists'),
+            detail: translation,
         });
+    }
+
+    showSuccessToast(translation: string) {
+        this.messageService.clear();
+        this.messageService.add({
+            key: 'toast',
+            severity: 'success',
+            summary: this.translocoService.translate('global.txtSuccessTitle'),
+            detail: translation,
+        });
+    }
+
+    testChannel(id: string) {
+        this.loading = true;
+        this.channelsClientService.testChannel(id).subscribe({
+            next: response => {
+                this.loading = false;
+                if (response.isSuccess) {
+                    this.showSuccessToast(this.translocoService.translate('modules.channels.txtSuccessfulTest'));
+                } else {
+                    this.showErrorToast(
+                        this.translocoService.translate('modules.channels.txtUnsuccessfulTest') +
+                            ` (${response.statusCode})`
+                    );
+                }
+            },
+            error: error => {
+                switch (error.status) {
+                    case 400:
+                        this.showErrorToast(this.translocoService.translate('global.txtInvalidDataError'));
+                        break;
+                    default:
+                        this.showErrorToast(this.translocoService.translate('global.txtUnexpectedError'));
+                        break;
+                }
+                this.loading = false;
+            },
+        });
+    }
+
+    get modifiedOnColumnLabel() {
+        switch (this.activeItem) {
+            case 'approved':
+                return this.translocoService.translate('modules.channels.txtActiveChannelsModifiedOnTitle');
+            case 'pending':
+                return this.translocoService.translate('modules.channels.txtAwaitingChannelsModifiedOnTitle');
+            case 'archived':
+                return this.translocoService.translate('modules.channels.txtInactiveChannelsModifiedOnTitle');
+            case 'rejected':
+                return this.translocoService.translate('modules.channels.txtRejectedChannelsModifiedOnTitle');
+            default:
+                return '';
+        }
     }
 }

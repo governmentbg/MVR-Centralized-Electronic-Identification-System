@@ -1,4 +1,5 @@
-﻿using eID.PAN.Contracts.Results;
+﻿#nullable disable
+using eID.PAN.Contracts.Results;
 using Newtonsoft.Json;
 
 namespace eID.PAN.Service.Entities;
@@ -55,3 +56,4 @@ public class SystemEvent : SystemEventResult, IEquatable<SystemEvent?>
         return !(left == right);
     }
 }
+#nullable restore

@@ -26,7 +26,7 @@ public class UserNotificationsService : BaseService
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<ServiceResult<IPaginatedData<RegisteredSystemResult>>> GetByFilterAsync(GetUserNotificationsByFilter message)
+    public async Task<ServiceResult<IPaginatedData<RegisteredSystemResult>>> GetByFilterAsync(GetSystemsAndNotificationsByFilter message)
     {
         if (message is null)
         {

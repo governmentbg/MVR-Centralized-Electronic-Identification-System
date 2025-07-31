@@ -37,7 +37,7 @@ export class CustomDateTransformer extends DefaultDateTransformer {
 
         switch (options.timeStyle) {
             case 'medium':
-                return date.toISOString().split('.')[0];
+                return date.toISOString().split('.')[0].replace('T', ' ');
             default:
                 return date.toISOString().split('T')[0];
         }

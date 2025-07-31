@@ -323,6 +323,7 @@ public class NotificationsService : BaseService
             RejectedBy = message.UserId,
             RejectedOn = DateTime.UtcNow,
             Translations = registeredSystem.Translations,
+            Reason = message.Reason,
         };
 
         // Execute
@@ -531,15 +532,10 @@ public class NotificationsService : BaseService
             };
         }
 
-        //TODO: Refactor this when the user profile is available
-        Guid userId = Guid.Empty;
-        if (message.UserId.HasValue)
+        Guid citizenProfileId = message.UserId ?? Guid.Empty;
+        if (!message.UserId.HasValue)
         {
-            userId = message.UserId.Value;
-        }
-        else
-        {
-            MpozeiUserProfile userProfile;
+            MpozeiUserProfile? userProfile;
             if (!string.IsNullOrWhiteSpace(message.Uid))
             {
                 //User profile in Mpozei by EGN or LNCh
@@ -551,7 +547,12 @@ public class NotificationsService : BaseService
                     return NotFound<bool>($"Uid", $"{message.Uid}");
                 }
 
-                userId = Guid.Parse(userProfile.EidentityId);
+                if (!Guid.TryParse(userProfile.CitizenProfileId, out citizenProfileId))
+                {
+                    var maskedUid = Regex.Replace(message.Uid, @".{4}$", "****", RegexOptions.None, matchTimeout: TimeSpan.FromMilliseconds(100));
+                    _logger.LogWarning("There was a problem while parsing citizenProfileId for UId: {Uid}", maskedUid);
+                    return NotFound<bool>($"Uid", $"{message.Uid}");
+                }
             }
             else if (message.EId.HasValue)
             {
@@ -563,13 +564,30 @@ public class NotificationsService : BaseService
                     return NotFound<bool>($"EId", $"{message.EId}");
                 }
 
-                userId = Guid.Parse(userProfile.EidentityId);
+                if (!Guid.TryParse(userProfile.CitizenProfileId, out citizenProfileId))
+                {
+                    _logger.LogWarning("There was a problem while parsing citizenProfileId for EId: {Uid}", message.EId);
+                    return NotFound<bool>($"Uid", $"{message.Uid}");
+                }
             }
+        }
+
+        if (citizenProfileId == Guid.Empty)
+        {
+            _logger.LogError("CitizenProfileId was empty after all checks and gatherings.");
+            return new ServiceResult<bool>
+            {
+                StatusCode = HttpStatusCode.Conflict,
+                Errors = new List<KeyValuePair<string, string>>
+                {
+                    new ("Invalid CitizenProfileId", "Unable to get valid CitizenProfileId.")
+                }
+            };
         }
 
         var notificationEvent = await _context.SystemEvents
                 .Include(t => t.RegisteredSystem)
-                .Include(t => t.DeactivatedUserEvent.Where(due => due.UserId == userId))
+                .Include(t => t.DeactivatedUserEvent.Where(due => due.UserId == citizenProfileId)) // userId = citizen_profile_id
                 .Where(ev => ev.Code == message.EventCode)
                 .Where(ev => ev.RegisteredSystem.Name == message.SystemName)
                 .FirstOrDefaultAsync();
@@ -598,7 +616,7 @@ public class NotificationsService : BaseService
         if (!notificationEvent.IsMandatory && notificationEvent.DeactivatedUserEvent.Any())
         {
             _logger.LogInformation("Notification will not be sent. {SystemName}:{EventCode} is deactivated from the user {UserId}",
-                message.SystemName, message.EventCode, userId);
+                message.SystemName, message.EventCode, citizenProfileId);
             return new ServiceResult<bool>
             {
                 StatusCode = HttpStatusCode.Conflict,
@@ -612,7 +630,7 @@ public class NotificationsService : BaseService
         // Get notification channels and user preferences
         var notificationChannels = await _context.NotificationChannels
             .Include(nc => nc.UserNotificationChannels
-                .Where(unc => unc.UserId == userId))
+                .Where(unc => unc.UserId == citizenProfileId)) // userId = citizen_profile_id
             .ToListAsync();
         if (notificationChannels is null || !notificationChannels.Any())
         {
@@ -649,13 +667,13 @@ public class NotificationsService : BaseService
             }
 
             _logger.LogInformation("User {UserId} did not select any {UserNotificationChannels}. It has been fell back to {DefaultNotificationChannel}",
-                userId, nameof(_context.UserNotificationChannels), ConfigurationsConstants.SMTP);
+                citizenProfileId, nameof(_context.UserNotificationChannels), ConfigurationsConstants.SMTP);
 
             userNotificationChannels.Add(defaultNotificationChannel);
         }
 
         // Prepare notification content
-        var request = new SendNotificationRequest { UserId = userId };
+        var request = new SendNotificationRequest { UserId = citizenProfileId };
         // Priority is get the content from the message
         if (message.Translations is not null && message.Translations.Any())
         {
@@ -694,55 +712,56 @@ public class NotificationsService : BaseService
 
         foreach (var channel in userNotificationChannels)
         {
-            Task sendTask;
-            if (!channel.IsBuiltIn)
-            {
-                sendTask = _publishEndpoint.Publish<SendHttpCallbackAsync>(new
-                {
-                    message.CorrelationId,
-                    request.UserId,
-                    channel.CallbackUrl,
-                    Body = request,
-                    request.Translations
-                });
-            }
-            else
-            {
-                sendTask = channel.Name switch
-                {
-                    ConfigurationsConstants.SMTP => _publishEndpoint.Publish<SendEmail>(new
-                    {
-                        message.CorrelationId,
-                        request.UserId,
-                        request.Translations
-                    }),
-                    ConfigurationsConstants.PUSH => _publishEndpoint.Publish<SendPushNotification>(new
-                    {
-                        message.CorrelationId,
-                        request.UserId,
-                        request.Translations
-                    }),
-                    ConfigurationsConstants.SMS => _publishEndpoint.Publish<SendSms>(new
-                    {
-                        message.CorrelationId,
-                        request.UserId,
-                        request.Translations
-                    }),
-                    _ => _publishEndpoint.Publish<SendHttpCallbackAsync>(new
-                    {
-                        message.CorrelationId,
-                        request.UserId,
-                        channel.CallbackUrl,
-                        Body = request,
-                        request.Translations
-                    })
-                };
-            }
-            sendNotificationTasks.Add(sendTask);
+            sendNotificationTasks.Add(GetChannelPublishNotification(message.CorrelationId, request, channel.IsBuiltIn, channel.Name, channel.CallbackUrl));
         }
 
         await Task.WhenAll(sendNotificationTasks);
         return Accepted(true);
+    }
+
+    private Task GetChannelPublishNotification(Guid correlationId, SendNotificationRequest request, bool channelIsBuiltIn, string channelName, string channelCallbackUrl)
+    {
+        if (channelIsBuiltIn)
+        {
+            return channelName switch
+            {
+                ConfigurationsConstants.SMTP => _publishEndpoint.Publish<SendEmail>(new
+                {
+                    CorrelationId = correlationId,
+                    request.UserId,
+                    request.Translations
+                }),
+                ConfigurationsConstants.PUSH => _publishEndpoint.Publish<SendPushNotification>(new
+                {
+                    CorrelationId = correlationId,
+                    request.UserId,
+                    request.Translations
+                }),
+                ConfigurationsConstants.SMS => _publishEndpoint.Publish<SendSms>(new
+                {
+                    CorrelationId = correlationId,
+                    request.UserId,
+                    request.Translations
+                }),
+                _ => _publishEndpoint.Publish<SendHttpCallbackAsync>(new
+                {
+                    CorrelationId = correlationId,
+                    request.UserId,
+                    CallbackUrl = channelCallbackUrl,
+                    Body = request,
+                    request.Translations
+                })
+            };
+        }
+
+        return _publishEndpoint.Publish<SendHttpCallbackAsync>(new
+        {
+            CorrelationId = correlationId,
+            request.UserId,
+            CallbackUrl = channelCallbackUrl,
+            Body = request,
+            request.Translations
+        });
     }
 
     public async Task<ServiceResult<IPaginatedData<RegisteredSystemRejectedResult>>> GetRegisteredSystemsRejectedAsync(GetRegisteredSystemsRejected message)
@@ -811,6 +830,54 @@ public class NotificationsService : BaseService
 
         // Result
         return Ok(result);
+    }
+
+    public async Task<ServiceResult<bool>> SendChannelActivatedNotificationAsync(SendChannelActivatedNotification message)
+    {
+        if (message is null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
+
+        // Validation
+        var validator = new SendChannelActivatedNotificationValidator();
+        var validationResult = await validator.ValidateAsync(message);
+        if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("Invalid {MessageType} message. Validation failed with errors: {Errors}.", nameof(SendChannelActivatedNotification), validationResult.Errors);
+            return BadRequest<bool>(validationResult.Errors);
+        }
+
+        var channel = await _context.NotificationChannels
+            .FirstOrDefaultAsync(nc => nc.Id == message.ChannelId);
+        if (channel is null)
+        {
+            _logger.LogWarning("No NotificationChannel with Id {Id}.", message.ChannelId);
+            return NotFound<bool>(nameof(message.ChannelId), message.ChannelId);
+        }
+
+        var request = new SendNotificationRequest
+        {
+            UserId = message.UserId,
+            Translations = new List<SendNotificationContentTranslation>
+            {
+               new SendNotificationContentTranslation
+               {
+                   Language = "bg",
+                   Message = "Това е тестова нотификация за проверка на активиран канал!"
+               },
+               new SendNotificationContentTranslation
+               {
+                   Language = "en",
+                   Message = "This is a test notification to check the activated channel!"
+               },
+            }
+        };
+
+        await GetChannelPublishNotification(message.CorrelationId, request, channel.IsBuiltIn, channel.Name, channel.CallbackUrl);
+        _logger.LogInformation("Sent test notification to NotificationChannel with Id {Id}.", message.ChannelId);
+
+        return Ok(true);
     }
 
     private static bool CompareCode(string left, string right)

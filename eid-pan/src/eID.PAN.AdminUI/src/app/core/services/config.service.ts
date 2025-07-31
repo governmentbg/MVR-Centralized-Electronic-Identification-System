@@ -11,6 +11,12 @@ export class AppConfigService {
         this.config = Object.assign({}, this.defaults);
     }
     private defaults: IAppConfig = {
+        systemProcesses: {
+            grafana: '',
+            prometheus: '',
+            keycloak_internal: '',
+            keycloak_external: '',
+        },
         journals: {
             folders: [''],
             fileExtensionFilter: '',
@@ -21,14 +27,15 @@ export class AppConfigService {
             poolingTimeout: 0,
             downloadBytesFileSize: 0,
         },
-        keycloak: {
-            keycloakUrl: '',
-            keycloakClientId: '',
-            keycloakRealm: '',
-            keycloakRedirectUri: '',
-            keycloakRefreshTokenKey: '',
-            keycloakTokenKey: '',
-            keycloakUpdateMinValidity: 0,
+        oauth: {
+            issuer: '',
+            clientId: '',
+            redirectUri: '',
+            requireHttps: true,
+            responseType: '',
+            scope: '',
+            useSilentRefresh: true,
+            timeoutFactor: 0.75,
         },
     };
     config: IAppConfig;

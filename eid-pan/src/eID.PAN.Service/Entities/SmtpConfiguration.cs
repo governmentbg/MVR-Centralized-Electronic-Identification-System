@@ -1,4 +1,5 @@
-﻿using eID.PAN.Contracts.Enums;
+﻿#nullable disable
+using eID.PAN.Contracts.Enums;
 using eID.PAN.Contracts.Results;
 
 namespace eID.PAN.Service.Entities;
@@ -27,3 +28,4 @@ public class SmtpConfiguration : IAuditableEntity, SmtpConfigurationResult
     public static string BuildSmtpConfigurationCacheKey(Guid id) => $"{_cacheBaseKey}:{id}";
     public static string AllSmtpConfigurationCacheKey = $"{_cacheBaseKey}:All";
 }
+#nullable restore

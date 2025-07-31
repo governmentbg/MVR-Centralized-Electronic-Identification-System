@@ -11,7 +11,8 @@ public class NotificationChannelsConsumer : BaseConsumer,
     IConsumer<ApproveNotificationChannel>,
     IConsumer<RejectNotificationChannel>,
     IConsumer<ArchiveNotificationChannel>,
-    IConsumer<RestoreNotificationChannel>
+    IConsumer<RestoreNotificationChannel>,
+    IConsumer<TestNotificationChannel>
 {
     private readonly NotificationChannelsService _notificationChannelsService;
 
@@ -55,6 +56,10 @@ public class NotificationChannelsConsumer : BaseConsumer,
     public async Task Consume(ConsumeContext<RestoreNotificationChannel> context)
     {
         await ExecuteMethodAsync(context, () => _notificationChannelsService.RestoreChannelAsync(context.Message));
+    }
+    public async Task Consume(ConsumeContext<TestNotificationChannel> context)
+    {
+        await ExecuteMethodAsync(context, () => _notificationChannelsService.TestChannelAsync(context.Message));
     }
 }
 

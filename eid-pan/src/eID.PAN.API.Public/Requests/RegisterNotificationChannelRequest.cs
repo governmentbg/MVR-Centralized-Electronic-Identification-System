@@ -3,14 +3,23 @@ using FluentValidation;
 
 namespace eID.PAN.API.Public.Requests;
 
+public class NotificationChannelPayload
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string Email { get; set; }
+    public string CallbackUrl { get; set; }
+    public string InfoUrl { get; set; }
+    public IEnumerable<NotificationChannelTranslationRequest> Translations { get; set; } = Enumerable.Empty<NotificationChannelTranslationRequest>();
+}
+
 public class RegisterNotificationChannelRequest : IValidatableRequest
 {
     public virtual IValidator GetValidator() => new RegisterNotificationChannelRequestValidator();
-    public string SystemId { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
+    public string Email { get; set; }
     public string CallbackUrl { get; set; }
-    public decimal Price { get; set; }
     public string InfoUrl { get; set; }
     public IEnumerable<NotificationChannelTranslationRequest> Translations { get; set; } = Enumerable.Empty<NotificationChannelTranslationRequest>();
 }
@@ -20,8 +29,10 @@ public class RegisterNotificationChannelRequestValidator : AbstractValidator<Reg
     public RegisterNotificationChannelRequestValidator()
     {
         RuleFor(r => r.Name).NotEmpty().MinimumLength(2).MaximumLength(64);
-        RuleFor(r => r.CallbackUrl).NotEmpty();
-        RuleFor(r => r.InfoUrl).NotEmpty();
+        RuleFor(r => r.Email).NotEmpty().EmailAddress().MaximumLength(1024);
+        RuleFor(r => r.CallbackUrl).NotEmpty().MaximumLength(2048);
+        RuleFor(r => r.InfoUrl).NotEmpty().MaximumLength(2048);
+        RuleFor(r => r.Description).NotEmpty().MaximumLength(2048);
         RuleFor(r => r.Translations)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
@@ -30,6 +41,21 @@ public class RegisterNotificationChannelRequestValidator : AbstractValidator<Reg
             .Must(t => t.Any(c => c.Language == "bg") && t.Any(c => c.Language == "en"))
                 .WithMessage($"{nameof(Translation)} languages must contain at least 'bg' and 'en' records.")
             .ForEach(r => r.SetValidator(new NotificationChannelTranslationRequestValidator()));
+    }
+}
+
+
+public class ModifyNotificationChannelRequest : RegisterNotificationChannelRequest, IValidatableRequest
+{
+    public Guid Id { get; set; }
+    public override IValidator GetValidator() => new ModifyNotificationChannelRequestValidator();
+}
+public class ModifyNotificationChannelRequestValidator : AbstractValidator<ModifyNotificationChannelRequest>
+{
+    public ModifyNotificationChannelRequestValidator()
+    {
+        Include(new RegisterNotificationChannelRequestValidator());
+        RuleFor(r => r.Id).NotEmpty();
     }
 }
 

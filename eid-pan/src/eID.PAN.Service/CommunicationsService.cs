@@ -245,26 +245,20 @@ public class CommunicationsService : BaseService
             return false;
         }
        
-        var userProfile = await _mpozeiCaller.FetchUserProfileAsync(message.UserId);
+        var userProfile = await _mpozeiCaller.FetchUserProfileByCitizenProfileIdAsync(message.UserId);
         if (userProfile is null)
         {
             _logger.LogWarning("There was a problem while trying to obtain User profile in Mpozei. UserId: {UserId}", message.UserId);
             return false;
         }
 
-        //TODO Remove this hardcoded values when MPOZEI returns this information
-        userProfile.RegistrationTokens = new List<string>()
-        {
-            "fwY-jlHxSVu0aYyzkW8yoa:APA91bGbdniPciswQiG1m47sRBHfIig7XvlwydR2Y9P2pXCCfpbI-gSP7E2CSgBYkgPyZQwOW1iHxsM2fNtPnN1udcY3QcOQgKKiIiRXFC5tEl_NkSaSQRPXxuq3Y_YPyCNwASdPCPeD"
-        };
-
         // 1. Fetch user language selection from user profile information.
-        if (!userProfile.RegistrationTokens.Any())
+        if (string.IsNullOrWhiteSpace(userProfile.FirebaseId))
         {
-            _logger.LogInformation("{UserId} doesn't have any applications token that can receive push notifications.", message.UserId);
+            _logger.LogInformation("{UserId} doesn't have application token that can receive push notification.", message.UserId);
             return false;
         }
-        return await _pushNotificationSender.SendPushNotificationAsync(message.UserId, userProfile.RegistrationTokens, GetLocalizedOrDefaultMessage(message, userProfile.Language));
+        return await _pushNotificationSender.SendPushNotificationAsync(message.UserId, userProfile.FirebaseId, GetLocalizedOrDefaultMessage(message, userProfile.Language));
     }
 
     public async Task<bool> SendSmsAsync(SendSms message)
@@ -283,7 +277,7 @@ public class CommunicationsService : BaseService
             return false;
         }
 
-        var userProfile = await _mpozeiCaller.FetchUserProfileAsync(message.UserId);
+        var userProfile = await _mpozeiCaller.FetchUserProfileByCitizenProfileIdAsync(message.UserId);
         if (userProfile is null)
         {
             _logger.LogWarning("There was a problem while trying to obtain User profile in Mpozei. UserId: {UserId}", message.UserId);
@@ -361,7 +355,7 @@ public class CommunicationsService : BaseService
 
     private async Task SendEmailAsync(SmtpConfiguration smtpConfiguration, ISmtpClient client, MimeMessage email)
     {
-        var socketOpt = SecureSocketOptions.Auto;
+        var socketOpt = SecureSocketOptions.None;
         if (smtpConfiguration.SecurityProtocol == SmtpSecurityProtocol.SSL)
         {
             socketOpt = SecureSocketOptions.SslOnConnect;
@@ -381,7 +375,8 @@ public class CommunicationsService : BaseService
         {
             client.Connect(smtpConfiguration.Server, smtpConfiguration.Port, socketOpt);
         }
-        if (!client.IsAuthenticated)
+        
+        if (client.Capabilities.HasFlag(SmtpCapabilities.Authentication) && !client.IsAuthenticated)
         {
             client.Authenticate(smtpConfiguration.UserName, plainPassword);
         }
@@ -395,7 +390,7 @@ public class CommunicationsService : BaseService
 
     private async Task<MimeMessage> PrepareEmailAsync(SendEmail message)
     {
-        var userProfile = await _mpozeiCaller.FetchUserProfileAsync(message.UserId);
+        var userProfile = await _mpozeiCaller.FetchUserProfileByCitizenProfileIdAsync(message.UserId);
         if (userProfile is null)
         {
             _logger.LogWarning("There was a problem while trying to obtain User profile in Mpozei. UserId: {UserId}", message.UserId);
@@ -414,8 +409,8 @@ public class CommunicationsService : BaseService
 
         var emailSubject = userProfile.Language switch
         {
-            "en" => "Automatic notification from the Central Electronic Identification System",
-            _ => "Автоматична нотификация от Централна система за електронна идентификация"
+            "en" => "Automatic notification from the Centralized Electronic Identification System (CEIS)",
+            _ => "Автоматична нотификация от Централизираната система за електронна идентификация (ЦСЕИ)"
         };
         email.Subject = emailSubject;
 

@@ -1,16 +1,26 @@
-﻿using eID.PJS.AuditLogging;
-using eID.PAN.API.Requests;
+﻿using eID.PAN.API.Requests;
 using eID.PAN.Contracts;
 using eID.PAN.Contracts.Commands;
 using eID.PAN.Contracts.Results;
+using eID.PJS.AuditLogging;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eID.PAN.API.Controllers;
 
+/// <summary>
+/// Implement Notification Channels Controller
+/// </summary>
 public class NotificationChannelsController : BaseV1Controller
 {
-    public NotificationChannelsController(IConfiguration configuration, ILogger<NotificationChannelsController> logger, AuditLogger auditLogger) : base(configuration, logger, auditLogger)
+    /// <summary>
+    /// Create an instance of <see cref="NotificationChannelsController"/>
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="configuration"></param>
+    /// <param name="auditLogger"></param>
+    public NotificationChannelsController(ILogger<NotificationChannelsController> logger, IConfiguration configuration, AuditLogger auditLogger)
+        : base(logger, configuration, auditLogger)
     {
     }
 
@@ -21,20 +31,18 @@ public class NotificationChannelsController : BaseV1Controller
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(INotificationChannelsData<NotificationChannelResult>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(INotificationChannelsData<NotificationChannelResult, NotificationChannelRejectedResult>))]
     public async Task<IActionResult> GetAllAsync(
         [FromServices] IRequestClient<GetAllNotificationChannels> client,
         CancellationToken cancellationToken)
     {
         var serviceResult = await GetResponseAsync(() =>
-            client.GetResponse<ServiceResult<INotificationChannelsData<NotificationChannelResult>>>(
+            client.GetResponse<ServiceResult<INotificationChannelsData<NotificationChannelResult, NotificationChannelRejectedResult>>>(
                 new
                 {
                     CorrelationId = RequestId,
-                    UserId = GetUserId()
+                    UserId = GetUid()
                 }, cancellationToken));
-
-        AddAuditLog(LogEventCode.GetAllNotificationChannels);
 
         return Result(serviceResult);
     }
@@ -52,21 +60,30 @@ public class NotificationChannelsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ApproveAsync(
         [FromServices] IRequestClient<ApproveNotificationChannel> client,
-        CancellationToken cancellationToken,
-        [FromRoute] string id)
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
     {
+        var request = new GetByIdRequest { Id = id };
+
+        var logEventCode = LogEventCode.APPROVE_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("NotificationChannelId", request.Id));
+
+        if (!request.IsValid())
+        {
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
+        }
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
                 new
                 {
-                    Id = id,
+                    request.Id,
                     CorrelationId = RequestId,
-                    ModifiedBy = GetUserId()
+                    ModifiedBy = GetUid()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ApproveNotificationChannel);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -74,29 +91,45 @@ public class NotificationChannelsController : BaseV1Controller
     /// Channel is moved in Rejected table and pending one is removed.
     /// </summary>
     /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
     /// <param name="id"></param>
+    /// <param name="payload"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPut("{id}/reject")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RejectAsync(
         [FromServices] IRequestClient<RejectNotificationChannel> client,
-        CancellationToken cancellationToken,
-        [FromRoute] string id)
+        [FromRoute] Guid id,
+        [FromBody] RejectNotificationChannelPayload payload,
+        CancellationToken cancellationToken)
     {
+        var request = new RejectNotificationChannelRequest
+        {
+            Id = id,
+            Reason = payload.Reason,
+        };
+
+        var logEventCode = LogEventCode.REJECT_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("NotificationChannelId", request.Id));
+
+        if (!request.IsValid())
+        {
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
+        }
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
                 new
                 {
-                    Id = id,
+                    request.Id,
                     CorrelationId = RequestId,
-                    ModifiedBy = GetUserId()
+                    ModifiedBy = GetUid(),
+                    request.Reason,
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RejectNotificationChannel);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -113,21 +146,30 @@ public class NotificationChannelsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> ArchiveAsync(
         [FromServices] IRequestClient<ArchiveNotificationChannel> client,
-        CancellationToken cancellationToken,
-        [FromRoute] string id)
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
     {
+        var request = new GetByIdRequest { Id = id };
+
+        var logEventCode = LogEventCode.ARCHIVE_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("NotificationChannelId", request.Id));
+
+        if (!request.IsValid())
+        {
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
+        }
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
                 new
                 {
                     Id = id,
                     CorrelationId = RequestId,
-                    ModifiedBy = GetUserId()
+                    ModifiedBy = GetUid()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.ArchiveNotificationChannel);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -144,20 +186,67 @@ public class NotificationChannelsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RestoreAsync(
         [FromServices] IRequestClient<RestoreNotificationChannel> client,
-        CancellationToken cancellationToken,
-        [FromRoute] string id)
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
     {
+        var request = new GetByIdRequest { Id = id };
+
+        var logEventCode = LogEventCode.RESTORE_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("NotificationChannelId", request.Id));
+
+        if (!request.IsValid())
+        {
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
+        }
+
         var serviceResult = await GetResponseAsync(() =>
             client.GetResponse<ServiceResult<Guid>>(
                 new
                 {
                     Id = id,
                     CorrelationId = RequestId,
-                    ModifiedBy = GetUserId()
+                    ModifiedBy = GetUid()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RestoreNotificationChannel);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
+    }
 
-        return Result(serviceResult);
+    /// <summary>
+    /// Sends test notification to that channel.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}/test")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestHttpCallbackResult))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> TestAsync(
+        [FromServices] IRequestClient<TestNotificationChannel> client,
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        var request = new GetByIdRequest { Id = id };
+
+        var logEventCode = LogEventCode.TEST_NOTIFICATION_CHANNEL;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("NotificationChannelId", request.Id));
+
+        if (!request.IsValid())
+        {
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
+        }
+
+        var serviceResult = await GetResponseAsync(() =>
+            client.GetResponse<ServiceResult<TestHttpCallbackResult>>(
+                new
+                {
+                    Id = id,
+                    CorrelationId = RequestId
+                }, cancellationToken));
+
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 }

@@ -3,6 +3,7 @@ using eID.PAN.Contracts.Results;
 using eID.PAN.Service.Database;
 using eID.PAN.Service.Entities;
 using eID.PAN.Service.Validators;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -14,15 +15,18 @@ public class UserNotificationChannelsService : BaseService
     private readonly ILogger<UserNotificationChannelsService> _logger;
     private readonly IDistributedCache _cache;
     private readonly ApplicationDbContext _context;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public UserNotificationChannelsService(
         ILogger<UserNotificationChannelsService> logger,
         IDistributedCache cache,
-        ApplicationDbContext context)
+        ApplicationDbContext context,
+        IPublishEndpoint publishEndpoint)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
     }
 
     public async Task<ServiceResult<IPaginatedData<UserNotificationChannelResult>>> GetByFilterAsync(GetUserNotificationChannelsByFilter message)
@@ -42,9 +46,7 @@ public class UserNotificationChannelsService : BaseService
 
         // Action
         // Prepare query
-        var approvedRegisteredSystemIds = _context.RegisteredSystems.Where(rs => rs.IsApproved).Select(rs => rs.Id).ToList();
         var notificationChannels = _context.NotificationChannels
-            .Where(nc => nc.IsBuiltIn || approvedRegisteredSystemIds.Contains(nc.SystemId))
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(message.ChannelName))
@@ -152,17 +154,31 @@ public class UserNotificationChannelsService : BaseService
         }
 
         // Process new events
-        var newEvents = channelIds
-            .Where(mIds => !currentChannels.Any(ce => mIds == ce.NotificationChannelId));
-        if (newEvents.Any())
+        var newChannels = channelIds
+            .Where(mIds => !currentChannels.Any(ce => mIds == ce.NotificationChannelId))
+            .ToList();
+        var thereAreNewChannels = newChannels.Any();
+        if (thereAreNewChannels)
         {
             _context.UserNotificationChannels
-                .AddRange(newEvents
+                .AddRange(newChannels
                     .Select(ne => CreateFromMessage(message, ne)));
         }
 
         // Execute query
         await _context.SaveChangesAsync();
+
+        if (thereAreNewChannels)
+        {
+            var tasks = newChannels.Select(ChannelId => _publishEndpoint.Publish<SendChannelActivatedNotification>(new
+            {
+                message.CorrelationId,
+                message.UserId,
+                ChannelId
+
+            }));
+            await Task.WhenAll(tasks);
+        }
 
         // Result
         return NoContent();

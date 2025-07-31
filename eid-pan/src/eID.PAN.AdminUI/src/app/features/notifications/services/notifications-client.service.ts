@@ -66,8 +66,8 @@ export class NotificationsClientService {
         return this.http.put<any>(`${this.apiUrl}/systems/${systemId}/restore`, {});
     }
 
-    rejectSystem(systemId: string): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/systems/${systemId}/reject`, {});
+    rejectSystem(systemId: string, reason: string): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/systems/${systemId}/reject`, { reason: reason });
     }
 
     archiveSystem(systemId: string): Observable<any> {

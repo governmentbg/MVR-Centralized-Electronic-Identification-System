@@ -1,4 +1,6 @@
-﻿using eID.PAN.Application.Consumers;
+﻿using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using eID.PAN.Application.Consumers;
 using eID.PAN.Application.Options;
 using eID.PAN.Contracts;
 using eID.PAN.Service;
@@ -129,8 +131,8 @@ public class Startup
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
                 return ApplicationPolicyRegistry.GetRetryPolicy(logger);
-            }).
-            UseHttpClientMetrics();
+            })
+            .UseHttpClientMetrics();
 
         var applicationUrls = Configuration.GetSection(nameof(ApplicationUrls)).Get<ApplicationUrls>() ?? new ApplicationUrls();
         applicationUrls.Validate();
@@ -139,31 +141,24 @@ public class Startup
             {
                 httpClient.BaseAddress = new Uri(applicationUrls.KeycloakHostUrl);
             })
-            .ConfigurePrimaryHttpMessageHandler((s) =>
+            .AddPolicyHandler((serviceProvider, request) =>
             {
-                return new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                };
+                var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
+                return ApplicationPolicyRegistry.GetRetryPolicy(logger);
+            })
+            .UseHttpClientMetrics();
+
+        services
+            .AddHttpClient(MpozeiCaller.HTTPClientName, httpClient =>
+            {
+                httpClient.BaseAddress = new Uri(applicationUrls.MpozeiHostUrl);
             })
             .AddPolicyHandler((serviceProvider, request) =>
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
                 return ApplicationPolicyRegistry.GetRetryPolicy(logger);
-            }).
-            UseHttpClientMetrics();
-
-        services
-           .AddHttpClient(MpozeiCaller.HTTPClientName, httpClient =>
-           {
-               httpClient.BaseAddress = new Uri(applicationUrls.MpozeiHostUrl);
-           })
-           .AddPolicyHandler((serviceProvider, request) =>
-           {
-               var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
-               return ApplicationPolicyRegistry.GetRetryPolicy(logger);
-           }).
-           UseHttpClientMetrics();
+            })
+            .UseHttpClientMetrics();
 
 
         // Services
@@ -172,7 +167,10 @@ public class Startup
         services.AddScoped<NotificationChannelsService>();
         services.AddScoped<UserNotificationsService>();
         services.AddScoped<CommunicationsService>();
-        services.AddScoped<ISmtpClient, SmtpClient>();
+        services.AddScoped<ISmtpClient, SmtpClient>(services =>
+        {
+            return new SmtpClient { CheckCertificateRevocation = false };
+        });
         services.AddScoped<UserNotificationChannelsService>();
         services.AddScoped<IPushNotificationSender, PushNotificationSender>();
         services.AddScoped<IMpozeiCaller, MpozeiCaller>();

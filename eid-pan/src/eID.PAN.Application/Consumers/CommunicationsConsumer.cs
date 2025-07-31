@@ -22,26 +22,26 @@ public class CommunicationsConsumer : BaseConsumer,
 
     public async Task Consume(ConsumeContext<SendEmail> context)
     {
-        await ExecuteMethodAsync(context, () => _communicationsService.SendEmailAsync(context.Message));
+        await ExecuteMethodWithoutResponseAsync(context, () => _communicationsService.SendEmailAsync(context.Message));
     }
 
     public async Task Consume(ConsumeContext<SendPushNotification> context)
     {
-        await ExecuteMethodAsync(context, () => _communicationsService.SendPushNotificationAsync(context.Message));
+        await ExecuteMethodWithoutResponseAsync(context, () => _communicationsService.SendPushNotificationAsync(context.Message));
     }
 
     public async Task Consume(ConsumeContext<SendSms> context)
     {
-        await ExecuteMethodAsync(context, () => _communicationsService.SendSmsAsync(context.Message));
+        await ExecuteMethodWithoutResponseAsync(context, () => _communicationsService.SendSmsAsync(context.Message));
     }
 
     public async Task Consume(ConsumeContext<SendHttpCallbackAsync> context)
     {
-        await ExecuteMethodAsync(context, () => _communicationsService.SendHttpCallbackAsync(context.Message));
+        await ExecuteMethodWithoutResponseAsync(context, () => _communicationsService.SendHttpCallbackAsync(context.Message));
     }
 
     public async Task Consume(ConsumeContext<SendDirectEmail> context)
     {
-        await ExecuteMethodAsync(context, () => _communicationsService.SendDirectEmailAsync(context.Message));
+        await ExecuteMethodWithoutResponseAsync(context, () => _communicationsService.SendDirectEmailAsync(context.Message));
     }
 }

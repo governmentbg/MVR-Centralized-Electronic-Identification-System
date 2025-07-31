@@ -14,7 +14,14 @@ namespace eID.PAN.API.Public.Controllers;
 /// </summary>
 public class NotificationsController : BaseV1Controller
 {
-    public NotificationsController(IConfiguration configuration, ILogger<NotificationsController> logger, AuditLogger auditLogger) : base(configuration, logger, auditLogger)
+    /// <summary>
+    /// Create an instance of <see cref="NotificationsController"/>
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="configuration"></param>
+    /// <param name="auditLogger"></param>
+    public NotificationsController(ILogger<NotificationsController> logger, IConfiguration configuration, AuditLogger auditLogger) 
+        : base(logger, configuration, auditLogger)
     {
     }
 
@@ -30,7 +37,7 @@ public class NotificationsController : BaseV1Controller
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IPaginatedData<RegisteredSystemResult>))]
     public async Task<IActionResult> GetAsync(
-        [FromServices] IRequestClient<GetUserNotificationsByFilter> client,
+        [FromServices] IRequestClient<GetSystemsAndNotificationsByFilter> client,
         CancellationToken cancellationToken,
         [FromQuery] int pageSize = 50,
         [FromQuery] int pageIndex = 1,
@@ -58,8 +65,6 @@ public class NotificationsController : BaseV1Controller
                     request.SystemName
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RegisterUserNotificationChannels);
-
         return Result(serviceResult);
     }
 
@@ -67,7 +72,6 @@ public class NotificationsController : BaseV1Controller
     /// Get deactivated user notifications
     /// </summary>
     /// <param name="client"></param>
-    /// <param name="configuration"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="pageSize"></param>
     /// <param name="pageIndex"></param>
@@ -76,7 +80,6 @@ public class NotificationsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IPaginatedData<Guid>))]
     public async Task<IActionResult> GetDeactivatedAsync(
         [FromServices] IRequestClient<GetDeactivatedUserNotifications> client,
-        [FromServices] IConfiguration configuration,
         CancellationToken cancellationToken,
         [FromQuery] int pageSize = 1000,
         [FromQuery] int pageIndex = 1)
@@ -87,9 +90,13 @@ public class NotificationsController : BaseV1Controller
             PageSize = pageSize
         };
 
+        var logEventCode = LogEventCode.GET_DEACTIVATED_USER_NOTIFICATIONS;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("UserId", GetUserId()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -102,16 +109,13 @@ public class NotificationsController : BaseV1Controller
                     UserId = GetUserId()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.GetDeactivatedUserNotifications, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
     /// Register deactivated user events
     /// </summary>
     /// <param name="client"></param>
-    /// <param name="configuration"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="ids"></param>
     /// <returns></returns>
@@ -119,18 +123,21 @@ public class NotificationsController : BaseV1Controller
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> RegisterDeactivatedEventsAsync(
         [FromServices] IRequestClient<RegisterDeactivatedEvents> client,
-        [FromServices] IConfiguration configuration,
-        CancellationToken cancellationToken,
-        [FromBody] HashSet<Guid> ids)
+        [FromBody] HashSet<Guid> ids,
+        CancellationToken cancellationToken)
     {
         var request = new RegisterDeactivatedEventsRequest
         {
             Ids = ids
         };
 
+        var logEventCode = LogEventCode.DEACTIVATE_USER_NOTIFICATIONS;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("UserId", GetUserId()));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -143,11 +150,8 @@ public class NotificationsController : BaseV1Controller
                     ModifiedBy = GetUserId()
                 }, cancellationToken));
 
-        AddAuditLog(LogEventCode.DeactivateUserNotifications, GetUserId());
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
-
 
     /// <summary>
     /// Register or update a system with its events.
@@ -160,15 +164,19 @@ public class NotificationsController : BaseV1Controller
     [HttpPost("systems", Name = nameof(RegisterOrUpdateSystemAsync))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [AllowAnonymous] // TODO: Must remain open until certificate authorization across all subsystems becomes available.
     public async Task<IActionResult> RegisterOrUpdateSystemAsync(
         [FromServices] IRequestClient<RegisterSystem> client,
         [FromBody] RegisterSystemRequest request,
         CancellationToken cancellationToken)
     {
+        var logEventCode = LogEventCode.REGISTER_SYSTEM;
+        var eventPayload = BeginAuditLog(logEventCode, request,
+            ("UserId", GetUserId()),
+            (nameof(request.SystemName), request.SystemName));
+
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -181,9 +189,7 @@ public class NotificationsController : BaseV1Controller
                 Events = (IEnumerable<SystemEvent>)request.Events
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.RegisterSystem);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 
     /// <summary>
@@ -192,42 +198,38 @@ public class NotificationsController : BaseV1Controller
     /// <param name="client"></param>
     /// <param name="input"></param>
     /// <param name="cancellationToken"></param>
-    /// <param name="testSystemName"></param>
-    /// <response code="200">Returns true if the system managed to queue the notification for sending</response>
+    /// <response code="202">Returns true if the system managed to queue the notification for sending</response>
     /// <returns>Whether or not the system managed to queue the notification for sending</returns>
     [HttpPost("send", Name = nameof(SendNotificationAsync))]
     [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(bool))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [AllowAnonymous] // TODO: TEMP
     public async Task<IActionResult> SendNotificationAsync(
         [FromServices] IRequestClient<SendNotification> client,
         [FromBody] SendNotificationRequestInput input,
-        CancellationToken cancellationToken,
-        [FromQuery] string? testSystemName = null)
+        CancellationToken cancellationToken)
     {
         var request = new SendNotificationRequest
         {
             UserId = input.UserId,
             EId = input.EId,
             Uid = input.Uid ?? string.Empty,
+            UidType = input.UidType,
             EventCode = input.EventCode,
-            Translations = input.Translations,
-            UidType = input.UidType
+            SystemName = GetSystemName(),
         };
 
-        var systemName = HttpContext.User.Claims.FirstOrDefault(d => d.Type == "SystemName")?.Value ?? string.Empty;
-        request.SystemName = systemName;
-
-        // TODO: !!! Only for test purposes. It will be deleted when AllowAnonymous has been deleted
-        if (string.IsNullOrWhiteSpace(systemName) && !string.IsNullOrWhiteSpace(testSystemName))
-        {
-            request.SystemName = testSystemName;
-        }
+        var logEventCode = LogEventCode.SEND_NOTIFICATION;
+        var eventPayload = BeginAuditLog(logEventCode, request, request.EId.ToString(),
+            (nameof(request.UserId), request.UserId ?? Guid.Empty),
+            (AuditLoggingKeys.TargetUid, request.Uid),
+            (AuditLoggingKeys.TargetUidType, request.UidType.ToString()),
+            (nameof(request.EventCode), request.EventCode),
+            (nameof(request.SystemName), request.SystemName));
 
         if (!request.IsValid())
         {
-            return BadRequest(request);
+            return BadRequestWithAuditLog(request, logEventCode, eventPayload);
         }
 
         var serviceResult = await GetResponseAsync(() =>
@@ -239,12 +241,10 @@ public class NotificationsController : BaseV1Controller
                 request.UserId,
                 request.EId,
                 request.Uid,
-                request.Translations,
+                Translations = Array.Empty<Contracts.Commands.SendNotificationTranslation>(),
                 request.UidType
             }, cancellationToken));
 
-        AddAuditLog(LogEventCode.SendNotification);
-
-        return Result(serviceResult);
+        return ResultWithAuditLog(serviceResult, logEventCode, eventPayload);
     }
 }

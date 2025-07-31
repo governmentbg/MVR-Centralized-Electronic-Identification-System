@@ -11,6 +11,9 @@ import { TranslocoRootModule } from 'src/app/transloco-root.module';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { SkeletonModule } from 'primeng/skeleton';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TranslocoLocaleModule } from '@ngneat/transloco-locale';
 
 @NgModule({
     declarations: [ChannelsComponent],
@@ -27,6 +30,9 @@ import { SkeletonModule } from 'primeng/skeleton';
         FormsModule,
         SelectButtonModule,
         SkeletonModule,
+        DialogModule,
+        InputTextareaModule,
+        TranslocoLocaleModule,
     ],
 })
 export class ChannelsModule {}

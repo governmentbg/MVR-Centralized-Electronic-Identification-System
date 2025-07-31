@@ -38,14 +38,16 @@ internal class SendNotificationValidator : AbstractValidator<SendNotification>
                 .WithMessage("Only one of UserId, Uid or EId is allowed");
         });
 
-        RuleFor(r => r.Translations)
-            .Cascade(CascadeMode.Stop)
-            .NotEmpty()
-            .ForEach(r => r.NotEmpty())
-            .Must(t => t?.Count() >= 2)
-            .Must(t => (t?.Any(c => c.Language == "bg") ?? false) && (t?.Any(c => c.Language == "en") ?? false))
-                .WithMessage($"{nameof(SendNotification.Translations)} languages must contain with 'bg' and 'en'")
-            .ForEach(r => r.SetValidator(new SendNotificationTranslationValidator()));
+        When(r => r.Translations != null && r.Translations.Any(), () =>
+            RuleFor(r => r.Translations)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .ForEach(r => r.NotEmpty())
+                .Must(t => t?.Count() >= 2)
+                .Must(t => (t?.Any(c => c.Language == "bg") ?? false) && (t?.Any(c => c.Language == "en") ?? false))
+                    .WithMessage($"{nameof(SendNotification.Translations)} languages must contain with 'bg' and 'en'")
+                .ForEach(r => r.SetValidator(new SendNotificationTranslationValidator()))
+        );
 
         When(r => !string.IsNullOrWhiteSpace(r.Uid), () =>
         {

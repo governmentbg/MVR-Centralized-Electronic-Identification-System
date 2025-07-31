@@ -1,4 +1,5 @@
-﻿using eID.PAN.Contracts.Results;
+﻿#nullable disable
+using eID.PAN.Contracts.Results;
 
 namespace eID.PAN.Service.Entities;
 
@@ -24,10 +25,12 @@ public class RegisteredSystem : RegisteredSystemResult
 public class RegisteredSystemRejected : RegisteredSystemRejectedResult
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
     public DateTime RejectedOn { get; set; }
-    public string? RejectedBy { get; set; }
+    public string RejectedBy { get; set; }
     public ICollection<RegisteredSystemTranslation> Translations { get; set; } = new List<RegisteredSystemTranslation>();
+    public string Reason { get; set; }
 
     IEnumerable<RegisteredSystemTranslationResult> RegisteredSystemRejectedResult.Translations { get => Translations; set => throw new NotImplementedException(); }
 }
+#nullable restore

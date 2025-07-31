@@ -1,4 +1,5 @@
-﻿using eID.PAN.Service.Entities;
+﻿using eID.PAN.Contracts;
+using eID.PAN.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Logging;
@@ -114,13 +115,14 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(f => f.Id);
             entity.Property(f => f.Id).ValueGeneratedNever();
-            entity.Property(f => f.SystemId).IsRequired();
+            entity.Property(f => f.SystemName).IsRequired().HasMaxLength(1024);
             entity.Property(f => f.Name).IsRequired().HasMaxLength(64);
-            entity.Property(f => f.Description);
+            entity.Property(f => f.Description).HasMaxLength(2048);
             entity.Property(f => f.ModifiedBy).HasMaxLength(64);
-            entity.Property(f => f.CallbackUrl).IsRequired();
+            entity.Property(f => f.CallbackUrl).IsRequired().HasMaxLength(2048);
             entity.Property(f => f.Price).IsRequired();
-            entity.Property(f => f.InfoUrl).IsRequired();
+            entity.Property(f => f.Email).IsRequired().HasMaxLength(1024);
+            entity.Property(f => f.InfoUrl).IsRequired().HasMaxLength(2048);
 
             entity.Property(f => f.Translations).IsRequired().HasColumnType("jsonb");
             entity.UseTpcMappingStrategy();
@@ -146,6 +148,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<NotificationChannelRejected>(entity =>
         {
             entity.ToTable("NotificationChannels.Rejected");
+            entity.Property(f => f.Reason)
+                .IsRequired()
+                .HasMaxLength(FieldLength.NotificationChannel.RejectReason);
         });
     }
 
@@ -156,8 +161,6 @@ public class ApplicationDbContext : DbContext
             entity.ToTable("NotificationChannels.Archive");
         });
     }
-
-
 
     private static void CreateDeactivatedUserEvent(ModelBuilder modelBuilder)
     {
@@ -212,30 +215,35 @@ public class ApplicationDbContext : DbContext
             throw new ArgumentNullException(nameof(logger));
         }
 
+        var willSeed = false;
         if (!NotificationChannels.Any(nc => nc.Name == ConfigurationsConstants.SMTP && nc.IsBuiltIn))
         {
+            willSeed = true;
+            logger.LogInformation("Seeding SMTP channel.");
             NotificationChannels.Add(new NotificationChannelApproved
             {
                 Id = Guid.NewGuid(),
                 IsBuiltIn = true,
                 Name = ConfigurationsConstants.SMTP,
-                Description = "Вътрешен канал за изпращане на имейли",
+                Description = "Канал за изпращане на известия по електронна поща",
                 CallbackUrl = "http://localhost/",
                 Price = 0,
                 InfoUrl = "http://localhost/",
+                Email = "support@localhost",
+                SystemName = "eID",
                 Translations = new List<NotificationChannelTranslation>
                 {
                     new NotificationChannelTranslation
                     {
                         Language = "bg",
-                        Name = ConfigurationsConstants.SMTP,
-                        Description = "Вътрешен канал за изпращане на имейли",
+                        Name = "Електронна поща",
+                        Description = "Канал за изпращане на известия по електронна поща",
                     },
                     new NotificationChannelTranslation
                     {
                         Language = "en",
-                        Name = ConfigurationsConstants.SMTP,
-                        Description = "Internal channel for sending emails",
+                        Name = "Email",
+                        Description = "Notification delivery channel via email",
                     }
                 }
             });
@@ -243,6 +251,8 @@ public class ApplicationDbContext : DbContext
 
         if (!NotificationChannels.Any(nc => nc.Name == ConfigurationsConstants.SMS && nc.IsBuiltIn))
         {
+            willSeed = true;
+            logger.LogInformation("Seeding SMS channel.");
             NotificationChannels.Add(new NotificationChannelApproved
             {
                 Id = Guid.NewGuid(),
@@ -252,6 +262,8 @@ public class ApplicationDbContext : DbContext
                 CallbackUrl = "http://localhost/",
                 Price = 0,
                 InfoUrl = "http://localhost/",
+                Email = "support@localhost",
+                SystemName = "eID",
                 Translations = new List<NotificationChannelTranslation>
                 {
                     new NotificationChannelTranslation
@@ -272,40 +284,48 @@ public class ApplicationDbContext : DbContext
 
         if (!NotificationChannels.Any(nc => nc.Name == ConfigurationsConstants.PUSH && nc.IsBuiltIn))
         {
+            willSeed = true;
+            logger.LogInformation("Seeding PUSH channel.");
             NotificationChannels.Add(new NotificationChannelApproved
             {
                 Id = Guid.NewGuid(),
                 IsBuiltIn = true,
                 Name = ConfigurationsConstants.PUSH,
-                Description = "Вътрешен канал за изпращане на PUSH нотификации",
+                Description = "Канал за изпращане на известия през мобилното приложение на централизираната система за електронна идентификация (ЦСЕИ)",
                 CallbackUrl = "http://localhost/",
                 Price = 0,
                 InfoUrl = "http://localhost/",
+                Email = "support@localhost",
+                SystemName = "eID",
                 Translations = new List<NotificationChannelTranslation>
                 {
                     new NotificationChannelTranslation
                     {
                         Language = "bg",
-                        Name = ConfigurationsConstants.PUSH,
-                        Description = "Вътрешен канал за изпращане на PUSH нотификации",
+                        Name = "Мобилно приложение",
+                        Description = "Канал за изпращане на известия през мобилното приложение на централизираната система за електронна идентификация (ЦСЕИ)",
                     },
                     new NotificationChannelTranslation
                     {
                         Language = "en",
-                        Name = ConfigurationsConstants.PUSH,
-                        Description = "Internal channel for sending PUSH notifications",
+                        Name = "Mobile application",
+                        Description = "Notification delivery channel via the mobile application of the centralized electronic identification system",
                     }
                 }
             });
+        }
 
-            try
+        try
+        {
+            if (willSeed)
             {
-                SaveChanges();
+                logger.LogInformation("Saving seeded information.");
             }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Error occurred during seed {CanallName} in table {TableName}", ConfigurationsConstants.SMTP, nameof(NotificationChannels));
-            }
+            SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Error occurred during channels seed.");
         }
     }
 
@@ -322,6 +342,10 @@ public class ApplicationDbContext : DbContext
             entity.Property(f => f.RejectedBy).HasMaxLength(64);
 
             entity.Property(f => f.Translations).IsRequired().HasColumnType("jsonb");
+            
+            entity.Property(f => f.Reason)
+                .IsRequired()
+                .HasMaxLength(FieldLength.RegisteredSystemRejected.RejectReason);
         });
     }
 

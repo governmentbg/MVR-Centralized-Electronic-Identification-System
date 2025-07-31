@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="8.0.13" />
+    <Compile Remove="External\**" />
+    <EmbeddedResource Remove="External\**" />
+    <None Remove="External\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="External\" />
+    <PackageReference Include="MassTransit" Version="8.4.1" />
   </ItemGroup>
 
 </Project>

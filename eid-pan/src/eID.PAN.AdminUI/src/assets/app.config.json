@@ -1,6 +1,8 @@
 {
     "journals": {
-        "folders": ["/app/logs/eid-pan/audit"],
+        "folders": [
+            "/app/logs/eid-pan/audit"
+        ],
         "fileExtensionFilter": "*.audit"
     },
     "integrity": {
@@ -9,13 +11,22 @@
         "poolingTimeout": 600000,
         "downloadBytesFileSize": 500000
     },
-    "keycloak": {
-        "keycloakUrl": "https://keycloak-dev.mvreid.local/",
-        "keycloakRealm": "master",
-        "keycloakClientId": "frontend-localhost",
-        "keycloakRedirectUri": "https://localhost:4200/",
-        "keycloakTokenKey": "kc_token",
-        "keycloakRefreshTokenKey": "kc_refreshToken",
-        "keycloakUpdateMinValidity": 120
+    "systemProcesses": {
+        "prometheus": "http://monitoring.mvreid.local:9090",
+        "grafana": "http://monitoring.mvreid.local:3000",
+        "ddosSystem1": "https://10.253.254.140",
+        "ddosSystem2": "https://10.253.254.140",
+        "keycloak_internal": "https://keycloak-dev.mvreid.local",
+        "keycloak_external": "http://keycloak-ext-dev.mvreid.local/"
+    },
+    "oauth": {
+        "clientId": "eid_mvr_auth_client",
+        "issuer": "https://keycloak-dev.mvreid.local/realms/eid_internal",
+        "redirectUri": "https://localhost:4200/",
+        "responseType": "code",
+        "requireHttps": true,
+        "scope": "openid profile email offline_access",
+        "useSilentRefresh": true,
+        "timeoutFactor": 0.75
     }
 }

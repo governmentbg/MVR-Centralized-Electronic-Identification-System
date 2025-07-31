@@ -5,7 +5,7 @@ using MassTransit;
 namespace eID.PAN.Application.Consumers;
 
 public class UserNotificationsConsumer : BaseConsumer,
-    IConsumer<GetUserNotificationsByFilter>,
+    IConsumer<GetSystemsAndNotificationsByFilter>,
     IConsumer<GetDeactivatedUserNotifications>,
     IConsumer<RegisterDeactivatedEvents>
 {
@@ -17,7 +17,7 @@ public class UserNotificationsConsumer : BaseConsumer,
         _service = service ?? throw new ArgumentNullException(nameof(service));
     } 
 
-    public async Task Consume(ConsumeContext<GetUserNotificationsByFilter> context)
+    public async Task Consume(ConsumeContext<GetSystemsAndNotificationsByFilter> context)
     {
         await ExecuteMethodAsync(context, () => _service.GetByFilterAsync(context.Message));
     }

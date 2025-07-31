@@ -10,7 +10,6 @@ public class SendNotificationRequestInput
     public Guid? EId { get; set; }
     public string? Uid { get; set; }
     public IdentifierType UidType { get; set; }
-    public IEnumerable<SendNotificationTranslation> Translations { get; set; } = Enumerable.Empty<SendNotificationTranslation>();
 }
 
 public class SendNotificationRequest : IValidatableRequest
@@ -23,7 +22,6 @@ public class SendNotificationRequest : IValidatableRequest
     public Guid? EId { get; set; }
     public string Uid { get; set; }
     public IdentifierType UidType { get; set; }
-    public IEnumerable<SendNotificationTranslation> Translations { get; set; } = Enumerable.Empty<SendNotificationTranslation>();
 }
 
 internal class SendNotificationRequestValidator : AbstractValidator<SendNotificationRequest>
@@ -51,17 +49,6 @@ internal class SendNotificationRequestValidator : AbstractValidator<SendNotifica
             .Empty()
             .When(r => r.EId is not null || r.UserId is not null)
             .WithMessage("Only one of UserId, Uid or EId is allowed");
-
-        When(r => r.Translations != null && r.Translations.Any(), () =>
-        {
-            RuleFor(r => r.Translations)
-            .Cascade(CascadeMode.Stop)
-            .ForEach(r => r.NotEmpty())
-            .Must(t => t?.Count() >= 2)
-            .Must(t => (t?.Any(c => c.Language == "bg") ?? false) && (t?.Any(c => c.Language == "en") ?? false))
-                .WithMessage($"{nameof(SendNotificationRequest.Translations)} languages must contain with 'bg' and 'en'")
-            .ForEach(r => r.SetValidator(new SendNotificationTranslationRequestValidator()));
-        });
 
         When(r => !string.IsNullOrWhiteSpace(r.Uid), () =>
         {

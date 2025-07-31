@@ -1,4 +1,5 @@
-﻿namespace eID.PAN.Service.Entities;
+﻿#nullable disable
+namespace eID.PAN.Service.Entities;
 
 public class DeactivatedUserEvent
 {
@@ -14,3 +15,4 @@ public class DeactivatedUserEvent
     public DateTime? ModifiedOn { get; set; }
     public string? ModifiedBy { get; set; }
 }
+#nullable restore

@@ -1,10 +1,13 @@
 ﻿using eID.PAN.Contracts.Commands;
+using eID.PAN.Contracts.Enums;
 using eID.PAN.Contracts.Results;
 using eID.PAN.Service.Database;
 using eID.PAN.Service.Entities;
 using eID.PAN.Service.Extensions;
 using eID.PAN.Service.Options;
 using eID.PAN.Service.Validators;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -18,18 +21,21 @@ public class SmtpConfigurationsService : BaseService
     private readonly IDistributedCache _cache;
     private readonly ApplicationDbContext _context;
     private readonly AesOptions _aesOptions;
+    private readonly ISmtpClient _smtpClient;
 
     public SmtpConfigurationsService(
         ILogger<SmtpConfigurationsService> logger,
         IDistributedCache cache,
         ApplicationDbContext context,
-        IOptions<AesOptions> aesOptions)
+        IOptions<AesOptions> aesOptions,
+        ISmtpClient smtpClient)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _aesOptions = (aesOptions ?? throw new ArgumentNullException(nameof(aesOptions))).Value;
         _aesOptions.Validate();
+        _smtpClient = smtpClient ?? throw new ArgumentNullException(nameof(smtpClient));
     }
 
     public async Task<ServiceResult<Guid>> CreateAsync(CreateSmtpConfiguration message)
@@ -66,13 +72,45 @@ public class SmtpConfigurationsService : BaseService
             CreatedOn = DateTime.UtcNow,
             CreatedBy = message.UserId
         };
-
+        if(!TryConnectToSmtpServer(smtpConfiguration))
+        {
+            _logger.LogWarning("Smtp configuration won't be created because it cannot connect to smtp server.");
+            return Conflict<Guid>(nameof(smtpConfiguration), smtpConfiguration.Server, "Can't connect to server.");
+        }
         await _context.SmtpConfigurations.AddAsync(smtpConfiguration);
         await _context.SaveChangesAsync();
         _cache.Remove(SmtpConfiguration.AllSmtpConfigurationCacheKey);
         _logger.LogInformation("Smtp configuration created. Id: {Id}", smtpConfiguration.Id);
         // Result
         return Ok(smtpConfiguration.Id);
+    }
+
+    private bool TryConnectToSmtpServer(SmtpConfiguration smtpConfiguration)
+    {
+        var socketOpt = SecureSocketOptions.None;
+        if (smtpConfiguration.SecurityProtocol == SmtpSecurityProtocol.SSL)
+        {
+            socketOpt = SecureSocketOptions.SslOnConnect;
+        }
+        else if (smtpConfiguration.SecurityProtocol == SmtpSecurityProtocol.TLS)
+        {
+            socketOpt = SecureSocketOptions.StartTls;
+        }
+
+        if (_smtpClient.IsConnected)
+        {
+            _smtpClient.Disconnect(quit: true);
+        }
+        try
+        {
+            _smtpClient.Connect(smtpConfiguration.Server, smtpConfiguration.Port, socketOpt);
+            return _smtpClient.IsConnected;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during smtp configuration verification.");
+            return false;
+        }
     }
 
     public async Task<ServiceResult<IPaginatedData<SmtpConfigurationResult>>> GetByFilterAsync(GetSmtpConfigurationsByFilter message)
@@ -184,7 +222,11 @@ public class SmtpConfigurationsService : BaseService
         smtpConfiguration.SecurityProtocol = message.SecurityProtocol;
         smtpConfiguration.ModifiedBy = message.UserId;
         smtpConfiguration.ModifiedOn = DateTime.UtcNow;
-
+        if (!TryConnectToSmtpServer(smtpConfiguration))
+        {
+            _logger.LogWarning("Smtp configuration {ConfigurationId} won't be updated because it cannot connect to smtp server.", smtpConfiguration.Id);
+            return Conflict(nameof(smtpConfiguration), smtpConfiguration.Server, "Can't connect to server.");
+        }
         await _context.SaveChangesAsync();
 
         // Invalidate the cache
