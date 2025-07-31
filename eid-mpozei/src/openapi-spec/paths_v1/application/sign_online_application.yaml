@@ -1,0 +1,40 @@
+methods:
+  post:
+    tags:
+      - Application
+    summary: Sign Online Application and verify Citizen Profile and device
+    description: Sign Online Application and verify Citizen Profile and device
+    operationId: signOnlineApplication
+    requestBody:
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/application/sign_online_application_request_v1.yaml#/schemas/SignOnlineApplicationRequest'
+    responses:
+      '200':
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/application/application_status_v1.yaml#/schemas/ApplicationStatus'
+        description: Success Created
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

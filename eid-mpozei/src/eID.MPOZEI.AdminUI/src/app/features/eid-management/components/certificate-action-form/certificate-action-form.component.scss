@@ -1,0 +1,10 @@
+@use "sass:math";
+$container-width: 700px;
+
+.reason-dropdown-container {
+    max-width: math.div($container-width, 2);
+}
+
+.action-container {
+    max-width: $container-width;
+}

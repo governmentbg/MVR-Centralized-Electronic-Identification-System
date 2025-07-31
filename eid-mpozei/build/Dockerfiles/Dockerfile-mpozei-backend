@@ -1,0 +1,43 @@
+FROM alpine:edge
+
+LABEL authors="Strahil vitkov <strahil.vitkov@bul-si.bg>"
+
+RUN apk --no-cache add bash openjdk17 curl ttf-dejavu
+#openjdk17-jre
+
+RUN set -x \
+    && addgroup mpozei \
+    && adduser -S -G mpozei -h /home/mpozei -s /bin/false mpozei \
+    && mkdir -p /home/mpozei/logs \
+    && mkdir -p /home/mpozei/logs/mpozei-backend \
+    && mkdir -p /home/mpozei/logs/audit/unsigned \
+    && chown -R mpozei:mpozei /home/mpozei
+
+WORKDIR /home/mpozei
+ENV JAVA_HOME=/usr/lib/jvm/default-jvm
+ENV PATH /home/mpozei:$PATH
+
+COPY src/mpozei-backend/target/mpozei-backend.jar /home/mpozei/
+# COPY infra/dev/certs/server_cacerts /home/mpozei/certs/server_cacerts
+#COPY infra/dev/certs/server_keystore /home/mpozei/certs/server_keystore
+COPY ext-conf/application-be.yaml /home/mpozei/config/application-be.yaml
+
+USER root
+#COPY infra/dev/certs/server_certificate.crt $JAVA_HOME/jre/lib/security
+#RUN keytool -export -keystore /home/mpozei/certs/server_cacerts -alias keycloak_dev.mvreid.local -file /home/mpozei/certs/keycloak-dev.mvreid.local.cer
+#RUN \
+#    cd $JAVA_HOME/jre/lib/security \
+#    && keytool -keystore cacerts -storepass changeit -noprompt -trustcacerts -importcert -alias mrveid.local -file server_certificate.crt \
+#    && keytool -keystore cacerts -storepass changeit -noprompt -trustcacerts -importcert -alias keycloak_dev.mvreid.local -file /home/mpozei/certs/keycloak-dev.mvreid.local.cer
+
+# The actions below are in Jenkinsfile
+#RUN ["mvnw", "clean"]
+#RUN ["mvnw", "test"]
+#RUN ["mvnw", "package", "-DskipTests"]
+
+EXPOSE 8096
+ 	
+ENTRYPOINT ["/usr/bin/java"]
+
+ENV SPRING_PROFILES_ACTIVE=logging-dev,logging-test,logging-audit,rabbitmq,keycloak,postgres,mail,redis
+CMD ["-jar", "-ea", "--add-opens", "java.base/java.time=ALL-UNNAMED", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-Dspring.config.additional-location=file:/home/mpozei/config/application-be.yaml", "mpozei-backend.jar"]

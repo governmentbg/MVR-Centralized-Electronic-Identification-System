@@ -1,0 +1,20 @@
+schemas:
+  PublicCertificateInfo:
+    type: object
+    properties:
+      commonName:
+        type: string
+      carrierType:
+        type: string
+      validityFrom:
+        type: string
+        format: date-time
+        description: Certificate valid from date
+      validityUntil:
+        type: string
+        format: date-time
+        description: Certificate valid until date
+      serialNumber:
+        type: string
+      status:
+        $ref: './citizen_certificate_status_ext_v1.yaml#/schemas/CertificateStatusExternal'

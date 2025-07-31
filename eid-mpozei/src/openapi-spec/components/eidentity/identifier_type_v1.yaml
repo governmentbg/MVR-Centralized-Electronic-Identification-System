@@ -1,0 +1,9 @@
+schemas:
+  IdentifierType:
+    type: string
+    description: The type of identification document
+    enum: &IdentifierType
+      - EGN
+      - LNCh
+      - FP
+    x-enum-varnames: *IdentifierType

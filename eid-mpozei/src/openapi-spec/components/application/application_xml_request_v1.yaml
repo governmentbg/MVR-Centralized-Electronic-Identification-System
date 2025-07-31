@@ -1,0 +1,6 @@
+schemas:
+  ApplicationXmlRequest:
+    type: object
+    properties:
+      dummyField:
+        type: string

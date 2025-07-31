@@ -1,0 +1,41 @@
+methods:
+  post:
+    tags:
+      - ExternalAdministrators
+    summary: Enrollment with client certificate
+    description: Enroll with a given certificate
+    operationId: enrollPkcs10Certificate
+    requestBody:
+      required: true
+      description: Add Certificate to Application
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/certificate/certificate_request_ext_admin_v1.yaml#/schemas/CertificateExtAdminRequest'
+    responses:
+      '201':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/certificate/certificate_response_v1.yaml#/schemas/CertificateResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

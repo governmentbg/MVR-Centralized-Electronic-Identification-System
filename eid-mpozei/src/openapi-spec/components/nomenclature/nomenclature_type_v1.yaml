@@ -1,0 +1,13 @@
+schemas:
+  NomenclatureTypeDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      nomenclatures:
+        type: array
+        items:
+          $ref: './nomenclature_v1.yaml#/schemas/NomenclatureDTO'

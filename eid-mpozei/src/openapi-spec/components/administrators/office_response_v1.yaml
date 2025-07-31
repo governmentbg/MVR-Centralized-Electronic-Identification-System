@@ -1,0 +1,11 @@
+schemas:
+  EidAdministratorFrontOfficeResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      location:
+        type: string

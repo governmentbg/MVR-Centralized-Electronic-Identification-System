@@ -1,0 +1,28 @@
+schemas:
+  NaifDeviceHistoryResponse:
+    type: object
+    properties:
+      MessageID:
+        type: string
+        format: uuid
+      MessageRefID:
+        type: string
+        format: uuid
+      User:
+        type: string
+      Timestamp:
+        type: string
+        format: date-time
+      CarrierSerialNumber:
+        type: string
+        description: Device Serial Number
+      LatestCertificateSerialNumber:
+        type: string
+      certificate_data:
+        type: array
+        items:
+          $ref: './naif_device_certificate_dto_v1.yaml#/schemas/NaifDeviceCertificateDTO'
+      ResponseStatusCode:
+        type: integer
+      ResponseStatusDesc:
+        type: string

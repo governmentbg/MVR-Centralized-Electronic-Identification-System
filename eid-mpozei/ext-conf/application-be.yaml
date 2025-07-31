@@ -1,0 +1,86 @@
+server:
+  port: 8096
+  ssl:
+    enabled: false
+    trust-store:
+    trust-store-password:
+    trust-store-type: PKCS12
+
+    key-alias: mvreid.local
+    key-store:
+    key-store-password:
+spring:
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+  rabbitmq:
+    listener:
+      simple:
+        concurrency: 3
+    host: mvreid-mq.test
+    username:
+    password:
+  security:
+    oauth2:
+      client:
+        registration:
+          eid-mpozei-m2m:
+            client-id:
+            client-secret:
+            authorization-grant-type: client_credentials
+            provider: keycloak
+        provider:
+          keycloak:
+            issuer-uri:
+            token-uri:
+            user-name-attribute: preferred_username
+  ssl:
+    bundle:
+      jks:
+        pan-client:
+          key:
+            alias: "mvreid.local"
+          keystore:
+            location:
+            password:
+            type: "PKCS12"
+          truststore:
+            location:
+            password:
+            type: "PKCS12"
+        ejbca-m2m:
+          key:
+            alias: "ejbca-client"
+          keystore:
+            location:
+            password:
+            type: "PKCS12"
+          truststore:
+            location:
+            password:
+            type: "PKCS12"
+custom:
+  rabbitmq:
+    queue-prefix: mpozei.rpcqueue.
+    management:
+      port:
+logging:
+  secret-key:
+services:
+  ruei-gateway-base-url:
+  rei-gateway-base-url:
+  ejbca-base-url: https://eidd01ejbca01.mvreid.local
+  pun-base-url: http://punapi-dev.mvreid.local
+  pivr-base-url: http://pivrapi-dev.mvreid.local
+  sign-server-base-url: http://signserver.mvreid.local/signserver
+  e-delivery-base-url: http://dev.integrations.mvreid.local
+ejbca:
+  certificate-profile-name: Certificate_Profile_MVR_DEV
+  end-entity-profile-name: "MVR DEV CA"
+  account-binding-id:
+mvr:
+  pan_client:
+    base_url: http://panapi-dev.mvreid.local
+    client_registration_id:

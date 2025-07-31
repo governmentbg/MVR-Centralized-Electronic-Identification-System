@@ -1,0 +1,763 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <p-dialog
+        [header]="t('modules.eidManagement.txtPersonRelationsSearch')"
+        [modal]="true"
+        [(visible)]="dialogVisible"
+        contentStyleClass="p-0"
+        class="information-dialog"
+        [draggable]="false"
+        [closeOnEscape]="false"
+        [breakpoints]="{ '960px': '85vw' }"
+        [style]="{ width: '60vw' }">
+        <p-table [value]="relatives" [tableStyle]="{ 'min-width': '60rem' }" [loading]="relativesSearchLoading">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtName') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtEGN') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtBirthDate') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtRelation') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtGender') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtNationality') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtDeathDate') }}</th>
+                    <th>{{ t('modules.eidManagement.relationSearch.txtRestrictions') }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-relative let-rowIndex="rowIndex">
+                <tr>
+                    <td>{{ relative.firstName }} {{ relative.surName }} {{ relative.familyName }}</td>
+                    <td>{{ relative.egn }}</td>
+                    <td>{{ formatDate(relative.birthDate) }}</td>
+                    <td>{{ relative.relationCode }}</td>
+                    <td>{{ relative.gender.genderName }}</td>
+                    <td>{{ relative.nationality.nationalityName }}</td>
+                    <td>{{ formatDate(relative.deathDate) }}</td>
+                    <td>
+                        <p-button
+                            *ngIf="!relative.restrictions"
+                            [label]="t('modules.eidManagement.relationSearch.txtCheckRestrictions')"
+                            styleClass="p-button p-button-primary p-button-sm"
+                            class="button-inside-notification"
+                            (onClick)="checkForRelativeRestrictions(relative, rowIndex)"
+                            [loading]="(buttonLoading[rowIndex] | async) ?? false"
+                            type="button">
+                        </p-button>
+                        <ng-container *ngIf="relative.restrictions">
+                            <ng-container *ngIf="relative.restrictions.isProhibited">
+                                <span class="text-error">{{
+                                    t('modules.eidManagement.relationSearch.txtProhibition')
+                                }}</span>
+                            </ng-container>
+                            <ng-container *ngIf="relative.restrictions.hasRevokedParentalRights">
+                                <span class="text-error">{{
+                                    t('modules.eidManagement.relationSearch.txtRevokedParentalRights')
+                                }}</span>
+                            </ng-container>
+                            <ng-container
+                                *ngIf="
+                                    !relative.restrictions.isProhibited &&
+                                    !relative.restrictions.hasRevokedParentalRights
+                                ">
+                                <span class="text-button-confirm">{{
+                                    t('modules.eidManagement.relationSearch.txtNoRestrictions')
+                                }}</span>
+                            </ng-container>
+                        </ng-container>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">
+                        <span
+                            class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                            <img src="/assets/images/noresults.png" />
+                            <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                {{ t('global.txtNoRecordsFound') }}
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-dialog>
+    <app-application-details
+        [applicationId]="selectedApplication.id"
+        [personalId]="personalId"
+        [personalIdType]="personalIdType"
+        [personalIdentity]="personalIdentity"
+        [currentEid]="currentEid"
+        [restrictionsStatus]="restrictionsStatus"
+        [hideActionButtons]="isPersonalDocumentExpired"
+        *ngIf="showApplicationDetails && selectedApplication"
+        (hide)="onHideApplicationDetails($event)"></app-application-details>
+    <app-certificate-details
+        [certificateId]="selectedCertificate"
+        [personalId]="personalId"
+        [personalIdType]="personalIdType"
+        [currentEid]="currentEid"
+        [personalIdentity]="personalIdentity"
+        [action]="action"
+        [restrictionsStatus]="restrictionsStatus"
+        [applicationId]="actionApplicationId"
+        *ngIf="showCertificateDetailsModal && selectedCertificate"
+        (hide)="onHideCertificateDetails($event)"></app-certificate-details>
+    <p-dialog
+        [header]="t('modules.eidManagement.txtSetPIN')"
+        [modal]="true"
+        [(visible)]="isPINChangeDialogVisible"
+        *ngIf="isPINChangeDialogVisible"
+        contentStyleClass="p-0"
+        class="information-dialog"
+        [draggable]="false"
+        [closeOnEscape]="false"
+        [breakpoints]="{ '992px': '85vw', '1200px': '85vw', '1400px': '85vw' }"
+        [style]="{ width: '50vw' }">
+        <app-pin-change-form (hide)="onHidePINDialog()" [personalIdentity]="personalIdentity"></app-pin-change-form>
+    </p-dialog>
+
+    <div [hidden]="showApplicationDetails || showCertificateDetailsModal">
+        <div class="row">
+            <div class="col">
+                <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <p-skeleton width="20rem" height="3rem" *ngIf="loadingEidStatus"></p-skeleton>
+                <h4 class="text-primary d-flex mb-0" *ngIf="!loadingEidStatus">
+                    <img
+                        *ngIf="personalIdentity && personalIdentity.picture; else elseBlock"
+                        class="header-icon rounded me-3"
+                        [alt]="t('modules.eidManagement.txtCitizenPicture')"
+                        [src]="'data:image/jpg;base64,' + personalIdentity.picture" />
+                    <ng-template #elseBlock>
+                        <i class="material-icons-outlined me-3 header-icon display-4">&#xe853;</i>
+                    </ng-template>
+                    <div class="header-info align-self-center">
+                        <span class="text-uppercase align-self-center d-block">
+                            <span>{{ translatedPersonalIdType?.name }}:</span> {{ personalId }}
+                        </span>
+                        <span class="align-self-center d-block" *ngIf="personalDocumentNumber">
+                            <span>{{ t('modules.eidManagement.txtDocumentNumber') }}:</span>
+                            {{ personalDocumentNumber }}
+                        </span>
+                        <span class="align-self-center d-block text-condensed">
+                            <span>
+                                {{ personalIdentity?.personNames?.firstName }}
+                                {{ personalIdentity?.personNames?.surname }}
+                                {{ personalIdentity?.personNames?.familyName }}
+                            </span>
+                        </span>
+                    </div>
+                </h4>
+            </div>
+            <div
+                class="col d-flex justify-content-end gap-3"
+                *appHasRole="[RoleType.OPERATOR, RoleType.RU_MVR_ADMINISTRATOR]">
+                <p-skeleton
+                    width="10rem"
+                    height="3rem"
+                    styleClass="d-inline-block text-end"
+                    *ngIf="loadingProhibitionDateOfDeathStatus"></p-skeleton>
+                <p-button
+                    *ngIf="
+                        isNewApplicationButtonVisible &&
+                        !loadingProhibitionDateOfDeathStatus &&
+                        !loadingRegixData &&
+                        !personIsAMinor
+                    "
+                    [label]="t('modules.eidManagement.txtSetPIN')"
+                    icon="pi pi-key"
+                    iconPos="left"
+                    (onClick)="setPIN()"
+                    styleClass="p-button p-button-success p-button-sm"></p-button>
+                <p-button
+                    *ngIf="
+                        isNewApplicationButtonVisible &&
+                        !loadingProhibitionDateOfDeathStatus &&
+                        !loadingRegixData &&
+                        !personIsAMinor
+                    "
+                    [label]="t('modules.eidManagement.txtNewApplication')"
+                    icon="pi pi-plus"
+                    iconPos="left"
+                    (onClick)="createNewApplication()"
+                    styleClass="p-button p-button-success p-button-sm"></p-button>
+            </div>
+
+            <p-divider class="header-divider" type="solid"></p-divider>
+        </div>
+
+        <div class="personal-data">
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtNationality') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">{{ nationality }}</p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtDateOfBirth') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">
+                    {{ formatDate(personalIdentity?.birthDate) || t('modules.eidManagement.txtNoData') }}
+                </p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtDocumentType') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">
+                    {{ personalIdentity?.documentType || t('modules.eidManagement.txtNoData') }}
+                </p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtDocumentNumber') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">
+                    {{ personalIdentity?.identityDocumentNumber || t('modules.eidManagement.txtNoData') }}
+                </p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtIssuedBy') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">
+                    {{ getIssuerName() }}
+                </p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtIssuedOn') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">
+                    {{ formatDate(personalIdentity?.issueDate) || t('modules.eidManagement.txtNoData') }}
+                </p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div class="">
+                <p class="title">{{ t('modules.eidManagement.txtValidTo') }}:</p>
+                <p class="value" *ngIf="!loadingRegixData">
+                    {{ formatDate(personalIdentity?.validDate) || t('modules.eidManagement.txtNoData') }}
+                </p>
+                <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+            </div>
+            <div>
+                <div class="col">
+                    <p class="title">{{ t('modules.eidManagement.txtEmail') }}:</p>
+                    <p class="value text-break" *ngIf="!loadingRegixData">
+                        {{ currentEid?.email || t('modules.eidManagement.txtNoData') }}
+                    </p>
+                    <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+                </div>
+            </div>
+            <div>
+                <div class="col">
+                    <p class="title">{{ t('modules.eidManagement.txtPhone') }}:</p>
+                    <p class="value" *ngIf="!loadingRegixData">
+                        {{ currentEid?.phoneNumber || t('modules.eidManagement.txtNoData') }}
+                    </p>
+                    <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+                </div>
+            </div>
+            <div style="grid-column: span 3">
+                <div class="col">
+                    <p class="title">{{ t('modules.eidManagement.txtAddress') }}:</p>
+                    <p class="value" *ngIf="!loadingRegixData">{{ permanentAddress }}</p>
+                    <p-skeleton *ngIf="loadingRegixData" height="1rem" width="6rem" styleClass="mb-3"></p-skeleton>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <div class="mt-4" *ngIf="errorMessages.length > 0 || personIsBelowLawfulAge">
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                    <div
+                        *ngFor="let message of errorMessages; index as i"
+                        class="alert alert-danger text-text-error d-flex justify-content-between border-0 fw-bolder">
+                        <span>{{ message }}</span>
+                    </div>
+
+                    <div
+                        *ngIf="personIsAMinor && personIsBelowLawfulAge"
+                        class="alert alert-danger text-text-error d-flex justify-content-between border-0 fw-bolder">
+                        <span>{{ t('modules.eidManagement.txtPersonBelowAge', { age: CHILD_AGE }) }}</span>
+                    </div>
+
+                    <div
+                        *ngIf="!personIsAMinor && personIsBelowLawfulAge"
+                        class="alert alert-danger text-text-error d-flex justify-content-between border-0 fw-bolder">
+                        <span>{{ t('modules.eidManagement.txtPersonBelowAge', { age: LAWFUL_AGE }) }}</span>
+                        <p-button
+                            *ngIf="personalIdType === PersonalIdTypes.EGN"
+                            [label]="t('modules.eidManagement.txtPersonRelationsSearch')"
+                            styleClass="p-button p-button-primary p-button-sm"
+                            class="button-inside-notification"
+                            (onClick)="showRelationsSearch()"
+                            type="button">
+                        </p-button>
+                    </div>
+                </div>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <div class="alert alert-primary border-0 fw-bolder" *ngIf="noEidForThisPerson && !loadingEidStatus">
+                    {{ noEidErrorMessage }}
+                </div>
+
+                <div *ngIf="loadingEidStatus || loadingRegixData">
+                    <p-skeleton width="20rem" height="3.5rem" styleClass="mb-3"></p-skeleton>
+                    <p-skeleton height="3.5rem" styleClass="mb-3"></p-skeleton>
+                </div>
+
+                <p-card *ngIf="!noEidForThisPerson && !loadingEidStatus && !loadingRegixData">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-4 d-flex justify-content-between">
+                                <div>
+                                    <p-selectButton
+                                        [options]="tabOptions"
+                                        [(ngModel)]="value"
+                                        [multiple]="false"
+                                        optionLabel="name"
+                                        optionValue="value"
+                                        (ngModelChange)="activeItemChange($event)">
+                                        <ng-template let-item>
+                                            <span class="p-button-label">{{ item.label }}</span>
+                                        </ng-template>
+                                    </p-selectButton>
+                                </div>
+                                <div>
+                                    <app-applications-filter
+                                        [hidden]="activeItem !== 'applications'"
+                                        (filteredData)="
+                                            onFilteredApplicationsDataChange($event)
+                                        "></app-applications-filter>
+                                    <app-certificates-filter
+                                        [hidden]="activeItem !== 'certificates'"
+                                        (filteredData)="
+                                            onFilteredCertificatesDataChange($event)
+                                        "></app-certificates-filter>
+                                </div>
+                            </div>
+
+                            <p-table
+                                #dt
+                                [hidden]="activeItem !== 'applications'"
+                                [value]="applications"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                dataKey="id"
+                                [lazy]="true"
+                                (onLazyLoad)="loadApplications($event)"
+                                [totalRecords]="applicationsTotalRecords"
+                                [rows]="applicationsPageSize"
+                                [paginator]="true"
+                                [showCurrentPageReport]="true"
+                                [rowsPerPageOptions]="[10, 25, 50]"
+                                [currentPageReportTemplate]="
+                                    t('global.txtTablePagination', {
+                                        first: '{first}',
+                                        last: '{last}',
+                                        totalRecords: '{totalRecords}'
+                                    })
+                                "
+                                [loading]="loadingApplications"
+                                loadingIcon="pi pi-spin pi-spinner"
+                                [globalFilterFields]="['id', 'createDate', 'deviceId', 'status']"
+                                sortField="createDate"
+                                [sortOrder]="-1"
+                                [rowSelectable]="false"
+                                paginatorDropdownAppendTo="body"
+                                [resizableColumns]="true">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pResizableColumn class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtApplicationNumber') }}
+                                        </th>
+                                        <th pResizableColumn class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtApplicationType') }}
+                                        </th>
+                                        <th pResizableColumn class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtOffice') }}
+                                        </th>
+                                        <th pResizableColumn class="text-nowrap">
+                                            {{ t('modules.eidManagement.tableFilter.txtSubmissionType') }}
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="createDate" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtApplicationCreatedOn') }}
+                                            <p-sortIcon field="createDate"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="deviceId" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtApplicationHolderType') }}
+                                            <p-sortIcon field="deviceId"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="status" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtApplicationStatus') }}
+                                            <p-sortIcon field="status"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn class="text-nowrap text-end">
+                                            {{ t('modules.eidManagement.txtApplicationPreview') }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="loadingbody">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-application>
+                                    <tr>
+                                        <td style="max-width: 18rem" [attr.aria-label]="application.applicationNumber">
+                                            <span class="multiline-ellipsis fw-bold">{{
+                                                application.applicationNumber
+                                            }}</span>
+                                        </td>
+                                        <td style="max-width: 18rem" [attr.aria-label]="application.applicationType">
+                                            <span class="multiline-ellipsis">{{
+                                                applicationTypeText(application.applicationType)
+                                            }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 11rem"
+                                            [attr.aria-label]="application.eidAdministratorOfficeName">
+                                            <span class="multiline-ellipsis">{{
+                                                getOfficeName(application.eidAdministratorFrontOfficeId)
+                                            }}</span>
+                                        </td>
+                                        <td style="max-width: 11rem" [attr.aria-label]="application.submissionType">
+                                            <span class="multiline-ellipsis">{{
+                                                submissionTypeTranslation(application.submissionType)
+                                            }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="formatDate(application.createDate, true)">
+                                            <span class="multiline-ellipsis">{{
+                                                formatDate(application.createDate, true)
+                                            }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 11rem"
+                                            [attr.aria-label]="applicationDeviceTypeTranslation(application.deviceId)">
+                                            <span class="multiline-ellipsis">{{
+                                                applicationDeviceTypeTranslation(application.deviceId)
+                                            }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="applicationStatusTranslation(application.status)">
+                                            <div [ngSwitch]="application.status">
+                                                <span
+                                                    *ngSwitchCase="ApplicationStatus.COMPLETED"
+                                                    class="text-button-confirm multiline-ellipsis">
+                                                    {{ applicationStatusTranslation(application.status) }}
+                                                </span>
+                                                <span
+                                                    *ngSwitchCase="ApplicationStatus.DENIED"
+                                                    class="text-text-error multiline-ellipsis">
+                                                    {{ applicationStatusTranslation(application.status) }}
+                                                </span>
+                                                <span *ngSwitchDefault class="text-text-active multiline-ellipsis">
+                                                    {{ applicationStatusTranslation(application.status) }}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td style="width: 10rem">
+                                            <div class="d-flex justify-content-end">
+                                                <p-button
+                                                    [title]="t('modules.eidManagement.txtPreviewApplication')"
+                                                    styleClass="p-button-sm p-button-text"
+                                                    (onClick)="showDetails(application)">
+                                                    <i class="material-icons-outlined">&#xf801;</i>
+                                                </p-button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="8">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" />
+                                                <span
+                                                    class="text-text-light"
+                                                    [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                    {{ t('global.txtNoRecordsFound') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-table
+                                [hidden]="activeItem !== 'certificates'"
+                                [value]="certificates"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                dataKey="uid"
+                                [lazy]="true"
+                                (onLazyLoad)="loadCertificates($event)"
+                                [totalRecords]="certificatesTotalRecords"
+                                [rows]="certificatesPageSize"
+                                [paginator]="true"
+                                [showCurrentPageReport]="true"
+                                [rowsPerPageOptions]="[10, 25, 50]"
+                                [currentPageReportTemplate]="
+                                    t('global.txtTablePagination', {
+                                        first: '{first}',
+                                        last: '{last}',
+                                        totalRecords: '{totalRecords}'
+                                    })
+                                "
+                                [loading]="loadingCertificates"
+                                loadingIcon="pi pi-spin pi-spinner"
+                                [globalFilterFields]="['id', 'createdOn', 'holder', 'status']"
+                                sortField="validityFrom"
+                                [sortOrder]="-1"
+                                [rowSelectable]="false"
+                                paginatorDropdownAppendTo="body"
+                                [resizableColumns]="true">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pResizableColumn pSortableColumn="serialNumber" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtCertificateSerialNumber') }}
+                                            <p-sortIcon field="serialNumber"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="alias" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtCertificateName') }}
+                                            <p-sortIcon field="alias"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="validityFrom" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtCertificateValidFrom') }}
+                                            <p-sortIcon field="validityFrom"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="validityUntil" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtCertificateValidTo') }}
+                                            <p-sortIcon field="validityUntil"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="deviceId" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtCertificateHolder') }}
+                                            <p-sortIcon field="deviceId"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn pSortableColumn="status" class="text-nowrap">
+                                            {{ t('modules.eidManagement.txtApplicationStatus') }}
+                                            <p-sortIcon field="status"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn class="text-nowrap text-end">
+                                            {{ t('modules.eidManagement.txtActions') }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="loadingbody">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-certificate>
+                                    <tr>
+                                        <td style="max-width: 18rem" [attr.aria-label]="certificate.serialNumber">
+                                            <span class="multiline-ellipsis fw-bold">{{
+                                                certificate.serialNumber
+                                            }}</span>
+                                        </td>
+                                        <td style="max-width: 18rem" [attr.aria-label]="certificate.alias">
+                                            <span class="multiline-ellipsis fw-bold">{{ certificate.alias }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="formatDate(certificate.validityFrom)">
+                                            <span class="multiline-ellipsis">{{
+                                                formatDate(certificate.validityFrom)
+                                            }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 11rem"
+                                            [attr.aria-label]="formatDate(certificate.validityUntil)">
+                                            <span class="multiline-ellipsis">{{
+                                                formatDate(certificate.validityUntil)
+                                            }}</span>
+                                            <span
+                                                class="d-inline-block badge text-uppercase text-black bg-button-danger-hover"
+                                                *ngIf="
+                                                    certificate.isExpiring &&
+                                                    certificate.status === CertificateStatus.ACTIVE
+                                                ">
+                                                {{ t('modules.eidManagement.details.txtExpiresSoon') }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="applicationDeviceTypeTranslation(certificate.deviceId)">
+                                            <span class="multiline-ellipsis">{{
+                                                applicationDeviceTypeTranslation(certificate.deviceId)
+                                            }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="certificateStatusTranslation(certificate.status)">
+                                            <div [ngSwitch]="certificate.status">
+                                                <span *ngSwitchCase="'ACTIVE'" class="text-button-confirm">
+                                                    {{ certificateStatusTranslation(certificate.status) }}
+                                                    <i
+                                                        *ngIf="isCertificateExpired(certificate)"
+                                                        class="material-icons-outlined cursor-default"
+                                                        [pTooltip]="
+                                                            t(
+                                                                'modules.eidManagement.txtCertificateExpiredButNotChangedInDB'
+                                                            )
+                                                        "
+                                                        tooltipPosition="bottom"
+                                                        >&#xe88e;</i
+                                                    >
+                                                </span>
+                                                <span *ngSwitchCase="'STOPPED'" class="text-theme-secondary-alert">{{
+                                                    certificateStatusTranslation(certificate.status)
+                                                }}</span>
+                                                <span *ngSwitchCase="'EXPIRED'" class="text-theme-secondary-alert">{{
+                                                    certificateStatusTranslation(certificate.status)
+                                                }}</span>
+                                                <span *ngSwitchCase="'FAILED'" class="text-text-error">{{
+                                                    certificateStatusTranslation(certificate.status)
+                                                }}</span>
+                                                <span *ngSwitchCase="'REVOKED'" class="text-text-error">{{
+                                                    certificateStatusTranslation(certificate.status)
+                                                }}</span>
+                                                <span *ngSwitchDefault>{{
+                                                    certificateStatusTranslation(certificate.status)
+                                                }}</span>
+                                            </div>
+                                        </td>
+                                        <td style="width: 10rem">
+                                            <div class="d-flex justify-content-end">
+                                                <p-button
+                                                    [title]="t('modules.eidManagement.txtPreviewApplication')"
+                                                    styleClass="p-button-sm p-button-text"
+                                                    (onClick)="showCertificateDetails(certificate.id)">
+                                                    <i class="material-icons-outlined">&#xf801;</i>
+                                                </p-button>
+                                                <p-button
+                                                    *ngIf="
+                                                        certificate.status === CertificateStatus.STOPPED &&
+                                                        !noSuchPersonError
+                                                    "
+                                                    [title]="t('modules.eidManagement.details.txtStart')"
+                                                    styleClass="p-button-sm p-button-success p-button-text"
+                                                    (onClick)="
+                                                        showCertificateDetails(
+                                                            certificate.id,
+                                                            ApplicationType.RESUME_EID
+                                                        )
+                                                    ">
+                                                    <i class="material-icons-outlined">&#xe1c4;</i>
+                                                </p-button>
+                                                <p-button
+                                                    *ngIf="
+                                                        certificate.status === CertificateStatus.ACTIVE &&
+                                                        !noSuchPersonError
+                                                    "
+                                                    [title]="t('modules.eidManagement.details.txtStop')"
+                                                    styleClass="p-button-sm p-button-warning p-button-text"
+                                                    (onClick)="
+                                                        showCertificateDetails(certificate.id, ApplicationType.STOP_EID)
+                                                    ">
+                                                    <i class="material-icons-outlined">&#xe1a2;</i>
+                                                </p-button>
+                                                <ng-container
+                                                    *appHasRole="[
+                                                        RoleType.OPERATOR,
+                                                        RoleType.RU_MVR_ADMINISTRATOR,
+                                                        RoleType.APP_ADMINISTRATOR
+                                                    ]">
+                                                    <p-button
+                                                        *ngIf="
+                                                            (certificate.status === CertificateStatus.STOPPED ||
+                                                                certificate.status === CertificateStatus.ACTIVE) &&
+                                                            !noSuchPersonError
+                                                        "
+                                                        [title]="t('modules.eidManagement.details.txtTerminate')"
+                                                        styleClass="p-button-sm p-button-danger p-button-text"
+                                                        (onClick)="
+                                                            showCertificateDetails(
+                                                                certificate.id,
+                                                                ApplicationType.REVOKE_EID
+                                                            )
+                                                        ">
+                                                        <i class="material-icons-outlined">&#xe99a;</i>
+                                                    </p-button>
+                                                </ng-container>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="7">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" />
+                                                <span
+                                                    class="text-text-light"
+                                                    [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                    {{ t('global.txtNoRecordsFound') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </p-card>
+            </div>
+        </div>
+
+        <p-button
+            [label]="t('global.txtBack')"
+            iconPos="left"
+            styleClass="p-button p-button-primary p-button-sm"
+            (onClick)="navigateToSearch()"
+            ><i class="material-icons-outlined">&#xe5e0;</i></p-button
+        >
+    </div>
+</section>

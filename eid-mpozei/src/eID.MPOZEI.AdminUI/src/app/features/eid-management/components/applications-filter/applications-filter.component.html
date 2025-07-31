@@ -1,0 +1,277 @@
+<aside role="table-filter" *transloco="let t" class="table-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.eidManagement.tableFilter.txtApplicationsFilter') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="applicationNumber" class="form-label">
+                            {{ t('modules.eidManagement.tableFilter.txtApplicationNumber') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="applicationNumber"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="applicationNumber"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtApplicationNumber')" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="w-100" for="createdDateFrom">{{
+                            t('modules.eidManagement.tableFilter.txtDateFrom')
+                        }}</label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="createdDateFrom"
+                            inputId="createdDateFrom"
+                            name="createdDateFrom"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            iconAriaLabel="calendar"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [placeholder]="t('global.txtDropdownPlaceholder')">
+                        </p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    filterForm.controls['createdDateFrom']?.errors?.['required'] &&
+                                    filterForm.controls['createdDateFrom']?.dirty
+                                ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.tableFilter.txtDateFrom')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="w-100" for="createdDateTo">{{
+                            t('modules.eidManagement.tableFilter.txtDateTo')
+                        }}</label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="createdDateTo"
+                            inputId="createdDateTo"
+                            name="createdDateTo"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            iconAriaLabel="calendar"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [placeholder]="t('global.txtDropdownPlaceholder')">
+                        </p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    filterForm.controls['createdDateTo']?.errors?.['required'] &&
+                                    filterForm.controls['createdDateTo']?.dirty
+                                ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.tableFilter.txtDateTo')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="filterForm.controls['createdDateTo'].errors?.['dateMoreThanOrEqualValid'] &&
+                                       filterForm.controls['createdDateTo'].dirty
+                                ">
+                                {{ t('global.txtInvalidDataError') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="deviceType" class="form-label"
+                            >{{ t('modules.eidManagement.tableFilter.txtCarrier') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="deviceId"
+                            [options]="carriers"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="status"
+                            appendTo="body"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="applicationType" class="form-label">
+                            {{ t('modules.eidManagement.tableFilter.txtType') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="applicationType"
+                            [options]="applicationTypes"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="applicationType"
+                            appendTo="body"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="status" class="form-label"
+                            >{{ t('modules.eidManagement.tableFilter.txtStatus') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="status"
+                            [options]="statuses"
+                            optionLabel="name"
+                            optionValue="code"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="status"
+                            appendTo="body"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                <div class="row mb-4" *appHasRole="[RoleType.APP_ADMINISTRATOR]">
+                    <div class="col">
+                        <label for="administrator" class="form-label">
+                            {{ t('modules.eidManagement.tableFilter.txtAdministrator') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="administratorId"
+                            [options]="administrators"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            styleClass="w-100"
+                            inputId="administrator"
+                            appendTo="body"
+                            (onChange)="loadOffices($event)"
+                            [overlayOptions]="{ baseZIndex: 1045 }"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="eidAdministratorFrontOfficeId" class="form-label">
+                            {{ t('modules.eidManagement.tableFilter.txtOffice') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="eidAdministratorFrontOfficeId"
+                            [options]="administratorOffices"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="eidAdministratorFrontOfficeId"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            appendTo="body"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="submissionType" class="form-label">
+                            {{ t('modules.eidManagement.tableFilter.txtSubmissionType') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="submissionType"
+                            [options]="submissionTypes"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="submissionType"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            appendTo="body"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <p-button
+                    (onClick)="clearAllFilteredValues()"
+                    [label]="t('modules.eidManagement.tableFilter.txtCancel')"
+                    styleClass="p-button p-button-danger me-3 app-button-small"></p-button>
+                <p-button
+                    [label]="t('modules.eidManagement.tableFilter.txtApplyFilters')"
+                    type="submit"
+                    styleClass="p-button me-3 p-button-primary app-button-small"
+                    [disabled]="
+                        (filterForm.valid && !filterForm.dirty) || (!filterForm.valid && filterForm.dirty)
+                    "></p-button>
+            </div>
+        </div>
+        <div class="offcanvas-backdrop fade show" *ngIf="visible"></div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="table-filter-choice">
+    <div class="row" [ngClass]="{ 'mb-4': chosenFilters.length > 0 }">
+        <div class="col text-end gap-3 d-flex">
+            <p-button
+                *ngIf="isAdminPage"
+                type="button"
+                styleClass="p-button-text"
+                (onClick)="exportData()"
+                icon="pi pi-download"
+                [label]="t('modules.logsViewer.txtExportData')"
+                loadingIcon="pi pi-spin pi-spinner"></p-button>
+            <p-button
+                type="button"
+                styleClass="p-button-text"
+                icon="pi pi-refresh"
+                (onClick)="refreshData()"
+                [label]="t('global.txtRefresh')"></p-button>
+            <p-button
+                styleClass="p-button-text"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (onClick)="openFilter()"
+                [label]="t('modules.eidManagement.tableFilter.txtApplicationsFilter')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </p-button>
+        </div>
+    </div>
+    <div class="row mb-4" [hidden]="chosenFilters.length === 0">
+        <div class="col text-end">
+            <span *ngFor="let filteredValue of chosenFilters">
+                <p-chip
+                    [label]="prepareFilteredValueLabel(filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="chosenFilters.length > 0"
+                type="button"
+                class="btn btn-link"
+                (click)="clearAllFilteredValues()"
+                aria-labelledby="Clear">
+                {{ t('modules.eidManagement.tableFilter.txtCancelAll') }}
+            </button>
+        </div>
+    </div>
+</section>

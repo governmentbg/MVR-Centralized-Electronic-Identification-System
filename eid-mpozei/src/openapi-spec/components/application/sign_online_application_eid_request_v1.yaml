@@ -1,0 +1,14 @@
+schemas:
+  SignOnlineApplicationEidRequest:
+    type: object
+    properties:
+      applicationId:
+        type: string
+        format: uuid
+      mobileApplicationInstanceId:
+        type: string
+      firebaseId:
+        type: string
+      requestChange:
+        type: boolean
+        default: false

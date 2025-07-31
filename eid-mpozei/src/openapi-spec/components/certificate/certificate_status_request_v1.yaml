@@ -1,0 +1,27 @@
+#schemas:
+#  CertificateStatusRequest:
+#    type: object
+#    properties:
+#      serial_number:
+#        type: string
+#        example: 1234567890ABCDEF
+#        description: Hex Serial Number
+#      status:
+#        type: string
+#        description: Delivery status
+#        default: DELIVERED
+#        enum:
+#          - DELIVERED
+#          - ERROR
+#          - RETRY
+#        example: 'DELIVERED'
+#      message:
+#        type: string
+#        description: Short status message
+#      correlationId:
+#        type: string
+#        nullable: false
+#      createDate:
+#        description: date this correspondence was created
+#        type: string
+#        format: date-time

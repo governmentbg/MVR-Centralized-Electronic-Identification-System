@@ -1,0 +1,43 @@
+methods:
+  post:
+    tags:
+      - Eidentity
+    summary: Attach eidentity to citizen profile
+    description: Attach eidentity to citizen profile
+    operationId: attachEidentity
+    parameters:
+      - name: citizenProfileId
+        in: path
+        description: 'Profile ID'
+        x-query-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_PROFILE_ID_CANNOT_BE_NULL)'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/http_response_v1.yaml#/schemas/HttpResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

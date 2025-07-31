@@ -1,0 +1,165 @@
+<aside role="table-filter" *transloco="let t" class="table-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.reports.tableFilter.txtFilters') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row">
+                    <div class="col">
+                        <label class="w-100" for="createDateFrom">
+                            {{ t('modules.reports.txtStartDate') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <p-calendar
+                            styleClass="w-100"
+                            formControlName="from"
+                            inputId="from"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            (onSelect)="validateToDate()"
+                            appendTo="body"
+                            [baseZIndex]="1045">
+                        </p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="filterForm.controls.from.errors?.['required'] && (filterForm.controls.from.dirty || filterForm.controls.from.touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.reports.txtStartDate')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="w-100" for="createDateTo">
+                            {{ t('modules.reports.txtEndDate') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <p-calendar
+                            styleClass="w-100"
+                            formControlName="to"
+                            inputId="to"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appendTo="body"
+                            [baseZIndex]="1045">
+                        </p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="filterForm.controls.to.errors?.['required'] &&
+                                         (filterForm.controls.to.dirty || filterForm.controls.to.touched)
+                                    ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.reports.txtEndDate')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                *ngIf="!filterForm.controls.to.errors?.['required'] &&
+                                        filterForm.controls.to.errors?.['dateMoreThanValid'] &&
+                                        (filterForm.controls.to.dirty || filterForm.controls.to.touched)
+                                    ">
+                                {{ t('validations.txtLaterThenStartDate') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="operators" class="w-100">
+                            {{ t('modules.reports.txtOperators') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <p-chips
+                            class="p-fluid"
+                            inputId="operators"
+                            formControlName="operators"
+                            [allowDuplicate]="false"
+                            [addOnBlur]="true"
+                            separator=","
+                            [placeholder]="t('modules.reports.txtOperatorsPlaceholder')"></p-chips>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="filterForm.controls.operators.errors?.['required'] && (filterForm.controls.operators.dirty || filterForm.controls.operators.touched)">
+                                {{
+                                    t('validations.txtInvalidField', {
+                                        field: t('modules.reports.txtOperators')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <button
+                    pButton
+                    type="button"
+                    (click)="clearAllFilteredValues()"
+                    [label]="t('modules.reports.tableFilter.txtCancel')"
+                    class="p-button p-button-danger me-3 app-button-small"></button>
+                <button
+                    pButton
+                    [label]="t('modules.reports.tableFilter.txtApplyFilters')"
+                    type="submit"
+                    class="p-button me-3 p-button-primary app-button-small"
+                    [disabled]="(filterForm.valid && !filterForm.dirty) || (!filterForm.valid && filterForm.dirty)"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="table-filter-choice" #filter>
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-between">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('modules.reports.txtFilters')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+            <div class="d-flex gap-3">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-sm"
+                    (click)="exportData()"
+                    [disabled]="disableExportBtn"
+                    icon="pi pi-download"
+                    [label]="t('modules.logsViewer.txtExportData')"
+                    loadingIcon="pi pi-spin pi-spinner"></button>
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-sm"
+                    [disabled]="disableExportBtn"
+                    icon="pi pi-refresh"
+                    (click)="refreshData()"
+                    [label]="t('global.txtRefresh')"></button>
+            </div>
+        </div>
+    </div>
+</section>

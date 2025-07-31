@@ -1,0 +1,158 @@
+openapi: 3.0.1
+info:
+  title: eID - MPOZEI HTTP API
+  description: Регистър на Удостоверения за Електронна Идентичност(РУЕИ)
+  version: '1.0'
+paths: { }
+components:
+  schemas:
+    CertificateRequest:
+      $ref: 'components/certificate/certificate_request_v1.yaml#/schemas/CertificateRequest'
+    CertificateExtAdminRequest:
+      $ref: 'components/certificate/certificate_request_ext_admin_v1.yaml#/schemas/CertificateExtAdminRequest'
+    CertificateResponse:
+      $ref: 'components/certificate/certificate_response_v1.yaml#/schemas/CertificateResponse'
+    CitizenCertificateSummaryResponse:
+      $ref: 'components/certificate/certificate_summary_response_v1.yaml#/schemas/CitizenCertificateSummaryResponse'
+    LevelOfAssurance:
+      $ref: './components/certificate/level_of_assurance_v1.yaml#/schemas/LevelOfAssurance'
+    NomenclatureDTO:
+      $ref: './components/nomenclature/nomenclature_v1.yaml#/schemas/NomenclatureDTO'
+    NomenclatureTypeDTO:
+      $ref: './components/nomenclature/nomenclature_type_v1.yaml#/schemas/NomenclatureTypeDTO'
+    ApplicationSignRequest:
+      $ref: './components/application/application_sign_request_v1.yaml#/schemas/ApplicationSignRequest'
+    FindCitizenCertificate:
+      $ref: './components/certificate/certificate_find_v1.yaml#/schemas/FindCertificateResponse'
+    EidentityResponse:
+      $ref: 'components/eidentity/eidentity_response_v1.yaml#/schemas/EidentityResponse'
+    EidentityExternalResponse:
+      $ref: 'components/eidentity/eidentity_response-ext_v1.yaml#/schemas/EidentityExternalResponse'
+    IdentifierType:
+      $ref: './components/eidentity/identifier_type_v1.yaml#/schemas/IdentifierType'
+    ApplicationSubmissionType:
+      $ref: 'components/application/application_submission_type_v1.yaml#/schemas/ApplicationSubmissionType'
+    ConfigurationResult:
+      $ref: 'components/common/configuration_v1.yaml#/schemas/ConfigurationResult'
+    UpdateConfigurationRequest:
+      $ref: 'components/common/configuration_v1.yaml#/schemas/UpdateConfigurationRequest'
+    ProblemDetails:
+      $ref: 'components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+    HttpResponse:
+      $ref: 'components/common/http_response_v1.yaml#/schemas/HttpResponse'
+    ValidationProblemDetails:
+      $ref: 'components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+    ApplicationResponse:
+      $ref: 'components/application/application_response_v1.yaml#/schemas/ApplicationResponse'
+    OnlineApplicationResponse:
+      $ref: 'components/application/online_application_response_v1.yaml#/schemas/OnlineApplicationResponse'
+    ApplicationType:
+      $ref: 'components/application/application_type_v1.yaml#/schemas/ApplicationType'
+    ApplicationStatus:
+      $ref: 'components/application/application_status_v1.yaml#/schemas/ApplicationStatus'
+    ApplicationDTO:
+      $ref: 'components/application/application_v1.yaml#/schemas/ApplicationDTO'
+    ApplicationDetailsResponse:
+      $ref: 'components/application/application_details_v1.yaml#/schemas/ApplicationDetailsResponse'
+    ApplicationDetailsExternalResponse:
+      $ref: 'components/application/application_details_ext_v1.yaml#/schemas/ApplicationDetailsExternalResponse'
+    GuardianDetails:
+      $ref: './components/application/guardian_details_v1.yaml#/schemas/GuardianDetails'
+    PersonalIdentityDocument:
+      $ref: './components/application/personal_identity_document_v1.yaml#/schemas/PersonalIdentityDocument'
+    PersonalIdentityDocumentV2:
+      $ref: './components/application/personal_identity_document_v2.yaml#/schemas/PersonalIdentityDocumentV2'
+    CertificateHistoryDTO:
+      $ref: './components/certificate/certificate_history_v1.yaml#/schemas/CertificateHistoryDTO'
+    CertificateStatus:
+      $ref: './components/certificate/citizen_certificate_status_v1.yaml#/schemas/CertificateStatus'
+    CertificateStatusExternal:
+      $ref: './components/certificate/citizen_certificate_status_ext_v1.yaml#/schemas/CertificateStatusExternal'
+    CertificateAlias:
+      $ref: './components/certificate/certificate_alias_v1.yaml#/schemas/CertificateAlias'
+    NaifCertificateStatus:
+      $ref: './components/certificate/citizen_certificate_status_naif_v1.yaml#/schemas/NaifCertificateStatus'
+    PersoCentreApplicationResponse:
+      $ref: './components/application/perso_centre_application_response_v1.yaml#/schemas/PersoCentreApplicationResponse'
+    PersoCentreConfirmApplicationRequest:
+      $ref: './components/application/perso_centre_application_confirm_request_v1.yaml#/schemas/PersoCentreConfirmApplicationRequest'
+    ApplicationConfirmationStatus:
+      $ref: './components/application/application_confirmation_status_v1.yaml#/schemas/ApplicationConfirmationStatus'
+    ApplicationRequest:
+      $ref: './components/application/online_application_request_v1.yaml#/schemas/OnlineApplicationRequest'
+    MobileCertificateBasicProfileRequest:
+      $ref: './components/certificate/mobile_certificate_basic_profile_request_v1.yaml#/schemas/MobileCertificateBasicProfileRequest'
+    MobileCertificateEidRequest:
+      $ref: './components/certificate/mobile_certificate_eid_request_v1.yaml#/schemas/MobileCertificateEidRequest'
+    ProfileVerifyLoginRequest:
+      $ref: './components/eidentity/profile_verify_login_request_v1.yaml#/schemas/ProfileVerifyLoginRequest'
+    SignOnlineApplicationRequest:
+      $ref: './components/application/sign_online_application_request_v1.yaml#/schemas/SignOnlineApplicationRequest'
+    SignOnlineApplicationEidRequest:
+      $ref: './components/application/sign_online_application_eid_request_v1.yaml#/schemas/SignOnlineApplicationEidRequest'
+    ConfirmCertificateEidRequest:
+      $ref: './components/certificate/certificate_eid_confirmation_request_v1.yaml#/schemas/CertificateEidConfirmationRequest'
+    ConfirmCertificateBasicProfileRequest:
+      $ref: './components/certificate/certificate_basic_profile_confirmation_request_v1.yaml#/schemas/CertificateBasicProfileConfirmationRequest'
+    CitizenProfileResponse:
+      $ref: './components/profile/citizen_profile_response_v1.yaml#/schemas/CitizenProfileResponse'
+    CitizenProfileRegistrationDTO:
+      $ref: './components/profile/citizen_profile_registration_v1.yaml#/schemas/CitizenProfileRegistrationDTO'
+    CitizenProfileUpdateRequest:
+      $ref: './components/profile/citizen_profile_update_v1.yaml#/schemas/CitizenProfileUpdateRequest'
+    ApplicationAddGuardiansRequest:
+      $ref: './components/application/application_add_guardians_v1.yaml#/schemas/ApplicationAddGuardiansRequest'
+    EidAdministratorResponse:
+      $ref: './components/administrators/administrator_response_v1.yaml#/schemas/EidAdministratorResponse'
+    ApplicationXmlResponse:
+      $ref: './components/application/application_xml_response_v1.yaml#/schemas/ApplicationXmlResponse'
+    NaifDeliveredCertificateDTO:
+      $ref: './components/naif/naif_delivered_certificate_v1.yaml#/schemas/NaifDeliveredCertificateDTO'
+#    UpdateCitizenIdentifierDTO:
+#      $ref: './components/naif/naif_update_citizen_identifier_v1.yaml#/schemas/UpdateCitizenIdentifierDTO'
+    InvalidateCitizenEidDTO:
+      $ref: './components/naif/naif_invalidate_citizen_eid_v1.yaml#/schemas/InvalidateCitizenEidDTO'
+    ForgottenPasswordDTO:
+      $ref: './components/profile/profile_forgotten_password_v1.yaml#/schemas/ForgottenPasswordDTO'
+    NaifUpdateCertificateStatusDTO:
+      $ref: './components/naif/certificate_update_status_naif_v1.yaml#/schemas/NaifUpdateCertificateStatusDTO'
+    Region:
+      $ref: './components/administrators/office_region_v1.yaml#/schemas/Region'
+    NaifIdentifierType:
+      $ref: './components/naif/naif_identifier_type_v1.yaml#/schemas/NaifIdentifierType'
+    NaifUpdateCertificateStatusResponse:
+      $ref: './components/naif/naif_update_certificate_status_response_v1.yaml#/schemas/NaifUpdateCertificateStatusResponse'
+    NaifDeviceHistoryRequest:
+      $ref: './components/naif/naif_get_device_history_request_v1.yaml#/schemas/NaifDeviceHistoryRequest'
+    NaifDeviceHistoryDTO:
+      $ref: './components/naif/naif_device_history_dto_v1.yaml#/schemas/NaifDeviceHistoryDTO'
+    NaifDeviceHistoryResponse:
+      $ref: './components/naif/naif_get_device_history_response_v1.yaml#/schemas/NaifDeviceHistoryResponse'
+#    NaifUpdateCitizenIdentifierResponse:
+#      $ref: './components/naif/naif_update_citizen_identifier_response_v1.yaml#/schemas/NaifUpdateCitizenIdentifierResponse'
+    NaifInvalidateEidResponse:
+      $ref: './components/naif/naif_invalidate_citizen_eid_response_v1.yaml#/schemas/NaifInvalidateEidResponse'
+    NaifDeliveredCertificateResponse:
+      $ref: './components/naif/naif_delivered_certificate_response_v1.yaml#/schemas/NaifDeliveredCertificateResponse'
+    NaifDeviceCertificateDTO:
+      $ref: './components/naif/naif_device_certificate_dto_v1.yaml#/schemas/NaifDeviceCertificateDTO'
+    DevicePukRequest:
+      $ref: './components/profile/device_puk_request_v1.yaml#/schemas/DevicePukRequest'
+#    DevicePukResponse:
+#      $ref: './components/profile/device_puk_response_v1.yaml#/schemas/DevicePukResponse'
+    DeviceLogRequestExternal:
+      $ref: './components/profile/device_log_request_external_v1.yaml#/schemas/DeviceLogRequestExternal'
+    DeviceLogRequestInternal:
+      $ref: './components/profile/device_log_request_internal_v1.yaml#/schemas/DeviceLogRequestInternal'
+    HelpPageDTO:
+      $ref: './components/help_page/help_page_v1.yaml#/schemas/HelpPageDTO'
+    PageAttachmentDTO:
+      $ref: './components/help_page/help_page_attachment_v1.yaml#/schemas/PageAttachmentDTO'
+    PublicCertificateInfo:
+      $ref: './components/certificate/public_certificate_info_v1.yaml#/schemas/PublicCertificateInfo'
+    MisepPaymentDTO:
+      $ref: './components/misep/misep_payment_v1.yaml#/schemas/MisepPaymentDTO'
+#    MisepPaymentStatusDTO:
+#      $ref: './components/misep/misep_payment_status_v1.yaml#/schemas/MisepPaymentStatusDTO'
+    ApplicationReportByOperatorsDTO:
+      $ref: './components/report/application_report_by_operators.yaml#/schemas/ApplicationReportByOperatorsDTO'

@@ -1,0 +1,15 @@
+schemas:
+  NaifDeviceCertificateDTO:
+    type: object
+    properties:
+      SerialNumber:
+        type: string
+      status:
+        $ref: '../certificate/citizen_certificate_status_v1.yaml#/schemas/CertificateStatus'
+      createDate:
+        type: string
+        format: date-time
+      status_data:
+        type: array
+        items:
+          $ref: './naif_device_history_dto_v1.yaml#/schemas/NaifDeviceHistoryDTO'

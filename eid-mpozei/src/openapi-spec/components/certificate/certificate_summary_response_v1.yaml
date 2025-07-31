@@ -1,0 +1,58 @@
+schemas:
+  CitizenCertificateSummaryResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Citizen Certificate ID
+      applicationNumber:
+        type: string
+      status:
+        $ref: './citizen_certificate_status_v1.yaml#/schemas/CertificateStatus'
+      eidAdministratorId:
+        type: string
+        format: uuid
+      eidAdministratorOfficeId:
+        type: string
+        format: uuid
+      eidAdministratorName:
+        type: string
+      eidentityId:
+        type: string
+        format: uuid
+      commonName:
+        type: string
+        description: Certificate Common Name
+      validityFrom:
+        type: string
+        format: date-time
+        description: Certificate valid from date
+      validityUntil:
+        type: string
+        format: date-time
+        description: Certificate valid until date
+      createDate:
+        type: string
+        format: date-time
+        description: Certificate created date
+      serialNumber:
+        type: string
+      deviceId:
+        type: string
+        format: uuid
+      levelOfAssurance:
+        $ref: './level_of_assurance_v1.yaml#/schemas/LevelOfAssurance'
+      reasonId:
+        type: string
+        format: uuid
+      reasonText:
+        type: string
+      isExpiring:
+        type: boolean
+      alias:
+        type: string
+        description: 'Certificate Alias'
+      carrierSerialNumber:
+        type: string
+        description: 'Serial number of the carrier'

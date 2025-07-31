@@ -1,0 +1,40 @@
+methods:
+  post:
+    tags:
+      - Naif
+    summary: Activate delivered Naif certificate
+    description: Activate delivered Naif certificate
+    operationId: activateDeliveredCertificateByNaif
+    requestBody:
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/naif/naif_delivered_certificate_v1.yaml#/schemas/NaifDeliveredCertificateDTO'
+    responses:
+      '200':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/naif/naif_delivered_certificate_response_v1.yaml#/schemas/NaifDeliveredCertificateResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

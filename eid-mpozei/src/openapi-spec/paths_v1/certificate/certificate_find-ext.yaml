@@ -1,0 +1,80 @@
+methods:
+  get:
+    tags:
+      - Certificate
+    summary: Find certificates by filter
+    description: Find certificates by filter
+    operationId: findCitizenCertificates
+    x-spring-paginated: true
+    parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+      - name: serialNumber
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: array
+          items:
+            $ref: '../../components/certificate/citizen_certificate_status_ext_v1.yaml#/schemas/CertificateStatusExternal'
+      - name: validityFrom
+        in: query
+        description: 'Create Date filter'
+        schema:
+          type: string
+          format: date
+      - name: validityUntil
+        in: query
+        description: 'Create Date filter'
+        schema:
+          type: string
+          format: date
+      - name: deviceId
+        in: query
+        description: 'Device Id filter'
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: eidAdministratorId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: alias
+        in: query
+        description: 'Certificate Alias'
+        schema:
+          type: string
+    responses:
+      '201':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                "$ref": "../../components/certificate/certificate_find_v1.yaml#/schemas/FindCertificateResponse"
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

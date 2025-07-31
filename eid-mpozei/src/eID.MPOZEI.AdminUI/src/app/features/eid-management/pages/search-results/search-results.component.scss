@@ -1,0 +1,49 @@
+@import '../../../../styles/variables.scss';
+
+.header-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 4rem;
+    line-height: 1;
+    color: $text-active;
+}
+
+.header-info {
+    font-size: 20px;
+    color: $text-active;
+}
+
+.personal-data {
+    padding: 0 80px;
+    display: grid;
+    grid-gap: 20px 40px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.title {
+    font-size: 0.875rem;
+    color: $text-light;
+    margin: 0;
+}
+
+.value {
+    font-weight: bold;
+    color: $theme-primary-dark;
+    margin-bottom: 0;
+}
+
+.button-inside-notification {
+    margin: -8px -8px -8px 0;
+}
+
+.information-dialog {
+    ::ng-deep .p-dialog-header {
+        background: $theme-secondary-dark;
+        color: #ffffff;
+        line-height: 1.5rem;
+    }
+
+    ::ng-deep .p-dialog-header-icon {
+        color: #ffffff;
+    }
+}

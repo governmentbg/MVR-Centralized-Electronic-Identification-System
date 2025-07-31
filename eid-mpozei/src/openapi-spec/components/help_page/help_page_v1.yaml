@@ -1,0 +1,20 @@
+schemas:
+  HelpPageDTO:
+    type: object
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      contentWithHtml:
+        type: string
+      pageName:
+        type: string
+      language:
+        type: string
+      url:
+        type: string
+      attachments:
+        type: array
+        items:
+          $ref: "./help_page_attachment_v1.yaml#/schemas/PageAttachmentDTO"

@@ -1,0 +1,32 @@
+schemas:
+  NaifUpdateCertificateStatusDTO:
+    type: object
+    required:
+      - MessageID
+      - User
+      - Timestamp
+      - Action
+      - CarrierSerialNumber
+      - UIDType
+      - PersonalId
+      - ReasonText
+    properties:
+      MessageID:
+        type: string
+        format: uuid
+      User:
+        type: string
+      Timestamp:
+        type: string
+        format: date-time
+      PersonalId:
+        type: string
+      UIDType:
+        $ref: './naif_identifier_type_v1.yaml#/schemas/NaifIdentifierType'
+      Action:
+        $ref: '../certificate/citizen_certificate_status_naif_v1.yaml#/schemas/NaifCertificateStatus'
+      CarrierSerialNumber:
+        type: string
+        description: Device Serial Number
+      ReasonText:
+        type: string

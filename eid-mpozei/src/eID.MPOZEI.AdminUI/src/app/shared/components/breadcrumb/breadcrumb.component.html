@@ -1,0 +1,16 @@
+<nav *transloco="let t">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-icon">
+            <i class="material-icons-outlined">&#xe5cb;</i>
+        </li>
+        <li class="breadcrumb-item" *ngFor="let item of items; let i = index" [tabindex]="i">
+            <a *ngIf="item.routerLink; else elseBlock" [routerLink]="[item.routerLink]">{{ item.label }}</a>
+            <ng-template #elseBlock>
+                <a *ngIf="item.onClick; else elseBlock" (click)="item.onClick()">{{ item.label }}</a>
+                <ng-template #elseBlock>
+                    <a>{{ item.label }}</a>
+                </ng-template>
+            </ng-template>
+        </li>
+    </ol>
+</nav>

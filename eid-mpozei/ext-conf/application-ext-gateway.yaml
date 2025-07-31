@@ -1,0 +1,32 @@
+server:
+  port: 8095
+  ssl:
+    enabled: false
+    trust-store:
+    trust-store-password:
+    trust-store-type: PKCS12
+logging:
+  secret-key:
+spring:
+  rabbitmq:
+    host: mvreid-mq.test
+    username:
+    password:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri:
+          audiences:
+            -
+keycloak:
+  auth-server-url:
+  realm: eid_public
+  oauth-scheme-name: keycloak
+custom:
+  rabbitmq:
+    queue-prefix: mpozei.rpcqueue.
+    routing-key-prefix: mpozei.routingkey.
+    rpc-exchange: mpozei.rpc.exchange
+    reply-exchange: mpozei-ext.reply.exchange
+    reply-queue: mpozei-ext.reply.rpcqueue

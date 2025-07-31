@@ -1,0 +1,41 @@
+methods:
+  post:
+    tags:
+      - Certificate
+    summary: Enrollment with Basic Profile
+    description: Enroll for a certificate given a PEM encoded PKCS#10 CSR from mobile device.
+    operationId: certificateEnrollWithBasicProfile
+    requestBody:
+      required: true
+      description: CSR to Signed Certificate.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/certificate/mobile_certificate_basic_profile_request_v1.yaml#/schemas/MobileCertificateBasicProfileRequest'
+    responses:
+      '201':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/certificate/certificate_response_v1.yaml#/schemas/CertificateResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

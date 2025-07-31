@@ -1,0 +1,7 @@
+schemas:
+  NaifIdentifierType:
+    type: integer
+    enum: [1, 2]
+    x-enum-varnames:
+      - EGN
+      - LNCh

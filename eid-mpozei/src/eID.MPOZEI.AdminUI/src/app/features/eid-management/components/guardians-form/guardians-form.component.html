@@ -1,0 +1,316 @@
+<div *transloco="let t">
+    <form [formGroup]="form">
+        <div
+            formArrayName="array"
+            *ngFor="let formGroup of form.controls.array.controls; let i = index; first as isFirst">
+            <p-divider *ngIf="!isFirst" type="solid"></p-divider>
+            <div [formGroupName]="i">
+                <div class="d-flex justify-content-between">
+                    <p class="text-text-active section-title">
+                        {{ i + 1 }}. {{ t('modules.eidManagement.txtGuardiansTitle') }}
+                    </p>
+                    <p-button
+                        iconPos="right"
+                        styleClass="p-button p-button-danger p-button-text p-button-sm"
+                        (onClick)="removeItem(i)">
+                        <span>{{ t('modules.eidManagement.txtRemove') }}</span>
+                        <i class="material-icons-outlined">&#xe872;</i>
+                    </p-button>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label [for]="'name' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtNameLabel') }} <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            [id]="'name' + i"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="firstName" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['firstName'].errors?.['required'] && (formGroup.controls['firstName'].dirty || formGroup.controls['firstName'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtNameLabel')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['firstName'].errors?.['pattern'] &&(formGroup.controls['firstName'].dirty || formGroup.controls['firstName'].touched)">
+                                {{ t('global.txtInvalidDataError') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label [for]="'surname' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtSurnameLabel') }} <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            [id]="'surname' + i"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="secondName" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['secondName'].errors?.['required'] && (formGroup.controls['secondName'].dirty || formGroup.controls['secondName'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtSurnameLabel')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['secondName'].errors?.['pattern'] &&(formGroup.controls['secondName'].dirty || formGroup.controls['secondName'].touched)">
+                                {{ t('global.txtInvalidDataError') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label [for]="'familyName' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtFamilyNameLabel') }} <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            [id]="'familyName' + i"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="lastName" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['lastName'].errors?.['required'] && (formGroup.controls['lastName'].dirty || formGroup.controls['lastName'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtFamilyNameLabel')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['lastName'].errors?.['pattern'] &&(formGroup.controls['lastName'].dirty || formGroup.controls['lastName'].touched)">
+                                {{ t('global.txtInvalidDataError') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label [for]="'type' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtPersonalIdTypeLabel') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="search-control">
+                            <p-dropdown
+                                formControlName="citizenIdentifierType"
+                                [inputId]="'type' + i"
+                                [options]="personalIdTypes"
+                                optionLabel="name"
+                                optionValue="id"
+                                styleClass="w-100"
+                                appendTo="body"
+                                (onChange)="personalIdTypeChange(formGroup)"></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label [for]="'personalId' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtPersonalIdLabel') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            pInputText
+                            digitOnly
+                            [id]="'personalId' + i"
+                            autocomplete="off"
+                            formControlName="citizenIdentifierNumber"
+                            class="w-100 search-control" />
+                        <div class="text-danger validation-text">
+                            <span
+                                *ngIf="
+                                    formGroup.controls['citizenIdentifierNumber'].errors?.['required'] &&
+                                    (formGroup.controls['citizenIdentifierNumber'].dirty ||
+                                        formGroup.controls['citizenIdentifierNumber'].touched)
+                                ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtPersonalIdLabel')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                *ngIf="
+                                    formGroup.controls['citizenIdentifierNumber'].errors?.['EgnError']
+                                ">
+                                {{
+                                    t('validations.txtInvalidField', {
+                                        field: t('modules.eidManagement.txtPersonalIdLabel')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                *ngIf="!formGroup.controls['citizenIdentifierNumber'].errors?.['EgnError'] &&
+                                    formGroup.controls['citizenIdentifierNumber'].errors?.['EgnAdultError']
+                                ">
+                                {{ t('modules.eidManagement.txtBelowLawfulAgeValidation') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label [for]="'citizenship' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtNationality') }} <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            [id]="'citizenship' + i"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="citizenship" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls['citizenship'].errors?.['required'] && (formGroup.controls['citizenship'].dirty || formGroup.controls['citizenship'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtNationality')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <p-divider type="solid"></p-divider>
+                <div class="row" formGroupName="personalIdentityDocument">
+                    <div class="col">
+                        <label [for]="'idCardNumber' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtDocumentNumber') }} <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            [id]="'idCardNumber' + i"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="identityNumber" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls.personalIdentityDocument.controls['identityNumber'].errors?.['required'] &&
+                                 (formGroup.controls.personalIdentityDocument.controls['identityNumber'].dirty || formGroup.controls.personalIdentityDocument.controls['identityNumber'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtDocumentNumber')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label [for]="'idCardIssuedOn' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtIssuedOn') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-calendar
+                            formControlName="identityIssueDate"
+                            [showIcon]="true"
+                            [inputId]="'idCardIssuedOn' + i"
+                            [iconAriaLabel]="t('modules.eidManagement.txtIssuedOn')"
+                            styleClass="w-100"
+                            dateFormat="yy-mm-dd"
+                            appendTo="body"
+                            [baseZIndex]="1045"></p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls.personalIdentityDocument.controls['identityIssueDate'].errors?.['required'] &&
+                                (formGroup.controls.personalIdentityDocument.controls['identityIssueDate'].dirty || formGroup.controls.personalIdentityDocument.controls['identityIssueDate'].touched)"
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtIssuedOn')
+                                    })
+                                }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+                <div class="row" formGroupName="personalIdentityDocument">
+                    <div class="col">
+                        <label [for]="'idCardIssuedBy' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtIssuedBy') }} <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            [id]="'idCardIssuedBy' + i"
+                            type="text"
+                            class="w-100"
+                            autocomplete="off"
+                            formControlName="identityIssuer" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls.personalIdentityDocument.controls['identityIssuer'].errors?.['required'] &&
+                                 (formGroup.controls.personalIdentityDocument.controls['identityIssuer'].dirty || formGroup.controls.personalIdentityDocument.controls['identityIssuer'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtIssuedBy')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <label [for]="'idCardValidUntil' + i" class="form-label">
+                            {{ t('modules.eidManagement.txtValidTo') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-calendar
+                            formControlName="identityValidityToDate"
+                            [showIcon]="true"
+                            [inputId]="'idCardValidUntil' + i"
+                            [iconAriaLabel]="t('modules.eidManagement.txtValidTo')"
+                            styleClass="w-100"
+                            dateFormat="yy-mm-dd"
+                            appendTo="body"
+                            [baseZIndex]="1045"></p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls.personalIdentityDocument.controls['identityValidityToDate'].errors?.['required'] &&
+                                (formGroup.controls.personalIdentityDocument.controls['identityValidityToDate'].dirty || formGroup.controls.personalIdentityDocument.controls['identityValidityToDate'].touched)">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.txtValidTo')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="formGroup.controls.personalIdentityDocument.controls['identityValidityToDate'].errors?.['dateMoreThanValid'] &&
+                                (formGroup.controls.personalIdentityDocument.controls['identityValidityToDate'].dirty || formGroup.controls.personalIdentityDocument.controls['identityValidityToDate'].touched)">
+                                {{ t('global.txtInvalidDataError') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-button
+        [label]="t('modules.eidManagement.txtAddPerson')"
+        icon="pi pi-plus"
+        iconPos="left"
+        (onClick)="addItem()"
+        [disabled]="form.controls.array.controls.length === maxGuardiansCount"
+        styleClass="p-button p-button-success p-button-sm"></p-button>
+</div>

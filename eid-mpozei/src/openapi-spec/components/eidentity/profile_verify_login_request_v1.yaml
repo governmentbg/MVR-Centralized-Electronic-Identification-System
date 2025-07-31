@@ -1,0 +1,10 @@
+schemas:
+  ProfileVerifyLoginRequest:
+    type: object
+    properties:
+      mobileApplicationInstanceId:
+        type: string
+      firebaseId:
+        type: string
+      forceUpdate:
+        type: boolean

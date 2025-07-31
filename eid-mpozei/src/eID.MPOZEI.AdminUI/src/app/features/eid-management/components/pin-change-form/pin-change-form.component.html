@@ -1,0 +1,207 @@
+<section class="h-100" *transloco="let t">
+    <p-card>
+        <ng-template pTemplate="content">
+            <div class="d-flex">
+                <app-steps [steps]="steps" [currentStep]="currentStep"></app-steps>
+                <div class="flex-grow-1 ps-4">
+                    <div *ngIf="currentStep === 0">
+                        <ng-container *ngIf="!loadingSmartCardService">
+                            <p class="fw-bold">
+                                {{ t('modules.eidManagement.txtSelectReader') }}
+                            </p>
+                            <form class="mb-4" [formGroup]="certificateForm" (ngSubmit)="onReaderSelected()">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="reader" class="form-label">
+                                            {{ t('modules.eidManagement.txtReader') }}:
+                                        </label>
+                                        <p-dropdown
+                                            formControlName="readerName"
+                                            [options]="cardReaders"
+                                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                                            styleClass="w-100"
+                                            class="search-control d-block"
+                                            [dropdownIcon]="
+                                                requestInProgress
+                                                    ? 'pi pi-spin pi-spinner p-dropdown-trigger'
+                                                    : 'pi pi-chevron-down p-dropdown-trigger'
+                                            "
+                                            appendTo="body"
+                                            inputId="reader">
+                                        </p-dropdown>
+                                        <div class="text-danger validation-text">
+                                            <span
+                                                class="d-block"
+                                                *ngIf="certificateForm.controls.readerName.errors?.['required'] &&
+                                                        (certificateForm.controls.readerName.dirty || certificateForm.controls.readerName.touched)
+                                                    ">
+                                                {{
+                                                    t('validations.txtPleaseEnterField', {
+                                                        field: t('modules.eidManagement.txtReader')
+                                                    })
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="CAN" class="form-label"
+                                            >{{ t('modules.eidManagement.txtCAN') }}
+                                            <span class="text-danger">*</span></label
+                                        >
+                                        <input
+                                            type="text"
+                                            pInputText
+                                            digitOnly
+                                            id="CAN"
+                                            autocomplete="off"
+                                            formControlName="can"
+                                            minlength="6"
+                                            maxlength="6"
+                                            class="w-100 d-block search-control" />
+
+                                        <div class="text-danger validation-text">
+                                            <span
+                                                *ngIf="
+                                                    certificateForm.controls.can.invalid &&
+                                                    (certificateForm.controls.can.dirty ||
+                                                        certificateForm.controls.can.touched)
+                                                ">
+                                                {{
+                                                    t('validations.txtPleaseEnterField', {
+                                                        field: t('modules.eidManagement.txtCAN')
+                                                    })
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="PUKFieldIsVisible && certificateForm.controls.puk">
+                                    <div class="col">
+                                        <label for="PUK" class="form-label"
+                                            >{{ t('modules.eidManagement.txtPUK') }}
+                                            <span class="text-danger">*</span></label
+                                        >
+                                        <input
+                                            type="text"
+                                            pInputText
+                                            digitOnly
+                                            id="PUK"
+                                            autocomplete="off"
+                                            formControlName="puk"
+                                            minlength="10"
+                                            maxlength="10"
+                                            class="w-100 d-block search-control" />
+
+                                        <div class="text-danger validation-text">
+                                            <span
+                                                *ngIf="
+                                                    certificateForm.controls.puk.invalid &&
+                                                    (certificateForm.controls.puk.dirty ||
+                                                        certificateForm.controls.puk.touched)
+                                                ">
+                                                {{
+                                                    t('validations.txtPleaseEnterField', {
+                                                        field: t('modules.eidManagement.txtPUK')
+                                                    })
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p-button
+                                    [label]="t('modules.eidManagement.txtContinue')"
+                                    styleClass="p-button p-button-primary p-button-sm"
+                                    [loading]="requestInProgress"
+                                    type="submit">
+                                </p-button>
+                            </form>
+                        </ng-container>
+                    </div>
+                    <div *ngIf="currentStep === 1">
+                        <div
+                            *ngIf="!areIdCardNumbersIdentical"
+                            class="alert alert-danger text-text-error border-0 fw-bolder">
+                            {{ t('modules.eidManagement.txtIdCardNumberIsNotIdentical') }}
+                        </div>
+                        <table class="w-100">
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">
+                                    {{ t('modules.eidManagement.txtIdCardNumberLabel') }}:
+                                </td>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                    {{ certificate.cardNumber }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">{{ t('modules.eidManagement.txtCAN') }}:</td>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                    {{ certificateForm.controls.can.value }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">
+                                    {{ t('modules.eidManagement.txtGenuineCard') }}:
+                                </td>
+                                <td
+                                    class="pb-4 fw-bold align-top"
+                                    [ngClass]="certificate.isGenuine ? 'text-theme-primary-dark' : 'text-danger'">
+                                    {{ certificate.isGenuine ? t('global.txtYes') : t('global.txtNo') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">
+                                    {{ t('modules.eidManagement.txtActivatedPIN') }}:
+                                </td>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                    {{ certificate.isPinActivated ? t('global.txtYes') : t('global.txtNo') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top" colspan="2">
+                                    <p-panel [header]="t('modules.eidManagement.txtCertificateInfo')">
+                                        <ng-container *ngIf="certificate.certificateInfo; else elseBlock">
+                                            <ul class="list-unstyled mb-0">
+                                                <li
+                                                    *ngFor="
+                                                        let item of parseTextToJSON(certificate.certificateInfo)
+                                                            | keyvalue;
+                                                        let last = last
+                                                    "
+                                                    [ngClass]="{ 'mb-2': !last }">
+                                                    <p class="form-label m-0">{{ item.key }}:</p>
+                                                    <span class="information-text text-break">
+                                                        <code class="text-break text-theme-primary-dark">
+                                                            {{ item.value }}
+                                                        </code>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </ng-container>
+                                        <ng-template #elseBlock>
+                                            {{ t('modules.eidManagement.txtNoAvailableCertificate') }}
+                                        </ng-template>
+                                    </p-panel>
+                                </td>
+                            </tr>
+                        </table>
+                        <p-button
+                            [label]="t('global.txtCancel')"
+                            styleClass="p-button p-button-danger me-3 p-button-sm"
+                            (onClick)="hide.emit()"
+                            [loading]="requestInProgress"></p-button>
+                        <p-button
+                            *ngIf="certificate.isGenuine && areIdCardNumbersIdentical"
+                            [label]="t('modules.eidManagement.txtContinue')"
+                            styleClass="p-button p-button-primary p-button-sm"
+                            (onClick)="setPin()"
+                            [loading]="requestInProgress">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-card>
+</section>

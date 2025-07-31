@@ -1,0 +1,447 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw', maxWidth: '700px' }"></p-confirmDialog>
+    <p-dialog
+        styleClass="error-dialog"
+        header="Header"
+        [(visible)]="showDenyDialog"
+        [style]="{ width: '50vw', maxWidth: '700px' }"
+        [draggable]="false"
+        [resizable]="false"
+        [modal]="true">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold text-uppercase">{{
+                t('modules.eidManagement.details.txtDenyApplication')
+            }}</span>
+        </ng-template>
+        <p class="mt-3 mb-4">{{ t('modules.eidManagement.details.txtReasonForDenialTitle') }}</p>
+        <form [formGroup]="form" (ngSubmit)="onDataSubmit()" class="d-lg-flex">
+            <div class="flex-grow-1">
+                <label for="reason" class="form-label d-block">{{
+                    t('modules.eidManagement.details.txtReasonForDenial')
+                }}</label>
+                <p-dropdown
+                    formControlName="reason"
+                    [options]="reasons"
+                    optionLabel="description"
+                    dataKey="name"
+                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                    inputId="reason"
+                    styleClass="w-100"
+                    appendTo="body"
+                    (onChange)="onReasonChange(form)"></p-dropdown>
+                <input
+                    *ngIf="form.controls.reason && showCustomReasonField"
+                    pInputText
+                    type="text"
+                    class="w-100 mt-3"
+                    formControlName="customReason"
+                    [placeholder]="t('modules.eidManagement.details.txtReason')" />
+
+                <div class="text-danger validation-text">
+                    <span
+                        *ngIf="
+                            form.controls.reason.invalid && (form.controls.reason.dirty || form.controls.reason.touched)
+                        ">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('modules.eidManagement.details.txtReasonForDenial')
+                            })
+                        }}
+                    </span>
+                    <span
+                        *ngIf="form.controls.customReason.errors?.['required'] &&(form.controls.customReason.dirty ||form.controls.customReason.touched)">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('modules.eidManagement.details.txtReasonForDenial')
+                            })
+                        }}
+                    </span>
+                </div>
+            </div>
+            <div class="ms-lg-4 pb-lg-4 align-self-end text-center text-lg-start">
+                <p-button
+                    [loading]="loading"
+                    [label]="t('modules.eidManagement.details.txtConfirmDenyApplication')"
+                    type="submit"
+                    styleClass="p-button p-button-danger"
+                    (onClick)="denyApplication()"></p-button>
+            </div>
+        </form>
+        <p-divider type="solid"></p-divider>
+        <div class="text-center">
+            <p-button (onClick)="showDenyDialog = false" styleClass="p-button p-button-primary">
+                {{ t('modules.eidManagement.txtClose') }}
+            </p-button>
+        </div>
+    </p-dialog>
+    <div class="row">
+        <div class="col">
+            <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+            <h4 class="mb-4 text-text-active">
+                {{ t('modules.eidManagement.details.txtPreviewApplication') }}
+            </h4>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <div class="d-flex justify-content-between card-header">
+                        <h5 class="d-flex m-0">
+                            <ng-container *ngIf="personalIdentity; else elseBlock">
+                                <img
+                                    *ngIf="personalIdentity.picture; else elseBlock"
+                                    class="header-icon rounded me-3"
+                                    [alt]="t('modules.eidManagement.txtCitizenPicture')"
+                                    [src]="'data:image/jpg;base64,' + personalIdentity.picture" />
+                                <ng-template #elseBlock>
+                                    <i class="material-icons-outlined me-3 header-icon display-4">&#xe853;</i>
+                                </ng-template>
+                                <div class="header-info align-self-center">
+                                    <span class="text-uppercase align-self-center d-block text-theme-primary-medium">
+                                        <span>{{ personalIdTypesTranslation(personalIdType) }}:</span> {{ personalId }}
+                                    </span>
+                                    <span class="align-self-center d-block text-condensed text-theme-primary-medium">
+                                        <span>
+                                            {{ personalIdentity.personNames?.firstName }}
+                                            {{ personalIdentity.personNames?.surname }}
+                                            {{ personalIdentity.personNames?.familyName }}
+                                        </span>
+                                    </span>
+                                </div>
+                            </ng-container>
+                            <ng-template #elseBlock>
+                                <i class="material-icons-outlined me-3 header-icon display-4">&#xe853;</i>
+                                <div class="header-info align-self-center">
+                                    <span
+                                        class="align-self-center d-block text-condensed text-theme-primary-medium"
+                                        *ngIf="application && !loading">
+                                        {{ application.firstName }}
+                                        {{ application.secondName }}
+                                        {{ application.lastName }}
+                                    </span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </div>
+                            </ng-template>
+                        </h5>
+                        <div class="align-self-center">
+                            <p-button
+                                [label]="t('modules.eidManagement.txtClose')"
+                                icon="pi pi-times"
+                                iconPos="right"
+                                styleClass="p-button p-button-danger p-button-text p-button-sm"
+                                (onClick)="closePreview()"></p-button>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="content">
+                    <div class="info-container">
+                        <table class="w-100">
+                            <tr>
+                                <td colspan="2" class="details-title">
+                                    {{ t('modules.eidManagement.details.txtApplicationDetails') }}:
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicationId') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{ application.applicationNumber }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr *ngIf="application && application.numForm">
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtReferenceNumber') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{ application.numForm }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.txtApplicationType') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">
+                                        {{ getApplicationTypeText(application.applicationType) }}
+                                    </span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtAdministrator') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{ application.eidAdministratorName }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtSubmittedTo') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{
+                                        application.eidAdministratorOfficeName
+                                    }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.tableFilter.txtSubmissionType') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{
+                                        submissionTypeTranslation(application.submissionType)
+                                    }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtLastModifiedBy') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{ application.operatorUsername }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtSubmittedOn') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{
+                                        formatDate(application.createDate)
+                                    }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtDeviceType') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && !loading">{{
+                                        applicationDeviceTypeTranslation(application.deviceId)
+                                    }}</span>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtStatus') }}:
+                                </td>
+                                <td class="fw-bold align-top">
+                                    <div *ngIf="application" [ngSwitch]="application.status">
+                                        <span
+                                            *ngSwitchCase="ApplicationStatus.COMPLETED"
+                                            class="fw-bold text-button-confirm">
+                                            {{ applicationStatusTranslation(application.status) }}
+                                        </span>
+                                        <span *ngSwitchCase="ApplicationStatus.DENIED" class="fw-bold text-text-error">
+                                            {{ applicationStatusTranslation(application.status) }}
+                                        </span>
+                                        <span *ngSwitchDefault class="text-secondary">
+                                            {{ applicationStatusTranslation(application.status) }}
+                                        </span>
+                                    </div>
+                                    <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr *ngIf="application && application.reasonId">
+                                <td class="pe-5 text-secondary details-row-title">
+                                    <ng-container
+                                        *ngIf="application.status === ApplicationStatus.DENIED; else elseBlock">
+                                        {{ t('modules.eidManagement.details.txtReasonForDenial') }}:
+                                    </ng-container>
+                                    <ng-template #elseBlock> {{ reasonLabelText() }}: </ng-template>
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    {{ getReasonTranslation(application.reasonId, application.reasonText) }}
+                                </td>
+                            </tr>
+                            <tr *ngIf="application && application.certificateId && application.serialNumber">
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtCertificateId') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <a
+                                        class="text-text-active fw-bold"
+                                        (click)="openCertificate(application.certificateId)">
+                                        {{ application.serialNumber }}
+                                        <i class="material-icons-outlined">&#xe89e;</i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <p-divider class="header-divider" type="solid" styleClass="m-0"></p-divider>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="details-title">
+                                    {{ t('modules.eidManagement.details.txtPersonalIdentityOfApplicant') }}:
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantName') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application; else elseBlock">
+                                        {{ application.firstName }}
+                                        {{ application.secondName }}
+                                        {{ application.lastName }}
+                                    </span>
+                                    <ng-template #elseBlock>
+                                        <span>{{ t('modules.eidManagement.txtNoData') }}</span>
+                                    </ng-template>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantNameLatin') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application; else elseBlock">
+                                        {{ application.firstNameLatin }}
+                                        {{ application.secondNameLatin }}
+                                        {{ application.lastNameLatin }}
+                                    </span>
+                                    <ng-template #elseBlock>
+                                        <span>{{ t('modules.eidManagement.txtNoData') }}</span>
+                                    </ng-template>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantNationality') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application && application.citizenship; else elseBlock">
+                                        {{ application.citizenship }}
+                                    </span>
+                                    <ng-template #elseBlock>
+                                        <span>{{ t('modules.eidManagement.txtNoData') }}</span>
+                                    </ng-template>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantEmail') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application">
+                                        {{ application.email || t('modules.eidManagement.txtNoData') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantPhone') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application">
+                                        {{ application.phoneNumber || t('modules.eidManagement.txtNoData') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.txtDocumentType') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application">
+                                        {{ application.identityType || t('modules.eidManagement.txtNoData') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.txtDocumentNumber') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application">
+                                        {{ application.identityNumber || t('modules.eidManagement.txtNoData') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantDocumentIssuedOn') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application">
+                                        {{
+                                            formatDate(application.identityIssueDate, false) ||
+                                                t('modules.eidManagement.txtNoData')
+                                        }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantDocumentIssuedBy') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span>
+                                        {{ getIssuerName() }}
+                                    </span>
+                                    <p-skeleton
+                                        *ngIf="loadingRegixData"
+                                        height="1rem"
+                                        width="6rem"
+                                        styleClass="mb-3"></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-5 text-secondary details-row-title">
+                                    {{ t('modules.eidManagement.details.txtApplicantDocumentValidTo') }}:
+                                </td>
+                                <td class="fw-bold text-secondary align-top">
+                                    <span *ngIf="application">
+                                        {{
+                                            formatDate(application.identityValidityToDate, false) ||
+                                                t('modules.eidManagement.txtNoData')
+                                        }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <ng-container *appHasRole="[RoleType.OPERATOR, RoleType.RU_MVR_ADMINISTRATOR]">
+                        <ng-container
+                            *ngIf="
+                                application &&
+                                application.status !== ApplicationStatus.COMPLETED &&
+                                application.status !== ApplicationStatus.DENIED &&
+                                application.status !== ApplicationStatus.PAYMENT_EXPIRED &&
+                                application.submissionType !== SubmissionType.PERSO_CENTRE &&
+                                !hideActionButtons
+                            ">
+                            <p-divider class="header-divider" type="solid"></p-divider>
+                            <p-button
+                                *ngIf="application.status !== ApplicationStatus.GENERATED_CERTIFICATE"
+                                [label]="t('modules.eidManagement.details.txtDenyApplication')"
+                                type="button"
+                                styleClass="p-button p-button-danger p-button-sm mt-2 me-4"
+                                (onClick)="denyApplication()"></p-button>
+                            <p-button
+                                *ngIf="isContinueApplicationProcessAvailable()"
+                                [label]="continueApplicationProcessText()"
+                                type="button"
+                                styleClass="p-button p-button-primary p-button-sm mt-2"
+                                (onClick)="goToApplicationAction()"></p-button>
+                        </ng-container>
+                    </ng-container>
+                </ng-template>
+            </p-card>
+        </div>
+    </div>
+</section>

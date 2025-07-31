@@ -1,0 +1,52 @@
+{
+    "/pivr/api": {
+        "target": "http://dev.pivradmin.mvreid.local",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/pivr": ""
+        }
+    },
+    "/mpozei/api": {
+        "target": "http://mpozeigw.mvreid.local",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/raeicei/api": {
+        "target": "http://raeicei-gateway.mvreid.local/",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/logssearch/api": {
+        "target": "https://locallogsapi-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/logssearch": ""
+        },
+        "changeOrigin": true
+    },
+    "/pjsservices/api": {
+        "target": "https://pjsservices-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/pjsservices": ""
+        },
+        "changeOrigin": true
+    },
+    "/pjs/api": {
+        "target": "https://pjsapi-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/pjs": ""
+        },
+        "changeOrigin": true
+    },
+    "/pun/api": {
+        "target": "https://punapi-dev.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/pun": ""
+        },
+        "changeOrigin": true
+    }
+}

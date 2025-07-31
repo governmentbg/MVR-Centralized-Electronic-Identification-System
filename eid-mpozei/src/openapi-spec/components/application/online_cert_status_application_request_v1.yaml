@@ -1,0 +1,6 @@
+schemas:
+  OnlineCertStatusApplicationRequest:
+    type: object
+    properties:
+      dummyField:
+        type: string

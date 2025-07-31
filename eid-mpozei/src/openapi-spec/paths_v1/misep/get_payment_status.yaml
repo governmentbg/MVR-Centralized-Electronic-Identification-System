@@ -1,0 +1,46 @@
+#methods:
+#  get:
+#    tags:
+#      - Misep
+#    summary: Get Payment by Id
+#    description: Get Payment by Id
+#    operationId: getPaymentById
+#    parameters:
+#      - name: paymentRequestId
+#        in: path
+#        description: 'Payment request id'
+#        required: true
+#        schema:
+#          type: string
+#      - name: citizenProfileId
+#        in: query
+#        description: 'Citizen profile id'
+#        schema:
+#          type: string
+#    responses:
+#      '200':
+#        description: Success
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/misep/misep_payment_status_v1.yaml#/schemas/MisepPaymentStatusDTO'
+#      '400':
+#        description: Bad Request
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+#      '500':
+#        description: Server Error
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      '504':
+#        description: Gateway Timeout
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      default:
+#        description: successful operation

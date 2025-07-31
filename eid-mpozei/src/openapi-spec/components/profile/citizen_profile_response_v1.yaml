@@ -1,0 +1,31 @@
+schemas:
+  CitizenProfileResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      firstName:
+        type: string
+      secondName:
+        type: string
+      lastName:
+        type: string
+      firstNameLatin:
+        type: string
+        description: First Name Latin
+      secondNameLatin:
+        type: string
+        description: Second Name Latin
+      lastNameLatin:
+        type: string
+        description: Last Name Latin
+      eidentityId:
+        type: string
+        format: uuid
+      phoneNumber:
+        type: string
+      email:
+        type: string
+      firebaseId:
+        type: string

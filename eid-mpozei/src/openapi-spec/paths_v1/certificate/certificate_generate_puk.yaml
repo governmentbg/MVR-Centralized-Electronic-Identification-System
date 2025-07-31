@@ -1,0 +1,26 @@
+#methods:
+#  get:
+#    tags:
+#      - Certificate
+#    summary: Generate PIN and PUK
+#    description: Generate PIN and PUK for the new security card.
+#    operationId: generatePUK
+#    responses:
+#      '200':
+#        description: Success
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/certificate/certificate_puk_response_v1.yaml#/schemas/CertificatePukResponse'
+#      '500':
+#        description: Server Error
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      '504':
+#        description: Gateway Timeout
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

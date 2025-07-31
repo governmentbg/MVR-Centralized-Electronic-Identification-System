@@ -1,0 +1,39 @@
+methods:
+  post:
+    tags:
+      - Naif
+    summary: Update certificate status
+    description: Update certificate status
+    operationId: updateCertificateStatusByNaif
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/naif/certificate_update_status_naif_v1.yaml#/schemas/NaifUpdateCertificateStatusDTO'
+    responses:
+      '200':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/naif/naif_update_certificate_status_response_v1.yaml#/schemas/NaifUpdateCertificateStatusResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

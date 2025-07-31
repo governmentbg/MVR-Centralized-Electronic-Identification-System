@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+    <meta charset="utf-8"></meta>
+    <title>Потвърждение</title>
+    <style>
+        html * {
+            font-family: Blogger Sans, Arial, Helvetica, sans-serif !important;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .line {
+            margin: 10px 50px;
+        }
+        .form-title {
+            text-align: center;
+            font-size: 26pt;
+        }
+    </style>
+</head>
+
+<body>
+<div class="form-container">
+    <p class="form-title">Потвърждение</p>
+    <div class="container">
+        <p>
+            <div style="margin-left:3rem">Днес [[${currentDate}]], долуподписаният/та [[${names}]] ,</div>
+            <div>
+            ЕГН/ЛНЧ/ЛН [[${citizenIdentifierNumber}]], потвърждавам, че посочените електронна поща и/или телефон за връзка са въведени коректно.
+            </div>
+        </p>
+        <div class="line">
+            <p><strong>Електронна поща:</strong> <a [href]="'mailto:' + [[${email}]]">[[${email}]]</a></p>
+            <p><strong>Мобилен телефон (РБ):</strong> [[${phone}]]</p>
+            <p><strong>Чуждестранен мобилен телефон:</strong> [[${foreignPhoneNumber}]]</p>
+        </div>
+        <p style="text-align: end;">Подпис:………………</p>
+    </div>
+</body>
+
+</html>

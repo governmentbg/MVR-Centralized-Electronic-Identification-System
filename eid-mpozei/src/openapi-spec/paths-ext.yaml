@@ -1,0 +1,84 @@
+openapi: 3.0.1
+info:
+  description: API reference documentation for Module for Accepting and Processing Electronic Identity Applications.
+  version: '1.0'
+  title: MPOZEI Certificate REST Interface
+#servers:
+#  - url: '/mpozei/external/api'
+paths:
+  "/mpozei/external/api/v1/applications":
+    $ref: 'paths_v1/application/application_online-ext.yaml#/methods'
+  "/mpozei/external/api/v1/applications/certificate-status-change/plain":
+    $ref: 'paths_v1/application/online_cert_status_application_plain.yaml#/methods'
+  "/mpozei/external/api/v1/applications/certificate-status-change/signed":
+    $ref: 'paths_v1/application/online_cert_status_application_signed.yaml#/methods'
+  "/mpozei/external/api/v1/applications/generate-xml":
+    $ref: 'paths_v1/application/generate-xml-ext.yaml#/methods'
+  "/mpozei/external/api/v1/applications/{id}":
+    $ref: 'paths_v1/application/application_id-ext.yaml#/methods'
+  "/mpozei/external/api/v1/applications/find":
+    $ref: 'paths_v1/application/application_list-ext.yaml#/methods'
+  "/mpozei/external/api/v1/certificates/find":
+    $ref: 'paths_v1/certificate/certificate_find-ext.yaml#/methods'
+  "/mpozei/external/api/v1/certificates/{id}":
+    $ref: 'paths_v1/certificate/certificate_summary-ext.yaml#/methods'
+  "/mpozei/external/api/v1/nomenclatures/applications/statuses":
+    $ref: 'paths_v1/nomenclature/application_statuses.yaml#/methods'
+  "/mpozei/external/api/v1/nomenclatures/certificates/statuses":
+    $ref: 'paths_v1/nomenclature/certificate_statuses.yaml#/methods'
+  "/mpozei/external/api/v1/applications/sign":
+    $ref: 'paths_v1/application/sign_online_application.yaml#/methods'
+  "/mpozei/external/api/v1/mobile/verify-login":
+    $ref: 'paths_v1/eidentity/profile_login_verification.yaml#/methods'
+  "/mpozei/external/api/v1/mobile/certificates/enroll/base-profile":
+    $ref: 'paths_v1/certificate/mobile_certificate_basic_profile_enroll.yaml#/methods'
+  "/mpozei/external/api/v1/mobile/certificates/enroll/eid":
+    $ref: 'paths_v1/certificate/mobile_certificate_eid_enroll.yaml#/methods'
+  "/mpozei/external/api/v1/mobile/certificates/confirm":
+    $ref: 'paths_v1/certificate/confirm_certificate_basic_profile.yaml#/methods'
+  "/mpozei/external/api/v1/mobile/certificates/confirm/eid":
+    $ref: 'paths_v1/certificate/confirm_certificate_eid.yaml#/methods'
+  "/mpozei/external/api/v1/applications/{applicationId}/complete":
+    $ref: 'paths_v1/application/application_complete_online.yaml#/methods'
+  "/mpozei/external/api/v1/eidentities":
+    $ref: 'paths_v1/eidentity/eidentity_id-ext.yaml#/methods'
+  "/mpozei/external/api/v1/eidentities/attach-to-profile/{citizenProfileId}":
+    $ref: 'paths_v1/eidentity/eidentity_attach-ext.yaml#/methods'
+  "/mpozei/external/api/v1/citizens/register":
+    $ref: './paths_v1/profile/citizen_profile_register.yaml#/methods'
+  "/mpozei/external/api/v1/citizens":
+    $ref: './paths_v1/profile/citizen_profile.yaml#/methods'
+  "/mpozei/external/api/v1/citizens/forgotten-password":
+    $ref: './paths_v1/profile/forgotten_password.yaml#/methods'
+  "/mpozei/external/api/v1/citizens/update-password":
+    $ref: './paths_v1/profile/update_password.yaml#/methods'
+  "/mpozei/external/api/v1/citizens/update-email":
+    $ref: './paths_v1/profile/update_email.yaml#/methods'
+  "/mpozei/external/api/v1/citizens/update-email/confirm":
+    $ref: './paths_v1/profile/confirm_update_email.yaml#/methods'
+  "/mpozei/external/api/v1/citizens/reset-password":
+    $ref: './paths_v1/profile/reset_password.yaml#/methods'
+  "/mpozei/external/api/v1/device-types":
+    $ref: 'paths_v1/nomenclature/device_types.yaml#/methods'
+  "/mpozei/external/api/v1/device/log":
+    $ref: 'paths_v1/profile/device_log_external.yaml#/methods'
+  "/mpozei/external/api/v1/nomenclatures/reasons":
+    $ref: 'paths_v1/nomenclature/reasons.yaml#/methods'
+  "/mpozei/external/api/v1/certificates/{id}/history":
+    $ref: './paths_v1/certificate/citizen_certificate_history.yaml#/methods'
+  "/mpozei/external/api/v1/help-pages/{id}":
+    $ref: 'paths_v1/help_page/get_help_page.yaml#/methods'
+  "/mpozei/external/api/v1/help-pages/name/{pageName}":
+    $ref: 'paths_v1/help_page/get_help_page_by_name.yaml#/methods'
+  "/mpozei/external/api/v1/help-pages/find":
+    $ref: 'paths_v1/help_page/find_help_pages.yaml#/methods'
+  "/mpozei/external/api/v1/help-pages/find-all":
+    $ref: 'paths_v1/help_page/get_all_help_pages.yaml#/methods'
+  "/mpozei/external/api/v1/certificates/alias":
+    $ref: './paths_v1/certificate/update_certificate_alias.yaml#/methods'
+  "/mpozei/external/api/v1/certificates/public-find":
+    $ref: './paths_v1/certificate/public_find_certificate_info.yaml#/methods'
+  "/mpozei/external/api/v1/payments":
+    $ref: './paths_v1/misep/get_all_payments.yaml#/methods'
+#  "/mpozei/external/api/v1/payments/{paymentRequestId}/status":
+#    $ref: './paths_v1/misep/get_payment_status.yaml#/methods'

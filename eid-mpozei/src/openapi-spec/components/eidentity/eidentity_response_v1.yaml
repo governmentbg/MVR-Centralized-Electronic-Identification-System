@@ -1,0 +1,44 @@
+schemas:
+  EidentityResponse:
+    type: object
+    properties:
+      eidentityId:
+        type: string
+        format: uuid
+        description: EIdentity ID
+      citizenProfileId:
+        type: string
+        format: uuid
+        description: Citizen Profile ID
+      active:
+        type: boolean
+        description: Eidentity status
+      firstName:
+        type: string
+        description: First Name
+      secondName:
+        type: string
+        description: Second Name
+      lastName:
+        type: string
+        description: Last Name
+      firstNameLatin:
+        type: string
+        description: First Name Latin
+      secondNameLatin:
+        type: string
+        description: Second Name Latin
+      lastNameLatin:
+        type: string
+        description: Last Name Latin
+      citizenIdentifierNumber:
+        type: string
+        description: Citizen Number
+      citizenIdentifierType:
+        $ref: './identifier_type_v1.yaml#/schemas/IdentifierType'
+      email:
+        type: string
+      phoneNumber:
+        type: string
+      firebaseId:
+        type: string

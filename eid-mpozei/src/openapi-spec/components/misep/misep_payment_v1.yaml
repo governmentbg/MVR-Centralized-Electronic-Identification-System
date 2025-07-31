@@ -1,0 +1,39 @@
+schemas:
+  MisepPaymentDTO:
+    type: object
+    properties:
+      ePaymentId:
+        type: string
+      citizenProfileId:
+        type: string
+      createdOn:
+        type: string
+        format: date-time
+      paymentDeadline:
+        type: string
+        format: date-time
+      paymentDate:
+        type: string
+        format: date-time
+      status:
+        type: string
+      accessCode:
+        type: string
+      registrationTime:
+        type: string
+        format: date-time
+      referenceNumber:
+        type: string
+      reason:
+        type: string
+      currency:
+        type: string
+      amount:
+        type: number
+      lastSync:
+        type: string
+        format: date-time
+      amountBGN:
+        type: number
+      amountEUR:
+        type: number

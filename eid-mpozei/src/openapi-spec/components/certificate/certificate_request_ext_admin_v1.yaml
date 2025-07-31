@@ -1,0 +1,26 @@
+schemas:
+  CertificateExtAdminRequest:
+    type: object
+    required:
+      - applicationId
+      - certificate
+      - deviceSerialNumber
+    properties:
+      applicationId:
+        type: string
+        format: uuid
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.APPLICATION_ID_CANNOT_BE_NULL)'
+      clientCertificate:
+        type: string
+        description: Base64 Encoded X509 Certificate
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTIFICATE_CANNOT_BE_BLANK)'
+      deviceSerialNumber:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTIFICATE_SERIAL_NUMBER_CANNOT_BE_BLANK)'
+      clientCertificateChain:
+        type: array
+        items:
+          type: string
+        example:
+        description: Certificate chain
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotEmpty(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTIFICATE_CHAIN_GENERAL_FAILURE)'

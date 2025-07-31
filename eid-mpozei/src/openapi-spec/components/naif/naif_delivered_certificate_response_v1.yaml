@@ -1,0 +1,19 @@
+schemas:
+  NaifDeliveredCertificateResponse:
+    type: object
+    properties:
+      MessageID:
+        type: string
+        format: uuid
+      MessageRefID:
+        type: string
+        format: uuid
+      User:
+        type: string
+      Timestamp:
+        type: string
+        format: date-time
+      ResponseStatusCode:
+        type: integer
+      ResponseStatusDesc:
+        type: string

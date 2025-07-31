@@ -1,0 +1,23 @@
+spring:
+  security:
+    oauth2:
+#      client:
+#        registration:
+#          keycloak:
+#            client-id: @MPOZEI_EGW_KEYCLOAK_CLIENT_ID@
+#            client-secret: @MPOZEI_EGW_KEYCLOAK_CLIENT_SECRET@
+#            authorization-grant-type: client_credentials
+#            provider: keycloak
+#        provider:
+#          keycloak:
+#            issuer-uri: https://@EXTERNAL_KEYCLOAK_BASE_URL@/realms/@EXTERNAL_KEYCLOAK_REALM@
+#            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}
+          audiences:
+          - eid_mpozei_ext
+keycloak:
+  auth-server-url: https://${EXTERNAL_KEYCLOAK_BASE_URL}
+  realm: ${EXTERNAL_KEYCLOAK_REALM}
+  oauth-scheme-name: keycloak

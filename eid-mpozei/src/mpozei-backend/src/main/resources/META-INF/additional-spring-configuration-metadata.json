@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "mvr.pan-client.url.send-notification",
+  "type": "java.lang.String",
+  "description": "A description for 'mvr.pan-client.url.send-notification'"
+}]}

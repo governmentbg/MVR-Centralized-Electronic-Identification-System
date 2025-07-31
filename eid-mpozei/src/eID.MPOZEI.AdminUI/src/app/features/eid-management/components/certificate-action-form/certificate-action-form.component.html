@@ -1,0 +1,90 @@
+<div class="row" *transloco="let t">
+    <div class="col">
+        <p class="details-title">{{ applicationActionText() }}:</p>
+        <div class="d-flex">
+            <app-steps [steps]="steps" [currentStep]="currentStep"></app-steps>
+            <div class="flex-grow-1 ps-4">
+                <div *ngIf="applicationCreationInProgress" class="col-xl-8">
+                    <p-skeleton height="1rem" width="16rem" styleClass="mb-4"></p-skeleton>
+                    <p-skeleton height="1rem" width="8rem" styleClass="mb-4"></p-skeleton>
+                    <p-skeleton height="1rem" width="16rem" styleClass="mb-4"></p-skeleton>
+                    <p-skeleton height="1rem" width="8rem"></p-skeleton>
+                </div>
+
+                <div *ngIf="currentStep === 0 && !applicationCreationInProgress" class="col-xl-10 action-container">
+                    <p class="fw-bold">
+                        {{ reasonText() }}
+                    </p>
+                    <p>{{ t('modules.eidManagement.details.txtApplicationNumber') }}: {{ createdApplicationNumber }}</p>
+                    <p>
+                        {{ t('modules.eidManagement.details.txtApplicationDate') }}:
+                        {{ formatDate(applicationCreationDate) }}
+                    </p>
+
+                    <form [formGroup]="form" (ngSubmit)="onDataSubmit()">
+                        <div class="reason-dropdown-container" *ngIf="action !== ApplicationType.RESUME_EID">
+                            <label for="reason" class="form-label">{{ reasonLabelText() }}</label>
+                            <p-dropdown
+                                formControlName="reason"
+                                [options]="reasons"
+                                optionLabel="description"
+                                dataKey="name"
+                                [placeholder]="t('global.txtDropdownPlaceholder')"
+                                styleClass="w-100"
+                                inputId="reason"
+                                appendTo="body"
+                                (onChange)="onReasonChange(form)"></p-dropdown>
+
+                            <input
+                                *ngIf="form.controls.reason && showCustomReasonField"
+                                pInputText
+                                type="text"
+                                class="w-100 mt-3"
+                                formControlName="customReason"
+                                [placeholder]="t('modules.eidManagement.details.txtReason')" />
+
+                            <div class="text-danger validation-text">
+                                <span
+                                    *ngIf="
+                                            form.controls.customReason.errors?.['required'] &&
+                                            (form.controls.customReason.dirty ||form.controls.customReason.touched)
+                                    ">
+                                    {{ reasonText() }}
+                                </span>
+                            </div>
+                        </div>
+                        <p-button
+                            [label]="
+                                isCurrentUserMVREmployee
+                                    ? t('modules.eidManagement.details.txtPrintApplication')
+                                    : t('global.txtContinue')
+                            "
+                            styleClass="p-button p-button-sm p-button-success"
+                            [loading]="requestInProgress"
+                            type="submit">
+                            <i *ngIf="isCurrentUserMVREmployee" class="material-icons-outlined me-2">&#xe8ad;</i>
+                        </p-button>
+                    </form>
+                </div>
+                <div *ngIf="currentStep === 1 && !applicationCreationInProgress" class="col-xl-10 action-container">
+                    <p class="fw-bold" *ngIf="isCurrentUserMVREmployee">
+                        {{ t('modules.eidManagement.details.txtPleaseConfirmSignedApplication') }}
+                    </p>
+                    <div class="mb-4" *ngIf="shouldShowGuardiansForm()">
+                        <app-guardians-form #guardiansForm></app-guardians-form>
+                        <p-divider type="solid"></p-divider>
+                    </div>
+
+                    <p-button
+                        [label]="submitButtonData.label"
+                        [styleClass]="submitButtonData.class"
+                        [loading]="requestInProgress"
+                        (onClick)="executeCertificateAction()"
+                        type="button">
+                        <i class="material-icons-outlined me-2" [innerHTML]="submitButtonData.icon"></i>
+                    </p-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

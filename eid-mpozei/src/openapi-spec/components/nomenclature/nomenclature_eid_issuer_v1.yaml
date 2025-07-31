@@ -1,0 +1,13 @@
+schemas:
+  NomenclatureEidIssuerDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      translations:
+        type: array
+        items:
+          $ref: './translation_v1.yaml#/schemas/NomenclatureTranslationDTO'

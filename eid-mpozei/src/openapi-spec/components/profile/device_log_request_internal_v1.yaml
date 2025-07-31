@@ -1,0 +1,22 @@
+schemas:
+  DeviceLogRequestInternal:
+    type: object
+    properties:
+      eventType:
+        enum:
+          - DESK_ENTER_PIN
+          - DESK_CHANGE_PIN
+          - DESK_ACTIVATE_PIN
+          - DESK_UPDATE_CERTIFICATE
+      messageType:
+        enum:
+          - REQUEST
+          - SUCCESS
+          - FAIL
+        default: REQUEST
+      eventPayload:
+        type: object
+        additionalProperties:
+          type: object
+      certificate:
+        type: string

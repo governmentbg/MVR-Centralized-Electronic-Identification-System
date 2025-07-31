@@ -1,0 +1,160 @@
+<aside role="table-filter" *transloco="let t" class="table-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.eidManagement.tableFilter.txtCertificatesFilter') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="serialNumber" class="form-label">
+                            {{ t('modules.eidManagement.tableFilter.txtCertificateSerialNumber') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="serialNumber"
+                            type="text"
+                            class="w-100"
+                            formControlName="serialNumber"
+                            autocomplete="off"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtCertificateSerialNumber')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label class="w-100" for="validityFrom">{{
+                            t('modules.eidManagement.tableFilter.txtValidFrom')
+                        }}</label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="validityFrom"
+                            inputId="validityFrom"
+                            name="validityFromDate"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            iconAriaLabel="calendar"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [placeholder]="t('global.txtDropdownPlaceholder')">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label class="w-100" for="validityUntil">{{
+                            t('modules.eidManagement.tableFilter.txtValidTo')
+                        }}</label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="validityUntil"
+                            inputId="validityUntil"
+                            name="validityUntilDate"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            iconAriaLabel="calendar"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [placeholder]="t('global.txtDropdownPlaceholder')">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="deviceType" class="form-label"
+                            >{{ t('modules.eidManagement.tableFilter.txtCarrier') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="deviceId"
+                            [options]="carriers"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="deviceType"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            appendTo="body"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="status" class="form-label"
+                            >{{ t('modules.eidManagement.tableFilter.txtStatus') }}
+                        </label>
+                        <p-multiSelect
+                            formControlName="status"
+                            [options]="statuses"
+                            optionLabel="name"
+                            optionValue="code"
+                            [placeholder]="t('modules.eidManagement.tableFilter.txtAllPlaceholder')"
+                            inputId="status"
+                            appendTo="body"
+                            [overlayOptions]="{ baseZIndex: 1045 }"
+                            styleClass="w-100">
+                        </p-multiSelect>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <p-button
+                    (onClick)="clearAllFilteredValues()"
+                    [label]="t('modules.eidManagement.tableFilter.txtCancel')"
+                    styleClass="p-button p-button-danger me-3 app-button-small"></p-button>
+                <p-button
+                    [label]="t('modules.eidManagement.tableFilter.txtApplyFilters')"
+                    type="submit"
+                    styleClass="p-button me-3 p-button-primary app-button-small"
+                    [disabled]="!filterForm.dirty"></p-button>
+            </div>
+        </div>
+        <div class="offcanvas-backdrop fade show" *ngIf="visible"></div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="table-filter-choice">
+    <div class="row" [ngClass]="{ 'mb-4': chosenFilters.length > 0 }">
+        <div class="col text-end gap-3 d-flex">
+            <p-button
+                type="button"
+                styleClass="p-button-text"
+                icon="pi pi-refresh"
+                (onClick)="refreshData()"
+                [label]="t('global.txtRefresh')"></p-button>
+            <p-button
+                styleClass="p-button-text"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (onClick)="openFilter()"
+                [label]="t('modules.eidManagement.tableFilter.txtCertificatesFilter')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </p-button>
+        </div>
+    </div>
+    <div class="row mb-4" [hidden]="chosenFilters.length === 0">
+        <div class="col text-end">
+            <span *ngFor="let filteredValue of chosenFilters">
+                <p-chip
+                    [label]="prepareFilteredValueLabel(filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="chosenFilters.length > 0"
+                type="button"
+                class="btn btn-link"
+                (click)="clearAllFilteredValues()"
+                aria-labelledby="Clear">
+                {{ t('modules.eidManagement.tableFilter.txtCancelAll') }}
+            </button>
+        </div>
+    </div>
+</section>

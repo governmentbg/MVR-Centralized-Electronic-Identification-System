@@ -1,0 +1,16 @@
+schemas:
+  MobileCertificateBasicProfileRequest:
+    type: object
+    required:
+      - certificateSigningRequest
+    properties:
+      otpCode:
+        type: string
+      certificateSigningRequest:
+        type: string
+        example: |-
+          -----BEGIN CERTIFICATE REQUEST-----
+          MIICh...V8shQ==
+          -----END CERTIFICATE REQUEST-----
+        description: Certificate request
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTICATE_SIGNING_REQUEST_CANNOT_BE_BLANK)'

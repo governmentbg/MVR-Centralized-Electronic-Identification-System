@@ -1,0 +1,8 @@
+schemas:
+  NomenclatureTranslationDTO:
+    type: object
+    properties:
+      name:
+        type: string
+      language:
+        type: string

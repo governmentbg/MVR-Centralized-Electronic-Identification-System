@@ -1,0 +1,12 @@
+schemas:
+  DeviceLogRequestExternal:
+    type: object
+    properties:
+      eventType:
+        enum:
+          - ONLINE_SUCCESSFUL_PIN_CHANGE
+          - ONLINE_UNSUCCESSFUL_PIN_CHANGE
+      eventPayload:
+        type: object
+        additionalProperties:
+          type: string

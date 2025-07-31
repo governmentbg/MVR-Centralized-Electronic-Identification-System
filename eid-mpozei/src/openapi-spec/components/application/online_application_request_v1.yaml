@@ -1,0 +1,10 @@
+schemas:
+  OnlineApplicationRequest:
+    type: object
+    properties:
+      xml:
+        type: string
+      signature:
+        type: string
+      signatureProvider:
+        type: string

@@ -1,0 +1,11 @@
+#schemas:
+#  CertificateStatusResponse:
+#    type: object
+#    description: status result
+#    properties:
+#      status:
+#        type: string
+#        description: New status
+#      message:
+#        type: string
+#        description: Short status message

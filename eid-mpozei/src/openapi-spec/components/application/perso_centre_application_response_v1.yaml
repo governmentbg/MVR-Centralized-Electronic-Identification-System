@@ -1,0 +1,17 @@
+schemas:
+  PersoCentreApplicationResponse:
+    type: object
+    properties:
+      applicationId:
+        type: string
+        format: uuid
+      certificate:
+        type: string
+      certificateCA:
+        type: array
+        items:
+          type: string
+        description: Certificate CA
+      certificateId:
+        type: string
+        format: uuid

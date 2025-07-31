@@ -1,0 +1,13 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+custom:
+  rabbitmq:
+    queue-prefix: mpozei.rpcqueue.
+    routing-key-prefix: mpozei.routingkey.
+    rpc-exchange: mpozei.rpc.exchange
+    reply-exchange: mpozei.reply.exchange
+    reply-queue: mpozei.reply.rpcqueue
+#    skipped-queues: >

@@ -1,0 +1,84 @@
+schemas:
+  ApplicationDetailsResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      firstName:
+        type: string
+      secondName:
+        type: string
+      lastName:
+        type: string
+      firstNameLatin:
+        type: string
+      secondNameLatin:
+        type: string
+      lastNameLatin:
+        type: string
+      citizenship:
+        type: string
+      applicationType:
+        $ref: './application_type_v1.yaml#/schemas/ApplicationType'
+      certificateId:
+        type: string
+        format: uuid
+      serialNumber:
+        type: string
+      status:
+        $ref: './application_status_v1.yaml#/schemas/ApplicationStatus'
+      createDate:
+        type: string
+        format: date-time
+        description: Certificate created date
+      deviceId:
+        type: string
+        format: uuid
+      eidAdministratorName:
+        type: string
+      eidAdministratorOfficeName:
+        type: string
+      eidAdministratorFrontOfficeId:
+        type: string
+        format: uuid
+      eidentityId:
+        type: string
+        format: uuid
+      email:
+        type: string
+      phoneNumber:
+        type: string
+      reasonId:
+        type: string
+        format: uuid
+      reasonText:
+        type: string
+      submissionType:
+        $ref: './application_submission_type_v1.yaml#/schemas/ApplicationSubmissionType'
+      applicationNumber:
+        type: string
+      identityNumber:
+        type: string
+      identityType:
+        type: string
+      identityIssueDate:
+        type: string
+        format: date
+      identityValidityToDate:
+        type: string
+        format: date
+      fee:
+        type: number
+        format: double
+      feeCurrency:
+        type: string
+      secondaryFee:
+        type: number
+        format: double
+      secondaryFeeCurrency:
+        type: string
+      numForm:
+        type: string
+      operatorUsername:
+        type: string

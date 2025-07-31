@@ -1,0 +1,15 @@
+schemas:
+  EidAdministratorResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      eikNumber:
+        type: string
+      offices:
+        type: array
+        items:
+          $ref: './office_response_v1.yaml#/schemas/EidAdministratorFrontOfficeResponse'

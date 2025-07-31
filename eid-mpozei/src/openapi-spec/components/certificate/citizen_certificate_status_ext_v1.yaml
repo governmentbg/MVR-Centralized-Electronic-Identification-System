@@ -1,0 +1,8 @@
+schemas:
+  CertificateStatusExternal:
+    type: string
+    enum:
+      - ACTIVE
+      - STOPPED
+      - REVOKED
+      - EXPIRED

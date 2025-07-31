@@ -1,0 +1,6 @@
+schemas:
+  MisepPaymentStatusDTO:
+    type: object
+    properties:
+      status:
+        type: string

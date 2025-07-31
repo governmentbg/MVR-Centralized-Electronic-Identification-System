@@ -1,0 +1,40 @@
+methods:
+  post:
+    tags:
+      - Naif
+    summary: Get device certificate history
+    description: Get device certificate history
+    operationId: getDeviceHistory
+    requestBody:
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/naif/naif_get_device_history_request_v1.yaml#/schemas/NaifDeviceHistoryRequest'
+    responses:
+      '200':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/naif/naif_get_device_history_response_v1.yaml#/schemas/NaifDeviceHistoryResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

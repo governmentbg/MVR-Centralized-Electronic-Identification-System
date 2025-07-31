@@ -1,0 +1,509 @@
+server:
+  port: ${MPOZEI_BE_SERVER_PORT}
+  ssl:
+    enabled: false
+    trust-store: ${MPOZEI_BE_TRUST_STORE}
+    trust-store-password: ${MPOZEI_BE_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
+    
+    key-alias: mvreid.local
+    key-store: ${MPOZEI_BE_KEY_STORE}
+    key-store-password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+spring:
+  task:
+    scheduling:
+      pool:
+        size: 8
+  profiles:
+    active: ${MPOZEI_BE_SPRING_ACTIVE_PROFILES}
+    group:
+      test: h2-unit-test,postgres,logging-dev
+  ssl:
+    bundle:
+      jks:
+        pan-client:
+          key:
+            alias: "mvreid.local"
+#          keystore:
+#            location: ${MPOZEI_BE_KEY_STORE}
+#            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+#            type: "PKCS12"
+#          truststore:
+#            location: ${MPOZEI_BE_KEY_STORE}
+#            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+#            type: "PKCS12"
+        ejbca-m2m:
+          key:
+            alias: "ejbca-client"
+          keystore:
+            location: ${MPOZEI_BE_KEY_STORE}
+            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+            type: "PKCS12"
+#          truststore:
+#            location: ${MPOZEI_BE_KEY_STORE}
+#            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+#            type: "PKCS12"
+        sign-server-m2m:
+          key:
+            alias: "te-user-manualsubjectname-cbc429ce-b3a9-44a4-8a6a-d6de5548702f"
+          keystore:
+            location: ${SIGN_SERVER_KEY_STORE}
+            password: ${SIGN_SERVER_KEY_STORE_PASSWORD}
+            type: "PKCS12"
+#          truststore:
+#            location: ${MPOZEI_BE_KEY_STORE}
+#            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+#            type: "PKCS12"
+#        open-search-m2m:
+#          key:
+#            alias: "mvreid.local"
+#          keystore:
+#            location: ${MPOZEI_BE_KEY_STORE}
+#            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+#            type: "PKCS12"
+#          truststore:
+#            location: ${MPOZEI_BE_KEY_STORE}
+#            password: ${MPOZEI_BE_KEY_STORE_PASSWORD}
+#            type: "PKCS12"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+wsdl-url: ${WSDL_URL:http://nexus.mvreid.local:8081/repository/maven-releases/data/service/1/service-1.wsdl}
+logging:
+  secret-key: ${MPOZEI_BE_AUDIT_LOGGING_SECRET_KEY}
+  encryption-key:
+  module-id: mpozei-backend
+  system-id: mpozei
+  file-name-pattern-audit: ${MPOZEI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${MPOZEI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${MPOZEI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${MPOZEI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${MPOZEI_BE_LOG_FILE_NAME}
+  level:
+    org.springframework.data.elasticsearch.core: DEBUG
+    bg.bulsi.mvr.mpozei.backend.client.MisepClient: DEBUG
+    bg.bulsi.mvr.mpozei.backend.client.EjbcaClient: DEBUG
+    bg.bulsi.mvr.mpozei.backend.client.PivrClient: DEBUG
+    bg.bulsi.mvr.mpozei.backend.client.PunClient: DEBUG
+    bg.bulsi.mvr.mpozei.backend.client.SignServerClient: DEBUG
+    bg.bulsi.mvr.mpozei.backend.client.EDeliveryClient: DEBUG
+springdoc:
+  swagger-ui:
+    enabled: ${MPOZEI_SWAGGER_ENABLED}
+services:
+  ruei-gateway-base-url: ${RUEI_GATEWAY_BASE_URL}
+  rei-gateway-base-url: ${REI_GATEWAY_BASE_URL}
+  ejbca-base-url: ${EJBCA_BASE_URL}
+  pun-base-url: ${PUN_BASE_URL}
+  raeicei-gateway-base-url: ${RAEICEI_GATEWAY_BASE_URL}
+  pivr-base-url: ${PIVR_BASE_URL}
+  sign-server-base-url: ${SIGN_SERVER_BASE_URL}
+  sign-server-worker-name: ${SIGN_SERVER_WORKER_NAME}
+  e-delivery-base-url: ${E_DELIVERY_BASE_URL}
+  misep-base-url: ${MISEP_BASE_URL}
+opensearch:
+  username: ${OPENSEARCH_USERNAME}
+  password: ${OPENSEARCH_PASSWORD}
+  hosts: ${OPENSEARCH_HOSTS}
+ejbca:
+  community-support: true
+  certificate-profile-name: ${EJBCA_CERTIFICATE_PROFILE_NAME}
+  end-entity-profile-name: End Entity MVR DEV Profile
+  account-binding-id: ${EJBCA_ACCOUNT_BINDING_ID}
+certificate-creation:
+  dev: true
+notification-sending: ${NOTIFICATION_SENDING}
+mvr:
+  certificate:
+    days-before-is-expiring: 30
+  pdf-generator:
+    enabled: true
+  pan_client:
+    enabled: true
+    register_system: true
+    base_url: ${PAN_BASE_URL}
+    client_registration_id: eid-mpozei-m2m
+cron-jobs:
+  deceased:
+    cron: '0 */10 * * * *'
+#    cron: 0 0 3 * * ?
+  daily-expired:
+    cron: '0 */10 * * * *'
+#    cron: 5 3 * * *
+  daily-unfinished:
+    cron: '0 */5 * * * *'
+#    cron: 10 3 * * *
+  payments-check:
+    cron: '0 */20 * * * *'
+  sync-personal-id-changes:
+    cron: '0 */5 * * * *'
+executor:
+  payments-thread-pool: ${MPOZEI_BE_PAYMENTS_THREAD_POOL}
+pipeline:
+  config:
+#
+#   CREATE ISSUE_EID
+#
+    IssueEidDeskPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityCreationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - calculatePaymentStep
+      - createDeskApplicationXmlStep
+    IssueEidOnlineEidPipeline:
+      - existingApplicationVerificationStep
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - calculatePaymentStep
+      - createPaymentStep
+    IssueEidOnlineBaseProfilePipeline:
+      - existingApplicationVerificationStep
+      - detachedSignatureVerificationStep
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityCreationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileAttachmentStep
+      - rueiBaseProfileVerificationStep
+      - calculatePaymentStep
+      - createPaymentStep
+    IssueEidPersoCentrePipeline:
+#      - pivrVerificationStep
+#      - regiXVerificationStep
+      - reiEidentityCreationStep
+      - reiEidentityVerificationStep
+      - createDeskApplicationXmlStep
+      - existingRueiCertificateVerificationStep
+      - ejbcaEndEntityCreationStep
+      - ejbcaCertificateCreationStep
+      - rueiCertificateCreationStep
+
+    # External Administrators
+
+    IssueEidDeskExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityCreationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - calculatePaymentStep
+      - createDeskApplicationXmlStep
+      - signDeskApplicationXmlStep
+      - xmlTimestampStep
+      - signApplicationStep
+      
+    IssueEidOnlineEidExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - calculatePaymentStep
+      - signApplicationStep
+      
+    IssueEidOnlineBaseProfileExtAdminPipeline:
+      - detachedSignatureVerificationStep
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityCreationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileAttachmentStep
+      - rueiBaseProfileVerificationStep
+      - calculatePaymentStep
+      - signApplicationStep
+#
+#   CREATE STOP_EID
+#
+    StopEidDeskPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - createDeskApplicationXmlStep
+    StopEidOnlineBaseProfilePipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - ejbcaCertificateRetrievalStep
+      - calculatePaymentStep
+      - createPaymentStep
+    StopEidOnlineEidPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - ejbcaCertificateRetrievalStep
+      - calculatePaymentStep
+      - createPaymentStep
+
+    # External Administrators
+
+    StopEidDeskExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - createDeskApplicationXmlStep
+      - rueiCertificateStatusVerificationStep
+      - signDeskApplicationXmlStep
+      - xmlTimestampStep
+      - signApplicationStep
+      
+    StopEidOnlineExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - calculatePaymentStep
+      - signApplicationStep
+#
+#   CREATE REVOKE_EID
+#
+    RevokeEidDeskPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - createDeskApplicationXmlStep
+    RevokeEidOnlineBaseProfilePipeline:
+      - detachedSignatureVerificationStep 
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - ejbcaCertificateRetrievalStep
+      - calculatePaymentStep
+      - createPaymentStep
+    RevokeEidOnlinePipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - ejbcaCertificateRetrievalStep
+      - calculatePaymentStep
+      - createPaymentStep
+
+    # External Administrators
+
+    RevokeEidDeskExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - createDeskApplicationXmlStep
+      - signApplicationStep
+      
+    RevokeEidOnlineBaseProfileExtAdminPipeline:
+      - detachedSignatureVerificationStep
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - calculatePaymentStep
+      - signApplicationStep
+      
+    RevokeEidOnlineExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - calculatePaymentStep
+      - signApplicationStep
+
+#
+#   CREATE RESUME_EID
+#
+    ResumeEidDeskPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - createDeskApplicationXmlStep
+    ResumeEidOnlineBaseProfilePipeline:
+      - detachedSignatureVerificationStep
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - ejbcaCertificateRetrievalStep
+      - calculatePaymentStep
+      - createPaymentStep
+    ResumeEidOnlineEidPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - rueiCertificateRetrievalStep
+      - ejbcaCertificateRetrievalStep
+      - calculatePaymentStep
+      - createPaymentStep
+
+    # External Administrators
+
+    ResumeEidDeskExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - createDeskApplicationXmlStep
+      - signApplicationStep
+      
+    ResumeEidOnlineBaseProfileExtAdminPipeline:
+      - detachedSignatureVerificationStep
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - calculatePaymentStep
+      - signApplicationStep
+      
+    ResumeEidOnlineEidExtAdminPipeline:
+      - pivrVerificationStep
+      - regiXVerificationStep
+      - xmlTimestampStep
+      - reiEidentityVerificationStep
+      - rueiBaseProfileVerificationStep
+      - extAdminCertificateRetrievalStep
+      - calculatePaymentStep
+      - signApplicationStep
+#
+#   EXPORT TO PDF
+#
+    ExportPipeline:
+      - punCarrierRetrievalStep
+      - exportApplicationStep
+#
+#   SIGN ISSUE_EID
+#
+    SignIssueEidDeskPipeline:
+      - signDeskApplicationXmlStep
+      - xmlTimestampStep
+      - createPaymentStep
+      - signApplicationStep
+    SignIssueEidOnlinePipeline:
+      - signApplicationStep
+#
+#   SIGN STOP_EID
+#
+    SignStopEidDeskPipeline:
+      - ejbcaCertificateRetrievalStep
+      - rueiCertificateStatusVerificationStep
+      - signDeskApplicationXmlStep
+      - xmlTimestampStep
+      - rueiCertificateStatusUpdateStep
+      - sendNotificationStep
+      - certificateHistoryCreationStep
+#
+#   SIGN RESUME_EID
+#
+    SignResumeEidDeskPipeline:
+      - ejbcaCertificateRetrievalStep
+      - rueiCertificateStatusVerificationStep
+      - signDeskApplicationXmlStep
+      - xmlTimestampStep
+      - rueiCertificateStatusUpdateStep
+      - sendNotificationStep
+      - certificateHistoryCreationStep
+#
+#   SIGN REVOKE_EID
+#
+    SignRevokeEidDeskPipeline:
+      - ejbcaCertificateRetrievalStep
+      - rueiCertificateStatusVerificationStep
+      - signDeskApplicationXmlStep
+      - xmlTimestampStep
+      - sendNotificationStep
+      - ejbcaCertificateRevocationStep
+      - rueiCertificateStatusUpdateStep
+      - certificateHistoryCreationStep   
+#
+#   ENROLL FOR CERTIFICATE
+#
+    EnrollForCertificatePipeline:
+      - existingRueiCertificateVerificationStep
+      - ejbcaEndEntityCreationStep
+      - ejbcaCertificateCreationStep
+      - rueiCertificateCreationStep
+      - punCarrierCreationStep
+      - certificateHistoryCreationStep
+      - sendNotificationStep
+
+    # External Administrators
+
+    EnrollForCertificateExtAdminPipeline:
+      - existingRueiCertificateVerificationStep
+      - extAdminCertificateExtractionStep
+      - rueiCertificateCreationStep
+      - punCarrierCreationStep
+      - certificateHistoryCreationStep
+      - sendNotificationStep
+
+#
+#   COMPLETE APPLICATION
+#
+    CompleteApplicationPipeline:
+      - еDeliveryNotificationStep
+      - rueiCertificateStatusUpdateStep
+      - certificateHistoryCreationStep
+    CompletePersoApplicationPipeline:
+      - punCarrierCreationStep
+    CompleteStopOnlinePipeline:
+      - rueiCertificateStatusVerificationStep
+      - rueiCertificateStatusUpdateStep
+      - sendNotificationStep
+      - certificateHistoryCreationStep
+    CompleteResumeOnlinePipeline:
+      - rueiCertificateStatusVerificationStep
+      - rueiCertificateStatusUpdateStep
+      - sendNotificationStep
+      - certificateHistoryCreationStep
+    CompleteRevokeOnlinePipeline:
+      - rueiCertificateStatusVerificationStep
+      - ejbcaCertificateRevocationStep
+      - rueiCertificateStatusUpdateStep
+      - sendNotificationStep
+      - certificateHistoryCreationStep
+
+    # External Administrators
+
+    CompleteIssueEidExtAdminPipeline:
+      - еDeliveryNotificationStep
+      - rueiCertificateStatusUpdateStep
+      - certificateHistoryCreationStep
+      
+    CompleteUpdateStatusExtAdminPipeline:
+      - rueiCertificateStatusVerificationStep
+      - rueiCertificateStatusUpdateStep
+      - sendNotificationStep
+      - certificateHistoryCreationStep

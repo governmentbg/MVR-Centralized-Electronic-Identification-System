@@ -1,0 +1,82 @@
+<ng-container *transloco="let t">
+    <h4 class="mb-4 text-uppercase" [attr.aria-label]="t('sidebar.txtReports')">
+        {{ t('sidebar.txtReports') }}
+    </h4>
+    <div class="p-card p-4 mb-4">
+        <app-reports-filter
+            (filteredData)="onFilterChange($event)"
+            (exportDataEvent)="onExport($event)"
+            [disableExportBtn]="!reportsFilterState || loading"></app-reports-filter>
+        <p-table [value]="report" [tableStyle]="{ 'min-width': '100%' }" [paginator]="false" [loading]="loading">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pResizableColumn pSortableColumn="operatorUsername" class="text-nowrap">
+                        {{ t('modules.reports.txtOperator') }}
+                        <p-sortIcon field="operatorUsername"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="submitted" class="text-nowrap">
+                        {{ t('modules.reports.txtSubmitted') }}
+                        <p-sortIcon field="submitted"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="signed" class="text-nowrap">
+                        {{ t('modules.reports.txtSigned') }}
+                        <p-sortIcon field="signed"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="paid" class="text-nowrap">
+                        {{ t('modules.reports.txtPaid') }}
+                        <p-sortIcon field="paid"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="approved" class="text-nowrap">
+                        {{ t('modules.reports.txtApproved') }}
+                        <p-sortIcon field="approved"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="generatedCertificate" class="text-nowrap">
+                        {{ t('modules.reports.txtGeneratedCertificate') }}
+                        <p-sortIcon field="generatedCertificate"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="completed" class="text-nowrap">
+                        {{ t('modules.reports.txtCompleted') }}
+                        <p-sortIcon field="completed"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="denied" class="text-nowrap">
+                        {{ t('modules.reports.txtDenied') }}
+                        <p-sortIcon field="denied"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-report>
+                <tr>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.operatorUsername }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.submitted }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.signed }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.paid }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.approved }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.generatedCertificate }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.completed }}</span>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">{{ report.denied }}</span>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">{{ t('global.txtNoRecordsFound') }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</ng-container>

@@ -1,0 +1,19 @@
+#schemas:
+#  ApplicationExport:
+#    type: object
+#    properties:
+##      id:
+##        type: string
+##        format: uuid
+#      personalIdType:
+#        type: string
+#      personalIdNumber:
+#        type: string
+#      personalIdIssueDate:
+#        type: string
+#        format: date
+#      personalIdValidityToDate:
+#        type: string
+#        format: date
+#      personalIdIssuer:
+#        type: string

@@ -1,0 +1,122 @@
+<section class="h-100" *transloco="let t">
+    <div class="row">
+        <div class="col">
+            <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+            <h4 class="mb-4 text-text-active">
+                {{ t('modules.eidManagement.details.txtCertificateFullHistory') }}
+            </h4>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col">
+            <p-card>
+                <ng-template pTemplate="content">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="subtitle">
+                                {{ t('modules.eidManagement.details.txtCertificateNumberTitle') }}:
+                            </div>
+                            <h5 *ngIf="certificate" class="text-text-default m-0">{{ certificate.serialNumber }}</h5>
+                        </div>
+                        <p-button
+                            [label]="t('modules.eidManagement.txtClose')"
+                            icon="pi pi-times"
+                            iconPos="right"
+                            styleClass="p-button p-button-danger p-button-text p-button-sm"
+                            (onClick)="closePreview()"></p-button>
+                    </div>
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                    <ng-container *ngIf="certificateHistory">
+                        <div *ngFor="let historyRecord of certificateHistory; let i = index">
+                            <p class="m-0 fw-bold" [ngClass]="getStatusClass(historyRecord.status)">
+                                {{ certificateStatusTranslation(historyRecord.status) }}
+                            </p>
+                            <ul class="list-unstyled">
+                                <ng-container *ngIf="historyRecord.status !== CertificateStatus.EXPIRED">
+                                    <li class="my-4">
+                                        <p class="m-0 text-theme-primary-medium">
+                                            {{ getIssuedTextByStatus(historyRecord.status) }}:
+                                        </p>
+                                        <p class="m-0 fw-bold text-text-default">
+                                            {{ formatDate(historyRecord.modifiedDateTime) }}
+                                        </p>
+                                    </li>
+                                    <li
+                                        class="my-4"
+                                        *ngIf="historyRecord.applicationId && historyRecord.applicationNumber">
+                                        <p class="m-0 text-theme-primary-medium">
+                                            {{ getApplicationNumberText(historyRecord.status) }}:
+                                        </p>
+                                        <p class="m-0 fw-bold">
+                                            <span class="text-text-light">
+                                                <a
+                                                    class="text-text-active"
+                                                    (click)="openApplication(historyRecord.applicationId)">
+                                                    {{ historyRecord.applicationNumber }}
+                                                    <i class="material-icons-outlined">&#xe89e;</i>
+                                                </a>
+                                            </span>
+                                        </p>
+                                    </li>
+                                    <li class="my-4">
+                                        <p class="m-0 text-theme-primary-medium">
+                                            {{ getApplicationDateText(historyRecord.status) }}:
+                                        </p>
+                                        <p class="m-0 fw-bold text-text-default">
+                                            {{ formatDate(historyRecord.modifiedDateTime) }}
+                                        </p>
+                                    </li>
+                                </ng-container>
+                                <li
+                                    class="my-4"
+                                    *ngIf="
+                                        historyRecord.status !== CertificateStatus.CREATED &&
+                                        historyRecord.status !== CertificateStatus.EXPIRED &&
+                                        historyRecord.reasonId
+                                    ">
+                                    <p class="m-0 text-theme-primary-medium">
+                                        {{ getApplicationReasonText(historyRecord.status) }}:
+                                    </p>
+                                    <p class="m-0 fw-bold text-text-default">
+                                        {{ getReasonTranslation(historyRecord.reasonId, historyRecord.reasonText) }}
+                                    </p>
+                                </li>
+                                <li
+                                    class="my-4"
+                                    *ngIf="
+                                        historyRecord.status === CertificateStatus.CREATED ||
+                                        historyRecord.status === CertificateStatus.EXPIRED
+                                    ">
+                                    <div class="my-4">
+                                        <p class="m-0 text-theme-primary-medium">
+                                            {{ t('modules.eidManagement.txtCertificateValidFrom') }}:
+                                        </p>
+                                        <p class="m-0 fw-bold text-text-default">
+                                            {{ formatDate(historyRecord.validityFrom) }}
+                                        </p>
+                                    </div>
+                                    <div class="my-4">
+                                        <p class="m-0 text-theme-primary-medium">
+                                            {{ t('modules.eidManagement.txtCertificateValidTo') }}:
+                                        </p>
+                                        <p class="m-0 fw-bold text-text-default">
+                                            {{ formatDate(historyRecord.validityUntil) }}
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p-divider class="header-divider" type="solid"></p-divider>
+                        </div>
+                    </ng-container>
+                    <p-button
+                        [label]="t('modules.eidManagement.details.txtBackToCertificate')"
+                        iconPos="left"
+                        styleClass="p-button p-button-primary p-button-sm"
+                        (onClick)="closePreview()"
+                        ><i class="material-icons-outlined">&#xe5e0;</i></p-button
+                    >
+                </ng-template>
+            </p-card>
+        </div>
+    </div>
+</section>

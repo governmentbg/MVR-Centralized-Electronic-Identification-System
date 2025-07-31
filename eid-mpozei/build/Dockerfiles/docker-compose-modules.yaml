@@ -1,0 +1,62 @@
+version: "3.4"
+services:
+  mpozei-gateway:
+    container_name: mvr-mpozei-gateway
+    image: mvr-mpozei-gateway:latest
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-mpozei-gateway
+    restart: always
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/mpozei/logs/mpozei-gateway"
+      - "../../logs:/home/mpozei/logs/audit"
+      - "../../logs:/home/mpozei/logs/audit/unsigned"
+    ports:
+      - "8094:8094"
+  mpozei-ext-gateway:
+    container_name: mvr-mpozei-ext-gateway
+    image: mvr-mpozei-ext-gateway:latest
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-mpozei-ext-gateway
+    restart: always
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/mpozei/logs/mpozei-ext-gateway"
+      - "../../logs:/home/mpozei/logs/audit"
+      - "../../logs:/home/mpozei/logs/audit/unsigned"
+    ports:
+      - "8095:8095"
+  mpozei-backend:
+    container_name: mvr-mpozei-backend
+    image: mvr-mpozei-backend:latest
+    extra_hosts:
+      - "${MQ_DOMAIN_NAME}:${MQ_HOST_NAME}"
+      - "${DB_DOMAIN_NAME}:${DB_HOST_NAME}"
+      - "${REDIS_DOMAIN_NAME}:${REDIS_HOST_NAME}"
+      - "${KEYCLOAK_DOMAIN_NAME}:${KEYCLOAK_HOST_NAME}"
+    build:
+      context: ../../
+      dockerfile: build/Dockerfiles/Dockerfile-mpozei-backend
+    restart: always
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "../../logs:/home/mpozei/logs/mpozei-backend"
+      - "../../logs:/home/mpozei/logs/audit"
+      - "../../logs:/home/mpozei/logs/audit/unsigned"
+    ports:
+      - "8096:8096"

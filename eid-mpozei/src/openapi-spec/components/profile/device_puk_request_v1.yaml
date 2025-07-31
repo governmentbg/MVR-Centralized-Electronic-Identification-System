@@ -1,0 +1,8 @@
+schemas:
+  DevicePukRequest:
+    type: object
+    properties:
+      chipSerialNumber:
+        type: string
+      holderId:
+        type: string

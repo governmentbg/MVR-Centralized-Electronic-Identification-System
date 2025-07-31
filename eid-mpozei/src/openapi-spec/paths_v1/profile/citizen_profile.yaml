@@ -1,0 +1,73 @@
+methods:
+#  get:
+#    tags:
+#      - CitizenProfile
+#    summary: Get Citizen Profile
+#    description: Get Citizen Profile
+#    operationId: getCitizenProfile
+#    responses:
+#      '200':
+#        description: Success Created
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/profile/citizen_profile_response_v1.yaml#/schemas/CitizenProfileResponse'
+#      '400':
+#        description: Bad Request
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+#      '500':
+#        description: Server Error
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      '504':
+#        description: Gateway Timeout
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      default:
+#        description: successful operation
+  put:
+    tags:
+      - CitizenProfile
+    summary: Update Citizen Profile
+    description: Update Citizen Profile
+    operationId: updateCitizenProfile
+    requestBody:
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/profile/citizen_profile_update_v1.yaml#/schemas/CitizenProfileUpdateRequest'
+    responses:
+      '200':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/http_response_v1.yaml#/schemas/HttpResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

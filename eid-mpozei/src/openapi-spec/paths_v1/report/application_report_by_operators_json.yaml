@@ -1,0 +1,57 @@
+methods:
+  get:
+    tags:
+      - Report
+    summary: Json report of applications by operators
+    description: Get json report of applications by operators
+    operationId: getJsonApplicationsReportByOperators
+    parameters:
+      - name: operators
+        in: query
+        x-query-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.OPERATORS_CANNOT_BE_NULL)'
+        description: 'List of operators'
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        x-query-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.START_DATE_CANNOT_BE_NULL)'
+        description: 'Start Date including'
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        x-query-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.END_DATE_CANNOT_BE_NULL)'
+        description: 'End Date including'
+        schema:
+          type: string
+          format: date
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                $ref: '../../components/report/application_report_by_operators.yaml#/schemas/ApplicationReportByOperatorsDTO'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

@@ -1,0 +1,20 @@
+schemas:
+  ApplicationReportByOperatorsDTO:
+    type: object
+    properties:
+      operatorUsername:
+        type: string
+      submitted:
+        type: integer
+      signed:
+        type: integer
+      paid:
+        type: integer
+      approved:
+        type: integer
+      generatedCertificate:
+        type: integer
+      completed:
+        type: integer
+      denied:
+        type: integer

@@ -1,0 +1,13 @@
+schemas:
+  SignOnlineApplicationRequest:
+    type: object
+    properties:
+      otpCode:
+        type: string
+      mobileApplicationInstanceId:
+        type: string
+      firebaseId:
+        type: string
+      forceUpdate:
+        type: boolean
+        default: false

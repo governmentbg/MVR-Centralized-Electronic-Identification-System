@@ -1,0 +1,50 @@
+<div class="pe-4 h-100 steps-column">
+    <ul class="list-unstyled">
+        <li class="mb-4" *ngFor="let step of steps; let i = index">
+            <div class="d-flex">
+                <div
+                    class="step-circle rounded-circle me-3 d-inline-block p-1 text-center"
+                    [ngClass]="{
+                        active: currentStep === i,
+                        finished: currentStep > i
+                    }">
+                    <span
+                        class="d-block"
+                        [ngClass]="{
+                            'text-text-active': currentStep === i,
+                            'text-text-light': currentStep < i,
+                            'text-button-confirm': currentStep > i
+                        }"
+                        style="width: 24px; height: 24px">
+                        <i class="material-icons-outlined" *ngIf="currentStep > i; else elseBlock">&#xe876;</i>
+                        <ng-template #elseBlock>{{ i + 1 }}</ng-template>
+                    </span>
+                </div>
+                <span
+                    class="align-self-center"
+                    [ngClass]="{
+                        'text-text-active': currentStep === i,
+                        'text-text-light': currentStep < i,
+                        'text-button-confirm': currentStep > i
+                    }">
+                    {{ step.name }}
+                </span>
+            </div>
+
+            <ul class="list-unstyled inner-steps mt-4" *ngIf="step.innerSteps && currentStep === i">
+                <li
+                    class="my-2"
+                    *ngFor="let innerStep of step.innerSteps; let idx = index"
+                    [ngClass]="{
+                        active: step.currentInnerStep === idx,
+                        finished: step.currentInnerStep && step.currentInnerStep > idx
+                    }">
+                    <i class="material-icons-outlined inner-step-arrow" *ngIf="step.currentInnerStep === idx">
+                        &#xe5c8;
+                    </i>
+                    <span>{{ innerStep.name }}</span>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
