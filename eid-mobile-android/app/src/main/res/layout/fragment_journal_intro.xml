@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_EFF6FF"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.digitall.eid.ui.view.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_background_color="@color/color_295999"
+        app:toolbar_elements_color="@color/color_white"
+        app:toolbar_navigation_icon="@drawable/ic_arrow_left"
+        app:toolbar_title="@string/journals_intro_title" />
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_EFF6FF"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical">
+
+            <com.digitall.eid.ui.view.ButtonImageTwoFieldsView
+                android:id="@+id/buttonFromMe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_20"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:elevation="8dp"
+                app:button_image_two_fields_description="@string/journals_intro_from_me_subtitle"
+                app:button_image_two_fields_icon="@drawable/ic_journals_from_me"
+                app:button_image_two_fields_title="@string/journals_intro_from_me_title" />
+
+            <com.digitall.eid.ui.view.ButtonImageTwoFieldsView
+                android:id="@+id/buttonToMe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_16"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:elevation="8dp"
+                app:button_image_two_fields_description="@string/journals_intro_to_me_subtitle"
+                app:button_image_two_fields_icon="@drawable/ic_journals_to_me"
+                app:button_image_two_fields_title="@string/journals_intro_to_me_title" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.digitall.eid.ui.view.ErrorView
+            android:id="@+id/errorView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_white"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <com.digitall.eid.ui.view.LoaderView
+            android:id="@+id/loaderView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_white"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

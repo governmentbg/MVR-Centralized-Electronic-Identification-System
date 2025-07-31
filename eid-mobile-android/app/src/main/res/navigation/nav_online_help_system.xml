@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_online_help_system"
+    app:startDestination="@id/onlineHelpSystemFragment">
+
+    <fragment
+        android:id="@+id/onlineHelpSystemFragment"
+        android:name="com.digitall.eid.ui.fragments.onlinehelpsystem.OnlineHelpSystemFragment"
+        android:label="onlineHelpSystemFragment"
+        tools:layout="@layout/fragment_base_web_view" />
+
+</navigation>

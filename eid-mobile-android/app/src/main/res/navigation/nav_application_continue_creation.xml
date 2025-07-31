@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_application_continue_creation"
+    app:startDestination="@id/applicationContinueCreationFragment">
+
+    <fragment
+        android:id="@+id/applicationContinueCreationFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.continuecreation.continuecreation.ApplicationContinueCreationFragment"
+        android:label="applicationContinueCreationFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toApplicationContinueCreationCreatePinFragment"
+            app:destination="@id/applicationContinueCreationCreatePinFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationContinueCreationCreatePinFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.continuecreation.pin.ApplicationContinueCreationCreatePinFragment"
+        android:label="applicationContinueCreationCreatePinFragment"
+        tools:layout="@layout/fragment_application_create_pin">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.applications.create.ApplicationCreatePinModel"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_fragment_landing"
+    android:fitsSystemWindows="true">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnEnvironment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/color_transparent"
+                android:drawableStart="@drawable/ic_settings"
+                android:drawableTint="@color/color_4A6484"
+                android:drawablePadding="6dp"
+                android:padding="16dp"
+                android:text="@string/environment_digitall_dev"
+                android:textColor="@color/color_4A6484" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/color_transparent"
+                android:drawableStart="@drawable/ic_bg_language"
+                android:drawablePadding="6dp"
+                android:padding="16dp"
+                android:text="@string/bulgarian"
+                android:textColor="@color/color_295999" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_1"
+            android:background="@drawable/bg_horizontal_separator" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_8"
+            android:importantForAccessibility="no"
+            app:srcCompat="@drawable/img_landing_logo" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvBGeID"
+            style="@style/TextStyle.32sp.SemiBold.295999"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_16"
+            android:text="@string/landing_bg_eid" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRepublic"
+            style="@style/TextStyle.12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_16"
+            android:text="@string/landing_republic_of_bulgaria"
+            android:textColor="@color/color_black" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMVR"
+            style="@style/TextStyle.12sp.Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/landing_mvr"
+            android:textColor="@color/color_black" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEnterPassword"
+            style="@style/TextStyle.14sp.Regular.0C53B2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16"
+            android:background="@drawable/bg_ripple_button_background_295999"
+            android:text="@string/landing_login_password"
+            android:textAllCaps="false"
+            android:textColor="@color/color_white" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEnterMobileEID"
+            style="@style/TextStyle.14sp.Regular.0C53B2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16"
+            android:background="@drawable/bg_ripple_button_background_295999"
+            android:text="@string/landing_login_mobile_eid"
+            android:textAllCaps="false"
+            android:textColor="@color/color_white" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEnterEIDDocument"
+            style="@style/TextStyle.14sp.Regular.0C53B2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16"
+            android:background="@drawable/bg_ripple_button_background_295999"
+            android:text="@string/landing_login_eid_document"
+            android:textAllCaps="false"
+            android:textColor="@color/color_white" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnRegister"
+            style="@style/TextStyle.14sp.Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_32"
+            android:background="@drawable/bg_ripple_button_background_transparent"
+            android:text="@string/landing_create_profile"
+            android:textAllCaps="false"
+            android:textColor="@color/color_295999" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.digitall.eid.ui.view.LoaderView
+        android:id="@+id/loaderView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+</FrameLayout>

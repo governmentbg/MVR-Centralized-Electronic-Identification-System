@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/color_94A3B8"
+    android:clipToPadding="false"
+    android:columnCount="3"
+    android:rowCount="4"
+    tools:parentTag="android.widget.GridLayout">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn1"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_1" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn2"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_2" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn3"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_3" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn4"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_4" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn5"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_5" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn6"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_6" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn7"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_7" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn8"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_8" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn9"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_9" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnFingerprint"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_fingerprint" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn0"
+        style="@style/PassCodeButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:enabled="true"
+        android:text="@string/passcode_btn_0" />
+
+    <FrameLayout
+        android:id="@+id/btnDelete"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="48dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_backspace" />
+
+    </FrameLayout>
+
+</merge>

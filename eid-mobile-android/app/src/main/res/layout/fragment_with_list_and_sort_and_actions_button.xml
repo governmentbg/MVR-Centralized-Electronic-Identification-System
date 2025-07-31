@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_EFF6FF"
+    android:fitsSystemWindows="true">
+
+    <com.digitall.eid.ui.view.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:toolbar_background_color="@color/color_295999"
+        app:toolbar_elements_color="@color/color_white"
+        app:toolbar_navigation_icon="@drawable/ic_arrow_left"
+        tools:toolbar_title="@string/lorem_ipsum_size_5" />
+
+    <com.digitall.eid.ui.view.ComplexGestureRefreshView
+        android:id="@+id/refreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextStyle.16sp.SemiBold.1C3050"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginTop="@dimen/margin_16"
+                    android:layout_marginBottom="@dimen/margin_16"
+                    android:singleLine="true"
+                    android:text="@string/sort_by_with_dots" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvSort"
+                    style="@style/TextStyle.16sp.SemiBold.1C3050"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_4"
+                    android:layout_marginTop="@dimen/margin_16"
+                    android:layout_marginBottom="@dimen/margin_16"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    tools:text="@string/lorem_ipsum_size_5" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/icFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="@dimen/margin_16"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginEnd="@dimen/margin_16"
+                    android:layout_marginBottom="@dimen/margin_16"
+                    android:background="@color/color_transparent"
+                    android:src="@drawable/ic_filter"
+                    app:shapeAppearanceOverlay="@style/RoundedImageView" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="12"
+                    tools:visibility="visible" />
+
+                <com.digitall.eid.ui.view.EmptyStateView
+                    android:id="@+id/emptyStateView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/color_white"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <com.digitall.eid.ui.view.ErrorView
+                    android:id="@+id/errorView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/color_white"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+                <com.digitall.eid.ui.view.LoaderView
+                    android:id="@+id/loaderView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
+
+            </FrameLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.digitall.eid.ui.view.ComplexGestureRefreshView>
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btnOptions"
+        style="@style/FloatingButton.018930"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_marginBottom="@dimen/margin_16"
+        android:minHeight="@dimen/margin_56"
+        android:textColor="@color/color_white"
+        app:collapsedSize="@dimen/margin_56"
+        app:icon="@drawable/ic_dots"
+        app:iconTint="@color/color_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnInquiry"
+        style="@style/FloatingButton.F59E0B"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_24"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/btnOptions"
+        app:layout_constraintEnd_toEndOf="@+id/btnOptions"
+        app:srcCompat="@drawable/ic_search" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvInquiry"
+        style="@style/TextStyle.16sp.Regular"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/margin_24"
+        android:layout_marginEnd="@dimen/margin_8"
+        android:background="@drawable/bg_ripple_button_background_f59e0b"
+        android:gravity="center"
+        android:paddingStart="@dimen/margin_10"
+        android:paddingEnd="@dimen/margin_10"
+        android:text="@string/empowerments_from_me_inquiry_legal_entity_option"
+        android:textColor="@color/color_white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btnInquiry"
+        app:layout_constraintEnd_toStartOf="@+id/btnInquiry"
+        app:layout_constraintTop_toTopOf="@+id/btnInquiry" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnCreate"
+        style="@style/FloatingButton.018930"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_24"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/btnInquiry"
+        app:layout_constraintEnd_toEndOf="@+id/btnInquiry"
+        app:layout_constraintStart_toStartOf="@+id/btnInquiry"
+        app:srcCompat="@drawable/ic_add" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvCreate"
+        style="@style/TextStyle.16sp.Regular"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/margin_24"
+        android:layout_marginEnd="@dimen/margin_8"
+        android:background="@drawable/bg_ripple_button_background_018930"
+        android:gravity="center"
+        android:paddingStart="@dimen/margin_10"
+        android:paddingEnd="@dimen/margin_10"
+        android:text="@string/empowerments_from_me_create_new_empowerment_option"
+        android:textColor="@color/color_white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btnCreate"
+        app:layout_constraintEnd_toStartOf="@+id/btnCreate"
+        app:layout_constraintTop_toTopOf="@+id/btnCreate" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

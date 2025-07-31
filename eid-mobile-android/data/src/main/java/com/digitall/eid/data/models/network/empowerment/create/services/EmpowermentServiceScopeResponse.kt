@@ -1,0 +1,14 @@
+/**
+ * Please follow code style when editing project
+ * Please follow principles of clean architecture
+ * Created 2023 by Roman Kryvolapov
+ **/
+package com.digitall.eid.data.models.network.empowerment.create.services
+
+import com.google.gson.annotations.SerializedName
+
+data class EmpowermentServiceScopeResponse(
+    @SerializedName("id") val id: String?,
+    @SerializedName("code") val code: String?,
+    @SerializedName("name") val name: String?,
+)

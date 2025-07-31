@@ -1,0 +1,5 @@
+rootProject.name = "eID"
+include ':app'
+include ':data'
+include ':domain'
+

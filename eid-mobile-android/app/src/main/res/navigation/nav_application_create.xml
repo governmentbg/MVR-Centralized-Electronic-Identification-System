@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_application_create"
+    app:startDestination="@id/applicationCreateIntroFragment">
+
+    <fragment
+        android:id="@+id/applicationCreateIntroFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.create.intro.ApplicationCreateIntroFragment"
+        android:label="applicationCreateIntroFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <action
+            android:id="@+id/toApplicationCreatePreviewFragment"
+            app:destination="@id/applicationCreatePreviewFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationCreatePreviewFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.create.preview.ApplicationCreatePreviewFragment"
+        android:label="applicationCreatePreviewFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.applications.create.ApplicationCreatePreviewUi"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toApplicationCreatePinFragment"
+            app:destination="@id/applicationCreatePinFragment" />
+
+        <action android:id="@+id/toApplicationPaymentFragment"
+            app:destination="@id/applicationPaymentFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationCreatePinFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.create.pin.ApplicationCreatePinFragment"
+        android:label="applicationCreatePinFragment"
+        tools:layout="@layout/fragment_application_create_pin">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.applications.create.ApplicationCreatePinModel"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationPaymentFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.payment.ApplicationPaymentFragment"
+        android:label="applicationPaymentFragment"
+        tools:layout="@layout/fragment_application_payment">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.applications.payment.ApplicationPaymentModel"
+            app:nullable="false" />
+
+    </fragment>
+
+
+</navigation>

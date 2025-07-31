@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_EFF6FF"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.digitall.eid.ui.view.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_background_color="@color/color_295999"
+        app:toolbar_elements_color="@color/color_white"
+        app:toolbar_navigation_icon="@drawable/ic_arrow_left"
+        app:toolbar_title="@string/empowerments_intro_title" />
+
+    <com.digitall.eid.ui.view.ButtonImageTwoFieldsView
+        android:id="@+id/btnFromMe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_20"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:elevation="8dp"
+        app:button_image_two_fields_description="@string/empowerments_intro_from_me_subtitle"
+        app:button_image_two_fields_icon="@drawable/ic_from_me"
+        app:button_image_two_fields_title="@string/empowerments_intro_from_me_title" />
+
+    <com.digitall.eid.ui.view.ButtonImageTwoFieldsView
+        android:id="@+id/btnToMe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:elevation="8dp"
+        app:button_image_two_fields_description="@string/empowerments_intro_to_me_subtitle"
+        app:button_image_two_fields_icon="@drawable/ic_to_me"
+        app:button_image_two_fields_title="@string/empowerments_intro_to_me_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnCreateNew"
+        style="@style/ButtonStyle.background_018930_text_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="@dimen/margin_20"
+        android:layout_marginEnd="@dimen/margin_20"
+        android:layout_marginBottom="@dimen/margin_20"
+        android:text="@string/empowerments_intro_create_button_title" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

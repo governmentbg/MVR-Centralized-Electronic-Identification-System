@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main_tab_eim"
+    app:startDestination="@id/mainTabEIMFragment">
+
+    <fragment
+        android:id="@+id/mainTabEIMFragment"
+        android:name="com.digitall.eid.ui.fragments.main.tabs.eim.MainTabEIMFragment"
+        android:label="mainTabEIMFragment"
+        tools:layout="@layout/fragment_main_tab_eim" />
+
+    <fragment
+        android:id="@+id/applicationsFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.show.flow.ApplicationsFlowFragment"
+        android:label="applicationsFlowFragment"
+        tools:layout="@layout/fragment_flow_container">
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="certificateId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/toApplicationsFlowFragment"
+        app:destination="@id/applicationsFlowFragment" />
+
+    <fragment
+        android:id="@+id/certificatesFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.flow.CertificatesFlowFragment"
+        android:label="certificatesFlowFragment"
+        tools:layout="@layout/fragment_flow_container">
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="certificateId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/toCertificatesFlowFragment"
+        app:destination="@id/certificatesFlowFragment" />
+
+    <fragment
+        android:id="@+id/applicationCreateFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.create.flow.ApplicationCreateFlowFragment"
+        android:label="applicationCreateFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toApplicationCreateFlowFragment"
+        app:destination="@id/applicationCreateFlowFragment" />
+
+    <fragment
+        android:id="@+id/scanCodeFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.scanner.flow.ScanCodeFlowFragment"
+        android:label="scanCodeFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toScanCodeFlowFragment"
+        app:destination="@id/scanCodeFlowFragment" />
+
+    <fragment
+        android:id="@+id/applicationConfirmFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.confirm.flow.ApplicationConfirmFlowFragment"
+        android:label="applicationConfirmFlowFragment"
+        tools:layout="@layout/fragment_flow_container">
+
+        <argument
+            android:name="qrCode"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/toApplicationConfirmFlowFragment"
+        app:destination="@id/applicationConfirmFlowFragment" />
+
+    <fragment
+        android:id="@+id/applicationContinueCreationFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.continuecreation.flow.ApplicationContinueCreationFlowFragment"
+        android:label="applicationContinueCreationFlowFragment"
+        tools:layout="@layout/fragment_flow_container">
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/toApplicationContinueCreationFlowFragment"
+        app:destination="@id/applicationContinueCreationFlowFragment" />
+
+    <action
+        android:id="@+id/toCardChangePin"
+        app:destination="@id/nav_card_change_pin" />
+
+    <include app:graph="@navigation/nav_card_change_pin"/>
+
+</navigation>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main_tab_more"
+    app:startDestination="@id/mainTabMoreFragment">
+
+    <fragment
+        android:id="@+id/mainTabMoreFragment"
+        android:name="com.digitall.eid.ui.fragments.main.tabs.more.MainTabMoreFragment"
+        android:label="mainTabFourFragment"
+        tools:layout="@layout/fragment_main_tab_more" />
+
+    <fragment
+        android:id="@+id/empowermentFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.all.flow.EmpowermentFlowFragment"
+        android:label="empowermentFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toEmpowermentFlowFragment"
+        app:destination="@id/empowermentFlowFragment" />
+
+    <fragment
+        android:id="@+id/empowermentFromMeFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.flow.EmpowermentFromMeFlowFragment"
+        android:label="empowermentFromMeFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toEmpowermentFromMeFlowFragment"
+        app:destination="@id/empowermentFromMeFlowFragment" />
+
+    <fragment
+        android:id="@+id/empowermentToMeFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.to.me.flow.EmpowermentToMeFlowFragment"
+        android:label="empowermentToMeFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toEmpowermentToMeFlowFragment"
+        app:destination="@id/empowermentToMeFlowFragment" />
+
+    <fragment
+        android:id="@+id/journalFromMeFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.from.me.flow.JournalFromMeFlowFragment"
+        android:label="journalFromMeFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toJournalFromMeFlowFragment"
+        app:destination="@id/journalFromMeFlowFragment" />
+
+    <fragment
+        android:id="@+id/journalToMeFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.to.me.flow.JournalToMeFlowFragment"
+        android:label="journalToMeFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toJournalToMeFlowFragment"
+        app:destination="@id/journalToMeFlowFragment" />
+
+    <fragment
+        android:id="@+id/empowermentCreateFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.create.flow.EmpowermentCreateFlowFragment"
+        android:label="empowermentCreateFlowFragment"
+        tools:layout="@layout/fragment_flow_container">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="true" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/toEmpowermentCreateFlowFragment"
+        app:destination="@id/empowermentCreateFlowFragment" />
+
+    <fragment
+        android:id="@+id/notificationsFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.notifications.flow.NotificationsFlowFragment"
+        android:label="notificationsFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toNotificationsFlowFragment"
+        app:destination="@id/notificationsFlowFragment" />
+
+    <fragment
+        android:id="@+id/journalFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.flow.JournalFlowFragment"
+        android:label="journalFlowFragment"
+        tools:layout="@layout/fragment_flow_container" />
+
+    <action
+        android:id="@+id/toJournalFlowFragment"
+        app:destination="@id/journalFlowFragment" />
+
+    <fragment
+        android:id="@+id/changeUserEmailFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.email.flow.ChangeCitizenEmailFlowFragment"
+        android:label="changeUserEmailFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toChangeUserEmailFlowFragment"
+        app:destination="@id/changeUserEmailFlowFragment" />
+
+    <fragment
+        android:id="@+id/changeUserPasswordFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.password.flow.ChangeCitizenPasswordFlowFragment"
+        android:label="changeUserPasswordFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toChangeUserPasswordFlowFragment"
+        app:destination="@id/changeUserPasswordFlowFragment" />
+
+    <fragment
+        android:id="@+id/changeUserPhoneFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.information.flow.ChangeCitizenInformationFlowFragment"
+        android:label="changeUserPhoneFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toChangeUserPhoneFlowFragment"
+        app:destination="@id/changeUserPhoneFlowFragment" />
+
+    <fragment
+        android:id="@+id/citizenInformationFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.information.flow.CitizenInformationFlowFragment"
+        android:label="citizenInformationFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toCitizenInformationFlowFragment"
+        app:destination="@id/citizenInformationFlowFragment" />
+
+    <fragment
+        android:id="@+id/faqFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.faq.flow.FaqFlowFragment"
+        android:label="faqFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toFaqFlowFragment"
+        app:destination="@id/faqFlowFragment" />
+
+    <fragment
+        android:id="@+id/contactsFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.contacts.flow.ContactsFlowFragment"
+        android:label="contactsFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toContactsFlowFragment"
+        app:destination="@id/contactsFlowFragment" />
+
+    <fragment
+        android:id="@+id/termsAndConditionsFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.termsandconditions.flow.TermsAndConditionsFlowFragment"
+        android:label="termsAndConditionsFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toTermsAndConditionsFlowFragment"
+        app:destination="@id/termsAndConditionsFlowFragment" />
+
+    <fragment
+        android:id="@+id/administratorsFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.administrators.flow.AdministratorsFlowFragment"
+        android:label="administratorsFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toAdministratorsFlowFragment"
+        app:destination="@id/administratorsFlowFragment" />
+
+    <fragment
+        android:id="@+id/centersCertificationServicesFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.centers.certification.services.flow.CentersCertificationServicesFlowFragment"
+        android:label="centersCertificationServicesFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toCentersCertificationServicesFlowFragment"
+        app:destination="@id/centersCertificationServicesFlowFragment" />
+
+    <fragment
+        android:id="@+id/electronicDeliverySystemFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.electronic.delivery.system.flow.ElectronicDeliverySystemFlowFragment"
+        android:label="electronicDeliverySystemFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toElectronicDeliverySystemFlowFragment"
+        app:destination="@id/electronicDeliverySystemFlowFragment" />
+
+    <fragment
+        android:id="@+id/providersElectronicAdministrativeServicesFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.providers.electronic.administrative.services.flow.ProvidersElectronicAdministrativeServicesFlowFragment"
+        android:label="providersElectronicAdministrativeServicesFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toProvidersElectronicAdministrativeServicesFlowFragment"
+        app:destination="@id/providersElectronicAdministrativeServicesFlowFragment" />
+
+    <fragment
+        android:id="@+id/onlineHelpSystemFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.onlinehelpsystem.flow.OnlineHelpSystemFlowFragment"
+        android:label="onlineHelpSystemFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toOnlineHelpSystemFlowFragment"
+        app:destination="@id/onlineHelpSystemFlowFragment" />
+
+    <fragment
+        android:id="@+id/paymentsHistoryFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.payments.history.flow.PaymentsHistoryFlowFragment"
+        android:label="paymentsHistoryFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toPaymentsHistoryFlowFragment"
+        app:destination="@id/paymentsHistoryFlowFragment" />
+
+    <fragment
+        android:id="@+id/citizenProfileSecurityFlowFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.profile.security.flow.CitizenProfileSecurityFlowFragment"
+        android:label="citizenProfileSecurityFlowFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <action
+        android:id="@+id/toCitizenProfileSecurityFlowFragment"
+        app:destination="@id/citizenProfileSecurityFlowFragment" />
+
+</navigation>

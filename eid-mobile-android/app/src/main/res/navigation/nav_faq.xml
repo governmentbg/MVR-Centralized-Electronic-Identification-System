@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_faq"
+    app:startDestination="@id/faqFragment">
+
+    <fragment
+        android:id="@+id/faqFragment"
+        android:name="com.digitall.eid.ui.fragments.faq.FaqFragment"
+        android:label="faqFragment"
+        tools:layout="@layout/fragment_base_web_view" />
+
+</navigation>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_empowerment_create"
+    app:startDestination="@id/empowermentCreateFragment">
+
+    <fragment
+        android:id="@+id/empowermentCreateFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.create.create.EmpowermentCreateFragment"
+        android:label="empowermentCreateFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/toEmpowermentCreatePreviewFragment"
+            app:destination="@id/empowermentCreatePreviewFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentCreatePreviewFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.create.preview.EmpowermentCreatePreviewFragment"
+        android:label="empowermentCreatePreviewFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.empowerment.create.create.EmpowermentCreatePreviewUiModel"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeFragment"
+            app:destination="@id/empowermentFromMeFragment"
+            app:popUpTo="@id/empowermentCreatePreviewFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+</navigation>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_EFF6FF"
+    android:clipToPadding="false"
+    tools:orientation="horizontal"
+    android:fitsSystemWindows="true"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/num1"
+        style="@style/PinNumberStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:layout_weight="1"
+        android:enabled="true"
+        android:text="" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/num2"
+        style="@style/PinNumberStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:layout_weight="1"
+        android:enabled="true"
+        android:text="" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/num3"
+        style="@style/PinNumberStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:layout_weight="1"
+        android:enabled="true"
+        android:text="" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/num4"
+        style="@style/PinNumberStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:layout_weight="1"
+        android:enabled="true"
+        android:text="" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/num5"
+        style="@style/PinNumberStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:layout_weight="1"
+        android:enabled="true"
+        android:text="" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/num6"
+        style="@style/PinNumberStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4"
+        android:layout_weight="1"
+        android:enabled="true"
+        android:text="" />
+
+</merge>

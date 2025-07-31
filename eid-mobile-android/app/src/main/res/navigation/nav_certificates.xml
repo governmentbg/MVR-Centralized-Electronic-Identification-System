@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_certificates"
+    app:startDestination="@id/certificatesFragment">
+
+    <fragment
+        android:id="@+id/certificatesFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.all.CertificatesFragment"
+        android:label="certificatesFragment"
+        tools:layout="@layout/fragment_with_list_and_sort_and_actions_button">
+
+        <action
+            android:id="@+id/toCertificateDetailsFragment"
+            app:destination="@id/certificateDetailsFragment" />
+
+        <action
+            android:id="@+id/toCertificateDetailsFilterFragment"
+            app:destination="@id/certificateDetailsFilterFragment" />
+
+        <action
+            android:id="@+id/toCertificateStopFragment"
+            app:destination="@id/certificateStopFragment" />
+
+        <action
+            android:id="@+id/toCertificateRevokeFragment"
+            app:destination="@id/certificateRevokeFragment" />
+
+        <action
+            android:id="@+id/toCertificateResumeFragment"
+            app:destination="@id/certificateResumeFragment" />
+
+        <action
+            android:id="@+id/toCertificateChangePinFragment"
+            app:destination="@id/certificateChangePinFragment" />
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="certificateId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateDetailsFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.details.CertificateDetailsFragment"
+        android:label="certificateDetailsFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <action
+            android:id="@+id/toCertificateStopFragment"
+            app:destination="@id/certificateStopFragment" />
+
+        <action
+            android:id="@+id/toCertificateResumeFragment"
+            app:destination="@id/certificateResumeFragment" />
+
+        <action
+            android:id="@+id/toCertificateRevokeFragment"
+            app:destination="@id/certificateRevokeFragment" />
+
+        <action
+            android:id="@+id/toCertificateEditAliasFragment"
+            app:destination="@id/certificateEditAliasFragment" />
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="certificateId"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="detailsType"
+            app:argType="com.digitall.eid.models.certificates.details.CertificateDetailsType"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateDetailsFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.filter.CertificateFilterFragment"
+        android:label="certificateDetailsFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.certificates.filter.CertificatesFilterModel"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateStopFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.stop.CertificateStopFragment"
+        android:label="certificateStopFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toApplicationPaymentFragment"
+            app:destination="@id/applicationPaymentFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateResumeFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.resume.CertificateResumeFragment"
+        android:label="certificateResumeFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <action
+            android:id="@+id/toApplicationPaymentFragment"
+            app:destination="@id/applicationPaymentFragment" />
+
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="false" />
+
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateRevokeFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.revoke.CertificateRevokeFragment"
+        android:label="certificateRevokeFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <action
+            android:id="@+id/toApplicationPaymentFragment"
+            app:destination="@id/applicationPaymentFragment" />
+
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateChangePinFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.change.pin.CertificateChangePinFragment"
+        android:label="certificateChangePinFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="type"
+            app:argType="com.digitall.eid.domain.models.common.DeviceType"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/certificateEditAliasFragment"
+        android:name="com.digitall.eid.ui.fragments.certificates.edit.alias.CertificateEditAliasFragment"
+        android:label="certificateEditAliasFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="alias"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationPaymentFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.payment.ApplicationPaymentFragment"
+        android:label="applicationPaymentFragment"
+        tools:layout="@layout/fragment_application_payment">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.applications.payment.ApplicationPaymentModel"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>
+
+
+
+
+
