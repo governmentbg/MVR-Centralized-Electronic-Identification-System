@@ -18,6 +18,7 @@ public class EmpowermentActivationStateMachine :
     public State CheckingDataInNTR { get; }
     public State CollectingAuthorizerSignatures { get; }
     public State CheckingUidsRestrictions { get; }
+    public State VerifyUidsRegistrationStatus { get; }
     public State ValidatingLegalEntityEmpowerment { get; }
     public State TimestampingEmpowermentXml { get; }
     public Event<NoBelowLawfulAgeDetected> NoBelowLawfulAgeDetected { get; }
@@ -36,6 +37,10 @@ public class EmpowermentActivationStateMachine :
     public Event<LegalEntityBulstatCheckFailed> LegalEntityBulstatCheckFailed { get; }
     public Event<TimestampEmpowermentXmlSucceeded> TimestampEmpowermentXmlSucceeded { get; }
     public Event<TimestampEmpowermentXmlFailed> TimestampEmpowermentXmlFailed { get; }
+    public Event<RegistrationStatusAllAvailable> RegistrationStatusAllAvailable { get; }
+    public Event<InvalidRegistrationStatusDetected> InvalidRegistrationStatusDetected { get; }
+    public Event<RegistrationStatusInfoNotAvailable> RegistrationStatusInfoNotAvailable { get; }
+    public Event<EmpowermentIsWithdrawn> EmpowermentIsWithdrawn { get; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public EmpowermentActivationStateMachine(ILogger<EmpowermentActivationStateMachine> logger)
@@ -159,6 +164,26 @@ public class EmpowermentActivationStateMachine :
             x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
             x.OnMissingInstance(m => m.Discard());
         });
+        Event(() => RegistrationStatusAllAvailable, x =>
+        {
+            x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
+            x.OnMissingInstance(m => m.Discard());
+        });
+        Event(() => InvalidRegistrationStatusDetected, x =>
+        {
+            x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
+            x.OnMissingInstance(m => m.Discard());
+        });
+        Event(() => RegistrationStatusInfoNotAvailable, x =>
+        {
+            x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
+            x.OnMissingInstance(m => m.Discard());
+        });
+        Event(() => EmpowermentIsWithdrawn, x =>
+        {
+            x.CorrelateBy((state, context) => state.EmpowermentId == context.Message.EmpowermentId);
+            x.OnMissingInstance(m => m.Discard());
+        });
 
         Schedule(
             () => EmpowermentActivationTimedOut,
@@ -204,13 +229,7 @@ public class EmpowermentActivationStateMachine :
                     // Combining all
                     Uids = ctx.Saga
                                 .EmpoweredUids
-                                .Union(
-                                    ctx.Saga.AuthorizerUids
-                                    .Select(authorizer => new UserIdentifierData
-                                    {
-                                        Uid = authorizer.Uid,
-                                        UidType = authorizer.UidType
-                                    }))
+                                .Union(ctx.Saga.AuthorizerUids)
                                 .Distinct(new Service.UserIdentifierEqualityComparer())
                 }))
                 .TransitionTo(VerifyingAllUidsAboveLawfulAge),
@@ -274,6 +293,10 @@ public class EmpowermentActivationStateMachine :
 
         During(CheckingDataInNTR,
             When(LegalEntityNTRCheckSucceeded)
+                .Then(ctx =>
+                {
+                    ctx.Saga.LegalEntityCannotBeConfirmed = !ctx.Message.CanBeConfirmed;
+                })
                 .PublishAsync(ctx => ctx.Init<CollectAuthorizerSignatures>(new
                 {
                     CorrelationId = ctx.Saga.OriginCorrelationId,
@@ -344,10 +367,9 @@ public class EmpowermentActivationStateMachine :
                             CorrelationId = ctx.Saga.OriginCorrelationId,
                             ctx.Saga.EmpowermentId,
                             // Combining all
-                            Uids = ctx.Saga.EmpoweredUids.Union(
-                                    ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType })
-                                )
-                                .Distinct(new Service.UserIdentifierEqualityComparer()),
+                            Uids = ctx.Saga.EmpoweredUids
+                                        .Union(ctx.Saga.AuthorizerUids)
+                                        .Distinct(new Service.UserIdentifierEqualityComparer()),
                             RapidRetries = false, // Suppress warning for missing property
                             RespondWithRawServiceResult = false // Suppress warning for missing property
                         }))
@@ -374,9 +396,8 @@ public class EmpowermentActivationStateMachine :
                     CorrelationId = ctx.Saga.OriginCorrelationId,
                     ctx.Saga.EmpowermentId,
                     // Combining all
-                    Uids = ctx.Saga.EmpoweredUids.Union(
-                                    ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType })
-                                )
+                    Uids = ctx.Saga.EmpoweredUids
+                                .Union(ctx.Saga.AuthorizerUids)
                                 .Distinct(new Service.UserIdentifierEqualityComparer()),
                     RapidRetries = false, // Suppress warning for missing property
                     RespondWithRawServiceResult = false // Suppress warning for missing property
@@ -406,10 +427,9 @@ public class EmpowermentActivationStateMachine :
                     CorrelationId = ctx.Saga.OriginCorrelationId,
                     ctx.Saga.EmpowermentId,
                     // Combining all
-                    Uids = ctx.Saga.EmpoweredUids.Union(
-                                    ctx.Saga.AuthorizerUids.Select(x => new UserIdentifierData { Uid = x.Uid, UidType = x.UidType })
-                                )
-                                .Distinct(new Service.UserIdentifierEqualityComparer()),
+                    Uids = ctx.Saga.EmpoweredUids
+                                    .Union(ctx.Saga.AuthorizerUids)
+                                    .Distinct(new Service.UserIdentifierEqualityComparer()),
                     RapidRetries = false, // Suppress warning for missing property
                     RespondWithRawServiceResult = false // Suppress warning for missing property
                 }))
@@ -428,10 +448,33 @@ public class EmpowermentActivationStateMachine :
 
         During(CheckingUidsRestrictions,
             When(NoRestrictedUidsDetected)
-                .Then(context => context.Saga.SuccessfulCompletion = true)
-                .Finalize(),
+                .PublishAsync(ctx => ctx.Init<VerifyUidsRegistrationStatus>(new
+                {
+                    CorrelationId = ctx.Saga.OriginCorrelationId,
+                    ctx.Saga.EmpowermentId,
+                    Uids = ctx.Saga.EmpoweredUids
+                }))
+                .TransitionTo(VerifyUidsRegistrationStatus),
             When(RestrictedUidsDetected)
                 .Then(ctx => ctx.Saga.DenialReason = ctx.Message.DenialReason)
+                .Finalize()
+        );
+
+        During(VerifyUidsRegistrationStatus,
+            When(RegistrationStatusAllAvailable)
+                .Then(context => context.Saga.SuccessfulCompletion = true)
+                .Finalize(),
+            When(InvalidRegistrationStatusDetected)
+                .Then(ctx =>
+                {
+                    ctx.Saga.DenialReason = ctx.Message.DenialReason;
+                })
+                .Finalize(),
+            When(RegistrationStatusInfoNotAvailable)
+                .Then(ctx =>
+                {
+                    ctx.Saga.DenialReason = EmpowermentsDenialReason.UidsRegistrationStatusInfoNotAvailable;
+                })
                 .Finalize()
         );
 
@@ -442,15 +485,25 @@ public class EmpowermentActivationStateMachine :
                 {
                     ctx.Saga.DenialReason = EmpowermentsDenialReason.TimedOut;
                 })
+                .Finalize(),
+            When(EmpowermentIsWithdrawn)
+                .Then(ctx =>
+                {
+                    ctx.Saga.IsEmpowermentWithdrawn = true;
+                })
                 .Finalize()
         );
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         BeforeEnter(Final,
-                binder => binder
-                    .IfElse(
-                        check => check.Saga.SuccessfulCompletion,
-                        success => success
+            binder => binder
+                .If(
+                    // When EmpowermentIsWithdrawn is received during CollectingSignatures, the saga is completed without any further actions.
+                    check => !check.Saga.IsEmpowermentWithdrawn, 
+                    wasNotWithdrawn => wasNotWithdrawn
+                        .IfElse(
+                            check => check.Saga.SuccessfulCompletion,
+                            success => success
                                 .PublishAsync(ctx => ctx.Init<ChangeEmpowermentStatus>(new
                                 {
                                     CorrelationId = ctx.Saga.OriginCorrelationId,
@@ -458,14 +511,14 @@ public class EmpowermentActivationStateMachine :
                                     Status = ctx.Saga.LegalEntityCannotBeConfirmed ? EmpowermentStatementStatus.Unconfirmed : EmpowermentStatementStatus.Active,
                                     DenialReason = EmpowermentsDenialReason.None // Suppress warning for missing property
                                 }))
-                                 .PublishAsync(ctx => ctx.Init<NotifyUids>(new
-                                 {
-                                     CorrelationId = ctx.Saga.OriginCorrelationId,
-                                     Uids = ctx.Saga.AuthorizerUids.Select(uid => new UserIdentifierData { Uid = uid.Uid, UidType = uid.UidType }),
-                                     ctx.Saga.EmpowermentId,
-                                     EventCode = Service.EventsRegistration.Events.EmpowermentCompleted.Code,
-                                     Service.EventsRegistration.Events.EmpowermentCompleted.Translations
-                                 }))
+                                .PublishAsync(ctx => ctx.Init<NotifyUids>(new
+                                {
+                                    CorrelationId = ctx.Saga.OriginCorrelationId,
+                                    Uids = ctx.Saga.AuthorizerUids.Cast<UserIdentifier>(),
+                                    ctx.Saga.EmpowermentId,
+                                    EventCode = Service.EventsRegistration.Events.EmpowermentCompleted.Code,
+                                    Service.EventsRegistration.Events.EmpowermentCompleted.Translations
+                                }))
                                 .PublishAsync(ctx => ctx.Init<NotifyUids>(new
                                 {
                                     CorrelationId = ctx.Saga.OriginCorrelationId,
@@ -474,7 +527,7 @@ public class EmpowermentActivationStateMachine :
                                     EventCode = Service.EventsRegistration.Events.EmpowermentToMeCompleted.Code,
                                     Service.EventsRegistration.Events.EmpowermentToMeCompleted.Translations
                                 })),
-                        failure => failure
+                            failure => failure
                                 .PublishAsync(ctx => ctx.Init<ChangeEmpowermentStatus>(new
                                 {
                                     CorrelationId = ctx.Saga.OriginCorrelationId,
@@ -485,13 +538,14 @@ public class EmpowermentActivationStateMachine :
                                 .PublishAsync(ctx => ctx.Init<NotifyUids>(new
                                 {
                                     CorrelationId = ctx.Saga.OriginCorrelationId,
-                                    Uids = ctx.Saga.AuthorizerUids.Select(uid => new UserIdentifierData { Uid = uid.Uid, UidType = uid.UidType }).AsEnumerable(),
+                                    Uids = ctx.Saga.AuthorizerUids.Cast<UserIdentifier>(),
                                     ctx.Saga.EmpowermentId,
                                     EventCode = Service.EventsRegistration.Events.EmpowermentDeclined.Code,
                                     Service.EventsRegistration.Events.EmpowermentDeclined.Translations
                                 }))
-                    )
-            );
+                        )
+                )
+        );
 
         WhenEnter(Final,
             binder => binder
@@ -529,5 +583,9 @@ public class EmpowermentActivationStateMachineDefinition :
         sagaConfigurator.Message<LegalEntityEmpowermentValidationFailed>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
         sagaConfigurator.Message<TimestampEmpowermentXmlSucceeded>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
         sagaConfigurator.Message<TimestampEmpowermentXmlFailed>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
+        sagaConfigurator.Message<RegistrationStatusAllAvailable>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
+        sagaConfigurator.Message<InvalidRegistrationStatusDetected>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
+        sagaConfigurator.Message<RegistrationStatusInfoNotAvailable>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
+        sagaConfigurator.Message<EmpowermentIsWithdrawn>(x => x.UsePartitioner(partition, m => m.Message.EmpowermentId));
     }
 }

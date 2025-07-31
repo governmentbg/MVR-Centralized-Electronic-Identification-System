@@ -10,4 +10,8 @@ public interface EmpowermentSignatureResult
     /// Person who's signature is being stored
     /// </summary>
     public string SignerUid { get; }
+    /// <summary>
+    /// The detached signature
+    /// </summary>
+    public string Signature { get; }
 }

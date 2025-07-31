@@ -54,6 +54,8 @@ public class GetEmpowermentsByDeauRequest : IValidatableRequest
     /// Page index
     /// </summary>
     public int PageIndex { get; set; } = 1;
+    public EmpowermentsByDeauSortBy? SortBy { get; set; }
+    public SortDirection SortDirection { get; set; }
 }
 
 public class GetEmpowermentsByDeauRequestValidator : AbstractValidator<GetEmpowermentsByDeauRequest>
@@ -118,7 +120,6 @@ public class GetEmpowermentsByDeauRequestValidator : AbstractValidator<GetEmpowe
         });
         RuleFor(r => r.EmpoweredUidType).NotEmpty().IsInEnum();
 
-        RuleFor(x => x.ServiceId).NotEmpty();
         When(x => x.VolumeOfRepresentation != null, () =>
         {
             RuleForEach(x => x.VolumeOfRepresentation).NotEmpty();
@@ -128,5 +129,10 @@ public class GetEmpowermentsByDeauRequestValidator : AbstractValidator<GetEmpowe
 
         RuleFor(r => r.PageIndex).GreaterThanOrEqualTo(1);
         RuleFor(r => r.PageSize).GreaterThanOrEqualTo(1).LessThanOrEqualTo(50);
+        RuleFor(r => r.SortBy).IsInEnum();
+        When(r => r.SortBy.HasValue, () =>
+        {
+            RuleFor(r => r.SortDirection).IsInEnum();
+        });
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using eID.RO.Contracts.Commands;
 using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
 
@@ -60,18 +59,19 @@ public static class XMLSerializationHelper
 public class EmpowermentStatementItem
 {
     public string Id { get; set; } = string.Empty;
+    public string Number { get; set; } = string.Empty;
     public string OnBehalfOf { get; set; } = string.Empty;
     public string Uid { get; set; } = string.Empty;
     public IdentifierType UidType { get; set; }
     public string Name { get; set; } = string.Empty;
     [XmlArray]
     [XmlArrayItem(ElementName = "Uid")]
-    public UserIdentifierWithNameData[] AuthorizerUids { get; set; } = Array.Empty<UserIdentifierWithNameData>();
+    public AuthorizerIdentifierData[] AuthorizerUids { get; set; } = Array.Empty<AuthorizerIdentifierData>();
     [XmlArray]
     [XmlArrayItem(ElementName = "Uid")]
     public UserIdentifierData[] EmpoweredUids { get; set; } = Array.Empty<UserIdentifierData>();
-    public string SupplierId { get; set; } = string.Empty;
-    public string SupplierName { get; set; } = string.Empty;
+    public string ProviderId { get; set; } = string.Empty;
+    public string ProviderName { get; set; } = string.Empty;
     public int ServiceId { get; set; }
     public string ServiceName { get; set; } = string.Empty;
     public string TypeOfEmpowerment { get; set; } = string.Empty;
@@ -86,6 +86,5 @@ public class EmpowermentStatementItem
 [Serializable]
 public class VolumeOfRepresentationItem
 {
-    public string Code { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
 }

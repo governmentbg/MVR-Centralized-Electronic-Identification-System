@@ -1,8 +1,9 @@
 ﻿using eID.RO.Contracts.Results;
+using eID.RO.Service.Database;
 using MassTransit;
-using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace eID.RO.Application.StateMachines;
 
@@ -18,8 +19,9 @@ SagaStateMachineInstance
     public Guid? SignatureCollectionTimeoutTokenId { get; set; }
 
     public Guid EmpowermentId { get; set; }
-    public IEnumerable<UserIdentifierWithName> AuthorizerUids { get; set; } = Enumerable.Empty<UserIdentifierWithNameData>();
-    public List<UserIdentifierWithName> SignedUids { get; set; } = new List<UserIdentifierWithName>();
+    public IEnumerable<AuthorizerIdentifier> AuthorizerUids { get; set; } = Enumerable.Empty<AuthorizerIdentifierData>();
+    public List<AuthorizerIdentifier> SignedUids { get; set; } = new List<AuthorizerIdentifier>();
+    public bool IsEmpowermentWithdrawn { get; set; } = false;
 }
 public class SignaturesCollectionStateMap :
     SagaClassMap<SignaturesCollectionState>
@@ -29,7 +31,13 @@ public class SignaturesCollectionStateMap :
         entity.ToTable("Sagas.SignaturesCollections");
         entity.Property(x => x.CurrentState).HasMaxLength(64);
 
-        entity.Property(x => x.AuthorizerUids).HasJsonConversion();
-        entity.Property(x => x.SignedUids).HasJsonConversion();
+        entity.Property(x => x.AuthorizerUids).HasConversion(
+            x => EncryptionHelper.Encrypt(JsonConvert.SerializeObject(x)),
+            x => JsonConvert.DeserializeObject<IEnumerable<AuthorizerIdentifierData>>(EncryptionHelper.Decrypt(x))
+        );
+        entity.Property(x => x.SignedUids).HasConversion(
+            x => EncryptionHelper.Encrypt(JsonConvert.SerializeObject(x)),
+            x => JsonConvert.DeserializeObject<IEnumerable<AuthorizerIdentifierData>>(EncryptionHelper.Decrypt(x)).ToList<AuthorizerIdentifier>()
+        );
     }
 }

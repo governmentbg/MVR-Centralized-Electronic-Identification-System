@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { KeycloakService } from 'keycloak-angular';
-import { AuthService } from '../../../core/services/auth.service';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
     selector: 'app-navbar',
@@ -9,10 +8,13 @@ import { AuthService } from '../../../core/services/auth.service';
     styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
-    constructor(private router: Router, private keycloak: KeycloakService, private authService: AuthService) {}
+    constructor(private oAuthService: OAuthService, private userService: UserService) {}
+
+    get name() {
+        return this.userService.user.name;
+    }
 
     logout() {
-        this.authService.removeTokenData();
-        this.keycloak.logout();
+        this.oAuthService.revokeTokenAndLogout();
     }
 }

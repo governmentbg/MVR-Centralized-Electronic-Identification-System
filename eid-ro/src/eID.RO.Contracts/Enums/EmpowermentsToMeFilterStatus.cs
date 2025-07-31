@@ -3,7 +3,8 @@
 public enum EmpowermentsToMeFilterStatus
 {
     Active = 3,
-    DisagreementDeclared = 5,
+    Denied = 5,
+    DisagreementDeclared = 6, 
     Withdrawn = 7,
     Expired = 8,
     Unconfirmed = 9

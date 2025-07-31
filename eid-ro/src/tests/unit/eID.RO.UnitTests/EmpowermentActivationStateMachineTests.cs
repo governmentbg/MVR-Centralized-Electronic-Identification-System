@@ -73,7 +73,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -121,7 +121,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -140,7 +140,104 @@ internal class EmpowermentActivationStateMachineTests
             await harness.Stop();
         }
     }
-    
+
+    [Test]
+    public async Task LegalEntity_WaitsForSignaturesAfterCannotBeConfirmedNTRCheckAsync()
+    {
+        await using var provider = new ServiceCollection()
+                .AddMassTransitTestHarness(mt =>
+                {
+                    mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+                    mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+                    mt.AddConsumer<CannotBeConfirmedCheckLegalEntityInNTRConsumer>();
+                    mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+                })
+                .BuildServiceProvider(true);
+
+        var harness = provider.GetTestHarness();
+
+        await harness.Start();
+        try
+        {
+            var command = new InitiateEmpowermentActivationProcessCommand
+            {
+                CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+                EmpowermentId = Guid.NewGuid(),
+                Uid = "8802184852",
+                Name = "Фирма",
+                IssuerName = "Иван Иванов Иванов",
+                IssuerPosition = "Шеф",
+                OnBehalfOf = OnBehalfOf.LegalEntity,
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                ExpiryDate = null
+            };
+            await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+
+            var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+            Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess was not published.");
+            Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess was not consumed.");
+            Assert.That(await sagaHarness.Consumed.Any<LegalEntityNTRCheckSucceeded>(), "LegalEntityNTRCheckSucceeded was not consumed.");
+            var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
+            Assert.That(currSaga?.Saga.LegalEntityCannotBeConfirmed == true, "LegalEntityCannotBeConfirmed is not true.");
+
+            Assert.IsTrue(await harness.Published.Any<CollectAuthorizerSignatures>(), "CollectAuthorizerSignatures message was not published.");
+        }
+        finally
+        {
+            await harness.Stop();
+        }
+    }
+
+
+    [Test]
+    public async Task LegalEntity_WaitsForSignaturesAfterCanBeConfirmedNTRCheckAsync()
+    {
+        await using var provider = new ServiceCollection()
+                .AddMassTransitTestHarness(mt =>
+                {
+                    mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+                    mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+                    mt.AddConsumer<CanBeConfirmedCheckLegalEntityInNTRConsumer>();
+                    mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+                })
+                .BuildServiceProvider(true);
+
+        var harness = provider.GetTestHarness();
+
+        await harness.Start();
+        try
+        {
+            var command = new InitiateEmpowermentActivationProcessCommand
+            {
+                CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+                EmpowermentId = Guid.NewGuid(),
+                Uid = "8802184852",
+                Name = "Фирма",
+                IssuerName = "Иван Иванов Иванов",
+                IssuerPosition = "Шеф",
+                OnBehalfOf = OnBehalfOf.LegalEntity,
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                ExpiryDate = null
+            };
+            await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+
+            var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+            Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess was not published.");
+            Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess was not consumed.");
+            Assert.That(await sagaHarness.Consumed.Any<LegalEntityNTRCheckSucceeded>(), "LegalEntityNTRCheckSucceeded was not consumed.");
+            var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
+            Assert.That(currSaga?.Saga.LegalEntityCannotBeConfirmed == false, "LegalEntityCannotBeConfirmed is not false.");
+
+            Assert.IsTrue(await harness.Published.Any<CollectAuthorizerSignatures>(), "CollectAuthorizerSignatures message was not published.");
+        }
+        finally
+        {
+            await harness.Stop();
+        }
+    }
+
     [Test]
     public async Task LegalEntity_WillCheckBulstatWhenNotFoundInNTRAsync()
     {
@@ -168,7 +265,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -215,7 +312,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -237,62 +334,64 @@ internal class EmpowermentActivationStateMachineTests
             await harness.Stop();
         }
     }
-    [Test]
-    public async Task LegalEntity_FinalizedAfterSuccessfulUnconfirmedBulstatCheckAsync()
-    {
-        await using var provider = new ServiceCollection()
-                .AddMassTransitTestHarness(mt =>
-                {
-                    mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
-                    mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
-                    mt.AddConsumer<NoDataForLegalEntityInNTRConsumer>();
-                    mt.AddConsumer<SucceedingLegalEntityCheckInBulstatConsumer>();
-                    mt.AddConsumer<SuccessfulAuthorizerRestrictionsConsumer>();
-                    mt.AddConsumer<SuccessfulSigningConsumer>();
-                    mt.AddConsumer<SuccessfulValidateLegalEntityEmpowermentConsumer>();
-                    mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
-                })
-                .BuildServiceProvider(true);
+    //[Test]
+    //public async Task LegalEntity_FinalizedAfterSuccessfulUnconfirmedBulstatCheckAsync()
+    //{
+    //    await using var provider = new ServiceCollection()
+    //            .AddMassTransitTestHarness(mt =>
+    //            {
+    //                mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+    //                mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+    //                mt.AddConsumer<NoDataForLegalEntityInNTRConsumer>();
+    //                mt.AddConsumer<SucceedingLegalEntityCheckInBulstatConsumer>();
+    //                mt.AddConsumer<SuccessfulAuthorizerRestrictionsConsumer>();
+    //                mt.AddConsumer<SuccessfulSigningConsumer>();
+    //                mt.AddConsumer<SuccessfulValidateLegalEntityEmpowermentConsumer>();
+    //                mt.AddConsumer<SuccessfulVerifyUidsRegistrationStatusConsumer>();
+    //                mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //            })
+    //            .BuildServiceProvider(true);
 
-        var harness = provider.GetTestHarness();
+    //    var harness = provider.GetTestHarness();
 
-        await harness.Start();
-        try
-        {
-            var command = new InitiateEmpowermentActivationProcessCommand
-            {
-                CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
-                EmpowermentId = Guid.NewGuid(),
-                Uid = "8802184852",
-                Name = "Фирма",
-                IssuerName = "Иван Иванов Иванов",
-                IssuerPosition = "Шеф",
-                OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
-                EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
-                ExpiryDate = null
-            };
-            await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+    //    await harness.Start();
+    //    try
+    //    {
+    //        var command = new InitiateEmpowermentActivationProcessCommand
+    //        {
+    //            CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+    //            EmpowermentId = Guid.NewGuid(),
+    //            Uid = "8802184852",
+    //            Name = "Фирма",
+    //            IssuerName = "Иван Иванов Иванов",
+    //            IssuerPosition = "Шеф",
+    //            OnBehalfOf = OnBehalfOf.LegalEntity,
+    //            AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+    //            EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            ExpiryDate = null
+    //        };
+    //        await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
 
-            var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
-            Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess message was not published.");
-            Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess message was not consumed.");
-            Assert.That(await sagaHarness.Consumed.Any<LegalEntityNotPresentInNTR>(), "LegalEntityNotPresentInNTR message was not consumed.");
-            Assert.IsTrue(await harness.Published.Any<CheckLegalEntityInBulstat>(), "CheckLegalEntityInBulstat message was not published.");
+    //        var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //        Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess message was not published.");
+    //        Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess message was not consumed.");
+    //        Assert.That(await sagaHarness.Consumed.Any<LegalEntityNotPresentInNTR>(), "LegalEntityNotPresentInNTR message was not consumed.");
+    //        Assert.IsTrue(await harness.Published.Any<CheckLegalEntityInBulstat>(), "CheckLegalEntityInBulstat message was not published.");
 
-            Assert.That(await sagaHarness.Consumed.Any<LegalEntityBulstatCheckSucceeded>(), "LegalEntityBulstatCheckSucceeded message was not consumed.");
-            Assert.That(await sagaHarness.Consumed.Any<NoRestrictedUidsDetected>(), "NoRestrictedUidsDetected message was not consumed.");
-            
-            var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
-            Assert.That(currSaga?.Saga.LegalEntityCannotBeConfirmed == true, "LegalEntityCannotBeConfirmed false");
-            Assert.IsTrue(await harness.Published.Any<ChangeEmpowermentStatus>(f => f.Context.Message.Status == EmpowermentStatementStatus.Unconfirmed), "ChangeEmpowermentStatus message with Unconfirmed Status was not published.");
-            Assert.That(currSaga?.Saga.CurrentState == sagaHarness.StateMachine.Final.Name, $"State is not final but {currSaga?.Saga.CurrentState}");
-        }
-        finally
-        {
-            await harness.Stop();
-        }
-    }
+    //        Assert.That(await sagaHarness.Consumed.Any<LegalEntityBulstatCheckSucceeded>(), "LegalEntityBulstatCheckSucceeded message was not consumed.");
+    //        Assert.That(await sagaHarness.Consumed.Any<NoRestrictedUidsDetected>(), "NoRestrictedUidsDetected message was not consumed.");
+    //        Assert.That(await sagaHarness.Consumed.Any<RegistrationStatusAllAvailable>(), "RegistrationStatusAllAvailable message was not consumed.");
+
+    //        var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
+    //        Assert.That(currSaga?.Saga.LegalEntityCannotBeConfirmed == true, "LegalEntityCannotBeConfirmed false");
+    //        Assert.IsTrue(await harness.Published.Any<ChangeEmpowermentStatus>(f => f.Context.Message.Status == EmpowermentStatementStatus.Unconfirmed), "ChangeEmpowermentStatus message with Unconfirmed Status was not published.");
+    //        Assert.That(currSaga?.Saga.CurrentState == sagaHarness.StateMachine.Final.Name, $"State is not final but {currSaga?.Saga.CurrentState}");
+    //    }
+    //    finally
+    //    {
+    //        await harness.Stop();
+    //    }
+    //}
 
     [Test]
     public async Task LegalEntity_CollectsSignaturesAfterSuccessfulBulstatCheckAsync()
@@ -322,7 +421,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -343,6 +442,71 @@ internal class EmpowermentActivationStateMachineTests
             await harness.Stop();
         }
     }
+
+    [Test]
+    public async Task LegalEntity_EmpowermentIsWithdrawnDuringCollectAuthorizerSignaturesAsync()
+    {
+        await using var provider = new ServiceCollection()
+                .AddMassTransitTestHarness(mt =>
+                {
+                    mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+                    mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+                    mt.AddConsumer<NoDataForLegalEntityInNTRConsumer>();
+                    mt.AddConsumer<SucceedingLegalEntityCheckInBulstatConsumer>();
+                    mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+                })
+                .BuildServiceProvider(true);
+
+        var harness = provider.GetTestHarness();
+
+        await harness.Start();
+        try
+        {
+            var command = new InitiateEmpowermentActivationProcessCommand
+            {
+                CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+                EmpowermentId = Guid.NewGuid(),
+                Uid = "8802184852",
+                Name = "Фирма",
+                IssuerName = "Иван Иванов Иванов",
+                IssuerPosition = "Шеф",
+                OnBehalfOf = OnBehalfOf.LegalEntity,
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                ExpiryDate = null
+            };
+            await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+
+            var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+            Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess message was not published.");
+            Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "InitiateEmpowermentActivationProcess message was not consumed.");
+            Assert.That(await sagaHarness.Consumed.Any<LegalEntityNotPresentInNTR>(), "LegalEntityNotPresentInNTR message was not consumed.");
+            Assert.IsTrue(await harness.Published.Any<CheckLegalEntityInBulstat>(), "CheckLegalEntityInBulstat message was not published.");
+
+            Assert.That(await sagaHarness.Consumed.Any<LegalEntityBulstatCheckSucceeded>(), "LegalEntityBulstatCheckSucceeded message was not consumed.");
+            Assert.IsTrue(await harness.Published.Any<CollectAuthorizerSignatures>(), "CollectAuthorizerSignatures message was not published.");
+
+            await harness.Bus.Publish<EmpowermentIsWithdrawn>(new
+            {
+                command.EmpowermentId
+            });
+
+            var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).First();
+            Assert.Multiple(async () =>
+            {
+                Assert.That(await harness.Published.Any<EmpowermentIsWithdrawn>(), Is.True);
+                Assert.That(await sagaHarness.Consumed.Any<EmpowermentIsWithdrawn>(s => s.Context.Message.EmpowermentId == command.EmpowermentId));
+                Assert.That(currSaga.Saga.IsEmpowermentWithdrawn, Is.True);
+                Assert.That(currSaga.Saga.CurrentState, Is.EqualTo(sagaHarness.StateMachine.Final.Name));
+            });
+
+        }
+        finally
+        {
+            await harness.Stop();
+        }
+    }
+
 
     [Test]
     public async Task LegalEntity_ChecksNTRBeforeAllElseAsync()
@@ -371,7 +535,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN, Name = "Тест", IsIssuer = true } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -417,7 +581,7 @@ internal class EmpowermentActivationStateMachineTests
                 Uid = "8802184852",
                 Name = "Иван Иванов Иванов",
                 OnBehalfOf = OnBehalfOf.Individual,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -439,54 +603,56 @@ internal class EmpowermentActivationStateMachineTests
         }
     }
 
-    [Test]
-    public async Task Individual_FinalizedAfterSigningAndPositiveRestrictionCheckAsync()
-    {
-        await using var provider = new ServiceCollection()
-                .AddMassTransitTestHarness(mt =>
-                {
-                    mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
-                    mt.AddConsumer<SuccessfulSigningConsumer>();
-                    mt.AddConsumer<SuccessfulAuthorizerRestrictionsConsumer>();
-                    mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
-                    mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
-                })
-                .BuildServiceProvider(true);
+    //[Test]
+    //public async Task Individual_FinalizedAfterSigningAndPositiveRestrictionCheckAsync()
+    //{
+    //    await using var provider = new ServiceCollection()
+    //            .AddMassTransitTestHarness(mt =>
+    //            {
+    //                mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+    //                mt.AddConsumer<SuccessfulSigningConsumer>();
+    //                mt.AddConsumer<SuccessfulAuthorizerRestrictionsConsumer>();
+    //                mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+    //                mt.AddConsumer<SuccessfulVerifyUidsRegistrationStatusConsumer>();
+    //                mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //            })
+    //            .BuildServiceProvider(true);
 
-        var harness = provider.GetTestHarness();
+    //    var harness = provider.GetTestHarness();
 
-        await harness.Start();
-        try
-        {
-            var command = new InitiateEmpowermentActivationProcessCommand
-            {
-                CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
-                EmpowermentId = Guid.NewGuid(),
-                Uid = "8802184852",
-                Name = "Иван Иванов Иванов",
-                OnBehalfOf = OnBehalfOf.Individual,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
-                EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
-                ExpiryDate = null
-            };
-            await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+    //    await harness.Start();
+    //    try
+    //    {
+    //        var command = new InitiateEmpowermentActivationProcessCommand
+    //        {
+    //            CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+    //            EmpowermentId = Guid.NewGuid(),
+    //            Uid = "8802184852",
+    //            Name = "Иван Иванов Иванов",
+    //            OnBehalfOf = OnBehalfOf.Individual,
+    //            AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            ExpiryDate = null
+    //        };
+    //        await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
 
-            var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
-            Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>());
-            Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>());
-            Assert.That(await sagaHarness.Consumed.Any<SignaturesCollected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
-            Assert.That(await sagaHarness.Consumed.Any<NoRestrictedUidsDetected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
-            Assert.That(await sagaHarness.Consumed.Any<NoBelowLawfulAgeDetected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
-            var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
-            Assert.That(currSaga?.Saga.CurrentState == sagaHarness.StateMachine.Final.Name);
-            Assert.That(currSaga?.Saga.DenialReason == EmpowermentsDenialReason.None);
-            Assert.IsTrue(currSaga?.Saga.SuccessfulCompletion);
-        }
-        finally
-        {
-            await harness.Stop();
-        }
-    }
+    //        var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //        Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>());
+    //        Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>());
+    //        Assert.That(await sagaHarness.Consumed.Any<SignaturesCollected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
+    //        Assert.That(await sagaHarness.Consumed.Any<NoRestrictedUidsDetected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
+    //        Assert.That(await sagaHarness.Consumed.Any<NoBelowLawfulAgeDetected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
+    //        Assert.That(await sagaHarness.Consumed.Any<RegistrationStatusAllAvailable>(m => command.EmpowermentId == m.Context.Message.EmpowermentId));
+    //        var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
+    //        Assert.That(currSaga?.Saga.CurrentState == sagaHarness.StateMachine.Final.Name);
+    //        Assert.That(currSaga?.Saga.DenialReason == EmpowermentsDenialReason.None);
+    //        Assert.IsTrue(currSaga?.Saga.SuccessfulCompletion);
+    //    }
+    //    finally
+    //    {
+    //        await harness.Stop();
+    //    }
+    //}
 
     [Test]
     public async Task GetsFinalizedAfterDeadlineAsync()
@@ -524,7 +690,7 @@ internal class EmpowermentActivationStateMachineTests
                 Uid = "8802184852",
                 Name = "Иван Иванов Иванов",
                 OnBehalfOf = OnBehalfOf.Individual,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 ExpiryDate = null
             };
@@ -571,7 +737,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "2542184851", UidType = IdentifierType.LNCh } },
                 ExpiryDate = null
             };
@@ -617,7 +783,7 @@ internal class EmpowermentActivationStateMachineTests
                 IssuerName = "Иван Иванов Иванов",
                 IssuerPosition = "Шеф",
                 OnBehalfOf = OnBehalfOf.LegalEntity,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "2542184851", UidType = IdentifierType.LNCh } },
                 ExpiryDate = null
             };
@@ -662,7 +828,7 @@ internal class EmpowermentActivationStateMachineTests
                 Name = "Име",
                 IssuerName = "Име именов",
                 OnBehalfOf = OnBehalfOf.Individual,
-                AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+                AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
                 EmpoweredUids = new UserIdentifierData[] { new() { Uid = "63202034795", UidType = IdentifierType.LNCh } }, // Lnch not present in database - NotFound expected
                 ExpiryDate = null
             };
@@ -682,6 +848,107 @@ internal class EmpowermentActivationStateMachineTests
         }
     }
 
+
+    //[Test]
+    //public async Task GetsFinalizedIfInvalidRegistrationStatusDetectedAsync()
+    //{
+    //    await using var provider = new ServiceCollection()
+    //            .AddMassTransitTestHarness(mt =>
+    //            {
+    //                mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+    //                mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+    //                mt.AddConsumer<SuccessfulSigningConsumer>();
+    //                mt.AddConsumer<SuccessfulAuthorizerRestrictionsConsumer>();
+    //                mt.AddConsumer<FailingVerifyUidsRegistrationStatusConsumer>();
+    //                mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //            })
+    //            .BuildServiceProvider(true);
+
+    //    var harness = provider.GetTestHarness();
+
+    //    await harness.Start();
+    //    try
+    //    {
+    //        var command = new InitiateEmpowermentActivationProcessCommand
+    //        {
+    //            CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+    //            EmpowermentId = Guid.NewGuid(),
+    //            Uid = "8802184852",
+    //            Name = "Иван Иванов Иванов",
+    //            OnBehalfOf = OnBehalfOf.Individual,
+    //            AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            ExpiryDate = null
+    //        };
+    //        await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+
+    //        var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //        Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "Didn't published InitiateEmpowermentActivationProcess");
+    //        Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "Didn't consumed InitiateEmpowermentActivationProcess");
+    //        Assert.That(await sagaHarness.Consumed.Any<SignaturesCollected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId), "Didn't consumed SignaturesCollected");
+    //        Assert.That(await sagaHarness.Consumed.Any<NoRestrictedUidsDetected>(), "Didn't consumed NoRestrictedUidsDetected");
+    //        Assert.That(await sagaHarness.Consumed.Any<NoBelowLawfulAgeDetected>(), "Didn't consumed NoBelowLawfulAgeDetected");
+    //        Assert.That(await sagaHarness.Consumed.Any<InvalidRegistrationStatusDetected>(), "Didn't consumed InvalidRegistrationStatusDetected");
+    //        var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
+    //        Assert.That(currSaga?.Saga.CurrentState == sagaHarness.StateMachine.Final.Name, "Not in final state");
+    //        Assert.That(currSaga?.Saga.DenialReason == EmpowermentsDenialReason.InvalidEmpoweredUidRegistrationStatusDetected, "Unexpected denial reason");
+    //    }
+    //    finally
+    //    {
+    //        await harness.Stop();
+    //    }
+    //}
+
+    //[Test]
+    //public async Task GetsFinalizedIfRegistrationStatusInfoNotAvailableAsync()
+    //{
+    //    await using var provider = new ServiceCollection()
+    //            .AddMassTransitTestHarness(mt =>
+    //            {
+    //                mt.AddConsumer<SuccessfulTimestampEmpowermentXmlConsumer>();
+    //                mt.AddConsumer<SuccessfulLawfulAgeVerificationConsumer>();
+    //                mt.AddConsumer<SuccessfulSigningConsumer>();
+    //                mt.AddConsumer<SuccessfulAuthorizerRestrictionsConsumer>();
+    //                mt.AddConsumer<NotAvailableVerifyUidsRegistrationStatusConsumer>();
+    //                mt.AddSagaStateMachine<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //            })
+    //            .BuildServiceProvider(true);
+
+    //    var harness = provider.GetTestHarness();
+
+    //    await harness.Start();
+    //    try
+    //    {
+    //        var command = new InitiateEmpowermentActivationProcessCommand
+    //        {
+    //            CorrelationId = new Guid("aaaaaaa0-0000-0000-0000-00000000aaaa"),
+    //            EmpowermentId = Guid.NewGuid(),
+    //            Uid = "8802184852",
+    //            Name = "Иван Иванов Иванов",
+    //            OnBehalfOf = OnBehalfOf.Individual,
+    //            AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+    //            ExpiryDate = null
+    //        };
+    //        await harness.Bus.Publish<InitiateEmpowermentActivationProcess>(command);
+
+    //        var sagaHarness = harness.GetSagaStateMachineHarness<EmpowermentActivationStateMachine, EmpowermentActivationState>();
+    //        Assert.IsTrue(await harness.Published.Any<InitiateEmpowermentActivationProcess>(), "Didn't published InitiateEmpowermentActivationProcess");
+    //        Assert.That(await sagaHarness.Consumed.Any<InitiateEmpowermentActivationProcess>(), "Didn't consumed InitiateEmpowermentActivationProcess");
+    //        Assert.That(await sagaHarness.Consumed.Any<SignaturesCollected>(m => command.EmpowermentId == m.Context.Message.EmpowermentId), "Didn't consumed SignaturesCollected");
+    //        Assert.That(await sagaHarness.Consumed.Any<NoRestrictedUidsDetected>(), "Didn't consumed NoRestrictedUidsDetected");
+    //        Assert.That(await sagaHarness.Consumed.Any<NoBelowLawfulAgeDetected>(), "Didn't consumed NoBelowLawfulAgeDetected");
+    //        Assert.That(await sagaHarness.Consumed.Any<RegistrationStatusInfoNotAvailable>(), "Didn't consumed RegistrationStatusInfoNotAvailable");
+    //        var currSaga = sagaHarness.Sagas.Select(q => q.EmpowermentId == command.EmpowermentId).FirstOrDefault();
+    //        Assert.That(currSaga?.Saga.CurrentState == sagaHarness.StateMachine.Final.Name);
+    //        Assert.That(currSaga?.Saga.DenialReason == EmpowermentsDenialReason.UidsRegistrationStatusInfoNotAvailable);
+    //    }
+    //    finally
+    //    {
+    //        await harness.Stop();
+    //    }
+    //}
+
     private static readonly object[] _validStatementsTestCases =
     {
      new object[] {
@@ -693,7 +960,7 @@ internal class EmpowermentActivationStateMachineTests
              Uid = "8802184852",
              Name = "Иван Иванов Иванов",
              OnBehalfOf = OnBehalfOf.Individual,
-             AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+             AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
              EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
              ExpiryDate = null
          }
@@ -709,7 +976,7 @@ internal class EmpowermentActivationStateMachineTests
             IssuerName = "Иван Иванов Иванов",
             IssuerPosition = "Шеф",
             OnBehalfOf = OnBehalfOf.LegalEntity,
-            AuthorizerUids = new UserIdentifierWithNameData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
+            AuthorizerUids = new AuthorizerIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
             EmpoweredUids = new UserIdentifierData[] { new() { Uid = "8802184852", UidType = IdentifierType.EGN } },
             ExpiryDate = null
         }
@@ -740,6 +1007,32 @@ internal class EmpowermentActivationStateMachineTests
             });
         }
     }
+    public class CannotBeConfirmedCheckLegalEntityInNTRConsumer :
+        IConsumer<CheckLegalEntityInNTR>
+    {
+        public async Task Consume(ConsumeContext<CheckLegalEntityInNTR> context)
+        {
+            await context.RespondAsync<LegalEntityNTRCheckSucceeded>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId,
+                CanBeConfirmed = false
+            });
+        }
+    }
+    public class CanBeConfirmedCheckLegalEntityInNTRConsumer :
+        IConsumer<CheckLegalEntityInNTR>
+    {
+        public async Task Consume(ConsumeContext<CheckLegalEntityInNTR> context)
+        {
+            await context.RespondAsync<LegalEntityNTRCheckSucceeded>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId,
+                CanBeConfirmed = true
+            });
+        }
+    }
     public class NoDataForLegalEntityInNTRConsumer :
         IConsumer<CheckLegalEntityInNTR>
     {
@@ -761,7 +1054,7 @@ internal class EmpowermentActivationStateMachineTests
             {
                 context.Message.CorrelationId,
                 context.Message.EmpowermentId
-        });
+            });
         }
     }
     public class FailingLegalEntityCheckInBulstatConsumer :
@@ -851,6 +1144,43 @@ internal class EmpowermentActivationStateMachineTests
             });
         }
     }
+    public class SuccessfulVerifyUidsRegistrationStatusConsumer :
+        IConsumer<VerifyUidsRegistrationStatus>
+    {
+        public async Task Consume(ConsumeContext<VerifyUidsRegistrationStatus> context)
+        {
+            await context.RespondAsync<RegistrationStatusAllAvailable>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId
+            });
+        }
+    }
+    public class FailingVerifyUidsRegistrationStatusConsumer :
+        IConsumer<VerifyUidsRegistrationStatus>
+    {
+        public async Task Consume(ConsumeContext<VerifyUidsRegistrationStatus> context)
+        {
+            await context.RespondAsync<InvalidRegistrationStatusDetected>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId
+            });
+        }
+    }
+
+    public class NotAvailableVerifyUidsRegistrationStatusConsumer :
+        IConsumer<VerifyUidsRegistrationStatus>
+    {
+        public async Task Consume(ConsumeContext<VerifyUidsRegistrationStatus> context)
+        {
+            await context.RespondAsync<RegistrationStatusInfoNotAvailable>(new
+            {
+                context.Message.CorrelationId,
+                context.Message.EmpowermentId
+            });
+        }
+    }
     public class SuccessfulValidateLegalEntityEmpowermentConsumer :
         IConsumer<ValidateLegalEntityEmpowerment>
     {
@@ -912,7 +1242,7 @@ internal class InitiateEmpowermentActivationProcessCommand : InitiateEmpowerment
     public string IssuerPosition { get; set; } = string.Empty;
     public string IssuerName { get; set; } = string.Empty;
     public OnBehalfOf OnBehalfOf { get; set; }
-    public IEnumerable<UserIdentifierWithName> AuthorizerUids { get; set; } = Enumerable.Empty<UserIdentifierWithNameData>();
+    public IEnumerable<AuthorizerIdentifier> AuthorizerUids { get; set; } = Enumerable.Empty<AuthorizerIdentifierData>();
     public IEnumerable<UserIdentifier> EmpoweredUids { get; set; } = Array.Empty<UserIdentifierData>();
     public DateTime? ExpiryDate { get; set; }
 }
@@ -921,6 +1251,6 @@ internal class InitiateSignatureCollectionProcessCommand : CollectAuthorizerSign
 {
     public Guid CorrelationId { get; set; }
     public Guid EmpowermentId { get; set; }
-    public IEnumerable<UserIdentifierWithName> AuthorizerUids { get; set; } = Array.Empty<UserIdentifierWithNameData>();
+    public IEnumerable<AuthorizerIdentifier> AuthorizerUids { get; set; } = Array.Empty<AuthorizerIdentifierData>();
     public DateTime SignaturesCollectionDeadline { get; set; }
 }

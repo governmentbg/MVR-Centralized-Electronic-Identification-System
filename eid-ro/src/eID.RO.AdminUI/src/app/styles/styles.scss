@@ -27,9 +27,20 @@ a {
 }
 
 label,
-legend {
+.form-label {
     font-size: 0.875rem;
     line-height: 1.5rem;
+    color: $text-light;
+    &.disabled {
+        color: $text-inactive;
+    }
+}
+
+.validation-text {
+    font-size: 12px;
+    margin-top: 0.5rem;
+    line-height: 1;
+    min-height: 1rem;
 }
 
 @each $name, $color in $brand-colors {
@@ -41,49 +52,56 @@ legend {
     }
 }
 
-.text-active {
+.app-button-small {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 22px;
+}
+
+// Classes with theme colors
+.active-confirm {
+    color: $button-confirm;
+}
+
+.reject {
+    color: $button-reject;
+}
+
+.text-light {
+    color: $text-light;
+}
+
+.light-grey-bg {
+    background: $background-light-grey;
+}
+
+.danger {
+    color: $button-danger;
+}
+
+.p-input-icon-left > i, .p-input-icon-left > .p-icon-wrapper, .p-input-icon-right > i, .p-input-icon-right > .p-icon-wrapper {
+    right: 12px;
+    scale: 1.7;
     color: $text-active;
 }
 
-.text-default {
-    color: $text-default;
+.link-style {
+    text-decoration: underline;
+    color: $text-active;
 }
 
-p-calendar {
-    &.p-calendar-clearable .p-calendar-clear-icon {
-        right: 4rem;
-    }
-
-    .p-calendar {
-        width: 100%;
-        table {
-            font-size: 10pt;
-            margin: -0.143rem 0;
-        }
-        table td {
-            padding: 0.2rem !important;
-        }
-
-        .p-datepicker table td > span {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-
-        .p-datepicker .p-datepicker-header {
-            padding: 0.2rem;
-        }
-
-        .p-timepicker {
-            button.p-ripple {
-                height: 1rem;
-            }
-        }
-    }
+// Multi line truncation
+.multiline-ellipsis {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* start showing ellipsis when 2nd line is reached */
+    white-space: pre-wrap; /* let the text wrap preserving spaces */
+    word-break: break-word;
 }
 
-.validation-text {
-    position: absolute;
-    font-size: 0.75rem;
+.text-active {
+    color: $text-active;
 }
 
 .empty-message-container {
@@ -96,11 +114,21 @@ p-calendar {
     }
 }
 
+.logo-container {
+    color: $text-inactive;
+    padding: 12px 0;
+    img {
+        width: 100px;
+        height: 100px;
+    }
+}
+
 h1,
 h2,
 h3,
 h4,
 label,
+.form-label,
 .p-datatable .p-datatable-thead > tr > th {
     font-family: $roboto-condensed-medium-font;
 }
@@ -109,12 +137,12 @@ label,
 }
 h5,
 h6,
+button,
+.p-button,
 .roboto-condensed {
     font-family: $roboto-condensed-regular-font;
 }
 
-.p-selectbutton.p-buttonset {
-    .p-button {
-        padding: 12px 32px;
-    }
+.p-button-sm {
+    font-family: $roboto-condensed-regular-font;
 }

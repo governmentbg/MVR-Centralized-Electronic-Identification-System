@@ -1,7 +1,7 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using eID.RO.Contracts.Commands;
 using eID.RO.Contracts.Enums;
+using eID.RO.Service.Requests;
 using eID.RO.Service.Validators;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,17 +13,14 @@ public class NotificationSender : INotificationSender
 {
     private readonly ILogger<NotificationSender> _logger;
     private readonly HttpClient _httpClient;
-    private readonly IKeycloakCaller _keycloakCaller;
 
     public NotificationSender(
         ILogger<NotificationSender> logger,
-        IHttpClientFactory httpClientFactory,
-        IKeycloakCaller keycloakCaller)
+        IHttpClientFactory httpClientFactory)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _ = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _httpClient = httpClientFactory.CreateClient("PAN");
-        _keycloakCaller = keycloakCaller ?? throw new ArgumentNullException(nameof(keycloakCaller));
     }
 
     public async Task<bool> SendAsync(NotifyUids notification)
@@ -45,6 +42,7 @@ public class NotificationSender : INotificationSender
         var tasks = notification.Uids
             .Select(uid => SendSingleNotificationAsync(new SendNotificationRequest
             {
+                RequestId = notification.CorrelationId.ToString(),
                 EventCode = notification.EventCode,
                 Uid = uid.Uid,
                 UidType = uid.UidType,
@@ -58,6 +56,33 @@ public class NotificationSender : INotificationSender
                 .All(result => result == true);
     }
 
+    public async Task<bool> SendAsync(NotifyUid notification)
+    {
+        if (notification is null)
+        {
+            throw new ArgumentNullException(nameof(notification));
+        }
+
+        // Validation
+        var validator = new NotifyUidValidator();
+        var validationResult = await validator.ValidateAsync(notification);
+        if (!validationResult.IsValid)
+        {
+            _logger.LogInformation("Notification Sender validation failed. {Errors}", validationResult.Errors);
+            return false;
+        }
+
+        var result = await SendSingleNotificationAsync(new SendNotificationRequest
+        {
+            RequestId = notification.CorrelationId.ToString(),
+            EventCode = notification.EventCode,
+            Uid = notification.Uid,
+            UidType = notification.UidType
+        });
+
+        return result;
+    }
+
     private async Task<bool> SendSingleNotificationAsync(SendNotificationRequest notification)
     {
         var sendNotificationUrl = "/api/v1/notifications/send";
@@ -67,18 +92,13 @@ public class NotificationSender : INotificationSender
 
         try
         {
-            var keycloakToken = await _keycloakCaller.GetTokenAsync();
-            if (string.IsNullOrWhiteSpace(keycloakToken))
-            {
-                _logger.LogWarning("Unable to obtain Keycloak token");
-                throw new InvalidOperationException("Unable to obtain Keycloak token");
-            }
-
             var statusesWeWontRetry = new System.Net.HttpStatusCode[] {
                 System.Net.HttpStatusCode.BadRequest,
                 System.Net.HttpStatusCode.Conflict,
                 System.Net.HttpStatusCode.InternalServerError,
-                System.Net.HttpStatusCode.NotFound
+                System.Net.HttpStatusCode.NotFound,
+                System.Net.HttpStatusCode.Unauthorized,
+                System.Net.HttpStatusCode.Forbidden
             };
             var policy = Policy<HttpResponseMessage>
                             .Handle<Exception>()
@@ -89,20 +109,26 @@ public class NotificationSender : INotificationSender
                             _ => TimeSpan.FromSeconds(60),
                             (exception, timespan) =>
                             {
-                                _logger.LogInformation("Failed sending notification. Next attempt will be at {NextAttemptTime}", DateTime.UtcNow.Add(timespan));
+                                _logger.LogWarning(
+                                    exception.Exception,
+                                    "Failed sending notification. StatusCode: ({StatusCode}) {Result}. Next attempt will be at {NextAttemptTime}",
+                                    exception.Result?.StatusCode, exception.Result?.ToString(), DateTime.UtcNow.Add(timespan));
                             });
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", keycloakToken);
-
-            var response = await policy.ExecuteAsync(() => _httpClient.PostAsync(
-                $"{sendNotificationUrl}",
-                new StringContent(JsonConvert.SerializeObject(httpSendNotificationBody), Encoding.UTF8, "application/json")
-            ));
+            var response = await policy.ExecuteAsync(async () =>
+            {
+                using var requestMessage = new HttpRequestMessage(HttpMethod.Post, sendNotificationUrl);
+                requestMessage.Headers.TryAddWithoutValidation("Request-Id", notification.RequestId);
+                requestMessage.Content = new StringContent(JsonConvert.SerializeObject(httpSendNotificationBody), 
+                    Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
+                
+                return await _httpClient.SendAsync(requestMessage);
+            });
 
             if (!response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation("Send notification failed response: {Response}", responseBody);
+                _logger.LogInformation("Send notification failed response: ({StatusCode}) {Response}", response.StatusCode, responseBody);
             }
             response.EnsureSuccessStatusCode();
         }
@@ -132,13 +158,15 @@ public class NotificationSender : INotificationSender
 
 internal class SendNotificationRequest
 {
-    public string EventCode { get; set; }
-    public string Uid { get; set; }
+    public string RequestId { get; set; } = string.Empty;
+    public string EventCode { get; set; } = string.Empty;
+    public string Uid { get; set; } = string.Empty;
     public IdentifierType UidType { get; set; }
-    public IEnumerable<Translation> Translations { get; set; }
+    public IEnumerable<Translation> Translations { get; set; } = Enumerable.Empty<Translation>();
 }
 
 public interface INotificationSender
 {
     Task<bool> SendAsync(NotifyUids notification);
+    Task<bool> SendAsync(NotifyUid notification);
 }

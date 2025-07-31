@@ -32,5 +32,9 @@ public class GetEmpowermentsToMeByFilterValidator : AbstractValidator<GetEmpower
         {
             RuleFor(r => r.ValidToDate).Equals(null);
         });
+        When(r => r.OnBehalfOf.HasValue, () =>
+        {
+            RuleFor(r => r.OnBehalfOf).NotNull().IsInEnum();
+        });
     }
 }

@@ -1,5 +1,4 @@
-﻿using eID.RO.Contracts.Commands;
-using eID.RO.Contracts.Enums;
+﻿using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
 using FluentValidation;
 
@@ -8,13 +7,8 @@ namespace eID.RO.API.Public.Requests;
 /// <summary>
 /// Used for creating new empowerment statements
 /// </summary>
-public class AddEmpowermentStatementsRequest : IValidatableRequest
+public class AddEmpowermentStatementsRequest
 {
-    /// <summary>
-    /// Internal validator for the request
-    /// </summary>
-    /// <returns></returns>
-    public virtual IValidator GetValidator() => new AddEmpowermentStatementRequestValidator();
     /// <summary>
     /// Setting the type of empowering entity
     /// </summary>
@@ -41,15 +35,15 @@ public class AddEmpowermentStatementsRequest : IValidatableRequest
     /// </summary>
     public TypeOfEmpowerment TypeOfEmpowerment { get; set; }
     /// <summary>
-    /// Representation of supplier - external enumeration
+    /// Representation of provider - extended reference
     /// </summary>
-    public string SupplierId { get; set; } = string.Empty;
+    public string ProviderId { get; set; } = string.Empty;
     /// <summary>
-    /// Supplier Name, collected and stored in the moment of execution
+    /// Provider name, collected and stored in the moment of execution
     /// </summary>
-    public string SupplierName { get; set; } = string.Empty;
+    public string ProviderName { get; set; } = string.Empty;
     /// <summary>
-    /// Numeric representation of service, depends on selected supplier - external enumeration
+    /// Numeric representation of service, depends on selected provider - extended reference
     /// </summary>
     public int ServiceId { get; set; }
     /// <summary>
@@ -79,12 +73,12 @@ public class AddEmpowermentStatementsRequest : IValidatableRequest
     /// <summary>
     /// List of EGNs or LNCHs of Authorizer people
     /// </summary>
-    public IList<UserIdentifierWithNameData> AuthorizerUids { get; set; } = new List<UserIdentifierWithNameData>();
+    public IList<AuthorizerIdentifierData> AuthorizerUids { get; set; } = new List<AuthorizerIdentifierData>();
 }
 
 public class AddEmpowermentStatementRequestValidator : AbstractValidator<AddEmpowermentStatementsRequest>
 {
-    public AddEmpowermentStatementRequestValidator()
+    public AddEmpowermentStatementRequestValidator(bool allowSelfEmpowerment)
     {
         RuleFor(r => r.OnBehalfOf).NotEmpty().IsInEnum();
         When(r => r.OnBehalfOf == OnBehalfOf.LegalEntity, () =>
@@ -126,9 +120,8 @@ public class AddEmpowermentStatementRequestValidator : AbstractValidator<AddEmpo
             .ForEach(r => r.SetValidator(new UserIdentifierValidator()));
 
         RuleFor(r => r.TypeOfEmpowerment).IsInEnum();
-        RuleFor(r => r.SupplierId).NotEmpty();
-        RuleFor(r => r.SupplierName).NotEmpty();
-        RuleFor(r => r.ServiceId).NotEmpty();
+        RuleFor(r => r.ProviderId).NotEmpty();
+        RuleFor(r => r.ProviderName).NotEmpty();
         RuleFor(r => r.ServiceName).NotEmpty();
         RuleFor(r => r.VolumeOfRepresentation).NotEmpty()
             .ForEach(r => r.SetValidator(new VolumeOfRepresentationRequestValidator()));
@@ -140,54 +133,54 @@ public class AddEmpowermentStatementRequestValidator : AbstractValidator<AddEmpo
 
         RuleFor(r => r.AuthorizerUids)
             .NotEmpty()
-            .ForEach(r => r.SetValidator(new UserIdentifierWithNameValidator()));
+            .Must(r => HaveNoDuplicates(r))
+                .WithMessage("{PropertyName} contains duplicates.")
+            .ForEach(r => r.SetValidator(new UserIdentifierValidator()));
+
+        if (!allowSelfEmpowerment)
+        {
+            When(r => r.OnBehalfOf == OnBehalfOf.Individual, () =>
+            {
+                RuleFor(r => r.AuthorizerUids.Any(au => r.EmpoweredUids.Any(eu => eu.Uid == au.Uid && eu.UidType == au.UidType)))
+                    .NotEqual(true)
+                    .WithName("AuthorizerUids, EmpoweredUids")
+                    .WithMessage("Self empowerment is not allowed");
+            });
+
+            When(r => r.OnBehalfOf == OnBehalfOf.LegalEntity && r.AuthorizerUids.DistinctBy(au => (au.Uid, au.UidType)).Count() == 1, () =>
+            {
+                RuleFor(r => r.EmpoweredUids.Any(eu => eu.Uid == r.AuthorizerUids.First().Uid
+                            && eu.UidType == r.AuthorizerUids.First().UidType))
+                    .NotEqual(true)
+                    .WithName("AuthorizerUids, EmpoweredUids")
+                    .WithMessage("Self empowerment is not allowed");
+            });
+        }
+    }
+    private bool HaveNoDuplicates(IList<AuthorizerIdentifierData> items)
+    {
+        if (items is null)
+        {
+            return true;
+        }
+        return items.Select(r => r.Uid).Distinct().Count() == items.Count;
     }
 }
 public class VolumeOfRepresentationRequest : VolumeOfRepresentationResult
 {
-    public string Code { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
 }
 public class VolumeOfRepresentationRequestValidator : AbstractValidator<VolumeOfRepresentationRequest>
 {
     public VolumeOfRepresentationRequestValidator()
     {
-        RuleFor(r => r.Code).NotEmpty();
         RuleFor(r => r.Name).NotEmpty();
     }
 }
 
-public class UserIdentifierValidator : AbstractValidator<UserIdentifierData>
+public class UserIdentifierValidator : AbstractValidator<UserIdentifier>
 {
     public UserIdentifierValidator()
-    {
-        When(r => r.UidType == IdentifierType.EGN, () => {
-            RuleFor(r => r.Uid)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .Must(uid => ValidatorHelpers.EgnFormatIsValid(uid))
-                    .WithMessage("{PropertyName} invalid EGN.")
-                .Must(uid => ValidatorHelpers.IsLawfulAge(uid))
-                .WithMessage("{PropertyName} people below lawful age.");
-        });
-
-        When(r => r.UidType == IdentifierType.LNCh, () => {
-            RuleFor(r => r.Uid)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .Must(uid => ValidatorHelpers.LnchFormatIsValid(uid))
-                .WithMessage("{PropertyName} invalid LNCh.");
-        });
-
-        RuleFor(r => r.UidType)
-            .NotEmpty()
-            .IsInEnum();
-    }
-}
-
-public class UserIdentifierWithNameValidator : AbstractValidator<UserIdentifierWithNameData>
-{
-    public UserIdentifierWithNameValidator()
     {
         When(r => r.UidType == IdentifierType.EGN, () => {
             RuleFor(r => r.Uid)
@@ -211,6 +204,6 @@ public class UserIdentifierWithNameValidator : AbstractValidator<UserIdentifierW
             .NotEmpty()
             .MaximumLength(200)
             .Must(name => ValidatorHelpers.UserIdentifierNameIsValid(name))
-            .WithMessage("{PropertyName} containts invalid symbols. Only Bulgarian letters, dashes, apostrophes and space are allowed");
+            .WithMessage("{PropertyName} contains invalid symbols. Only Bulgarian letters, dashes, apostrophes and space are allowed");
     }
 }

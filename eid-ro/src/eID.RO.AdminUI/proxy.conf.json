@@ -14,5 +14,10 @@
             "^/pjsservices": ""
         },
         "changeOrigin": true
+    },
+    "/api": {
+        "target": "https://roapi-dev.mvreid.local",
+        "secure": false,
+        "changeOrigin": true
     }
 }

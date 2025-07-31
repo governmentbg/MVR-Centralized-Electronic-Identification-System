@@ -47,6 +47,7 @@ namespace eID.RO.Application.Consumers
 
             var bulstatVerificationResult = await _verificationService.CheckLegalEntityInBulstatAsync(new CheckLegalEntityInBulstatRequest
             {
+                CorrelationId = context.Message.CorrelationId,
                 AuthorizerUids = authorizerUids,
                 Uid = context.Message.Uid
             });

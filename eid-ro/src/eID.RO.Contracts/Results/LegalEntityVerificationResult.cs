@@ -7,7 +7,7 @@ public class LegalEntityVerificationResult
     /// <summary>
     /// Returns 'true' if Issuer is valid after external check for the legal entity
     /// </summary>
-    public bool Successfull { get; set; }
+    public bool Successful { get; set; }
 
     /// <summary>
     /// List of all representatives, that needs to sign the empowerment
@@ -15,14 +15,14 @@ public class LegalEntityVerificationResult
     public IEnumerable<UserIdentifier> AuthorizerUids { get; set; } = new List<UserIdentifierData>();
 
     public LegalEntityVerificationResult() { }
-    public LegalEntityVerificationResult(bool successfull)
+    public LegalEntityVerificationResult(bool successful)
     {
-        Successfull = successfull;
+        Successful = successful;
     }
 
-    public LegalEntityVerificationResult(bool successfull, IEnumerable<UserIdentifier> authorizerUids)
+    public LegalEntityVerificationResult(bool successful, IEnumerable<UserIdentifier> authorizerUids)
     {
-        Successfull = successfull;
+        Successful = successful;
         AuthorizerUids = authorizerUids;
     }
 }

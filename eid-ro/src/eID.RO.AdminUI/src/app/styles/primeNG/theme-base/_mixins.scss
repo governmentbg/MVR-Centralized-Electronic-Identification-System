@@ -201,3 +201,11 @@
     padding-left: $inlineSpacing;
     padding-right: $inlineSpacing;
 }
+
+
+@mixin disabled-input() {
+    color: $text-inactive;
+    background: $background-light-grey;
+    border: 1px solid $theme-primary-light;
+    opacity: 1;
+}

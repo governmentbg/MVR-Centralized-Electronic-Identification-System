@@ -10,7 +10,7 @@ public class GetEmpowermentsByEikFilterRequest : IValidatableRequest
 
     public string Eik { get; set; } = string.Empty;
     public EmpowermentsByEikFilterStatus? Status { get; set; }
-    public string? SupplierName { get; set; }
+    public string? ProviderName { get; set; }
     public string? ServiceName { get; set; }
     public DateTime? ValidToDate { get; set; }
     public bool? ShowOnlyNoExpiryDate { get; set; }

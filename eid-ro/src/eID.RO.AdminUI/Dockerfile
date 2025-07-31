@@ -1,12 +1,12 @@
 FROM docker.io/library/nginx:stable-alpine AS base
 
-FROM docker.io/library/node:lts-stretch AS build
+FROM docker.io/library/node:20-bookworm AS build
 WORKDIR /app
 ARG EID_NPM_REPO_URL
 ARG EID_NUGET_REPO_URL
 COPY ./package.json .
 COPY ./.npmrc .
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 COPY . .
 RUN npm run build --  --output-path=dist --output-hashing=all

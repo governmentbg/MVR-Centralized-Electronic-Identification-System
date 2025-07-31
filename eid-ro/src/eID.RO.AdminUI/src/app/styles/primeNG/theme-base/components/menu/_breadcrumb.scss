@@ -1,9 +1,11 @@
+@import '../../../../variables.scss';
+
 .p-breadcrumb {
     background: $breadcrumbBg;
-    border: $breadcrumbBorder;
+    border: none;
     border-radius: $borderRadius;
     padding: $breadcrumbPadding;
-
+    font-size: 12px;
     ul {
         li {
             .p-menuitem-link {
@@ -15,11 +17,11 @@
                 }
 
                 .p-menuitem-text {
-                    color: $breadcrumbItemTextColor;
+                    color: $text-default;
                 }
 
                 .p-menuitem-icon {
-                    color: $breadcrumbItemIconColor;
+                    color: $text-default;
                 }
             }
 
@@ -28,6 +30,11 @@
                 color: $breadcrumbSeparatorColor;
             }
 
+            &:first-child {
+                .p-menuitem-text {
+                    color: $text-active;
+                }
+            }
             &:last-child {
                 .p-menuitem-text {
                     color: $breadcrumbLastItemTextColor;

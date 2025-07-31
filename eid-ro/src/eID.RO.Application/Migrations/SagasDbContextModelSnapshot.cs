@@ -17,7 +17,7 @@ namespace eID.RO.Application.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.18")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -51,6 +51,9 @@ namespace eID.RO.Application.Migrations
 
                     b.Property<Guid>("EmpowermentId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsEmpowermentWithdrawn")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("IssuerName")
                         .IsRequired()
@@ -90,6 +93,67 @@ namespace eID.RO.Application.Migrations
                     b.ToTable("Sagas.EmpowermentActivations", (string)null);
                 });
 
+            modelBuilder.Entity("eID.RO.Application.StateMachines.EmpowermentVerificationState", b =>
+                {
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorizerUids")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CurrentRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CurrentState")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int>("DenialReason")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EmpoweredUids")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EmpowermentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EmpowermentValidationCheckExpirationTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IssuerPosition")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OnBehalfOf")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("OriginCorrelationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ReceivedDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UidType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CorrelationId");
+
+                    b.ToTable("Sagas.EmpowermentVerifications", (string)null);
+                });
+
             modelBuilder.Entity("eID.RO.Application.StateMachines.SignaturesCollectionState", b =>
                 {
                     b.Property<Guid>("CorrelationId")
@@ -106,6 +170,9 @@ namespace eID.RO.Application.Migrations
 
                     b.Property<Guid>("EmpowermentId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsEmpowermentWithdrawn")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("OriginCorrelationId")
                         .HasColumnType("uuid");

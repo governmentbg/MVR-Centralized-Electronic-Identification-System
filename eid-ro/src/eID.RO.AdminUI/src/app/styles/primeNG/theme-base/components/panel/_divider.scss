@@ -8,7 +8,7 @@
         padding: $dividerHorizontalPadding;
 
         &:before {
-            border-top: $dividerSize $theme-primary-light;
+            border-top: $dividerSize $dividerColor;
         }
 
         .p-divider-content {
@@ -21,7 +21,7 @@
         padding: $dividerVerticalPadding;
 
         &:before {
-            border-left: $dividerSize $theme-primary-light;
+            border-left: $dividerSize $dividerColor;
         }
 
         .p-divider-content {

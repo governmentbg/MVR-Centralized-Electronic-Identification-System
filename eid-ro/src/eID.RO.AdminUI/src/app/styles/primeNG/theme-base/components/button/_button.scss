@@ -513,8 +513,9 @@
 
     &.p-button-outlined {
         background-color: transparent;
-        color: $dangerButtonBg;
+        color: $text-error;
         border: $outlinedButtonBorder;
+        border-color: $button-reject;
 
         &:enabled:hover {
             background: rgba($dangerButtonBg, $textButtonHoverBgOpacity);

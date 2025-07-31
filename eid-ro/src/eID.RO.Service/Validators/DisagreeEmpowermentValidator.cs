@@ -17,7 +17,11 @@ internal class DisagreeEmpowermentValidator : AbstractValidator<DisagreeEmpowerm
                 .WithMessage("{PropertyName} is below lawful age.");
         RuleFor(r => r.UidType).NotEmpty().IsInEnum();
         RuleFor(r => r.EmpowermentId).NotEmpty();
-        RuleFor(r => r.Reason).NotEmpty()
-            .MaximumLength(256);
+        When(r => !string.IsNullOrWhiteSpace(r.Reason), () =>
+        {
+            RuleFor(r => r.Reason)
+                .NotEmpty()
+                .MaximumLength(256);
+        });
     }
 }

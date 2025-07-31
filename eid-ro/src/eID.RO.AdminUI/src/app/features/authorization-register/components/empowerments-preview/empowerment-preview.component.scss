@@ -1,0 +1,18 @@
+@import '../../../../styles/variables.scss';
+
+.dates-container {
+    background-color: $background-light-grey;
+    padding: 0.5rem 2rem;
+    border-radius: 0.188rem;
+}
+
+.badge-empowerment {
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 8px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    display: inline-block;
+}

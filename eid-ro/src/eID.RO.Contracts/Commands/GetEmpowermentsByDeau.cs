@@ -10,7 +10,7 @@ public interface GetEmpowermentsByDeau : CorrelatedBy<Guid>
     public IdentifierType AuthorizerUidType { get; set; }
     public string EmpoweredUid { get; set; }
     public IdentifierType EmpoweredUidType { get; set; }
-    public string SupplierId { get; set; }
+    public string ProviderId { get; set; }
     public string RequesterUid { get; set; }
     public int ServiceId { get; set; }
     /// <summary>
@@ -20,4 +20,6 @@ public interface GetEmpowermentsByDeau : CorrelatedBy<Guid>
     public DateTime StatusOn { get; set; }
     public int PageSize { get; set; }
     public int PageIndex { get; set; }
+    public EmpowermentsByDeauSortBy? SortBy { get; set; }
+    public SortDirection SortDirection { get; set; }
 }

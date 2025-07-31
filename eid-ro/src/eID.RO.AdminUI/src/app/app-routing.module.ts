@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 import { LayoutComponent } from './shared/components/layout/layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { RoleType } from './core/enums/auth.enum';
+import { PageUnauthorizedComponent } from './shared/components/page-unauthorized/page-unauthorized.component';
 
 const routes: Routes = [
     {
@@ -13,11 +15,31 @@ const routes: Routes = [
             {
                 path: '',
                 pathMatch: 'full',
-                redirectTo: 'logs-viewer/journals',
+                redirectTo: 'authorization-register',
             },
             {
                 path: 'logs-viewer',
                 loadChildren: () => import('@eid/ngx-eid-logs-viewer').then(m => m.NgxEidLogsViewerModule),
+                data: { roles: [RoleType.APP_ADMINISTRATOR] },
+            },
+            {
+                path: 'authorization-register',
+                canActivate: [AuthGuard],
+                loadChildren: () =>
+                    import('./features/authorization-register/authorization-register.module').then(
+                        m => m.AuthorizationRegisterModule
+                    ),
+                data: { roles: [RoleType.CIS_BACKOFFICE, RoleType.RU_MVR_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR] },
+            },
+            {
+                path: 'system-processes',
+                loadChildren: () =>
+                    import('./features/system-processes/system-processes.module').then(m => m.SystemProcessesModule),
+                data: { roles: [RoleType.APP_ADMINISTRATOR] },
+            },
+            {
+                path: 'unauthorized',
+                component: PageUnauthorizedComponent,
             },
         ],
     },

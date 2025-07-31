@@ -10,9 +10,10 @@ public interface IVerificationService
 {
     Task<ServiceResult<UidsRestrictionsResult>> CheckUidsRestrictionsAsync(CheckUidsRestrictions message);
     Task<ServiceResult<LegalEntityVerificationResult>> VerifyRequesterInLegalEntityAsync(CheckLegalEntityInNTR message);
-    Task<ServiceResult> VerifySignatureAsync(string originalFile, string signature, string uid, IdentifierType uidType, SignatureProvider signatureProvider);
+    Task<ServiceResult> VerifySignatureAsync(Guid correlationId, string originalFile, string signature, string uid, IdentifierType uidType, SignatureProvider signatureProvider);
     Task<ServiceResult<bool>> VerifyUidsLawfulAgeAsync(VerifyUidsLawfulAge message);
-    Task<ServiceResult<LegalEntityActualState>> GetLegalEntityActualStateAsync(string uid);
-    Task<ServiceResult<LegalEntityStateOfPlay>> GetBulstatStateOfPlayByUidAsync(string uid);
+    Task<ServiceResult<bool>> VerifyUidsRegistrationStatusAsync(VerifyUidsRegistrationStatus message);
+    Task<ServiceResult<LegalEntityActualState>> GetLegalEntityActualStateAsync(Guid correlationId, string uid);
+    Task<ServiceResult<LegalEntityStateOfPlay>> GetBulstatStateOfPlayByUidAsync(Guid correlationId, string uid);
     Task<ServiceResult<LegalEntityBulstatVerificationResult>> CheckLegalEntityInBulstatAsync(CheckLegalEntityInBulstatRequest request);
 }

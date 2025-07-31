@@ -1,9 +1,11 @@
 ﻿using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
+using eID.RO.Service.Database;
+using eID.RO.Service.Extensions;
 using MassTransit;
-using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace eID.RO.Application.StateMachines;
 
@@ -20,6 +22,7 @@ public class WithdrawalsCollectionState : SagaStateMachineInstance
     /// <summary>
     /// User who initiated withdraw operation. EGN or LNCh
     /// </summary>
+    [EncryptProperty]
     public string IssuerUid { get; set; } = string.Empty;
     /// <summary>
     /// IssuerUid type
@@ -45,6 +48,7 @@ public class WithdrawalsCollectionState : SagaStateMachineInstance
     /// <summary>
     /// Uid of the legal entity that empowers someone.
     /// </summary>
+    [EncryptProperty]
     public string? LegalEntityUid { get; set; }
     /// <summary>
     /// Name of the legal entity
@@ -64,11 +68,18 @@ internal class WithdrawalsCollectionStateMap : SagaClassMap<WithdrawalsCollectio
 {
     protected override void Configure(EntityTypeBuilder<WithdrawalsCollectionState> entity, ModelBuilder model)
     {
+        model.UseEncryption();
         entity.ToTable("Sagas.WithdrawalsCollections");
         entity.Property(x => x.CurrentState).HasMaxLength(64);
 
         entity.Property(x => x.Reason).HasMaxLength(256);
-        entity.Property(x => x.AuthorizerUids).HasJsonConversion();
-        entity.Property(x => x.EmpoweredUids).HasJsonConversion();
+        entity.Property(x => x.AuthorizerUids).HasConversion(
+            x => EncryptionHelper.Encrypt(JsonConvert.SerializeObject(x)),
+            x => JsonConvert.DeserializeObject<IEnumerable<AuthorizerIdentifierData>>(EncryptionHelper.Decrypt(x))
+        );
+        entity.Property(x => x.EmpoweredUids).HasConversion(
+            x => EncryptionHelper.Encrypt(JsonConvert.SerializeObject(x)),
+            x => JsonConvert.DeserializeObject<IEnumerable<UserIdentifierData>>(EncryptionHelper.Decrypt(x))
+        );
     }
 }

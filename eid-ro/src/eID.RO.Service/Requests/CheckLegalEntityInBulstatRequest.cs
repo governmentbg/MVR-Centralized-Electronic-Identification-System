@@ -5,6 +5,7 @@ namespace eID.RO.Service.Requests;
 
 public class CheckLegalEntityInBulstatRequest
 {
+    public Guid CorrelationId { get; set; }
     public IEnumerable<IAuthorizerUidData> AuthorizerUids { get; set; }
     public string Uid { get; set; } = string.Empty;
 }
@@ -13,6 +14,7 @@ public class CheckLegalEntityInBulstatRequestValidator : AbstractValidator<Check
 {
     public CheckLegalEntityInBulstatRequestValidator()
     {
+        RuleFor(r => r.CorrelationId).NotEmpty();
         RuleFor(r => r.Uid).NotEmpty();
         RuleFor(r => r.AuthorizerUids)
             .Cascade(CascadeMode.Stop)

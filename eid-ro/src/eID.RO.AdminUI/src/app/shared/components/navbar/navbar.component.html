@@ -20,12 +20,17 @@
             </hgroup>
         </div>
         <div class="navbar-nav ms-auto d-flex flex-column">
-            <app-language-selector class="ms-auto"></app-language-selector>
-            <ul class="mb-2 mb-lg-0">
+            <ul class="mb-2">
                 <li class="nav-item d-flex">
-                    <a class="nav-link" (click)="logout()">{{ t('global.logout') }}</a>
+                    <span class="navbar-text me-2"> <i class="pi pi-user"></i> {{ name }} </span>
+                    <button
+                        class="btn btn-link text-decoration-none bg-background-light-grey nav-link"
+                        (click)="logout()">
+                        {{ t('global.logout') }}
+                    </button>
                 </li>
             </ul>
+            <app-language-selector class="ms-auto"></app-language-selector>
         </div>
     </div>
 </nav>

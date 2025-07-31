@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using eID.PJS.AuditLogging;
 using eID.RO.Application.Consumers;
 using eID.RO.Application.Options;
 using eID.RO.Application.StateMachines;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using Npgsql;
 using Prometheus;
 using Quartz;
 using RabbitMQ.Client;
@@ -39,7 +41,6 @@ public class Startup
         services.AddOptions<ApplicationUrls>().BindConfiguration(nameof(ApplicationUrls));
         services.AddOptions<ApplicationOptions>().BindConfiguration(nameof(ApplicationOptions));
         services.AddOptions<KeycloakOptions>().BindConfiguration(nameof(KeycloakOptions));
-        services.AddOptions<TimestampServerOptions>().BindConfiguration(nameof(TimestampServerOptions));
 
         // HealthCheck
         services.Configure<HealthCheckPublisherOptions>(options =>
@@ -164,6 +165,13 @@ public class Startup
                     r.UsePostgres();
                     r.ExistingDbContext<SagasDbContext>();
                 });
+            mt.AddSagaStateMachine<EmpowermentVerificationStateMachine, EmpowermentVerificationState>(typeof(EmpowermentVerificationStateMachineDefinition))
+                .EntityFrameworkRepository(r =>
+                {
+                    r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                    r.UsePostgres();
+                    r.ExistingDbContext<SagasDbContext>();
+                });
 
             mt.UsingRabbitMq((ctx, cfg) =>
             {
@@ -172,6 +180,12 @@ public class Startup
                 cfg.UsePrometheusMetrics(serviceName: Program.ApplicationName);
                 cfg.UseNewtonsoftJsonSerializer();
                 cfg.UseNewtonsoftJsonDeserializer();
+                cfg.UseMessageRetry(options =>
+                {
+                    options.Handle<NpgsqlException>();
+                    options
+                        .Incremental(10, TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+                });
                 cfg.ConfigureEndpoints(ctx);
             });
         });
@@ -272,14 +286,6 @@ public class Startup
             {
                 httpClient.BaseAddress = new Uri(applicationUrls.KeycloakHostUrl);
             })
-            // TODO: Must be removed at some point
-            .ConfigurePrimaryHttpMessageHandler((s) =>
-            {
-                return new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                };
-            })
             .AddPolicyHandler((serviceProvider, request) =>
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
@@ -287,35 +293,34 @@ public class Startup
             }).
             UseHttpClientMetrics();
 
-        var timestampServerOptions = new TimestampServerOptions();
-        Configuration.Bind(nameof(TimestampServerOptions), timestampServerOptions);
-        timestampServerOptions.Validate();
         services
-            .AddHttpClient(TimestampServerOptions.HTTP_CLIENT_NAME, httpClient =>
+            .AddHttpClient("Signing", httpClient =>
             {
-                httpClient.BaseAddress = new Uri(timestampServerOptions.BaseUrl);
-                httpClient.DefaultRequestHeaders.Clear();
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation(Microsoft.Net.Http.Headers.HeaderNames.ContentType, "application/timestamp-query");
+                httpClient.BaseAddress = new Uri(applicationUrls.SigningHostUrl);
+                httpClient.Timeout = TimeSpan.FromSeconds(300);
             })
-            .ConfigurePrimaryHttpMessageHandler((s) =>
-            {
-                var bytes = File.ReadAllBytes(Path.GetFullPath(timestampServerOptions.CertificatePath));
-                var certificate = new X509Certificate2(bytes, timestampServerOptions.CertificatePass);
-
-                return new HttpClientHandler
-                {
-                    ClientCertificates = { certificate },
-                    // TODO: To be removed in prod
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                };
-            })
+            .AddHttpMessageHandler<ObtainKeycloakTokenHandler>()
             .AddPolicyHandler((serviceProvider, request) =>
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
                 return ApplicationPolicyRegistry.GetRetryPolicy(logger);
-            }).
-            UseHttpClientMetrics();
+            })
+            .UseHttpClientMetrics();
 
+        services
+            .AddHttpClient(MpozeiCaller.HTTPClientName, httpClient =>
+            {
+                httpClient.BaseAddress = new Uri(applicationUrls.MpozeiHostUrl);
+            })
+            .AddHttpMessageHandler<ObtainKeycloakTokenHandler>()
+            .AddPolicyHandler((serviceProvider, request) =>
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<Startup>>();
+                return ApplicationPolicyRegistry.GetRetryPolicy(logger);
+            })
+            .UseHttpClientMetrics();
+
+        services.AddAuditLog(Configuration);
         // Services
         services.AddTransient<EventRegistrationService>();
         services.AddTransient<IEventsRegistrator, EventsRegistrator>();
@@ -326,6 +331,14 @@ public class Startup
         services.AddScoped<OpenDataService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<ObtainKeycloakTokenHandler>();
+        services.AddScoped<IMpozeiCaller, MpozeiCaller>();
+        services.AddScoped<INumberRegistrator, NumberRegistrator>();
+
+
+        var aesOptions = new AesOptions();
+        Configuration.Bind(nameof(AesOptions), aesOptions);
+        aesOptions.Validate();
+        Service.Database.EncryptionHelper.SetEncryptionKey(aesOptions.Key);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

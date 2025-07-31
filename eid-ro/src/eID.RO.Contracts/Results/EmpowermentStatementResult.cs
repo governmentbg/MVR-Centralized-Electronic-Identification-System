@@ -1,4 +1,5 @@
-﻿using eID.RO.Contracts.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using eID.RO.Contracts.Enums;
 
 namespace eID.RO.Contracts.Results;
 
@@ -8,6 +9,10 @@ public interface EmpowermentStatementResult
     /// Empowerment statement Id
     /// </summary>
     public Guid Id { get; set; }
+    /// <summary>
+    /// Empowerment number. Template: РОx/dd.mm.yyyy. x is a integer, dd.mm.yyyy the date of action.
+    /// </summary>
+    public string Number { get; set; }
     /// <summary>
     /// On this date, once verified and signed, the empowerment can be considered active.
     /// </summary>
@@ -46,13 +51,13 @@ public interface EmpowermentStatementResult
     /// </summary>
     public IEnumerable<UidResult> EmpoweredUids { get; set; }
     /// <summary>
-    /// Extended reference. Matches IISDA Supplier Id.
+    /// Extended reference.
     /// </summary>
-    public string SupplierId { get; set; }
+    public string ProviderId { get; set; }
     /// <summary>
     /// Extended reference. Used for display, sorting and filtering
     /// </summary>
-    public string SupplierName { get; set; }
+    public string ProviderName { get; set; }
     /// <summary>
     /// Extended reference. Matches IISDA Service Id.
     /// </summary>
@@ -124,7 +129,6 @@ public static class Extensions
             case EmpowermentStatementStatus.Created:
                 statement.CalculatedStatusOn = CalculatedEmpowermentStatus.Created;
                 return;
-
             case EmpowermentStatementStatus.CollectingAuthorizerSignatures:
                 statement.CalculatedStatusOn = CalculatedEmpowermentStatus.CollectingAuthorizerSignatures;
                 return;
@@ -134,9 +138,11 @@ public static class Extensions
             case EmpowermentStatementStatus.Withdrawn:
                 statement.CalculatedStatusOn = CalculatedEmpowermentStatus.Withdrawn;
                 return;
-
             case EmpowermentStatementStatus.DisagreementDeclared:
                 statement.CalculatedStatusOn = CalculatedEmpowermentStatus.DisagreementDeclared;
+                return;
+            case EmpowermentStatementStatus.Unconfirmed:
+                statement.CalculatedStatusOn = CalculatedEmpowermentStatus.Unconfirmed;
                 return;
 
             case EmpowermentStatementStatus.Active:
@@ -238,4 +244,36 @@ public interface UidResult
     /// </summary>
     string Uid { get; }
     IdentifierType UidType { get; }
+    string Name { get; }
+}
+
+public class UidResultComparer : IEqualityComparer<UidResult>
+{
+    public bool Equals(UidResult? x, UidResult? y)
+    {
+        if (ReferenceEquals(x, y))
+            return true;
+
+        if (x is null || y is null)
+            return false;
+
+        return x.Uid == y.Uid && x.UidType == y.UidType && x.Name.Equals(y.Name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public int GetHashCode([DisallowNull] UidResult obj)
+    {
+        if (obj is null)
+            throw new ArgumentNullException(nameof(obj));
+
+        // Combine hash codes of Uid and UidType
+        int hashUid = obj.Uid.GetHashCode();
+        int hashUidType = obj.UidType.GetHashCode();
+        int name = obj.Name.GetHashCode();
+
+        unchecked
+        {
+            // Simple hash code combination algorithm
+            return ((hashUid << 5) + hashUid) ^ hashUidType ^ name;
+        }
+    }
 }

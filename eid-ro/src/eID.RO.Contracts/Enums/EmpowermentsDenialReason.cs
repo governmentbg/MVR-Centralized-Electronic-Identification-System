@@ -36,5 +36,12 @@ public enum EmpowermentsDenialReason
     DeregisteredInBulstat = 29,
     SignatureCollectionTimeOut = 30,
     UnsuccessfulTimestamping = 31,
-    DeniedByDeauAdministrator = 32
+    DeniedByDeauAdministrator = 32,
+    InvalidUidRegistrationStatusDetected = 33,
+    UidsRegistrationStatusInfoNotAvailable = 34,
+    RegistrationStatusUnavailable = 35,
+    InactiveProfile = 36,
+    NoBaseProfile = 37,
+    NameMismatch = 38,
+    NoRegistration = 39
 }

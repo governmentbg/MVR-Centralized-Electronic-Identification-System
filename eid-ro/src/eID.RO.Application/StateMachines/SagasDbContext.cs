@@ -17,6 +17,7 @@ public class SagasDbContext :
             yield return new EmpowermentActivationStateMap();
             yield return new SignaturesCollectionStateMap();
             yield return new WithdrawalsCollectionStateMap();
+            yield return new EmpowermentVerificationStateMap();
         }
     }
 }

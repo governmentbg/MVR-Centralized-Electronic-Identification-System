@@ -293,6 +293,7 @@ internal class WithdrawalsCollectionStateMachineTests
         Assert.That(await harness.Published.Any<NotifyUids>());
         Assert.That(await harness.Published.Any<ChangeEmpowermentStatus>());
         Assert.That(await harness.Published.Any<ChangeEmpowermentWithdrawalStatus>());
+        Assert.That(await harness.Published.Any<EmpowermentIsWithdrawn>());
 
         AssertSagaState(harness, message.EmpowermentId, "Final");
 

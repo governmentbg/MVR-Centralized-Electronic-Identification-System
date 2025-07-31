@@ -1,5 +1,6 @@
 ﻿using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
+using eID.RO.Service.Database;
 using Newtonsoft.Json;
 
 namespace eID.RO.Service.Entities;
@@ -18,6 +19,7 @@ public class EmpowermentWithdrawal : EmpowermentWithdrawResult
     /// <summary>
     /// Person who initiated the withdrawal process
     /// </summary>
+    [EncryptProperty]
     public string IssuerUid { get; set; } = string.Empty;
     /// <summary>
     /// IssuerUid type

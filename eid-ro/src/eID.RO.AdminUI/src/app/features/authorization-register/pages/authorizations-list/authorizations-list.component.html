@@ -1,0 +1,374 @@
+<section class="h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div [hidden]="showPreview">
+            <div class="row">
+                <div class="col">
+                    <h2 class="text-text-active text-uppercase mb-0">
+                        {{ t('sidebar.txtAuthorizationRegister') }}
+                    </h2>
+                </div>
+            </div>
+            <p-divider class="header-divider" styleClass="mt-4 mb-4" type="solid"></p-divider>
+            <div class="row">
+                <div class="col">
+                    <app-empowerments-filter (filteredData)="onFilteredDataChange($event)"></app-empowerments-filter>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p-table
+                        #dt
+                        [value]="empowerments"
+                        [tableStyle]="{ 'min-width': '100%' }"
+                        [rowHover]="true"
+                        dataKey="uid"
+                        [lazy]="true"
+                        (onLazyLoad)="loadEmpowerments($event)"
+                        [totalRecords]="totalRecords"
+                        [rows]="pageSize"
+                        [paginator]="true"
+                        [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                        [currentPageReportTemplate]="
+                            t('global.txtTablePagination', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        [loading]="loading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        [globalFilterFields]="['uid', 'authorizer', 'providername', 'servicename', 'status']"
+                        sortField="status"
+                        [sortOrder]="1"
+                        [rowSelectable]="false">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.txtNumber') }}
+                                </th>
+                                <th pSortableColumn="createdOn" class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.txtCreatedOn') }}
+                                    <p-sortIcon field="createdOn"></p-sortIcon>
+                                </th>
+                                <th style="width: 10rem">
+                                    {{ t('modules.authorizationStatement.statementForm.txtAuthorizerPersonalNumber') }}
+                                </th>
+                                <th pSortableColumn="name" class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.txtFromTheNameOf') }}
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="providername" class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.filterLabels.providerName') }}
+                                    <p-sortIcon field="providername"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="servicename" class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.filterLabels.serviceName') }}
+                                    <p-sortIcon field="servicename"></p-sortIcon>
+                                </th>
+                                <th style="width: 10rem">
+                                    {{ t('modules.authorizationStatement.statementForm.txtProxyPersonalNumber') }}
+                                </th>
+                                <th pSortableColumn="status" class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.filterLabels.status') }}
+                                    <p-sortIcon field="status"></p-sortIcon>
+                                </th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.authorizationRegister.tableFilter.txtAction') }}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-empower>
+                            <tr
+                                [ngClass]="{
+                                    'light-grey-bg': rowIsNotActive(empower)
+                                }">
+                                <td style="max-width: 18rem" [attr.aria-label]="empower.number">
+                                    <span class="multiline-ellipsis">{{ empower.number }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 10rem"
+                                    [attr.aria-label]="empower.createdOn | translocoDate"
+                                    [title]="empower.createdOn | translocoDate">
+                                    <span class="multiline-ellipsis">{{ empower.createdOn | translocoDate }}</span>
+                                </td>
+                                <td style="width: 10rem">
+                                    <span
+                                        *ngIf="empower.authorizerUids.length !== 0"
+                                        class="text-break d-flex"
+                                        [title]="empower.authorizerUids[0].uid">
+                                        {{ empower.authorizerUids[0].uid }}
+                                    </span>
+
+                                    <span
+                                        *ngIf="empower.authorizerUids.length > 1"
+                                        class="text-break d-flex link-style"
+                                        [escape]="false"
+                                        [pTooltip]="getHtmlTooltipForExtraUids(empower.authorizerUids)"
+                                        [title]="getTooltipForExtraUids(empower.authorizerUids)"
+                                        tooltipPosition="top">
+                                        {{ t('modules.authorizationRegister.tableFilter.txtMoreThenOneEGN', {
+                                        value: empower.authorizerUids.length - 1,
+                                    })}}
+                                    </span>
+                                </td>
+                                <td style="max-width: 18rem" [attr.aria-label]="empower.name" [title]="empower.name">
+                                    <span class="multiline-ellipsis">{{ empower.name }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="empower.providerName"
+                                    [title]="empower.providerName">
+                                    <span class="multiline-ellipsis">{{ empower.providerName }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="empower.serviceName"
+                                    [title]="empower.serviceName">
+                                    <span class="multiline-ellipsis">{{ empower.serviceName }}</span>
+                                </td>
+                                <td style="width: 10rem">
+                                    <span
+                                        *ngIf="empower.empoweredUids.length !== 0"
+                                        class="text-break d-flex"
+                                        [title]="empower.empoweredUids[0].uid">
+                                        {{ empower.empoweredUids[0].uid }}
+                                    </span>
+
+                                    <span
+                                        *ngIf="empower.empoweredUids.length > 1"
+                                        class="text-break d-flex link-style"
+                                        [escape]="false"
+                                        [pTooltip]="getHtmlTooltipForExtraUids(empower.empoweredUids)"
+                                        [title]="getTooltipForExtraUids(empower.empoweredUids)"
+                                        tooltipPosition="top">
+                                        {{ t('modules.authorizationRegister.tableFilter.txtMoreThenOneEGN', {
+                                        value: empower.empoweredUids.length - 1,
+                                    })}}
+                                    </span>
+                                </td>
+                                <td [attr.aria-label]="empower.status" style="width: 12rem" class="roboto-condensed">
+                                    <container-element [ngSwitch]="empower.status">
+                                        <span *ngSwitchCase="'Active'" class="d-flex align-items-center">
+                                            <span
+                                                *ngIf="ifDateIsExpired(empower.expiryDate); else elseBlock"
+                                                class="text-break">
+                                                <i class="material-icons-outlined me-3">&#xe644;</i>
+                                                {{ t('modules.authorizationRegister.tableFilter.statuses.Expired') }}
+                                            </span>
+                                            <ng-template #elseBlock class="d-flex align-items-center">
+                                                <span
+                                                    *ngIf="ifUpcoming(empower); else innerElseBlock"
+                                                    class="text-break">
+                                                    <i class="material-icons-outlined me-3">&#xf238;</i>
+                                                    <span style="width: 7rem">
+                                                        {{ t('empowermentCheckModule.statuses.UpComing') }}
+                                                    </span>
+                                                </span>
+                                                <ng-template #innerElseBlock class="d-flex align-items-center">
+                                                    <span class="active-confirm d-flex me-3">
+                                                        <i class="material-icons-outlined align-self-center"
+                                                            >&#xe877;</i
+                                                        >
+                                                    </span>
+                                                    <span class="d-flex flex-column">
+                                                        <span class="d-flex active-confirm">
+                                                            {{
+                                                                t(
+                                                                    'modules.authorizationRegister.tableFilter.statuses.' +
+                                                                        empower.status
+                                                                )
+                                                            }}
+                                                        </span>
+                                                        <span class="d-flex">
+                                                            {{ empower.expiryDate | translocoDate }}
+                                                        </span>
+                                                    </span>
+                                                </ng-template>
+                                            </ng-template>
+                                        </span>
+                                        <span *ngSwitchCase="'Created'" class="danger d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span>
+                                                {{
+                                                    t(
+                                                        'modules.authorizationRegister.tableFilter.statuses.' +
+                                                            empower.status
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            *ngSwitchCase="'CollectingAuthorizerSignatures'"
+                                            class="danger text-break d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span>
+                                                {{
+                                                    t(
+                                                        'modules.authorizationRegister.tableFilter.statuses.AwaitingSignature'
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            *ngSwitchCase="'DisagreementDeclared'"
+                                            class="reject d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe14b;</i>
+                                            <span>
+                                                {{
+                                                    t(
+                                                        'modules.authorizationRegister.tableFilter.statuses.' +
+                                                            empower.status
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                        <span *ngSwitchCase="'Withdrawn'" class="reject d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                            <span>
+                                                {{
+                                                    t(
+                                                        'modules.authorizationRegister.tableFilter.statuses.' +
+                                                            empower.status
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                        <span *ngSwitchCase="'Denied'" class="reject d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe5cd;</i>
+                                            <span>
+                                                {{
+                                                    t(
+                                                        'modules.authorizationRegister.tableFilter.statuses.' +
+                                                            empower.status
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                        <span *ngSwitchCase="'Unconfirmed'" class="danger d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe001;</i>
+                                            <span>
+                                                {{
+                                                    t(
+                                                        'modules.authorizationRegister.tableFilter.statuses.' +
+                                                            empower.status
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                        <span *ngSwitchDefault></span>
+                                    </container-element>
+                                </td>
+                                <td style="width: 8rem">
+                                    <div class="d-flex">
+                                        <button
+                                            pButton
+                                            type="button"
+                                            [title]="
+                                                t(
+                                                    'modules.authorizationRegister.tableFilter.details.txtPreviewEmpowerment'
+                                                )
+                                            "
+                                            [attr.aria-label]="
+                                                t(
+                                                    'modules.authorizationRegister.tableFilter.details.txtPreviewEmpowerment'
+                                                )
+                                            "
+                                            class="p-button-sm p-button-text"
+                                            (click)="showDetails(empower)">
+                                            <i class="material-icons-outlined">&#xf801;</i>
+                                        </button>
+                                        <button
+                                            pButton
+                                            type="button"
+                                            [title]="
+                                                t(
+                                                    'modules.authorizationRegister.tableFilter.details.txtDownloadPdfCertificate'
+                                                )
+                                            "
+                                            [attr.aria-label]="
+                                                t(
+                                                    'modules.authorizationRegister.tableFilter.details.txtDownloadPdfCertificate'
+                                                )
+                                            "
+                                            class="p-button-sm p-button-text"
+                                            (click)="exportEmpowermentCertificate(empower)">
+                                            <i class="material-icons-outlined">&#xe2c4;</i>
+                                        </button>
+                                        <button
+                                            pButton
+                                            type="button"
+                                            [title]="
+                                                t(
+                                                    'modules.authorizationRegister.tableFilter.details.txtPrintPdfCertificate'
+                                                )
+                                            "
+                                            [attr.aria-label]="
+                                                t(
+                                                    'modules.authorizationRegister.tableFilter.details.txtPrintPdfCertificate'
+                                                )
+                                            "
+                                            class="p-button-sm p-button-text"
+                                            (click)="exportEmpowermentCertificate(empower, true)">
+                                            <i class="material-icons-outlined">&#xe8ad;</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="9">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="showPreview">
+            <app-empowerment-preview
+                (hide)="onHideDetails($event)"
+                [empowerment]="selectedEmpowerment"
+                [showWithdrawalMode]="showWithdrawalMode"></app-empowerment-preview>
+        </div>
+    </p-card>
+</section>

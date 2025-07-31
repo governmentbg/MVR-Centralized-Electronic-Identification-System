@@ -1,15 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
+using eID.RO.Service.Database;
 
 namespace eID.RO.Service.Entities;
 
-public class EmpowermentStatement : EmpowermentStatementResult, EmpowermentStatementFromMeResult
+public class EmpowermentStatement :
+    EmpowermentStatementResult,
+    EmpowermentStatementFromMeResult,
+    EmpowermentStatementWithSignaturesResult
 {
     public Guid Id { get; set; }
     /// <summary>
+    /// Empowerment number. Template: РОx/dd.mm.yyyy. x is a integer, dd.mm.yyyy the date of action.
+    /// </summary>
+    public string Number { get; set; } = string.Empty;
+    /// <summary>
     /// Uid of the individual/legal entity that empowers someone.
     /// </summary>
+    [EncryptProperty]
     public string Uid { get; set; }
     /// <summary>
     /// When OnBehalfOf.LegalEntity the value doesn't matter.
@@ -32,11 +41,11 @@ public class EmpowermentStatement : EmpowermentStatementResult, EmpowermentState
     /// Uids of people that are being empowered
     /// </summary>
     public ICollection<EmpoweredUid> EmpoweredUids { get; set; } = new List<EmpoweredUid>();
-    public string SupplierId { get; set; }
+    public string ProviderId { get; set; }
     /// <summary>
     /// Extended reference. Used for display, sorting and filtering
     /// </summary>
-    public string SupplierName { get; set; }
+    public string ProviderName { get; set; }
     public int ServiceId { get; set; }
     /// <summary>
     /// Extended reference. Used for display, sorting and filtering
@@ -55,6 +64,7 @@ public class EmpowermentStatement : EmpowermentStatementResult, EmpowermentState
     /// UTC. When ExpiryDate is set to null the empowerment will be active until withdrawn.
     /// </summary>
     public DateTime? ExpiryDate { get; set; }
+    [EncryptProperty]
     public string XMLRepresentation { get; set; }
     public DateTime? CreatedOn { get; set; }
     public string? CreatedBy { get; set; }

@@ -10,5 +10,6 @@ public enum CalculatedEmpowermentStatus
     DisagreementDeclared = 6,
     Withdrawn = 7,
     Expired = 8,
-    UpComing = 9
+    UpComing = 9,
+    Unconfirmed = 10
 }

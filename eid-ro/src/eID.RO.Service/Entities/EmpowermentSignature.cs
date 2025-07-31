@@ -1,5 +1,6 @@
 ﻿using eID.RO.Contracts.Enums;
 using eID.RO.Contracts.Results;
+using eID.RO.Service.Database;
 using Newtonsoft.Json;
 
 namespace eID.RO.Service.Entities;
@@ -14,6 +15,7 @@ public class EmpowermentSignature : EmpowermentSignatureResult
     /// <summary>
     /// Person who's signature is being stored
     /// </summary>
+    [EncryptProperty]
     public string SignerUid { get; set; } = string.Empty;
 
     /// <summary>
