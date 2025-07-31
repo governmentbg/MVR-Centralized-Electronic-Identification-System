@@ -1,0 +1,44 @@
+<aside class="d-sm-flex flex-column sidebar-menu h-100 flex-shrink-0" *transloco="let t">
+    <nav class="nav flex-column">
+        <ng-container *appHasRole="[RoleType.APP_ADMINISTRATOR]">
+            <a
+                class="nav-link"
+                [routerLink]="['/system-processes']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="toggleSubMenu(false)">
+                <i class="material-icons-outlined">&#xe8b9;</i>
+                {{ t('sidebar.txtSystemProcesses') }}
+            </a>
+            <a
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link parent-link"
+                (click)="toggleSubMenu(true)"
+                [ngClass]="{ active: isMenuToggled }">
+                <i class="material-icons-outlined">&#xe241;</i>
+                {{ t('sidebar.txtJournals') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/logs-viewer/journals']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #journals="routerLinkActive"
+                *ngIf="isMenuToggled">
+                {{ t('sidebar.txtLocalJournals') }}
+                <i class="material-icons-outlined" *ngIf="journals.isActive">&#xe5cc;</i>
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/logs-viewer/integrity']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #integrity="routerLinkActive"
+                *ngIf="isMenuToggled">
+                {{ t('sidebar.txtIntegrity') }}
+                <i class="material-icons-outlined" *ngIf="integrity.isActive">&#xe5cc;</i>
+            </a>
+        </ng-container>
+    </nav>
+</aside>

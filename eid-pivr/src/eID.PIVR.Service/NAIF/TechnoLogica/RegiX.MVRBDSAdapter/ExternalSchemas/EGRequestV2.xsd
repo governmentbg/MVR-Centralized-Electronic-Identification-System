@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://bg.mvr/request" targetNamespace="http://bg.mvr/request" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="RequestDataType">
+		<xs:choice>
+			<xs:element name="BG" type="PidAndDocIdType">
+				<xs:annotation>
+					<xs:documentation>Единен граждански номер на лице(български или чужд гражданин)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FC">
+				<xs:annotation>
+					<xs:documentation>Личен номер или ЕГН на чужденец</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="PID" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>ЕГН</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ID" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>Личен номер на чужденец</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Vehicle">
+				<xs:annotation>
+					<xs:documentation>Регистрационен номер на превозно средство</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RegistrationNumber" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="HeaderType">
+		<xs:sequence>
+			<xs:element name="DateTime" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>Време на подаване на заявката</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Operation" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Вид операция:0001-справка за бълграски гражданин,0002-справка за чужд гражданин,0003-справка за превозно средство</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UserName" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Имена на потребител, извършил справката</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OrganizationUnit" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Организация</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CallerIPAddress" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>IP адрес на клиента</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BiometricDataFlag" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="CallContext" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Request">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header" type="HeaderType"/>
+				<xs:element name="RequestData" type="RequestDataType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="PidAndDocIdType">
+		<xs:sequence>
+			<xs:element name="PID" type="xs:string"/>
+			<xs:element name="DocID" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

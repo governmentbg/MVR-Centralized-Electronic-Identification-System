@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$authors$</authors>
+    <owners>$authors$</owners>
+    <description>$description$</description>
+    <dependencies>
+       <dependency id="FastMember.Signed" version="1.5.0" />
+       <dependency id="RegiX.Common" version="1.0.47" />
+       <dependency id="System.ServiceModel.Http" version="4.8.0"/>
+    </dependencies>
+  </metadata>
+</package>

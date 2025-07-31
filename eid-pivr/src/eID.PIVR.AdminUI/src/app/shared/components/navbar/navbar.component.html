@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg" *transloco="let t">
+    <div class="container-fluid flex-nowrap">
+        <a class="navbar-brand ms-2">
+            <img src="/assets/images/logo.png" alt="pivr-logo" [attr.aria-roledescription]="t('ariaLabels.txtLogo')" />
+        </a>
+        <div class="nav-item d-flex flex-column">
+            <hgroup role="group" [attr.aria-roledescription]="t('ariaLabels.txtHeadingGroup')">
+                <h4
+                    [attr.aria-roledescription]="t('ariaLabels.txtTitle')"
+                    [attr.aria-label]="t('navbar.title')"
+                    class="text-uppercase roboto-condensed">
+                    {{ t('navbar.title') }}
+                </h4>
+                <p
+                    [attr.aria-roledescription]="t('ariaLabels.txtSubTitle')"
+                    [attr.aria-label]="t('navbar.subtitle')"
+                    class="subtitle text-uppercase m-0">
+                    {{ t('navbar.subtitle') }}
+                </p>
+            </hgroup>
+        </div>
+        <div class="navbar-nav ms-auto d-flex flex-column">
+            <ul class="mb-2">
+                <li class="nav-item d-flex">
+                    <span class="navbar-text me-2"> <i class="pi pi-user"></i> {{ name }} </span>
+                    <button
+                        class="btn btn-link text-decoration-none bg-background-light-grey nav-link"
+                        (click)="logout()">
+                        {{ t('global.logout') }}
+                    </button>
+                </li>
+            </ul>
+            <app-language-selector class="ms-auto"></app-language-selector>
+        </div>
+    </div>
+</nav>
