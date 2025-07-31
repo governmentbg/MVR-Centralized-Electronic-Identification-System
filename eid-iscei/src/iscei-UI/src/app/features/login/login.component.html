@@ -1,0 +1,31 @@
+<section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100 rounded-0">
+        <h3 class="m-4 text-primary text-center text-uppercase">{{ t('global.login') }}</h3>
+        <i
+            *ngIf="requestInProgress"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem; margin-right: 1rem; margin-bottom: 1rem"></i>
+        <div class="d-flex flex-wrap flex-row justify-content-center gap-5" *ngIf="originUrl">
+            <div class="p-fluid">
+                <button
+                    pButton
+                    type="button"
+                    class="mt-4"
+                    [disabled]="requestInProgress"
+                    [attr.aria-label]="t('loginPage.txtLoginWithMobileeID')"
+                    routerLink="mobile-eid"
+                    [queryParams]="{ origin: originUrl, realm: realm, client_id: client_id }"
+                    [label]="t('loginPage.txtLoginWithMobileeID')"></button>
+                <button
+                    pButton
+                    type="button"
+                    class="mt-4"
+                    [disabled]="requestInProgress"
+                    [attr.aria-label]="t('loginPage.txtLoginWithDocumenteID')"
+                    [label]="t('loginPage.txtLoginWithDocumenteID')"
+                    routerLink="personal-document-eid"
+                    [queryParams]="{ origin: originUrl, realm: realm, client_id: client_id }"></button>
+            </div>
+        </div>
+    </p-card>
+</section>

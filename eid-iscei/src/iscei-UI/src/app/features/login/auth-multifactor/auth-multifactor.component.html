@@ -1,0 +1,43 @@
+<div class="imprint h-100">
+    <section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+        <p-card styleClass="h-100 d-flex flex-column justify-content-center align-items-center gap-4">
+            <h3 class="mt-4 text-primary text-center">{{ t('global.txtOtpTitle') }}</h3>
+            <div class="d-flex flex-column align-items-center">
+                <p-knob
+                    [(ngModel)]="ttl"
+                    [max]="initialTtl"
+                    [readonly]="true"
+                    [strokeWidth]="5"
+                    [showValue]="true"
+                    [size]="120"
+                    [valueTemplate]="displayValue"></p-knob>
+            </div>
+            <ng-container *ngIf="!requestInProgress">
+                <div class="d-flex flex-column align-items-center">
+                    <p-inputMask
+                        mask="99999999"
+                        [autoClear]="false"
+                        [(ngModel)]="otp"
+                        (ngModelChange)="onOtpChange($event)"
+                        [autoFocus]="true"
+                        appTrim
+                        placeholder="________"
+                        class="otp-input text-lg"
+                        styleClass="text-center"></p-inputMask>
+                </div>
+                <div class="d-flex flex-column align-items-center" *ngIf="remainingTries > 0 && remainingTries < 3">
+                    <div class="text-primary">
+                        {{ t('global.txtRemainingAttempts', {
+                            attempts: remainingTries
+                        }) }}
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="requestInProgress">
+                <i
+                    class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                    style="font-size: 2rem; margin-right: 1rem; margin-bottom: 1rem"></i>
+            </ng-container>
+        </p-card>
+    </section>
+</div>

@@ -1,0 +1,50 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          eid-iscei-m2m:
+            client-id: ${ISCEI_INTERNAL_KEYCLOAK_CLIENT_ID}
+            client-secret: ${ISCEI_INTERNAL_KEYCLOAK_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            provider: keycloak-internal
+        provider:
+          keycloak-external:
+            issuer-uri: https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}
+            authorization-uri: https://@EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}/protocol/openid-connect/auth
+            token-uri: https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}/protocol/openid-connect/token
+            user-name-attribute: preferred_username
+          keycloak-internal:
+            issuer-uri: https://${INTERNAL_KEYCLOAK_BASE_URL}/realms/${INTERNAL_KEYCLOAK_REALM}
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}
+          principal-claim-name: preferred_username
+          audiences:
+            - eid_iscei_ext
+            
+mvr:
+  ciba-authorization-uri: https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}/protocol/openid-connect/ext/ciba/auth
+  ciba-authorization-callback-uri:  https://${EXTERNAL_KEYCLOAK_BASE_URL}/realms/${EXTERNAL_KEYCLOAK_REALM}/protocol/openid-connect/ext/ciba/auth/callback
+  oauth-clients:
+    eid_android_app: 
+      name: 'Андроид Мобилно Приложение за Гражданите'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+    eid_ios_app: 
+      name: 'IOS Мобилно Приложение за Граждание'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+    eid_pdeau_app: 
+      name: 'Портал за доставчици на услуги'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+    eid_pg_app:
+      name: 'Портал за гражданите'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+  proxied-clients:
+    eid_pg_app:
+      client-id: ${EID_PG_APP_CLIENT_ID}
+      client-secret: ${EID_PG_APP_CLIENT_SECRET}

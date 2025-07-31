@@ -1,0 +1,25 @@
+{
+    "/api": {
+        "target": "http://isceigw.mvreid.local",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/pdeau": {
+        "target": "https://pdeauapipublic-dev.mvreid.local/",
+        "secure": false,
+        "pathRewrite": {
+            "^/pdeau": ""
+        },
+        "changeOrigin": true
+    },
+    "/raeicei/external": {
+        "target": "http://raeicei-ext-gateway.mvreid.local/",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/externalassets": {
+        "target": "https://dev.iscei.mvreid.local",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

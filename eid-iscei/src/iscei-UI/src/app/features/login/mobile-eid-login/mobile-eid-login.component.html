@@ -1,0 +1,159 @@
+<div class="imprint">
+    <section class="container h-100" *transloco="let t">
+        <p-card styleClass="h-100">
+            <div class="horizontally-centered-container w-fit">
+                <form [formGroup]="form" class="p-fluid" (ngSubmit)="submit()" *ngIf="!requestInProgress && originUrl">
+                    <h3 class="mt-4 text-primary text-center">{{ t('global.txtSignIn') }}</h3>
+                    <div>
+                        <label for="type" class="form-label"
+                            >{{ t('modules.eidManagement.form.labels.txtCitizenIdentifierType') }}
+                            <span class="text-danger">*</span></label
+                        >
+                        <p-dropdown
+                            formControlName="type"
+                            [options]="identifierTypes"
+                            optionLabel="name"
+                            optionValue="id"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            styleClass="w-100"
+                            (onChange)="onIdentifierChange($event, form)"
+                            inputId="type">
+                            <ng-template pTemplate="dropdownicon">
+                                <i
+                                    *ngIf="requestInProgress"
+                                    class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                    style="font-size: 1rem"></i>
+                                <i
+                                    *ngIf="!requestInProgress"
+                                    class="pi pi-chevron-down p-dropdown-trigger"
+                                    style="font-size: 1rem"></i>
+                            </ng-template>
+                        </p-dropdown>
+                        <div class="text-danger validation-text">
+                            <span *ngIf="form.controls['type'].invalid && form.controls['type'].dirty">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.form.labels.txtCitizenIdentifierType')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="citizenNumber" class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtCitizenIdentifierNumber') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div>
+                            <p-password
+                                formControlName="citizenNumber"
+                                [feedback]="false"
+                                [toggleMask]="true"
+                                class="cursor-pointer"></p-password>
+                        </div>
+                        <div class="text-danger validation-text">
+                            <span
+                                *ngIf="
+                                form.controls['citizenNumber'].invalid &&
+                                form.controls['citizenNumber'].dirty &&
+                                form.get('citizenNumber')?.errors?.['required']
+                            ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.form.labels.txtCitizenIdentifierNumber')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-inline-block"
+                                *ngIf="!form.get('citizenNumber')?.errors?.['required']
+                                            && !form.get('citizenNumber')?.errors?.['pattern']
+                                            && !form.get('citizenNumber')?.errors?.['PinError']
+                                            && !form.get('citizenNumber')?.errors?.['EgnError']
+                                            && form.get('citizenNumber')?.errors?.['EgnAdultError']">
+                                {{ t('modules.authorizationStatement.statementForm.txtEGNAdultError') }}</span
+                            >
+                            <span
+                                class="d-inline-block"
+                                *ngIf="!form.get('citizenNumber')?.errors?.['required']
+                                            && !form.get('citizenNumber')?.errors?.['pattern']
+                                            && !form.get('citizenNumber')?.errors?.['PinError']
+                                            && form.get('citizenNumber')?.errors?.['EgnError']
+                                            ">
+                                {{ t('modules.authorizationStatement.statementForm.txtEGNInvalid') }}</span
+                            >
+                            <span
+                                class="d-inline-block"
+                                *ngIf="!form.get('citizenNumber')?.errors?.['required']
+                                            && !form.get('citizenNumber')?.errors?.['pattern']
+                                            && form.get('citizenNumber')?.errors?.['PinError']">
+                                {{ t('modules.authorizationStatement.statementForm.txtLNCHInvalid') }}</span
+                            >
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="phoneNumber" class="form-label">
+                            <span>{{ t('registrationPage.titles.phone') }}</span>
+                        </label>
+                        <input
+                            type="tel"
+                            pInputText
+                            id="phoneNumber"
+                            formControlName="phoneNumber"
+                            [ariaLabel]="t('registrationPage.titles.phone')" />
+                    </div>
+                    <div class="d-flex align-items-start gap-2">
+                        <p-checkbox
+                            formControlName="termsAgreement"
+                            inputId="termsAgreement"
+                            class="mt-2"
+                            [binary]="true"></p-checkbox>
+                        <label for="termsAgreement" style="font-size: smaller">
+                            {{ t('loginPage.txtAgreementCheckbox') }} <strong>{{ realm }}</strong>
+                        </label>
+                    </div>
+                    <div class="d-flex gap-3 mt-4">
+                        <button
+                            pButton
+                            type="button"
+                            [routerLink]="(scope && system_id) ? '/administration-login' :'/login'"
+                            [attr.aria-label]="t('global.txtCancel')"
+                            [label]="t('global.txtCancel')"
+                            [disabled]="requestInProgress"
+                            [queryParams]="{ origin: originUrl, client_id: client_id, realm: realm }"
+                            class="p-button p-button-danger p-button-sm"></button>
+                        <button
+                            pButton
+                            type="submit"
+                            [ariaLabel]="t('registrationPage.titles.login')"
+                            [label]="t('registrationPage.titles.login')"
+                            [disabled]="requestInProgress"
+                            class="p-button p-button-sm"></button>
+                    </div>
+                </form>
+            </div>
+            <ng-container *ngIf="requestInProgress">
+                <h3 class="text-primary text-center">{{ t('loginPage.txtAuthApprovalReqTitle') }}</h3>
+                <div class="container app-main-screen-with-buttons">
+                    <p class="text-center">
+                        {{ t('loginPage.txtAuthApprovalReqDescription') }}
+                    </p>
+                    <i
+                        *ngIf="requestInProgress"
+                        class="pi pi-spin pi-spinner p-dropdown-trigger text-primary mb-2"
+                        style="font-size: 3rem"></i>
+                    <div class="horizontally-centered-container">
+                        <p-button
+                            type="submit"
+                            class="w-100 mt-2"
+                            styleClass="w-100"
+                            (click)="cancel()"
+                            [ariaLabel]="t('global.txtCancel')"
+                            [label]="t('global.txtCancel')">
+                        </p-button>
+                    </div>
+                </div>
+            </ng-container>
+        </p-card>
+    </section>
+</div>

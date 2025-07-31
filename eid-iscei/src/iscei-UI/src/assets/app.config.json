@@ -1,0 +1,15 @@
+{
+    "oauth": {
+        "issuer": "https://isceigw.mvreid.local",
+        "tokenEndpoint": "https://isceigw.mvreid.local/code-flow/token",
+        "responseType": "code",
+        "scope": "openid profile email",
+        "realm": "eid_public",
+        "accessTokenKey": "access_token",
+        "refreshTokenKey": "refresh_token",
+        "updateMinValidity": 120
+    },
+    "externalLinks": {
+        "providersApi": "https://pdeauapipublic-dev.mvreid.local/api/v1/Providers/list"
+    }
+}

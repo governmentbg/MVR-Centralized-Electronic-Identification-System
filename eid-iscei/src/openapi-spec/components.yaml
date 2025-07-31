@@ -1,0 +1,18 @@
+openapi: 3.0.1
+info:
+  title: eID - ISCEI HTTP API
+  description: Информационна система на Център за електронна идентификация (ИСЦЕИ)
+  version: v1
+paths: { }
+components:
+  schemas:
+    ConfigurationResult:
+      $ref: 'components/common/configuration_v1.yaml#/schemas/ConfigurationResult'
+    UpdateConfigurationRequest:
+      $ref: 'components/common/configuration_v1.yaml#/schemas/UpdateConfigurationRequest'
+    ProblemDetails:
+      $ref: 'components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+    ValidationProblemDetails:
+      $ref: 'components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+    CibaDelegationRequest:
+      $ref: 'components/auth/ciba_delegation_request_v1.yaml#/schemas/CibaDelegationRequest'

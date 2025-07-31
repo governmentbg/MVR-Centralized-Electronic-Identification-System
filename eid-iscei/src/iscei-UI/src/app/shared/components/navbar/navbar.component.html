@@ -1,0 +1,20 @@
+<nav class="top-bar navbar navbar-expand-lg bg-nav" *transloco="let t">
+    <div class="container flex-nowrap">
+        <a class="navbar-brand">
+            <img style="height: 6rem; width: 6rem;" src="/assets/images/pg-brand-logo.png" [alt]="t('aria.txtLogo')" />
+        </a>
+        <div class="nav-item d-flex flex-column">
+            <hgroup role="group" aria-roledescription="Heading group">
+                <h5 [attr.aria-roledescription]="t('aria.txtTitle')" class="main-title">
+                    {{ t('navbar.txtRepublicOfBulgaria') }}
+                </h5>
+                <h5 [attr.aria-roledescription]="t('aria.txtTitle')" class="title fw-bold">
+                    {{ t('global.txtMinistryOfInterior') }}
+                </h5>
+                <h3 [attr.aria-roledescription]="t('aria.txtSubTitle')" id="sub-title" class="subtitle m-0">
+                    {{ t('navbar.subtitle') }}
+                </h3>
+            </hgroup>
+        </div>
+    </div>
+</nav>

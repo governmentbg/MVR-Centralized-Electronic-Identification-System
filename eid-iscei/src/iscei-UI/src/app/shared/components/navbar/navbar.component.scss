@@ -1,0 +1,43 @@
+@import '../../../../../node_modules/bootstrap/scss/functions';
+@import '../../../../../node_modules/bootstrap/scss/variables';
+@import '../../../../../node_modules/bootstrap/scss/mixins';
+@import '../../../styles/variables';
+
+.top-bar {
+    height: auto;
+
+    @include media-breakpoint-up(sm) {
+        height: $authorized-header-height;
+    }
+    .container {
+        justify-content: flex-start;
+        .main-title {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: $text-dark;
+        }
+
+        .title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: $text-dark;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: $text-active;
+        }
+    }
+}
+
+@include media-breakpoint-down(xl) {
+    .top-bar {
+        height: auto;
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    #sub-title {
+        font-size: 1.1rem;
+    }
+}

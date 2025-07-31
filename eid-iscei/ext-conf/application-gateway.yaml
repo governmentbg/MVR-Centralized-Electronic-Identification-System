@@ -1,0 +1,8 @@
+server:
+  port: 8099
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    disable-swagger-default-url: true
+    path: /docs
