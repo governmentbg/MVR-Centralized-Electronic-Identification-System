@@ -1,0 +1,51 @@
+methods:
+  post:
+    summary: Complete Issue Eid Application
+    operationId: completeIssueEidApplication
+    tags:
+      - Application
+    parameters:
+      - name: applicationId
+        in: path
+        description: 'Application ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/application/application_status_v1.yaml#/schemas/ApplicationStatus'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Time Out
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

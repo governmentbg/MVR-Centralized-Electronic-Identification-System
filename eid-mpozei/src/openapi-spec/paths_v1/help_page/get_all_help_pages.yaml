@@ -1,0 +1,36 @@
+methods:
+  get:
+    tags:
+      - HelpPage
+    summary: Get All Help Pages
+    description: Get All Help Page
+    operationId: getAllHelpPages
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                $ref: '../../components/help_page/help_page_v1.yaml#/schemas/HelpPageDTO'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

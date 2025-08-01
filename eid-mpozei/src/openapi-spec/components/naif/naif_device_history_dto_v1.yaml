@@ -1,0 +1,11 @@
+schemas:
+  NaifDeviceHistoryDTO:
+    type: object
+    properties:
+      status:
+        $ref: '../certificate/citizen_certificate_status_v1.yaml#/schemas/CertificateStatus'
+      eventDate:
+        type: string
+        format: date-time
+      reason:
+        type: string

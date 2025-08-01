@@ -1,0 +1,29 @@
+schemas:
+  NaifDeliveredCertificateDTO:
+    type: object
+    required:
+      - MessageID
+      - User
+      - Timestamp
+      - CarrierSerialNumber
+      - UIDType
+      - PersonalId
+    properties:
+      MessageID:
+        type: string
+        format: uuid
+      User:
+        type: string
+      Timestamp:
+        type: string
+        format: date-time
+      PersonalId:
+        type: string
+      UIDType:
+        $ref: './naif_identifier_type_v1.yaml#/schemas/NaifIdentifierType'
+      CarrierSerialNumber:
+        type: string
+      PhoneNumber:
+        type: string
+      Email:
+        type: string

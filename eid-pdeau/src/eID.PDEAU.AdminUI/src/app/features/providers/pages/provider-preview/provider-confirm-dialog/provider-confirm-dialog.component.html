@@ -1,0 +1,38 @@
+<ng-container *transloco="let t; read: 'modules.providers.application-preview.approve-dialog'">
+    <p-dialog
+        [(visible)]="showDialog"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [style]="{ width: '50vw', maxWidth: '700px' }"
+        styleClass="success-dialog">
+        <ng-template pTemplate="header">
+            <h3 class="text-white">{{ t('txtTitle') }}</h3>
+        </ng-template>
+        <div class="pt-4 d-flex flex-column gap-2">
+            <h5>{{ t('txtDescription') }}</h5>
+            <textarea
+                [disabled]="approveMutation.isLoading"
+                [placeholder]="t('txtInputPlaceholder')"
+                class="w-100 p-2"
+                rows="5"
+                pInputTextarea
+                [(ngModel)]="textAreaValue"></textarea>
+        </div>
+        <ng-template pTemplate="footer">
+            <p-button
+                styleClass="p-button-primary"
+                [label]="t('txtCancel')"
+                [ariaLabel]="t('txtCancel')"
+                (click)="hide()"></p-button>
+            <p-button
+                [disabled]="approveMutation.isLoading"
+                [loading]="approveMutation.isLoading"
+                [label]="t('txtApprove')"
+                [ariaLabel]="t('txtApprove')"
+                styleClass="p-button-success"
+                (click)="approveProvider()"></p-button>
+        </ng-template>
+    </p-dialog>
+    <button pButton type="button" class="p-button p-button-success" [label]="t('txtApprove')" (click)="show()"></button>
+</ng-container>

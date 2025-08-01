@@ -1,0 +1,1270 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">eID</string>
+    <string name="loader_wait_message">We are looking for your data, it might take a moment.</string>
+
+    <!-- Common errors -->
+    <string name="error">Something went wrong</string>
+    <string name="error_loading_error">Sorry, it seems something went wrong. Please try again.</string>
+    <string name="error_server_error_short">Server error</string>
+    <string name="error_internal_error_short">Internal error</string>
+    <string name="error_server_error">Error while receiving data from the server, please try again later</string>
+    <string name="error_network_error_short">Network error</string>
+    <string name="error_network_error">Error during network request, please try again later</string>
+    <string name="error_network_not_available">No internet connection</string>
+    <string name="error_network_not_available_description">Connect to the Internet and try again</string>
+    <string name="error_invalid_format">Invalid format</string>
+    <string name="error_not_enough_characters">Not enough characters in the field.</string>
+    <string name="error_cannot_be_empty">This field cannot be empty.</string>
+    <string name="error_password_must_contain_only_numbers">Password must contain only numbers</string>
+    <string name="must_contain_only_numbers">Only numbers are allowed here</string>
+    <string name="error_empty_state_tile">Nothing found</string>
+    <string name="error_empty_state_description">Refresh the screen if content should be present</string>
+    <string name="error_no_consent_to_share_data">No consent to share data</string>
+    <string name="error_pin_code_not_setup">Pin code not setup</string>
+    <string name="error_user_not_setup_correct">User not setup</string>
+    <string name="error_user_is_not_identified">User is not identified</string>
+    <string name="error_user_name_not_found">User name not found</string>
+    <string name="error_user_email_not_found">User email not found</string>
+    <string name="error_user_phone_not_found">User phone not found</string>
+    <string name="error_user_personal_identification_number_not_found">User personal identification number not found</string>
+    <string name="error_request_is_being_processed">The request is being processed, please wait and click update</string>
+    <string name="error_server_fetch_information">We could not fetch the necessary information</string>
+    <string name="error_api_general">An error has occurred. Try again. (%s)</string>
+    <string name="error_field_required">The field is required</string>
+    <string name="error_valid_email_format">Invalid email format</string>
+    <string name="error_names_uppercase">The name must begin with uppercase character</string>
+    <string name="error_field_symbols_length">The field must be at least %s symbols</string>
+    <string name="error_valid_phone_number">Enter a valid phone number</string>
+    <string name="error_valid_password_format">The password needs to have at least 8 characters with 1 upper case, 1 lower case, 1 number and 1 special character.</string>
+    <string name="error_password_mismatch">Passwords don\'t match</string>
+    <string name="error_names_combination">You must enter a combination of first name and middle name or first name and last name</string>
+    <string name="error_invalid_egn">Invalid EGN</string>
+    <string name="error_invalid_lnch">Invalid LNCh</string>
+    <string name="error_invalid_personal_identifier_format">Invalid personal identifier format</string>
+    <string name="error_invalid_personal_identifier">Invalid personal identifier</string>
+    <string name="error_card_chip_unsupported">The card with this number does not support electronic identity</string>
+    <string name="error_pin_code_mismatch">Pin code mismatch</string>
+    <string name="error_pin_code_length">The PIN code must be %s digits</string>
+    <string name="error_invalid_bulstat">Invalid BULSTAT</string>
+    <string name="error_value_already_used">The given value is already used</string>
+    <string name="error_personal_identifier_already_used">The given personal identifier is already used</string>
+    <string name="error_empowerment_self">You can not empower yourself</string>
+    <string name="error_empowerment_self_as_representative">You can not empower yourself when you are the only legal representative</string>
+    <string name="error_pin_code_incorrect">PIN is incorrect. Number of attempts left: %s</string>
+    <string name="error_biometrics_enable">Could not enable biometrics</string>
+    <string name="error_biometrics_not_available">Biometrics not available</string>
+    <string name="error_biometrics_system">Biometric system error</string>
+
+    <!-- Blocked -->
+    <string name="error_blocked_title">Entrance blocked</string>
+    <string name="error_blocked_description">Unlock in %s seconds</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="exit">Exit</string>
+    <string name="back">Back</string>
+    <string name="apply">Apply</string>
+    <string name="retry" tools:override="true">Retry</string>
+    <string name="reload">Reload</string>
+    <string name="next">Next</string>
+    <string name="proceed">Proceed</string>
+    <string name="start">Start</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
+    <string name="save">Save</string>
+    <string name="close">Close</string>
+    <string name="remove">Remove</string>
+    <string name="share">Share</string>
+    <string name="select">Select</string>
+    <string name="invite">Invite</string>
+    <string name="delete">Delete</string>
+    <string name="skip">Skip</string>
+    <string name="clear">Clear</string>
+    <string name="clear_all">Clear All</string>
+    <string name="view_all">View All</string>
+    <string name="see_all">See All</string>
+    <string name="all">All</string>
+    <string name="search">Search</string>
+    <string name="edit">Edit</string>
+    <string name="edit_data">Edit data</string>
+    <string name="verify">Verify</string>
+    <string name="done">Done</string>
+    <string name="bullet">•</string>
+    <string name="confirm">Confirm</string>
+    <string name="continue_label">Continue</string>
+    <string name="optional">Optional</string>
+    <string name="unknown">Unknown</string>
+    <string name="need_help">Need help?</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="oops">Oops</string>
+    <string name="oops_with_dots">Oops…</string>
+    <string name="sorry">Sorry</string>
+    <string name="logout">Logout</string>
+    <string name="try_again">Try again</string>
+    <string name="ok" tools:override="true">OK</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="update">Update</string>
+    <string name="wait">Please wait</string>
+    <string name="please_select">Please select a value</string>
+    <string name="please_input">Please enter a value</string>
+    <string name="information">Information</string>
+    <string name="certificate_stop">Stop</string>
+    <string name="certificate_resume">Resume</string>
+    <string name="certificate_change_pin">Change PIN</string>
+    <string name="certificate_revoke">Revoke</string>
+    <string name="application_payment">Payment</string>
+    <string name="mobile_applicatipon">Mobile application</string>
+    <string name="identity_card">Bulgarian identity card with chip</string>
+    <string name="egn">EGN</string>
+    <string name="lnch">LNCH</string>
+    <string name="certificate">Certificate</string>
+    <string name="not_specified">Not specified</string>
+    <string name="send">Send</string>
+    <string name="no_value">No value</string>
+    <string name="no_search_results">No search results</string>
+    <string name="required_sign">*</string>
+    <string name="sign">Sign</string>
+    <string name="begin">Home</string>
+    <string name="more">More</string>
+    <string name="filters">Filters</string>
+    <string name="sort_by_with_dots">Sort by:</string>
+    <string name="authentication_type">Authentication type</string>
+    <string name="signing_type">Sign</string>
+    <string name="select_all">Select all</string>
+    <string name="unspecified">Unspecified</string>
+    <string name="apply_filters">Apply filters</string>
+    <string name="clear_filters">Clear</string>
+    <string name="pin_creation_message">Do you want to create a PIN code to protect your profile?</string>
+
+    <!-- Notifications -->
+    <string name="channel_name">EID</string>
+    <string name="channel_description">Notifications from the EID application</string>
+    <string name="warning_label">Warning</string>
+    <string name="notifications_window_label">In order for application to work properly, you must allow notifications. Current notification: %s</string>
+    <string name="settings_label">Settings</string>
+
+    <!-- Pin -->
+    <string name="passcode_btn_1">1</string>
+    <string name="passcode_btn_2">2</string>
+    <string name="passcode_btn_3">3</string>
+    <string name="passcode_btn_4">4</string>
+    <string name="passcode_btn_5">5</string>
+    <string name="passcode_btn_6">6</string>
+    <string name="passcode_btn_7">7</string>
+    <string name="passcode_btn_8">8</string>
+    <string name="passcode_btn_9">9</string>
+    <string name="passcode_btn_0">0</string>
+
+    <!-- Permissions -->
+    <string name="permissions_modal_title">Access required</string>
+    <string name="permissions_modal_description">Please adjust your settings to allow GTWorld access your %s, without it you cannot proceed.</string>
+    <string name="permissions_modal_step_1">Turn on «%s» in settings.</string>
+    <string name="permissions_modal_step_2">After that, go back to the app.</string>
+    <string name="permissions_modal_open_settings">Open settings</string>
+    <string name="permissions_contacts">Contacts</string>
+    <string name="permissions_camera">Camera</string>
+    <string name="permissions_location">Location</string>
+
+    <!-- Biometric error -->
+    <string name="biometric_error_title">Biometric error</string>
+    <string name="biometric_error_description">User identification error, you may have unlocked the device using an alternative method, unlock the device using your fingerprint and try again</string>
+
+    <!-- Registration enter PIN -->
+    <string name="registration_enter_pin_title">Hello</string>
+    <string name="registration_enter_pin_forgot_title">Forgot your PIN?</string>
+    <string name="registration_enter_pin_incorrect">PIN is incorrect. The number of attempts left: %s\nTry again or click the forgotten password button.</string>
+
+    <!-- Create PIN -->
+    <string name="create_pin_title">Create password</string>
+    <string name="create_pin_description">To better protect your app avoid using consecutive numbers, repeating digits, your date of birth, or your phone number.</string>
+    <string name="create_pin_error_pass_code_not_secure">Your password is too simple. Use different numbers to create a stronger one.</string>
+    <string name="create_pin_error_pass_code_cannot_be_set_as_sequential_numbers">Don\'t use sequential numbers. It\'s too easy to guess. Make a stronger password.</string>
+    <string name="create_pin_error_pass_code_repeating_digits_more_than_2">Don\'t use repeating digits more than twice. It\'s too easy to guess. Make a stronger password.</string>
+    <string name="create_pin_error_pass_code_your_date_of_birth">Don\'t use your birthday. It\'s too easy to guess. Make a stronger password.</string>
+    <string name="create_pin_error_pass_code_your_part_phone_number">Don\'t use any part of your phone number. It\'s too easy to guess. Make a stronger password.</string>
+    <string name="create_pin_error_pass_code_already_used">You\'ve already used this combination for a password. Please create a new one. </string>
+
+    <!-- Confirm PIN -->
+    <string name="confirm_pin_title">Confirm password</string>
+    <string name="confirm_pin_description">Enter your password one more time to be sure it\'s correct.</string>
+    <string name="confirm_pin_error_password_not_match">Your password does not match the one you provided earlier.</string>
+
+    <!-- Auth Enable biometric -->
+    <string name="enable_biometric_title">Enable biometrics</string>
+    <string name="enable_biometric_for_faster_login_description">Would you like to enable biometric login?</string>
+    <string name="enable_biometric_for_faster_transactions_and_in_app_actions_description">You can turn on biometrics for faster transactions and in-app actions.</string>
+    <string name="enable_biometric_btn_later">Set it up later</string>
+    <string name="enable_biometric_btn_enable">Enable</string>
+
+    <!-- Auth Enter PIN -->
+    <string name="auth_enter_pin_title">Hello, %s,</string>
+    <string name="auth_enter_pin_forgot_title">Forgot your PIN?</string>
+    <string name="auth_enter_pin_incorrect">PIN is incorrect. The number of attempts left: %s\nTry again or click the forgotten password button.</string>
+    <string name="auth_enter_pin_error_check_remote">PIN is incorrect. Try again or click the forgotten password button.</string>
+
+    <!-- Enter biometric -->
+    <string name="enter_biometric_title">Hello, %s,</string>
+    <string name="enter_biometric_use_pin">Use PIN</string>
+    <string name="enter_biometric_confirm">Още</string>
+
+    <!-- Auth Biometric -->
+    <string name="auth_biometric_scanner_description">Use Biometric to unlock the app</string>
+    <string name="auth_biometric_scanner_title">Authentication</string>
+    <string name="auth_biometric_scanner_failed">Fingerprint not recognized.</string>
+    <string name="auth_biometric_scanner_many_attempts">Too many attempts. Please try again later.</string>
+
+    <!-- Auth Start -->
+    <string name="landing_bg_eid">BGeID</string>
+    <string name="landing_republic_of_bulgaria">Republic of Bulgaria</string>
+    <string name="landing_mvr">Ministry of Interior</string>
+    <string name="landing_login_password">Login with password</string>
+    <string name="landing_login_pin">Login with PIN</string>
+    <string name="landing_login_biometric">Login with biometrics</string>
+    <string name="landing_login_mobile_eid">Login with mobile eID</string>
+    <string name="landing_login_eid_document">Login with electronic identity</string>
+    <string name="landing_create_profile">Create profile</string>
+
+    <!-- Login -->
+    <string name="login_email_title">Email:</string>
+    <string name="login_password_title">Password:</string>
+    <string name="login_authenticate_button_title">Enter</string>
+    <string name="login_forgotten_password_button_title">Forgotten password</string>
+    <string name="login_wrong_credentials_error">Invalid user credentials. Try again or click the forgotten password button.</string>
+
+    <!-- Languages -->
+    <string name="language_bulgarian">Bulgarian</string>
+    <string name="language_english">English</string>
+
+    <!-- Registration -->
+    <string name="registration_title">Registration</string>
+    <string name="registration_name">Name by identity document:</string>
+    <string name="registration_surname">Surname by identity document:</string>
+    <string name="registration_fathers_name">Father\'s name by identity document:</string>
+    <string name="registration_name_latin">Name in latin by identity document:</string>
+    <string name="registration_fathers_name_latin">Father\'s name in latin by identity document:</string>
+    <string name="registration_surname_latin">Surname in latin by identity document:</string>
+    <string name="registration_email">Email:</string>
+    <string name="registration_password">Password:</string>
+    <string name="registration_confirm_password">Confirm password:</string>
+    <string name="registration_create_profile">Create profile</string>
+    <string name="registration_phone_number">Phone number:</string>
+    <string name="registration_names_length_error">The field must be at least %s symbols</string>
+    <string name="registration_names_uppercase_error">The name must begin with uppercase character</string>
+    <string name="registration_email_error">Enter a valid email</string>
+    <string name="registration_phone_error">Enter a valid phone number</string>
+    <string name="registration_password_mismatch_error">Passwords don\'t match</string>
+    <string name="registration_names_disclaimer">Please enter names according to identification document.</string>
+    <string name="registration_leading_trailing_whitespace_error">The value must not begin or end with white space</string>
+    <string name="registration_success_message">You successfully created your profile. Please, check your inbox for the activation email we\'ve send.</string>
+
+    <!-- Lorem ipsum -->
+    <string name="lorem_ipsum_size_1">Lorem ipsum</string>
+    <string name="lorem_ipsum_size_2">Lorem ipsum dolor</string>
+    <string name="lorem_ipsum_size_3">Lorem ipsum dolor sit amet</string>
+    <string name="lorem_ipsum_size_4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut</string>
+    <string name="lorem_ipsum_size_5">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</string>
+    <string name="lorem_ipsum_size_6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="lorem_ipsum_size_7">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+    <!-- Empowerment from me list items -->
+    <string name="empowerment_from_me_title">Empowerments from me</string>
+    <string name="empowerment_from_me_number_title">Number empowerment:\n%s</string>
+    <string name="empowerment_from_me_service_provider_title">Service provider:</string>
+    <string name="empowerment_from_me_from_title">From:</string>
+    <string name="empowerment_from_me_service_title">Service:</string>
+    <string name="empowerment_from_me_empowerer_title">Empowerer:</string>
+    <string name="empowerment_from_me_status_title">Status:</string>
+    <string name="empowerment_from_me_type_egn">EGN:%s</string>
+    <string name="empowerment_from_me_type_egn_and_name">EGN:%1$s - %2$s</string>
+    <string name="empowerment_from_me_type_lnch">LNCh:%s</string>
+    <string name="empowerment_from_me_type_lnch_and_name">LNCh:%1$s - %2$s</string>
+    <string name="empowerment_from_me_additional_empowerers">and %s people…</string>
+    <string name="empowerment_from_me_creation_date_title">Creation date:</string>
+
+    <!-- Empowerment to me list items -->
+    <string name="empowerment_to_me_title">Empowerments to me</string>
+    <string name="empowerment_to_me_service_provider_title">Service provider:</string>
+    <string name="empowerment_to_me_service_title">Service:</string>
+    <string name="empowerment_to_me_empowerer_title">Empowerer:</string>
+    <string name="empowerment_to_me_status_title">Status:</string>
+    <string name="empowerment_to_me_number_title">Number empowerment:\n%s</string>
+    <string name="empowerment_to_me_creation_date_title">Creation date:</string>
+
+    <!-- Empowerment Cancel Screen -->
+    <string name="empowerment_cancel_to_me_success">Successful withdrawal.</string>
+    <string name="empowerment_cancel_from_me_success">Successful withdrawal.</string>
+    <string name="empowerment_cancel_empowerment_details_title">Details of empowerment</string>
+    <string name="empowerment_cancel_reason_title">Reason:</string>
+    <string name="empowerment_cancel_number_title">Number:</string>
+    <string name="empowerment_cancel_status_title">Status:</string>
+    <string name="empowerment_cancel_from_title">On behalf of:</string>
+    <string name="empowerment_cancel_individual">Individual</string>
+    <string name="empowerment_cancel_legal_entity">Legal entity</string>
+    <string name="empowerment_cancel_name_title">Name:</string>
+    <string name="empowerment_cancel_egn_lnch_empowerer_title">EGN/LNCh of empowerer:</string>
+    <string name="empowerment_cancel_eik_bulstat_empowerer_title">EIK/Bulstat of legal entity:</string>
+    <string name="empowerment_cancel_egn_lnch_empowered_people">EGN/LNCh of empowered people:</string>
+    <string name="empowerment_cancel_legal_representatives_title">Legal representatives:</string>
+    <string name="empowerment_cancel_supplier_title">Supplier:</string>
+    <string name="empowerment_cancel_service_title">Service:</string>
+    <string name="empowerment_cancel_extent_representative_power_title">Extent of representative power:</string>
+    <string name="empowerment_cancel_history_of_empowerment_title">History of empowerment</string>
+    <string name="empowerment_cancel_start_date_title">Valid from:</string>
+    <string name="empowerment_cancel_submitted_date_title">Submitted on:</string>
+    <string name="empowerment_cancel_end_date_title">Valid until:</string>
+    <string name="empowerment_cancel_unlimited">Unlimited</string>
+    <string name="empowerment_cancel_to_me_title">Declaration of disagreement</string>
+    <string name="empowerment_cancel_to_me_button_title">Declare disagreement</string>
+    <string name="empowerment_cancel_from_me_title">Withdrawal of empowerment</string>
+    <string name="empowerment_cancel_from_me_button_title">Confirm withdrawal</string>
+    <string name="empowerment_cancel_reasons_wont_be_used_type">It won\'t be used</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_screen_title">Certificate</string>
+    <string name="certificate_details_title">Preview certificate for electronic identity</string>
+    <string name="certificate_details_certificate_id">Certificate ID:</string>
+    <string name="certificate_details_alias">Certificate alias:</string>
+    <string name="certificate_details_eid_idenity_id">Electronic identity number:</string>
+    <string name="certificate_details_serial_number">Serial number:</string>
+    <string name="certificate_details_certificate_common_name">Names:</string>
+    <string name="certificate_details_certificate_status">Status:</string>
+    <string name="certificate_details_certificate_issued_on">Issued on:</string>
+    <string name="certificate_details_certificate_valid_from">Valid from:</string>
+    <string name="certificate_details_certificate_valid_until">Valid until:</string>
+    <string name="certificate_details_certificate_issued_from">Issued from:</string>
+    <string name="certificate_details_certificate_carrier">Carrier:</string>
+    <string name="certificate_details_certificate_carrier_number">Carrier number:</string>
+    <string name="certificate_details_certificate_carrier_level_of_assurance">Carrier assurance level:</string>
+    <string name="certificate_details_certificate_stop_button">Stop certificate</string>
+    <string name="certificate_details_certificate_revoke_button">Revoke certificate</string>
+    <string name="certificate_details_certificate_resume_button">Resume certificate</string>
+    <string name="certificate_details_certificate_stop_reason">Stopping reason:</string>
+    <string name="certificate_details_certificate_resume_reason">Resuming reason:</string>
+    <string name="certificate_details_certificate_revocation_reason">Revocation reason:</string>
+    <string name="certificate_details_full_history_title">Full certificate history</string>
+    <string name="certificate_details_full_history_element_status_title">Status:</string>
+    <string name="certificate_details_full_history_element_created_application_create_date_title">Application issued:</string>
+    <string name="certificate_details_full_history_element_created_application_number_title">Application number:</string>
+    <string name="certificate_details_full_history_element_created_application_modified_date_title">Issued certificate on:</string>
+    <string name="certificate_details_full_history_element_revoked_application_create_date_title">Application issued:</string>
+    <string name="certificate_details_full_history_element_revoked_application_number_title">Application number:</string>
+    <string name="certificate_details_full_history_element_revoked_application_modified_date_title">Revoked certificate on:</string>
+    <string name="certificate_details_full_history_element_stopped_application_create_date_title">Application issued:</string>
+    <string name="certificate_details_full_history_element_stopped_application_number_title">Application number:</string>
+    <string name="certificate_details_full_history_element_stopped_application_modified_date_title">Stopped certificate on:</string>
+    <string name="certificate_details_full_history_element_expired_application_create_date_title">Application issued:</string>
+    <string name="certificate_details_full_history_element_expired_application_number_title">Application number:</string>
+    <string name="certificate_details_full_history_element_expired_application_modified_date_title">Expired certificate on:</string>
+    <string name="certificate_details_full_history_element_active_application_create_date_title">Application issued:</string>
+    <string name="certificate_details_full_history_element_active_application_number_title">Application number:</string>
+    <string name="certificate_details_full_history_element_active_application_modified_date_title">Renewal certificate on:</string>
+    <string name="certificate_details_full_history_element_valid_from_title">Valid from:</string>
+    <string name="certificate_details_full_history_element_valid_until_title">Valid until:</string>
+    <string name="certificate_details_full_history_element_reason_title">Reason:</string>
+
+    <!-- Certificate edit alias -->
+    <string name="certificate_edit_alias_screen_title">Certificate alias</string>
+    <string name="certificate_edit_alias_title">Alias:</string>
+    <string name="certificate_edit_alias_empty_error">Certificate alias cannot be empty</string>
+    <string name="certificate_edit_alias_confirm_button">Confirm</string>
+    <string name="certificate_edit_alias_success_message">Successfully set new certificate alias</string>
+
+    <!-- Certificate Stop -->
+    <string name="certificate_stop_screen_title">Application</string>
+    <string name="certificate_stop_title">Application for termination of certificate</string>
+    <string name="certificate_stop_reason_title">Reason:</string>
+    <string name="certificate_stop_input_reason_title">Description:</string>
+    <string name="certificate_stop_personal_data_title">Personal data</string>
+    <string name="certificate_stop_name_title">Name:</string>
+    <string name="certificate_stop_fathers_name_title">Father\'s name:</string>
+    <string name="certificate_stop_surname_title">Surname:</string>
+    <string name="certificate_stop_name_latin_title">Name (latin):</string>
+    <string name="certificate_stop_fathers_name_latin_title">Father\'s name (latin):</string>
+    <string name="certificate_stop_surname_latin_title">Surname (latin):</string>
+    <string name="certificate_stop_date_of_birth_title">Date of birth:</string>
+    <string name="certificate_stop_personal_document_title">Personal document</string>
+    <string name="certificate_stop_identifier_title">Identifier:</string>
+    <string name="certificate_stop_identifier_type_title">Identifier type:</string>
+    <string name="certificate_stop_citizenship_title">Citizenship:</string>
+    <string name="certificate_stop_document_number_title">Document number:</string>
+    <string name="certificate_stop_document_type_title">Document type:</string>
+    <string name="certificate_stop_issued_on_title">Issued on:</string>
+    <string name="certificate_stop_issued_from_title">Issued from:</string>
+    <string name="certificate_stop_valid_until_title">Valid until:</string>
+    <string name="certificate_stop_confirm_termination_title">Confirm termination</string>
+    <string name="certificate_stop_required_length_value_error">The value must be at least %s symbols</string>
+    <string name="certificate_stop_success_message">Certificate is stopped</string>
+    <string name="certificate_stop_invalid_identifier_egn_error">The identifier is not a valid EGN</string>
+    <string name="certificate_stop_invalid_identifier_lnch_error">The identifier is not a valid LNCH</string>
+
+    <!-- Certificate Revoke -->
+    <string name="certificate_revoke_screen_title">Application</string>
+    <string name="certificate_revoke_title">Application for revocation of certificate</string>
+    <string name="certificate_revoke_reason_title">Reason:</string>
+    <string name="certificate_revoke_input_reason_title">Description:</string>
+    <string name="certificate_revoke_personal_data_title">Personal data</string>
+    <string name="certificate_revoke_name_title">Name:</string>
+    <string name="certificate_revoke_fathers_name_title">Father\'s name:</string>
+    <string name="certificate_revoke_surname_title">Surname:</string>
+    <string name="certificate_revoke_name_latin_title">Name (latin):</string>
+    <string name="certificate_revoke_fathers_name_latin_title">Father\'s name (latin):</string>
+    <string name="certificate_revoke_surname_latin_title">Surname (latin):</string>
+    <string name="certificate_revoke_date_of_birth_title">Date of birth:</string>
+    <string name="certificate_revoke_personal_document_title">Personal document</string>
+    <string name="certificate_revoke_identifier_title">Identifier:</string>
+    <string name="certificate_revoke_identifier_type_title">Identifier type:</string>
+    <string name="certificate_revoke_citizenship_title">Citizenship:</string>
+    <string name="certificate_revoke_document_number_title">Document number:</string>
+    <string name="certificate_revoke_document_type_title">Document type:</string>
+    <string name="certificate_revoke_issued_on_title">Issued on:</string>
+    <string name="certificate_revoke_issued_from_title">Issued from:</string>
+    <string name="certificate_revoke_valid_until_title">Valid until:</string>
+    <string name="certificate_revoke_signing_type_title">Sign application with:</string>
+    <string name="certificate_revoke_confirm_termination_title">Confirm revocation</string>
+    <string name="certificate_revoke_required_length_value_error">The value must be at least %s symbols</string>
+    <string name="certificate_revoke_success_message">Certificate is revoked</string>
+    <string name="certificate_revoke_invalid_identifier_egn_error">The identifier is not a valid EGN</string>
+    <string name="certificate_revoke_invalid_identifier_lnch_error">The identifier is not a valid LNCH</string>
+
+    <!-- Certificate resume -->
+    <string name="certificate_resume_screen_title">Application</string>
+    <string name="certificate_resume_title">Application for resumption of certificate</string>
+    <string name="certificate_resume_reason_title">Reason:</string>
+    <string name="certificate_resume_input_reason_title">Description:</string>
+    <string name="certificate_resume_personal_data_title">Personal data</string>s
+    <string name="certificate_resume_name_title">Name:</string>
+    <string name="certificate_resume_fathers_name_title">Father\'s name:</string>
+    <string name="certificate_resume_surname_title">Surname:</string>
+    <string name="certificate_resume_name_latin_title">Name (latin):</string>
+    <string name="certificate_resume_fathers_name_latin_title">Father\'s name (latin):</string>
+    <string name="certificate_resume_surname_latin_title">Surname (latin):</string>
+    <string name="certificate_resume_date_of_birth_title">Date of birth:</string>
+    <string name="certificate_resume_personal_document_title">Personal document</string>
+    <string name="certificate_resume_identifier_title">Identifier:</string>
+    <string name="certificate_resume_identifier_type_title">Identifier type:</string>
+    <string name="certificate_resume_citizenship_title">Citizenship:</string>
+    <string name="certificate_resume_document_number_title">Document number:</string>
+    <string name="certificate_resume_document_type_title">Document type:</string>
+    <string name="certificate_resume_issued_on_title">Issued on:</string>
+    <string name="certificate_resume_issued_from_title">Issued from:</string>
+    <string name="certificate_resume_valid_until_title">Valid until:</string>
+    <string name="certificate_resume_signing_type_title">Sign application with:</string>
+    <string name="certificate_resume_confirm_termination_title">Confirm resumption</string>
+    <string name="certificate_resume_required_length_value_error">The value must be at least %s symbols</string>
+    <string name="certificate_resume_success_message">Certificate is resumed</string>
+    <string name="certificate_resume_invalid_identifier_egn_error">The identifier is not a valid EGN</string>
+    <string name="certificate_resume_invalid_identifier_lnch_error">The identifier is not a valid LNCH</string>
+
+    <!-- Tab More -->
+    <string name="tab_more_profile_section_title">MY PROFILE</string>
+    <string name="tab_more_profile_section_information">Profile information</string>
+    <string name="tab_more_profile_section_security">Profile security</string>
+    <string name="tab_more_profile_section_notifications_settings">Notification settings</string>
+    <string name="tab_more_profile_section_change_email">Change email</string>
+    <string name="tab_more_profile_section_change_password">Change password</string>
+    <string name="tab_more_profile_section_change_phone">Add/Change phone</string>
+    <string name="tab_more_profile_section_payment_history">Payment history</string>
+    <string name="tab_more_services_section_title">SERVICES</string>
+    <string name="tab_more_services_section_eid_management">Electronic identity management</string>
+    <string name="tab_more_services_section_empowerment_register">Empowerment register</string>
+    <string name="tab_more_services_section_journals">History of events</string>
+    <string name="tab_more_useful_section_title">USEFUL</string>
+    <string name="tab_more_useful_section_faq">Frequently asked questions</string>
+    <string name="tab_more_settings_section_title">SETTINGS</string>
+    <string name="tab_more_settings_section_settings">Settings</string>
+    <string name="tab_more_contacts">Contacts</string>
+    <string name="tab_more_terms_and_conditions">Terms and conditions</string>
+    <string name="tab_more_administrators">Administrators</string>
+    <string name="tab_more_centers_certification_services">Centers of certification services</string>
+    <string name="tab_more_providers_electronic_administrative_services">Providers of EAS</string>
+    <string name="tab_more_online_help_system">Online help system</string>
+    <string name="tab_more_electronic_delivery_system">Secure electronic delivery system</string>
+
+    <!-- Change user email -->
+    <string name="change_user_email_title">Change email</string>
+    <string name="change_user_email_input_email_title">New email address:</string>
+    <string name="change_user_email_confirm_button_title">Confirm</string>
+    <string name="change_user_email_back_button_title">Decline</string>
+    <string name="change_user_email_email_error">Enter a valid email</string>
+    <string name="change_user_email_leading_trailing_whitespace_error">The value must not begin or end with white space</string>
+    <string name="change_user_email_success_message">To confirm your email change, please check your email for an activation link.</string>
+
+    <!-- Change user password -->
+    <string name="change_user_password_title">Change password</string>
+    <string name="change_user_password_input_old_password_title">Old password:</string>
+    <string name="change_user_password_input_new_password_title">New password:</string>
+    <string name="change_user_password_input_confirm_new_password_title">Confirm password:</string>
+    <string name="change_user_password_confirm_button_title">Confirm</string>
+    <string name="change_user_password_back_button_title">Decline</string>
+    <string name="change_user_password_mismatch_error">Passwords don\'t match</string>
+    <string name="change_user_password_pattern_error">The password needs to have at least 8 characters with 1 upper case, 1 lower case, 1 number and 1 special character</string>
+    <string name="change_user_password_leading_trailing_whitespace_error">The value must not begin or end with white space</string>
+    <string name="change_user_password_success_message">You successfully changed your password.</string>
+
+    <!-- Certificates -->
+    <string name="certificate_expiring_soon">Expiring soon</string>
+
+    <!-- Empowerments from me -->
+    <string name="empowerments_from_me_inquiry_legal_entity_option">Inquiry legal entity</string>
+    <string name="empowerments_from_me_create_new_empowerment_option">Create new empowerment</string>
+    <string name="empowerments_from_me_options">Options</string>
+
+    <!-- Empowerments legal entity search -->
+    <string name="empowerments_inquiry_legal_entity_search_title">Legal entity check</string>
+    <string name="empowerments_inquiry_legal_entity_search_input_title">Bulstat of legal entity</string>
+    <string name="empowerments_inquiry_legal_entity_search_confirm_button_title">Make a reference</string>
+    <string name="empowerments_inquiry_legal_entity_search_invalid_input">Invalid EIK/Bulstat length</string>
+
+    <!-- Empowerments legal entity -->
+    <string name="empowerments_legal_entity_title">Reference by EIK: %s</string>
+
+    <!-- Empowerments entity filter -->
+    <string name="empowerments_entity_filter_status_title">Choose status:</string>
+    <string name="empowerments_entity_filter_on_behalf_off_title">On behalf of:</string>
+    <string name="empowerments_entity_filter_legal_entity_name_title">Name of legal entity:</string>
+    <string name="empowerments_entity_filter_empowerer_title">Empowerer:</string>
+    <string name="empowerments_entity_filter_supplier_title">Supplier of EAU:</string>
+    <string name="empowerments_entity_filter_service_title">Service:</string>
+    <string name="empowerments_entity_filter_eik_bulstat_title">UIC/Bulstat:</string>
+    <string name="empowerments_entity_filter_unlimited_title">Unlimited</string>
+    <string name="empowerments_entity_filter_end_date_title">At the latest by:</string>
+    <string name="empowerments_entity_filter_add_empowered_person_button_title">+ Add empowered person</string>
+    <string name="empowerments_entity_filter_identifier_title">Identifier:</string>
+    <string name="empowerments_entity_filter_egn_lnch_empowered_person_title">EGN/LNCH of empowered person:</string>
+    <string name="empowerments_entity_filter_apply_filters_button_title">Apply filters</string>
+    <string name="empowerments_entity_filter_clear_button_title">Clear</string>
+    <string name="empowerments_entity_filter_empowerment_number_section_title">Number</string>
+    <string name="empowerments_entity_filter_empowerment_number_title">Empowerment number:</string>
+    <string name="empowerments_entity_filter_status_section_title">Status</string>
+    <string name="empowerments_entity_filter_authorizer_section_title">Empowerer</string>
+    <string name="empowerments_entity_filter_service_section_title">Service</string>
+    <string name="empowerments_entity_filter_empowered_people_section_title">Empowered people</string>
+    <string name="empowerments_entity_filter_empty_supplier_title">First enter an EAU supplier</string>
+    <string name="empowerments_entity_filter_period_section_title">Validity period</string>
+    <string name="empowerments_entity_filter_invalid_egn_error">Invalid EGN</string>
+    <string name="empowerments_entity_filter_invalid_lnch_error">Invalid LNCH</string>
+
+    <!-- Empowerments entity sorting enum -->
+    <string name="empowerments_entity_by_default_sorting_enum">By default</string>
+    <string name="empowerments_entity_created_on_asc_sorting_enum">Created on(asc.)</string>
+    <string name="empowerments_entity_created_on_desc_sorting_enum">Created on(desc.)</string>
+    <string name="empowerments_entity_on_behalf_off_asc_sorting_enum">On behalf off(asc.)</string>
+    <string name="empowerments_entity_on_behalf_off_desc_sorting_enum">On behalf off(desc.)</string>
+    <string name="empowerments_entity_provider_asc_sorting_enum">Provider(asc.)</string>
+    <string name="empowerments_entity_provider_desc_sorting_enum">Provider(desc.)</string>
+    <string name="empowerments_entity_service_asc_sorting_enum">Service(asc.)</string>
+    <string name="empowerments_entity_service_desc_sorting_enum">Service(desc.)</string>
+    <string name="empowerments_entity_status_asc_sorting_enum">Status(asc.)</string>
+    <string name="empowerments_entity_status_desc_sorting_enum">Status(desc.)</string>
+    <string name="empowerments_entity_number_asc_sorting_enum">Number(asc.)</string>
+    <string name="empowerments_entity_number_desc_sorting_enum">Number(desc.)</string>
+    <string name="empowerments_entity_empowerer_asc_sorting_enum">Empowerer(asc.)</string>
+    <string name="empowerments_entity_empowerer_desc_sorting_enum">Empowerer(desc.)</string>
+    <string name="empowerments_entity_identifier_asc_sorting_enum">Identifier(asc.)</string>
+    <string name="empowerments_entity_identifier_desc_sorting_enum">Identifier(desc.)</string>
+
+    <!-- Empowerments entity statuses -->
+    <string name="empowerments_entity_statuses_all_status_title">All</string>
+    <string name="empowerments_entity_statuses_active_status_title">Active</string>
+    <string name="empowerments_entity_statuses_disagreement_declared_status_title">Disagreement declared</string>
+    <string name="empowerments_entity_statuses_withdrawn_status_title">Withdrawn</string>
+    <string name="empowerments_entity_statuses_verified_status_title">Verified</string>
+    <string name="empowerments_entity_statuses_created_status_title">In progress</string>
+    <string name="empowerments_entity_statuses_expired_status_title">Expired</string>
+    <string name="empowerments_entity_statuses_denied_status_title">Denied</string>
+    <string name="empowerments_entity_statuses_collecting_authorizer_signatures_status_title">Awaiting signature</string>
+    <string name="empowerments_entity_statuses_collecting_withdrawal_signatures_status_title">Awaiting signature</string>
+    <string name="empowerments_entity_statuses_awaiting_signature_status_title">Awaiting signature</string>
+    <string name="empowerments_entity_statuses_unconfirmed_status_title">Unconfirmed</string>
+    <string name="empowerments_entity_statuses_upcoming_status_title">Upcoming</string>
+
+    <!-- Empowerments entity on behalf off enum -->
+    <string name="empowerments_entity_on_behalf_off_individual_enum_type">Individual</string>
+    <string name="empowerments_entity_on_behalf_off_legal_entity_enum_type">Legal entity</string>
+
+    <!-- Empowerement create -->
+    <string name="empowerment_create_screen_title">Empowerments</string>
+    <string name="empowerment_create_required_length_value_error">The value must be at least %s symbols</string>
+    <string name="empowerment_create_names_uppercase_error">The name must begin with uppercase character</string>
+    <string name="empowerment_create_names_leading_trailing_whiespace_error">The value must not begin or end with white space</string>
+    <string name="empowerment_create_invalid_identifier_egn_error">The identifier is not a valid EGN</string>
+    <string name="empowerment_create_duplicate_identifier_egn_error">The given EGN is already used</string>
+    <string name="empowerment_create_empowerment_self_error">You can not empower yourself</string>
+    <string name="empowerment_create_empowerment_self_as_representative_error">You can not empower yourself when you are the only legal representative</string>
+    <string name="empowerment_create_invalid_identifier_lnch_error">The identifier is not a valid LNCH</string>
+    <string name="empowerment_create_duplicate_identifier_lnch_error">The given LNCH is already used</string>
+    <string name="empowerment_create_required_bulstat_length_error">The BULSTAT can not be less than %s symbols</string>
+    <string name="empowerment_create_invalid_bulstat_error">Invalid BULSTAT</string>
+    <string name="empowerment_create_choose_value_error">Please choose a value</string>
+    <string name="empowerment_create_submit_application_title">Submit an application</string>
+    <string name="empowerment_create_applicant_title">Applicant</string>
+    <string name="empowerment_create_identifier_title">Identifier:</string>
+    <string name="empowerment_create_choose_identifier_type_hint">Choose an identifier type first</string>
+    <string name="empowerment_create_identifier_number_title">Identifier number:</string>
+    <string name="empowerment_create_names_title">Names on personal document:</string>
+    <string name="empowerment_create_legal_representative_names_title">Names on personal document:</string>
+    <string name="empowerment_create_legal_representatives_title">Legal representatives</string>
+    <string name="empowerment_create_empowerment_title">Empowerment</string>
+    <string name="empowerment_create_empowered_persons_title">Empowered persons</string>
+    <string name="empowerment_create_on_behalf_of_title">On behalf of:</string>
+    <string name="empowerment_create_add_empowered_person_button_title">+ Add empowered person</string>
+    <string name="empowerment_create_add_legal_representative_button_title">+ Add representative</string>
+    <string name="empowerment_create_type_of_empowerment_title">Type of empowerment:</string>
+    <string name="empowerment_create_supplier_name_title">Supplier name:</string>
+    <string name="empowerment_create_service_title">Service:</string>
+    <string name="empowerment_create_volume_of_representation_title">Volume of representation:</string>
+    <string name="empowerment_create_start_date_title">Start date:</string>
+    <string name="empowerment_create_end_date_title">End date:</string>
+    <string name="empowerment_create_issuer_position_title">Issuer position:</string>
+    <string name="empowerment_create_company_number_title">Company number by EIK:</string>
+    <string name="empowerment_create_legal_entity_name">Legal entity name:</string>
+    <string name="empowerment_create_preview_and_save_button_title">Preview and save</string>
+    <string name="empowerment_create_preview_button_title">Preview</string>
+    <string name="empowerment_create_submission_button_title">Submission</string>
+    <string name="empowerment_create_success_message">You have created an empowerment, please sign on the "From Me" page</string>
+    <string name="empowerment_create_empowerment_type_separate_enum_type">Separate</string>
+    <string name="empowerment_create_empowerment_type_together_enum_type">Together</string>
+    <string name="empowerment_create_indefinite_empowerment_message">The empowerment you are creating will not be limited in time.</string>
+
+    <!-- Empowerment signing -->
+    <string name="empowerment_signing_sign_button_title">Sign empowerment</string>
+
+    <!-- Empowerments legal entity filter -->
+    <string name="empowerments_legal_entity_filter_status_title">Status:</string>
+    <string name="empowerments_legal_entity_filter_service_title">Service:</string>
+    <string name="empowerments_legal_entity_filter_empty_supplier_title">First enter an EAU supplier</string>
+    <string name="empowerments_legal_entity_filter_term_title">Term:</string>
+    <string name="empowerments_legal_entity_filter_empty_type_title">First select an ID type</string>
+
+    <!-- Forgotten password -->
+    <string name="forgotten_password_title">Forgotten password</string>
+    <string name="forgotten_password_disclaimer">Please enter the names in Cyrillic as they appear on your ID.</string>
+    <string name="forgotten_password_input_name_title">Name by identity document:</string>
+    <string name="forgotten_password_input_surname_title">Surname by identity document:</string>
+    <string name="forgotten_password_input_fathers_name_title">Father\'s name by identity document:</string>
+    <string name="forgotten_password_input_email_title">Email:</string>
+    <string name="forgotten_password_change_password_button_title">Change password</string>
+    <string name="forgotten_password_success_message">You successfully reset your password. Please, check your inbox for the reset link we\'ve send.</string>
+
+    <!-- Create application -->
+    <string name="create_application_field_length_error">The field must be at least %s symbols</string>
+    <string name="create_application_leading_trailing_whitespace_error">The value must not begin or end with white space</string>
+    <string name="create_application_names_uppercase_error">The name must begin with uppercase character</string>
+    <string name="create_application_forname_latin_title">Latin forname:</string>
+    <string name="create_application_father_name_latin_title">Latin father\'s name:</string>
+    <string name="create_application_surname_latin_title">Latin surname:</string>
+    <string name="create_application_citizenship_title">Citizenship:</string>
+    <string name="create_application_identifier_type_title">Identifier type:</string>
+    <string name="create_application_identifier_number_title">Identifier number:</string>
+    <string name="create_application_date_of_birth_title">Date of birth:</string>
+    <string name="create_application_document_type_title">Document type:</string>
+    <string name="create_application_document_number_title">Document number:</string>
+    <string name="create_application_date_of_issue_title">Date of issue:</string>
+    <string name="create_application_valid_until_title">Valid until:</string>
+    <string name="create_application_issued_from_title">Issued from:</string>
+    <string name="create_application_electronic_identity_administrator_title">Electronic identity administrator:</string>
+    <string name="create_application_administrator_office_title">Administrator\'s office:</string>
+    <string name="create_application_carrier_title">Carrier:</string>
+    <string name="create_application_comment_title">Comment:</string>
+    <string name="create_application_comment">If you are not registered in the Secure Electronic Delivery System (SEDS) and have not provided a phone number in your profile, when issuing an electronic identity certificate, it will be recorded only on the selected electronic carrier and will not be delivered through SEDS.</string>
+    <string name="create_application_certificate_alias_title">Certificate alias:</string>
+    <string name="create_application_signing_type_title">Sign application with:</string>
+    <string name="create_application_preview_button_title">Preview</string>
+    <string name="create_application_cancel_button_title">Cancel</string>
+    <string name="create_application_sign_button_title">Sign</string>
+    <string name="create_application_send_button_title">Send</string>
+    <string name="create_application_edit_button_title">Edit</string>
+    <string name="create_application_document_type_enum_identity_card_title">Bulgarian identity card with chip</string>
+    <string name="create_application_screen_title">Application</string>
+    <string name="create_application_title">Creating an application for issuance/renewal of an electronic identity certificate</string>
+    <string name="create_application_personal_data_title">Personal data from an identity document</string>
+    <string name="create_application_additional_information_title">Additional information</string>
+    <string name="create_application_choose_administrator_warning">Please choose administrator first</string>
+    <string name="create_application_choose_carrier_warning">Please choose carrier first</string>
+    <string name="create_application_personal_document_title">Personal document</string>
+    <string name="create_application_invalid_egn_error">Invalid EGN</string>
+    <string name="create_application_invalid_lnch_error">Invalid LNCH</string>
+    <string name="create_application_invalid_identifier_error">Invalid identifier</string>
+    <string name="create_application_success_message">Successfully sent application</string>
+    <string name="create_application_success_confirm_message">Successfully verified application and stored certificate</string>
+    <string name="create_application_create_pin_title">You must create a PIN for access. Please enter a PIN</string>
+    <string name="create_application_confirm_pin_title">Please confirm PIN</string>
+    <string name="create_application_finish_pin_title">Please press "Complete"</string>
+
+    <!-- Change user information -->
+    <string name="change_citizen_information_screen_title">Change personal information</string>
+    <string name="change_citizen_information_name_title">Name by identity document:</string>
+    <string name="change_citizen_information_surname_title">Surname by identity document:</string>
+    <string name="change_citizen_information_fathers_name_title">Father\'s name by identity document:</string>
+    <string name="change_citizen_information_name_latin_title">Name in latin by identity document:</string>
+    <string name="change_citizen_information_fathers_name_latin_title">Father\'s name in latin by identity document:</string>
+    <string name="change_citizen_information_surname_latin_title">Surname in latin by identity document:</string>
+    <string name="change_citizen_information_phone_title">Phone number:</string>
+    <string name="change_citizen_information_success_message">You successfully changed your information.</string>
+    <string name="change_citizen_information_names_length_error">The field must be at least %s symbols</string>
+    <string name="change_citizen_information_names_uppercase_error">The name must begin with uppercase character</string>
+    <string name="change_citizen_information_phone_error">Enter a valid phone number</string>
+
+    <!-- Citizen information -->
+    <string name="citizen_information_screen_title">Profile information</string>
+    <string name="citizen_information_personal_data_title">PERSONAL DATA</string>
+    <string name="citizen_information_name_title">Name by identity document:</string>
+    <string name="citizen_information_fathers_name_title">Father\'s name by identity document:</string>
+    <string name="citizen_information_surname_title">Surname by identity document:</string>
+    <string name="citizen_information_name_latin_title">Name in latin by identity document:</string>
+    <string name="citizen_information_fathers_name_latin_title">Father\'s name in latin by identity document:</string>
+    <string name="citizen_information_surname_latin_title">Surname in latin by identity document:</string>
+    <string name="citizen_information_contacts_title">CONTACTS</string>
+    <string name="citizen_information_profile_security_title">PROFILE SECURITY</string>
+    <string name="citizen_information_multi_factor_authentication_title">Two-factor authentication</string>
+    <string name="citizen_information_electronic_identity_title">ELECTRONIC IDENTITY</string>
+    <string name="citizen_information_electronic_identity_number_title">Electronic identity number:</string>
+    <string name="citizen_information_email_title">Email:</string>
+    <string name="citizen_information_mobile_phone_title">Phone number:</string>
+    <string name="citizen_information_change_password_button_title">Change password</string>
+    <string name="citizen_information_change_associate_eid_button_title">Associate\nelectronic identifier</string>
+    <string name="citizen_information_change_associate_eid_successful_message">Successfully associated eID with base profile.</string>
+
+    <!-- FAQ -->
+    <string name="faq_title">Frequently asked questions</string>
+
+    <!-- Contacts -->
+    <string name="contacts_title">Contacts</string>
+
+    <!-- Terms and conditions -->
+    <string name="terms_and_conditions_title">Terms and conditions</string>
+
+    <!-- Tab application/certificates -->
+    <string name="tab_applications_certificates_change_card_pin">Change card PIN</string>
+
+    <!-- Online help system -->
+    <string name="online_help_system">Online help system</string>
+
+    <!-- Change certificate PIN -->
+    <string name="change_certificate_pin_title">Change PIN</string>
+    <string name="change_certificate_pin_disclaimer_text">Enter the PIN code of the personal document</string>
+    <string name="change_certificate_pin_enter_current_pin_title">Enter current PIN</string>
+    <string name="change_certificate_pin_enter_can_title">Enter CAN</string>
+    <string name="change_certificate_pin_enter_new_pin_title">Enter new PIN</string>
+    <string name="change_certificate_pin_confirm_new_pin_title">Confirm new PIN</string>
+    <string name="change_certificate_pin_change_pin_button_title">Change PIN</string>
+    <string name="change_certificate_pin_pin_length_error">The PIN code must be %s digits</string>
+    <string name="change_certificate_pin_current_pin_match_stored_pin_error">The entered PIN does not matches the certificate</string>
+    <string name="change_certificate_pin_current_pin_match_error">The new PIN matches the old one and can\'t be used</string>
+    <string name="change_certificate_pin_pin_mismatch_error">Pin code mismatch</string>
+    <string name="change_certificate_pin_card_success_message">Pin successfully changed</string>
+    <string name="change_certificate_pin_certificate_success_message">Pin successfully changed</string>
+
+    <!-- Bottom sheet scan NFC card -->
+    <string name="bottom_sheet_scan_nfc_card_scan_title">Please put the card on your phone</string>
+    <string name="bottom_sheet_scan_nfc_card_processing_title">Please keep the card steady</string>
+    <string name="bottom_sheet_scan_nfc_card_scan_succees_title">The operation was successful</string>
+    <string name="bottom_sheet_scan_nfc_card_scan_error_title">There was an error during the operation</string>
+
+    <!-- NFC card error -->
+    <string name="nfc_card_scan_pin_not_activated_error">Card PIN not activated. Please visit issuer office.</string>
+    <string name="nfc_card_scan_pace_malformed_certificate_failed_error">The stored certificate on the card is malformed.</string>
+    <string name="nfc_card_scan_pace_someone_else_eid_card_failed_error">You are trying to change the PIN of an eID card which does not belong to you.</string>
+    <string name="nfc_card_scan_communication_failed_error">Establishing card communication failed. Please try again.</string>
+    <string name="nfc_card_scan_communication_lost_error">Communication with the card failed. Please try again.</string>
+    <string name="nfc_card_scan_wrong_pin_last_try_error">There was an error processing the entered PIN. You don\'t have any more tries left.</string>
+    <string name="nfc_card_scan_wrong_pin_next_try_error">There was an error processing the entered PIN. You have one more try left.</string>
+    <string name="nfc_card_scan_suspended_error">The entered PIN is wrong.</string>
+    <string name="nfc_card_scan_block_card_error">Card is blocked. Please visit issuer office.</string>
+
+    <!-- Empowerment details -->
+    <string name="empowerment_details_preview_title">Preview empowerment</string>
+    <string name="empowerment_details_signing_title">Sign empowerment</string>
+    <string name="empowerment_details_title">Empowerment details</string>
+    <string name="empowerment_details_number_title">Number:</string>
+    <string name="empowerment_details_status_title">Status:</string>
+    <string name="empowerment_details_reason_title">Reason:</string>
+    <string name="empowerment_details_onbehalfof_title">On behalf of:</string>
+    <string name="empowerment_details_onbehalfof_individual_enum_type">Individual</string>
+    <string name="empowerment_details_onbehalfof_legal_entity_enum_type">Legal entity</string>
+    <string name="empowerment_details_from_id_individual_title">EGN/LNCH number of the applicant:</string>
+    <string name="empowerment_details_empowerment_type_title">Empowerment type:</string>
+    <string name="empowerment_details_empowerment_type_together_title">Together only</string>
+    <string name="empowerment_details_empowerment_type_together_description">The empowerment is valid only upon the statement of all empowered people!</string>
+    <string name="empowerment_details_from_id_legal_entity_title">EIC/Bulstat of the legal entity:</string>
+    <string name="empowerment_details_name_title">Name:</string>
+    <string name="empowerment_details_legal_entity_name_title">Legal entity name:</string>
+    <string name="empowerment_details_legal_representatives_title">Legal representatives:</string>
+    <string name="empowerment_details_empowered_people_ids_title">EGN/LNCH of empowered people:</string>
+    <string name="empowerment_details_services_provider_title">Services provider:</string>
+    <string name="empowerment_details_service_title">Service:</string>
+    <string name="empowerment_details_scope_title">Extent of representative authority:</string>
+    <string name="empowerment_details_empowerment_history_title">Empowerment history</string>
+    <string name="empowerment_details_start_date_title">Valid from:</string>
+    <string name="empowerment_details_submitted_on_title">Submitted on:</string>
+    <string name="empowerment_details_end_date_title">Valid until:</string>
+    <string name="empowerment_details_indefinitely">Indefinitely</string>
+
+    <!-- Empowerment details statement statuses -->
+    <string name="empowerment_details_statement_statuses_none_status_title">None</string>
+    <string name="empowerment_details_statement_statuses_active_status_title">Effective on:</string>
+    <string name="empowerment_details_statement_statuses_disagreement_declared_status_title">Declared disagreement on:</string>
+    <string name="empowerment_details_statement_statuses_withdrawn_status_title">Withdrawn on:</string>
+    <string name="empowerment_details_statement_statuses_created_status_title">Submitted to:</string>
+    <string name="empowerment_details_statement_statuses_denied_status_title">Denied on:</string>
+    <string name="empowerment_details_statement_statuses_collecting_authorizer_signatures_status_title">Signed on:</string>
+    <string name="empowerment_details_statement_statuses_collecting_withdrawal_signatures_status_title">Awaiting withdrawal signature on:</string>
+    <string name="empowerment_details_statement_statuses_awaiting_signature_status_title">Awaiting signature on:</string>
+    <string name="empowerment_details_statement_statuses_unconfirmed_status_title">Entered on:</string>
+
+    <!-- Empowerment details denial reason statuses -->
+    <string name="empowerment_details_denial_reason_deceased_uid_enum_type">The applicant or empowered person is deceased.</string>
+    <string name="empowerment_details_denial_reason_prohibited_uid_enum_type">The applicant or empowered person is under prohibition.</string>
+    <string name="empowerment_details_denial_reason_ntr_check_failed_enum_type">Discrepancy in the provided data with the Commercial Register.</string>
+    <string name="empowerment_details_denial_reason_timed_out_enum_type">Unsuccessful check in the Commercial Register.</string>
+    <string name="empowerment_details_denial_reason_below_lawful_age_enum_type">The applicant or empowered person is under 18 years old.</string>
+    <string name="empowerment_details_denial_reason_no_permit_enum_type">The authorized person or authorized representative does not have the right of residence.</string>
+    <string name="empowerment_details_denial_reason_lawful_age_info_not_available_enum_type">Information about the lawful age is not available.</string>
+    <string name="empowerment_details_denial_reason_unsuccessful_restrictions_check_enum_type">Unsuccessful check for restrictions and encumbrances.</string>
+    <string name="empowerment_details_denial_reason_legal_entity_not_active_enum_type">The legal entity is not active.</string>
+    <string name="empowerment_details_denial_reason_legal_entity_representation_not_match_enum_type">Discrepancy in the legal representatives.</string>
+    <string name="empowerment_details_denial_reason_unsuccessful_legal_entity_check_enum_type">Unsuccessful check for the legal entity.</string>
+    <string name="empowerment_details_denial_reason_empowerment_statement_not_found_enum_type">The empowerment was not found.</string>
+    <string name="empowerment_details_denial_reason_bulstat_check_failed_enum_type">BULSTAT check failed.</string>
+    <string name="empowerment_details_denial_reason_reregistered_in_ntr_enum_type">Reregistered in NTR.</string>
+    <string name="empowerment_details_denial_reason_archived_in_bulstat_enum_type">Archived in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_in_insolvency_proceedings_in_bulstat_enum_type">In insolvency proceedings in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_insolvent_in_bulstat_enum_type">Insolvent in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_in_liquidation_in_bulstat_enum_type">In liquidation in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_inactive_in_bulstat_enum_type">Inactive in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_closed_in_bulstat_enum_type">Closed in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_terminated_through_merger_in_bulstat_enum_type">Terminated through merger in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_terminated_through_incorporation_in_bulstat_enum_type">Terminated through incorporation in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_terminated_through_division_in_bulstat_enum_type">Terminated through division in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_deleted_from_judicial_register_enum_type">Deleted from judicial register.</string>
+    <string name="empowerment_details_denial_reason_deleted_from_btpp_register_enum_type">Deleted from BTPP register.</string>
+    <string name="empowerment_details_denial_reason_registration_annulled_in_bulstat_enum_type">Registration annulled in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_terminated_due_to_enterprise_transaction_in_bulstat_enum_type">Terminated due to enterprise transaction in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_deregistered_in_bulstat_enum_type">Deregistered in BULSTAT.</string>
+    <string name="empowerment_details_denial_reason_unsuccessful_timestamping_enum_type">Unsuccessful timestamping.</string>
+    <string name="empowerment_details_denial_reason_signature_collection_time_out_enum_type">Unsuccessful signature collection.</string>
+    <string name="empowerment_details_denial_reason_invalid_uid_registration_status_detected_enum_type">There are individuals with mismatched names in the list of empowered persons.</string>
+    <string name="empowerment_details_denial_reason_denied_by_deau_administrator_enum_type">Denied by DEAU administrator.</string>
+    <string name="empowerment_details_denial_reason_uids_registration_status_info_not_available_enum_type">No information received for the profiles of empowered persons.</string>
+    <string name="empowerment_details_denial_reason_registration_status_unavailable_enum_type">System error.</string>
+    <string name="empowerment_details_denial_reason_inactive_profile_enum_type">The list of described persons includes individuals who either do not have an electronic identity, a registered profile in CSEI, or the two are not linked.</string>
+    <string name="empowerment_details_denial_reason_no_base_profile_enum_type">The list of described persons includes individuals who either do not have an electronic identity, a registered profile in CSEI, or the two are not linked.</string>
+    <string name="empowerment_details_denial_reason_name_mismatch_enum_type">The list of described persons includes individuals with mismatched names.</string>
+    <string name="empowerment_details_denial_reason_no_registration_enum_type">The list of described persons includes individuals who either do not have an electronic identity, a registered profile in CSEI, or the two are not linked.</string>
+
+    <!-- Empowerment signing -->
+    <string name="empowerment_signing_no_option_error">Choose signing option</string>
+    <string name="empowerment_signing_signed_status">Signed</string>
+    <string name="empowerment_signing_success_message">Empowerment signed successfully</string>
+
+    <!-- Enter card PIN -->
+    <string name="enter_card_pin_title">Login</string>
+    <string name="enter_card_pin_current_pin_title">Enter the PIN code of the personal document.</string>
+    <string name="enter_card_can_title">Enter the CAN code of the personal document.</string>
+    <string name="enter_card_pin_login_button_title">Login</string>
+
+    <!-- Tab requests -->
+    <string name="tab_requests_title">Pending requests</string>
+    <string name="tab_requests_element_accept_button_title">Accept</string>
+    <string name="tab_requests_element_decline_button_title">Decline</string>
+
+    <!-- Card PIN bottom sheet -->
+    <string name="bottom_sheet_card_pin_title">Authenticate</string>
+    <string name="bottom_sheet_card_pin_description_title">Enter the PIN code of the personal document.</string>
+    <string name="bottom_sheet_card_can_description_title">Enter the CAN code of the personal document.</string>
+    <string name="bottom_sheet_card_pin_button_title">Authenticate</string>
+
+    <!-- Application confirm PIN bottom sheet -->
+    <string name="bottom_sheet_application_confirm_pin_title">Complete creation of mobile eID</string>
+    <string name="bottom_sheet_application_confirm_pin_description">To access the mobile eID you need to create a PIN. Please enter a PIN.</string>
+    <string name="bottom_sheet_application_confirm_pin_description_confirm">Please confirm the PIN.</string>
+    <string name="bottom_sheet_application_confirm_pin_description_ready">Please press the `Complete` button</string>
+    <string name="bottom_sheet_application_confirm_pin_button_title">Complete</string>
+    <string name="bottom_sheet_application_confirm_pin_cancelation_message">You are going to cancel creation of PIN for mobile certificate. Doing so, you will need to start the whole process anew. Are you sure?</string>
+
+    <!-- Pin creation errors -->
+    <string name="confirm_pin_error_not_match">The provided PIN does not match the previously entered one.</string>
+    <string name="confirm_pin_error_repetition_or_consecutive_digits">The PIN is not strong enough. Your PIN cannot contain number sequences or repeated characters.</string>
+
+    <!-- Enter certificate PIN -->
+    <string name="enter_certificate_pin_title">Login</string>
+    <string name="enter_certificate_pin_current_pin_title">Enter PIN</string>
+    <string name="enter_certificate_pin_login_button_title">Login</string>
+
+    <!-- Certificates filter -->
+    <string name="certificates_filter_serial_number_title">Certificate number:</string>
+    <string name="certificates_filter_alias_title">Certificate alias:</string>
+    <string name="certificates_filter_issued_on_title">Issued on:</string>
+    <string name="certificates_filter_valid_until_title">Valid until:</string>
+    <string name="certificates_filter_status_title">Status:</string>
+    <string name="certificates_filter_carrier_title">Carrier:</string>
+    <string name="certificates_filter_administrator_title">Administrator:</string>
+    <string name="certificates_filter_apply_filter_button_title">Apply filters</string>
+    <string name="certificates_filter_clear_button_title">Clear</string>
+
+    <!-- Applications filter -->
+    <string name="applications_filter_identifier_title">Identifier:</string>
+    <string name="applications_filter_application_number_title">Application number:</string>
+    <string name="applications_filter_creation_date_title">Creation date:</string>
+    <string name="applications_filter_status_title">Status:</string>
+    <string name="applications_filter_carrier_title">Carrier:</string>
+    <string name="applications_filter_administrator_title">Administrator:</string>
+    <string name="applications_filter_subject_title">Subject:</string>
+    <string name="applications_filter_apply_filter_button_title">Apply filters</string>
+    <string name="applications_filter_clear_button_title">Clear</string>
+
+    <!-- Application details -->
+    <string name="application_details_screen_title">Application</string>
+    <string name="application_details_title">Application details:</string>
+    <string name="application_details_application_number_title">Application number:</string>
+    <string name="application_details_certificate_number_title">Certificate number:</string>
+    <string name="application_details_status_title">Status:</string>
+    <string name="application_details_payment_code_title">Payment code:</string>
+    <string name="application_details_reason_title">Reason:</string>
+    <string name="application_details_created_on_title">Created on:</string>
+    <string name="application_details_submitted_to_title">Submitted to:</string>
+    <string name="application_details_administrator_office_title">Administrator office:</string>
+    <string name="application_details_carrier_title">Carrier:</string>
+    <string name="application_details_applicant_personal_details_title">Applicant personal data from an identity document:</string>
+    <string name="application_details_names_title">Names:</string>
+    <string name="application_details_date_of_birth_title">Date of birth:</string>
+    <string name="application_details_email_title">Email:</string>
+    <string name="application_details_phone_number_title">Phone number:</string>
+    <string name="application_details_identification_number_type_title">Identification number type:</string>
+    <string name="application_details_identification_number_title">Identification number:</string>
+    <string name="application_details_document_type_title">Document type:</string>
+    <string name="application_details_document_number_title">Document number:</string>
+    <string name="application_details_issued_on_title">Issued on:</string>
+    <string name="application_details_valid_until_title">Valid until:</string>
+    <string name="application_details_continue_creation_process_button_title">Continue the creation process</string>
+    <string name="application_details_confirm_certificate_revoke_button_title">Confirm certificate revocation</string>
+    <string name="application_details_confirm_certificate_stop_button_title">Confirm certificate termination</string>
+    <string name="application_details_confirm_certificate_resume_button_title">Confirm certificate resumption</string>
+    <string name="application_details_payment_button_title">Payment</string>
+    <string name="application_details_back_button_title">Back</string>
+
+    <!-- Languages -->
+    <string name="bulgarian">Български</string>
+    <string name="english">English</string>
+
+    <!-- Certificate statuses -->
+    <string name="certificate_statuses_enum_active_title">Active</string>
+    <string name="certificate_statuses_enum_invalid_title">Invalid</string>
+    <string name="certificate_statuses_enum_stopped_title">Stopped</string>
+    <string name="certificate_statuses_enum_signed_title">Signed</string>
+    <string name="certificate_statuses_enum_created_title">Created</string>
+    <string name="certificate_statuses_enum_revoked_title">Revoked</string>
+    <string name="certificate_statuses_enum_expired_title">Expired</string>
+
+    <!-- Application statuses -->
+    <string name="application_statuses_enum_paid_title">Paid</string>
+    <string name="application_statuses_enum_denied_title">Denied</string>
+    <string name="application_statuses_enum_signed_title">Signed</string>
+    <string name="application_statuses_enum_approved_title">Approved</string>
+    <string name="application_statuses_enum_submitted_title">Submitted</string>
+    <string name="application_statuses_enum_completed_title">Completed</string>
+    <string name="application_statuses_enum_processing_title">Processing</string>
+    <string name="application_statuses_enum_pending_payment_title">Pending payment</string>
+    <string name="application_statuses_enum_payment_expired_title">Payment expired</string>
+    <string name="application_statuses_enum_pending_signature_title">Pending signature</string>
+    <string name="application_statuses_enum_stored_certificate_title">Stored certificate</string>
+    <string name="application_statuses_enum_generated_certificate_title">Generated certificate</string>
+
+    <!-- Information bottom sheet -->
+    <string name="bottom_sheet_information_registration"><![CDATA[<p>This portal allows you to create a user profile using an email address, a password and your name as it appears on your identity document. The password must be eight characters long and contain at least two letters, one of which must be capitalized, a number and a special symbol. Through the created unique user profile, you have access to:</p><ul><li><p>View data and add authentication means to the profile</p></li><li><p>Request electronic administrative services</p></li><li><p>View status of services requested by you</p></li><li><p>View payments made</p></li><li><p>History of events in the system</p></li><li><p>Manage notifications</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_empowerment_creation"><![CDATA[<p><strong>Filling out a new empowerment statement &nbsp;</strong>- At this stage, you need to complete the information for the empowerment:</p><p><strong>Applicant data</strong>:</p><ul><li><p><strong>On behalf of</strong>:&nbsp;You can choose one of the following options:<br/>*“Individual” - to issue a new empowerment on your behalf.<br/>*"Legal entity" - to issue a new empowerment on behalf of a legal entity you are part of.</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_empowerment_creation_individual"><![CDATA[<p><strong>Filling out an authorization statement </strong>- Fill in the authorization information:</p><p><strong>Applicant details:</strong></p><ul><li><p><strong>On behalf of:</strong> Select the “Individual” option to issue a statement on your behalf.</p></li></ul><p><strong>Authorized persons:</strong></p><ul><li><p><strong>Identifier:</strong> Select a Personal Identification Number (PIN) or a Personal Foreign Number (LNCh).</p></li><li><p><strong>Authorized person’s PIN/LNch:</strong> Enter valid data for the individuals you wish to authorize</p></li></ul><p>*You can authorize more than one person using the “Add Authorized Person +” button.</p><p><strong>Authorization:</strong></p><ul><li><p><strong>Authorization type:</strong> When more than one authorized person is added, the “Authorization Type” field appears, in which you must select whether the authorized persons will be able to use the authorization “Only together” or “Separately”:</p></li></ul><p>*With “Only together”, one authorization is created, which must be signed by you. The authorization can only be used when the authorized persons identify themselves to the Electronic Administrative Services Provider together.</p><p>*With “Separately”, as many authorizations are created as there are authorized persons. Each authorization is signed separately.</p><ul><li><p><strong>Service Provider:</strong> Select the provider of the service for which you want the authorization to be valid.</p></li><li><p><strong>Service:</strong> Select a service that the authorized person can perform on your behalf.</p></li><li><p><strong>Scope of the representative authority:</strong> Select the scope of the representative authority for the specific service.</p></li><li><p><strong>Start date:</strong> Select the date from which the authorization will enter into force.</p></li><li><p><strong>End date:</strong> Select the date until which the authorization will be valid.</p></li></ul><p><strong>*Important!:</strong> If no end date is specified, the authorization automatically becomes indefinite.</p><p><strong>Submitting the authorization statement </strong>- Carefully check the information entered, make sure that all data is correct and submit the statement.</p><ul><li><p>After successfully submitting an authorization statement, it will be visible in the "Authorizations from me" section with the status "Sign".</p></li><li><p>To complete the process of submitting the new authorization, you must follow the steps for signing with a Qualified Electronic Signature.</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_empowerment_creation_legal_entity"><![CDATA[<p><strong>Filling out a new empowerment statement &nbsp;</strong>- At this stage, you need to complete the information for the empowerment:</p><p><strong>Applicant data:</strong></p><ul><li><p><strong>On behalf of: &nbsp;</strong>Select the "Legal entity" option to issue a statement on behalf of the legal entity you are part of.</p></li><li><p><strong>As: &nbsp;</strong>Fill in the position you hold within the legal entity.</p></li><li><p><strong>EIC/Bulstat of the legal entity:</strong> Enter a valid EIC/BULSTAT of the legal entity.</p></li><li><p><strong>Legal Entity Name:</strong> Fill in the name of the legal entity.</p></li></ul><p><strong>Legal Representatives:</strong></p><ul><li><p><strong>Identifier:</strong> Select either EGN (<em>*for Bulgarian citizens only</em>) or  &nbsp;LNCH.</p></li><li><p><strong>EGN/LNCH of legal representative:</strong> Enter a valid Uniform civil number (EGN) or Personal foreigner number (LNCH) (depending on the selected identifier);</p></li><li><p><strong>Names of legal representative:</strong> Fill in the full name of the legal representative as per their ID card in Bulgarian. &nbsp;</p></li></ul><p><strong>*Important!:</strong> If the representation of the legal entity is “Jointly” or “In Another Manner,” you must provide the details for each legal representative who has the right to authorize. You can add additional fields by using the “Add legal representatives +” button.</p><p><strong>Empowered persons:</strong></p><ul><li><p><strong>Identifier:</strong> Select either EGN (<em>*for Bulgarian citizens only</em>) or  &nbsp;LNCH.</p></li><li><p><strong>EGN/LNCH number of the <span>empowered &nbsp;</span>person: &nbsp;</strong>Enter details about the person/s you wish to empower. You must provide their valid Uniform civil number (EGN) or Personal foreigner number (LNCH) (depending on the selected identifier);</p></li></ul><p>*In case you want to empower more than one person, you can add more fields for empowered persons using the "Add empowered person +" button.</p><p><strong>Empowerment:</strong></p><ul><li><p><strong>Empowerment type: &nbsp;</strong>When more than one empowered person is added, the "<strong>Empowerment type</strong>" field appears, in which you must choose whether the empowered persons will be able to use  &nbsp;power of attorney "Together Only" or "Separately":</p></li></ul><p>*For the"Together Only" option, a single empowerment is generated, which you must sign. Accordingly, it can only be used when the two empowered persons identify themselves before DEAU together.</p><p>*For the  &nbsp;"Separately" option,  &nbsp;a separate empowerment is generated for each entered proxy. Each empowerment is signed separately and is valid independently.</p><ul><li><p><strong>Service Provider: &nbsp;</strong>Select the service provider for which you want the empowerment to be valid.</p></li><li><p><strong>Service:</strong> Specify the service for which you wish to authorize the selected individuals to act on your behalf.</p></li><li><p><strong>Extent of representative authority:</strong> Choose the extent of their representative authority.</p></li><li><p><strong>Start Date: &nbsp;</strong>Select the date from which the empowerment will take effect.</p></li><li><p><strong>End Date:</strong> Indicate the date until which the authorization will be valid.</p></li></ul><p><strong>*Important!:</strong> If no end date is specified, the empowerment automatically becomes indefinite.</p><ul><li><p><strong>Review and Submit: &nbsp;</strong>After completing the empowerment, press the "Review and Submit" button to review the final document.</p></li></ul><p><strong>Submission of the empowerment statement &nbsp;</strong>- Carefully check the entered information, and make sure that all the data is correct. If everything is fine, press "Submit a statement":</p><ul><li><p>After pressing the button, a window will appear with a warning that the statement will be submitted, press "Submit".</p></li><li><p>Upon successful submission, the new empowerment statement will be visible in the "From me" section with the status "Sign". To complete the process of submitting the new empowerment, you must follow the steps to sign with a Qualified Electronic Signature (QES) or a Cloud Qualified Electronic Signature (CQES).</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_nfc"><![CDATA[<p>1. To use your phone as a reader, please make sure it has an NFC scanner and turn it on.</p><p>2. Establish the exact position of the reader.</p><p>3. Press the document firmly without moving it and do not remove it while the reading processes are in progress.</p>]]></string>
+    <string name="bottom_sheet_information_change_citizen_information"><![CDATA[<p><strong>Attention!</strong></p><p>Please, when changing names, enter the data from a Bulgarian identity document in order to be able to use the online services of the Centralized Electronic Identification System.</p>]]></string>
+    <string name="bottom_sheet_information_notifications_information"><![CDATA[<p>On this screen, you can set your preferences for receiving notifications, which are sent by default to the email address specified in the profile. The system offers the option of choosing alternative communication channels, providing flexibility and convenience. You have control over some of the notifications, as you can activate or deactivate them. Certain system notifications are mandatory and cannot be changed, as they are of critical importance for your security when using the services in the system. They have a protective function that allows you to react immediately in the event of a suspicious event or action.</p>]]></string>
+    <string name="bottom_sheet_information_empowerement_registry_information"><![CDATA[<p>The Register of Authorizations is:</p><ul><li><p>&nbsp;&nbsp;An electronic database containing information on authorizations in the exercise of rights before a state body, an organization providing public services, and persons performing public functions.</p></li><li><p>&nbsp;&nbsp;Only an individual with registration in the Citizens\' Portal and an electronic identity associated with the profile can be authorized.</p></li><li><p>&nbsp;&nbsp;Authorization is carried out by signing an authorization statement with a qualified electronic signature.</p></li><li><p>&nbsp;&nbsp;The authorizing party indicates the actions for which he grants rights to the authorized party and the term of the authorization.</p></li><li><p>&nbsp;&nbsp;Authorization on behalf of a legal entity can only be carried out by its legal representative.</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_applications_certificates_information"><![CDATA[<p>The process of issuing an Electronic Identity Certificate begins with submitting an application. This can be done both electronically and through an Electronic Identity Administrator (EIA).</p><ul><li><p>&nbsp;&nbsp;An electronic identity certificate is issued if the person has appeared in person at an administrative service center of the Ministry of Interior or an EIA office.</p></li><li><p>&nbsp;&nbsp;An electronic identity certificate for a minor or a person under guardianship is issued if the following requirements are met:\n&nbsp;&nbsp;1.&nbsp;&nbsp;The application is submitted only in person.<br>&nbsp;&nbsp;2.&nbsp;&nbsp;The application is also signed by a parent, respectively a guardian or custodian.<br>&nbsp;&nbsp;3.&nbsp;&nbsp;A parent, respectively a guardian or custodian has appeared in person and presented a valid identity document.</p></li><li><p>&nbsp;&nbsp;The electronic identity certificate is issued with a validity period of 5 years.</p></li><li><p>&nbsp;&nbsp;The electronic identity certificate is recorded only on an electronic medium that meets the requirements set out in the Regulations for the Implementation of the Electronic Identification Act.</p></li><li><p>&nbsp;&nbsp;The electronic identity certificate is entered in the Register of Electronic Identity Certificates.</p></li><li><p>&nbsp;&nbsp;The certificate holder is handed over personally to its holder, and exceptionally - to an authorized person, after presenting a notarized express power of attorney.</p></li><li><p>&nbsp;&nbsp;When the application for issuance of a certificate is submitted through an electronic identity administrator other than the Ministry of Interior, the relations between it and the person are regulated by a contract.</p></li><li><p>&nbsp;&nbsp;Foreigners with a permit for prolonged, permanent or long-term residence in the Republic of Bulgaria should visit in person the Directorate of Migration - Ministry of Interior, Department/Sector/Group "Migration" at the Directorate of Internal Affairs and the Directorate of Internal Affairs at the address of residence to submit an application for issuance of an electronic identity certificate.</p></li></ul>]]></string>
+
+    <!-- Empowerments intro -->
+    <string name="empowerments_intro_title">Empowerments</string>
+    <string name="empowerments_intro_from_me_title">From me</string>
+    <string name="empowerments_intro_from_me_subtitle">Authorizer</string>
+    <string name="empowerments_intro_to_me_title">To me</string>
+    <string name="empowerments_intro_to_me_subtitle">Authorized person</string>
+    <string name="empowerments_intro_create_button_title">Create new empowerment</string>
+
+    <!-- Jounals intro -->
+    <string name="journals_intro_title">History of events</string>
+    <string name="journals_intro_from_me_title">From me</string>
+    <string name="journals_intro_to_me_title">To me</string>
+    <string name="journals_intro_from_me_subtitle">Events from my actions</string>
+    <string name="journals_intro_to_me_subtitle">Events from internal checks or other systems</string>
+
+    <!-- Bottom navigation items -->
+    <string name="bottom_navigation_begin_item_title">Home</string>
+    <string name="bottom_navigation_eim_item_title">EIM</string>
+    <string name="bottom_navigation_pending_item_title">Pending</string>
+    <string name="bottom_navigation_more_item_title">More</string>
+
+    <!-- EIM intro -->
+    <string name="eim_intro_title">Managing electronic identity certificates</string>
+    <string name="eim_intro_applications_title">Applications</string>
+    <string name="eim_intro_applications_subtitle">Applications for electronic identity certificates</string>
+    <string name="eim_intro_certificates_title">Certificates</string>
+    <string name="eim_intro_certificates_subtitle">History of certificates for electronic identity</string>
+    <string name="eim_intro_scan_qr_code_button_title">Scan QR code</string>
+    <string name="eim_intro_create_certificate_button_title">Request new certificate</string>
+
+    <!-- Scan QR code -->
+    <string name="scan_qr_code_title">Scan QR code</string>
+    <string name="scan_qr_code_hint_title">Ready to scan</string>
+    <string name="scan_qr_code_scan_button_title">Scan</string>
+    <string name="scan_qr_code_instructions">Place QR code in front of the camera</string>
+
+    <!-- Empowerment legal list items -->
+    <string name="empowerment_legal_service_title">Service:</string>
+    <string name="empowerment_legal_empowerer_title">Empowerer:</string>
+    <string name="empowerment_legal_status_title">Status:</string>
+    <string name="empowerment_legal_from_title">From:</string>
+
+    <!-- Application list items -->
+    <string name="applications_title">Applications for electronic identity certificates</string>
+    <string name="application_created_on_title">Created on:</string>
+    <string name="application_subject_title">Subject:</string>
+    <string name="application_administrator_title">Administrator:</string>
+    <string name="application_carrier_title">Carrier:</string>
+    <string name="application_status_title">Status:</string>
+
+    <!-- Certificate list items -->
+    <string name="certificates_title">Certificates for electronic identity</string>
+    <string name="certificate_valid_from_title">Valid from:</string>
+    <string name="certificate_valid_until_title">Valid until:</string>
+    <string name="certificate_alias_title">EIA name:</string>
+    <string name="certificate_carrier_title">Carrier:</string>
+    <string name="certificate_status_title">Status:</string>
+
+    <!-- Journals from me list items -->
+    <string name="journals_from_me_title">History of events from me</string>
+    <string name="journal_from_me_identifier_title">Identifier:</string>
+    <string name="journal_from_me_date_title">Date:</string>
+
+    <!-- Journals to me list items -->
+    <string name="journals_to_me_title">History of events to me</string>
+    <string name="journal_to_me_identifier_title">Identifier:</string>
+    <string name="journal_to_me_system_title">System:</string>
+    <string name="journal_to_me_date_title">Date:</string>
+
+    <!-- Signing methods -->
+    <string name="signing_method_evrotrust_enum_type">Mobile KEP Evrotrust</string>
+    <string name="signing_method_borica_enum_type">Mobile KEP B-Trust</string>
+
+    <!-- Application action types -->
+    <string name="application_action_type_issue">Issue/Reinstate EIA</string>
+    <string name="application_action_type_resume">Resume EIA</string>
+    <string name="application_action_type_revoke">Revoke EIA</string>
+    <string name="application_action_type_stop">Stop EIA</string>
+
+    <!-- Empowerment action types -->
+    <string name="empowerment_action_type_copy">Copy</string>
+    <string name="empowerment_action_type_cancel_to_me">Declare disagreement</string>
+    <string name="empowerment_action_type_cancel_from_me">Withdraw</string>
+    <string name="empowerment_action_type_sign">Sign</string>
+
+    <!-- Application details type enums -->
+    <string name="application_details_enum_type_issue">Application for issuance of EIA</string>
+    <string name="application_details_enum_type_resume">Application for resumption of EIA</string>
+    <string name="application_details_enum_type_revoke">Application for revocation of EIA</string>
+    <string name="application_details_enum_type_stop">Application for termination of EIA</string>
+
+    <!-- Applications sorting enum -->
+    <string name="applications_by_default_sorting_enum">By default</string>
+    <string name="applications_application_number_asc_sorting_enum">Application number(asc.)</string>
+    <string name="applications_application_number_desc_sorting_enum">Application number(desc.)</string>
+    <string name="applications_creation_date_asc_sorting_enum">Submitted on(asc.)</string>
+    <string name="applications_creation_date_desc_sorting_enum">Submitted on(desc.)</string>
+    <string name="applications_application_type_asc_sorting_enum">Subject(asc.)</string>
+    <string name="applications_application_type_desc_sorting_enum">Subject(desc.)</string>
+    <string name="applications_administrator_asc_sorting_enum">Administrator(asc.)</string>
+    <string name="applications_administrator_desc_sorting_enum">Administrator(desc.)</string>
+    <string name="applications_device_type_asc_sorting_enum">Device type(asc.)</string>
+    <string name="applications_device_type_desc_sorting_enum">Device type(desc.)</string>
+    <string name="applications_status_asc_sorting_enum">Status(asc.)</string>
+    <string name="applications_status_desc_sorting_enum">Status(desc.)</string>
+
+    <!-- Certificates sorting enum -->
+    <string name="certificates_by_default_sorting_enum">By default</string>
+    <string name="certificates_serial_number_asc_sorting_enum">Serial number(asc.)</string>
+    <string name="certificates_serial_number_desc_sorting_enum">Serial number(desc.)</string>
+    <string name="certificates_alias_asc_sorting_enum">EIA name(asc.)</string>
+    <string name="certificates_alias_desc_sorting_enum">EIA name(desc.)</string>
+    <string name="certificates_valid_from_asc_sorting_enum">Valid from(asc.)</string>
+    <string name="certificates_valid_from_desc_sorting_enum">Valid from(desc.)</string>
+    <string name="certificates_valid_until_asc_sorting_enum">Valid until(asc.)</string>
+    <string name="certificates_valid_until_desc_sorting_enum">Valid until(desc.)</string>
+    <string name="certificates_administrator_asc_sorting_enum">Administrator(asc.)</string>
+    <string name="certificates_administrator_desc_sorting_enum">Administrator(desc.)</string>
+    <string name="certificates_device_type_asc_sorting_enum">Carrier(asc.)</string>
+    <string name="certificates_device_type_desc_sorting_enum">Carrier(desc.)</string>
+    <string name="certificates_status_asc_sorting_enum">Status(asc.)</string>
+    <string name="certificates_status_desc_sorting_enum">Status(desc.)</string>
+
+    <!-- Application device types enum -->
+    <string name="application_device_type_enum_mobile_application">Mobile application</string>
+    <string name="application_device_type_enum_identity_card">Bulgarian identity card with chip</string>
+
+    <!-- Requests list items -->
+    <string name="request_title">Verified identity</string>
+
+    <!-- Notifications types -->
+    <string name="notifications_type_channels">Channels</string>
+    <string name="notifications_type_notifications">Notifications</string>
+
+    <!-- Journals filter -->
+    <string name="journals_filter_start_date_title">Start date:</string>
+    <string name="journals_filter_end_date_title">End date:</string>
+    <string name="journals_filter_event_type_title">Event type:</string>
+
+    <!-- Application payment -->
+    <string name="application_payment_title">Successful application submission</string>
+    <string name="application_payment_description">To finalize the process, please complete the payment and visit a convenient administrator office of MVR.</string>
+    <string name="application_payment_item_title">Do not forget to bring:</string>
+    <string name="application_payment_item_description">  • Personal identification document</string>
+    <string name="application_payment_receipt_title">Payment details:</string>
+    <string name="application_payment_receipt_price_title">Price:</string>
+    <string name="application_payment_receipt_price_carrier_title">Carrier price:</string>
+    <string name="application_payment_receipt_currency_title">Currency:</string>
+
+    <!-- Application exit -->
+    <string name="application_exit_message">Do you want to close the application?</string>
+
+    <!-- Application create pin mobile -->
+    <string name="application_create_pin_title">Complete creation of mobile eID</string>
+    <string name="application_create_pin_description">To access the mobile eID you need to create a PIN. Please enter a PIN.</string>
+    <string name="application_create_pin_description_confirm">Please confirm the PIN.</string>
+    <string name="application_create_pin_description_ready">Please press the `Complete` button</string>
+    <string name="application_create_pin_button_title">Complete</string>
+    <string name="application_create_pin_cancellation_message">You are going to cancel creation of PIN for mobile certificate. Doing so, you will need to start the whole process anew. Are you sure?</string>
+
+    <!-- Create empowerment indefinite information -->
+    <string name="create_empowerment_indefinite_section_1_title">Filing a statement</string>
+    <string name="create_empowerment_indefinite_section_1_description">Before confirming the submission of a new perpetual empowerment, please consider the following risks::</string>
+    <string name="create_empowerment_indefinite_section_2_title">No automatic termination:</string>
+    <string name="create_empowerment_indefinite_section_2_description">The indefinite empowerment is valid until it is withdrawn by you or until the empowered person declares disagreement with it.</string>
+    <string name="create_empowerment_indefinite_section_3_title">Increased risk of unauthorized actions:</string>
+    <string name="create_empowerment_indefinite_section_3_description">With an indefinite empowerment, there is a risk that you may forget that its action is valid and it could be used for malicious purposes.</string>
+    <string name="create_empowerment_indefinite_section_4_title">Exposure to security risks:</string>
+    <string name="create_empowerment_indefinite_section_4_description">Perpetual empowerment can give your authorized individuals continued access to your information or assets, which can increase the risk of fraud or abuse.</string>
+    <string name="create_empowerment_indefinite_section_5_description">Your statement will be processed as soon as possible. Please sign it on the "From me" page.</string>
+
+    <!-- Environments -->
+    <string name="environment_digitall_dev">DIGITALL_DEV</string>
+    <string name="environment_mvr_dev">MVR_DEV</string>
+    <string name="environment_mvr_test">MVR_TEST</string>
+    <string name="environment_mvr_stage">MVR_STAGE</string>
+
+    <!-- Signing applications -->
+    <string name="evrotrust_open_application_message">Please open Evrotrust application</string>
+    <string name="borica_open_application_message">Please open Borica application</string>
+
+    <!-- Payment history status -->
+    <string name="payment_history_status_enum_pending">Pending</string>
+    <string name="payment_history_status_enum_authorized">Authorized</string>
+    <string name="payment_history_status_enum_ordered">Ordered</string>
+    <string name="payment_history_status_enum_paid">Paid</string>
+    <string name="payment_history_status_enum_expired">Expired</string>
+    <string name="payment_history_status_enum_canceled">Canceled</string>
+    <string name="payment_history_status_enum_suspended">Suspended</string>
+    <string name="payment_history_status_enum_inprocess">In process</string>
+    <string name="payment_history_status_enum_timedout">Timed out</string>
+
+    <!-- Payment history reason -->
+    <string name="payment_history_reason_enum_stopeid">Stop EIA</string>
+    <string name="payment_history_reason_enum_resumeeid">Resume EIA</string>
+    <string name="payment_history_reason_enum_revokeeid">Revoke EIA</string>
+    <string name="payment_history_reason_enum_issueeid">Issue/Reinstate EIA</string>
+
+    <!-- Payment history amount -->
+    <string name="payment_history_amount_enum_below">Amount below %s lev</string>
+    <string name="payment_history_amount_enum_between">Amount between %1$s and %2$s lev</string>
+    <string name="payment_history_amount_enum_over">Amount over %s lev</string>
+
+    <!-- Payment history list item -->
+    <string name="payments_history_screen_title">Payments history</string>
+    <string name="payment_history_payment_number_title">Payment №:</string>
+    <string name="payment_history_created_on_title">Created on:</string>
+    <string name="payment_history_subject_title">Subject:</string>
+    <string name="payment_history_payment_date_title">Payment date:</string>
+    <string name="payment_history_valid_until_title">Valid until:</string>
+    <string name="payment_history_status_title">Status:</string>
+    <string name="payment_history_amount_title">Amount:</string>
+    <string name="payment_history_last_updated_title">Last updated:</string>
+
+    <!-- Payment history sorting enum -->
+    <string name="payment_history_sorting_enum_by_default">By default</string>
+    <string name="payment_history_sorting_enum_created_on_asc">Created on(asc.)</string>
+    <string name="payment_history_sorting_enum_created_on_desc">Created on(desc.)</string>
+    <string name="payment_history_sorting_enum_subject_asc">Subject(asc.)</string>
+    <string name="payment_history_sorting_enum_subject_desc">Subject(desc.)</string>
+    <string name="payment_history_sorting_enum_payment_date_asc">Payment date(asc.)</string>
+    <string name="payment_history_sorting_enum_payment_date_desc">Payment date(desc.)</string>
+    <string name="payment_history_sorting_enum_valid_until_asc">Valid until(asc.)</string>
+    <string name="payment_history_sorting_enum_valid_until_desc">Valid until(desc.)</string>
+    <string name="payment_history_sorting_enum_status_asc">Status(asc.)</string>
+    <string name="payment_history_sorting_enum_status_desc">Status(desc.)</string>
+    <string name="payment_history_sorting_enum_amount_asc">Amount(asc.)</string>
+    <string name="payment_history_sorting_enum_amount_desc">Amount(desc.)</string>
+    <string name="payment_history_sorting_enum_last_sync_asc">Last sync(asc.)</string>
+    <string name="payment_history_sorting_enum_last_sync_desc">Last sync(desc.)</string>
+
+    <!-- Payment history filter -->
+    <string name="payments_history_filter_payment_number_title">Payment number:</string>
+    <string name="payments_history_filter_created_on_title">Created on:</string>
+    <string name="payments_history_filter_subject_title">Subject:</string>
+    <string name="payments_history_filter_status_title">Status:</string>
+    <string name="payments_history_filter_amount_title">Amount:</string>
+    <string name="payments_history_filter_payment_date_title">Payment date:</string>
+    <string name="payments_history_filter_valid_until_title">Valid until:</string>
+    <string name="payments_history_filter_apply_filter_button_title">Apply filters</string>
+    <string name="payments_history_filter_clear_button_title">Clear</string>
+
+    <!-- Level of assurance enum -->
+    <string name="level_of_assurance_enum_low">Low</string>
+    <string name="level_of_assurance_enum_substantial">Substantial</string>
+    <string name="level_of_assurance_enum_high">High</string>
+
+    <!-- Certificate enter pin -->
+    <string name="certificate_enter_pin_pin_mismatch">The entered PIN does not match the PIN of the certificate</string>
+
+    <!-- Login MFA -->
+    <string name="login_mfa_otp_title">Code:</string>
+    <string name="login_mfa_authenticate_button_title">Authenticate</string>
+    <string name="login_mfa_send_otp_button_title">New otp code</string>
+
+    <!-- Empowerement withdrawal bottom sheet -->
+    <string name="empowerment_withdrawal_bottom_sheet_title">Empowerment Withdrawal</string>
+    <string name="empowerment_withdrawal_bottom_sheet_message">By taking this action, you will invalidate your empowerment! Withdrawal takes effect immediately after processing and does not cancel actions previously taken with the given authorization. Do you wish to continue?</string>
+
+    <!-- Exit application -->
+    <string name="exit_application_message">Do you want to close application?</string>
+
+    <!-- Create citizen profile PIN bottom sheet -->
+    <string name="bottom_sheet_create_citizen_profile_pin_title">Create PIN</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_description">To access your profile you need to create a PIN. Please enter a PIN.</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_description_confirm">Please confirm the PIN.</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_description_ready">Please press the `Create PIN` button</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_button_title">Complete</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_cancellation_message">You are going to cancel creation of PIN for your profile. Doing so, you will need to start the whole process anew. Are you sure?</string>
+
+    <!-- Enter citizen profile PIN bottom sheet -->
+    <string name="bottom_sheet_enter_citizen_profile_pin_title">Authenticate</string>
+    <string name="bottom_sheet_enter_citizen_profile_pin_description">Please enter a PIN.</string>
+    <string name="bottom_sheet_enter_citizen_profile_pin_button_title">Authenticate</string>
+
+    <!-- Citizen profile security -->
+    <string name="citizen_profile_security_screen_title">Profile security</string>
+    <string name="citizen_profile_security_multi_factor_authentication_title">Two-factor authentication</string>
+    <string name="citizen_profile_security_pin_title">Secure with PIN</string>
+    <string name="citizen_profile_security_biometrics_title">Secure with biometrics</string>
+
+    <!-- Biometrics prompt -->
+    <string name="biometrics_prompt_title">Unlock application access</string>
+    <string name="biometrics_prompt_negative_button_title">Use PIN</string>
+
+</resources>

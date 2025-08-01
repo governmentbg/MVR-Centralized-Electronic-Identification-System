@@ -1,0 +1,214 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-text-default">
+                {{ t('modules.administrators.register.devices') }}
+            </h4>
+            <p-button
+                (onClick)="add()"
+                styleClass="p-button-success"
+                [label]="t('global.txtAdd')"
+                icon="pi pi-plus"></p-button>
+        </div>
+        <p-card>
+            <p-table
+                [value]="devices || []"
+                [tableStyle]="{ 'min-width': '100%' }"
+                [rowHover]="true"
+                [rowSelectable]="false">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name" class="text-nowrap">
+                            {{ t('modules.administrators.register.deviceName') }}
+                            <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="description" class="text-nowrap">
+                            {{ t('modules.administrators.register.description') }}
+                            <p-sortIcon field="description"></p-sortIcon>
+                        </th>
+                        <th class="text-nowrap">
+                            {{ t('modules.administrators.register.link') }}
+                        </th>
+                        <th class="text-nowrap"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-device let-rowIndex="rowIndex">
+                    <tr>
+                        <td style="max-width: 18rem" [attr.aria-label]="device.name" [title]="device.name">
+                            <span class="multiline-ellipsis">{{ device.name }}</span>
+                        </td>
+                        <td
+                            style="max-width: 18rem"
+                            [attr.aria-label]="device.description"
+                            [title]="device.description">
+                            <span class="multiline-ellipsis">{{ device.description }}</span>
+                        </td>
+                        <td
+                            style="max-width: 18rem"
+                            [attr.aria-label]="device.authorizationLink ? device.authorizationLink : device.backchannelAuthorizationLink"
+                            [title]="device.authorizationLink ? device.authorizationLink : device.backchannelAuthorizationLink">
+                            <span class="multiline-ellipsis">{{
+                                device.authorizationLink
+                                    ? device.authorizationLink
+                                    : device.backchannelAuthorizationLink
+                            }}</span>
+                        </td>
+                        <td>
+                            <p-button
+                                [title]="t('global.txtEdit')"
+                                styleClass="p-button-sm p-button-text"
+                                (click)="edit(device)">
+                                <i class="material-icons-outlined">&#xe3c9;</i>
+                            </p-button>
+                            <p-button
+                                [title]="t('global.txtDelete')"
+                                styleClass="p-button-sm p-button-text"
+                                (click)="remove(device)">
+                                <i class="material-icons-outlined">&#xe872;</i>
+                            </p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4">
+                            <span
+                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                                    {{ t('global.txtNoData') }}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-card>
+    </div>
+
+    <p-dialog
+        header="Header"
+        [(visible)]="showDialog"
+        [style]="{ width: '50vw', maxWidth: '960px' }"
+        [breakpoints]="{ '1200px': '75vw' }"
+        [draggable]="false"
+        [resizable]="false"
+        [modal]="true">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold text-uppercase">
+                {{
+                    action === 'Add'
+                        ? t('modules.administrators.register.addDeviceData')
+                        : t('modules.administrators.administrator-preview.editDeviceData')
+                }}
+            </span>
+        </ng-template>
+        <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()">
+            <div class="row row-cols-1 row-cols-lg-2">
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="name" class="form-label"
+                                >{{ t('modules.administrators.register.deviceName') }}
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input pInputText id="name" type="text" class="w-100" formControlName="name" />
+                            <app-error-field
+                                [formControlInstance]="deviceForm.controls.name"
+                                translationPrefix="modules.users.userForm.errors" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="description" class="form-label">
+                                {{ t('modules.administrators.register.description') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                id="description"
+                                class="w-100 p-2"
+                                rows="3"
+                                pInputTextarea
+                                formControlName="description"></textarea>
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="deviceForm.controls.description"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2" *ngIf="!checked">
+                        <div class="col">
+                            <label for="authorizationLink" class="form-label">
+                                {{ t('modules.administrators.register.authorizationLink') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                id="authorizationLink"
+                                class="w-100 p-2"
+                                rows="3"
+                                pInputTextarea
+                                formControlName="authorizationLink"></textarea>
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="deviceForm.controls.authorizationLink"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2" *ngIf="checked">
+                        <div class="col">
+                            <label for="authorizationLink" class="form-label">
+                                {{ t('modules.administrators.register.authorizationLink') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                id="backchannelAuthorizationLink"
+                                class="w-100 p-2"
+                                rows="3"
+                                pInputTextarea
+                                formControlName="backchannelAuthorizationLink"></textarea>
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="deviceForm.controls.backchannelAuthorizationLink"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="backchannelAuthorizationLinkToggle" class="form-label">
+                                {{ t('modules.administrators.register.backchannelAuthorizationLink') }}
+                            </label>
+                            <div>
+                                <p-inputSwitch
+                                    inputId="backchannelAuthorizationLinkToggle"
+                                    [(ngModel)]="checked"
+                                    [ngModelOptions]="{ standalone: true }"
+                                    (onChange)="onAuthorizationChange($event)"></p-inputSwitch>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p-divider type="solid"></p-divider>
+            <div class="d-flex gap-3 justify-content-center" *transloco="let tGlobal">
+                <button
+                    pButton
+                    type="button"
+                    (click)="onClosePreview()"
+                    class="p-button p-button-danger"
+                    [disabled]="editDeviceQuery.isLoading || addDeviceQuery.isLoading">
+                    {{ tGlobal('global.txtClose') }}
+                </button>
+                <button
+                    pButton
+                    [label]="tGlobal('global.txtSubmit')"
+                    [loading]="editDeviceQuery.isLoading || addDeviceQuery.isLoading"
+                    type="submit"
+                    class="p-button me-3 p-button-primary"></button>
+            </div>
+        </form>
+    </p-dialog>
+</section>

@@ -1,0 +1,50 @@
+<section id="provider-preview" class="h-100" *transloco="let t; read: 'modules.providers.provider-preview'">
+    <ng-container *ngIf="mode === 'view'">
+        <app-breadcrumb *ngIf="!userService.hasRole(RoleType.EMPLOYEE)" [items]="breadcrumbItems"></app-breadcrumb>
+        <div class="d-flex mb-4 align-items-center">
+            <h4 class="text-text-default mb-0">
+                {{ t('txtTitle') }}
+            </h4>
+        </div>
+        <p-card>
+            <p-tabView>
+                <p-tabPanel [header]="t('tabs.txtDetails')">
+                    <app-provider-details
+                        [application]="providerQuery.data"
+                        [isLoading]="providerQuery.isLoading"></app-provider-details>
+                </p-tabPanel>
+
+                <!-- <p-tabPanel [disabled]="providerQuery.isLoading" [header]="t('tabs.txtUsers')">
+                <app-users-table [users]="providerQuery.data?.users || []"></app-users-table>
+            </p-tabPanel> -->
+                <p-tabPanel [disabled]="providerQuery.isLoading" [header]="t('tabs.txtFiles')">
+                    <app-files-table [files]="providerQuery.data?.files || []"></app-files-table>
+                </p-tabPanel>
+                <p-tabPanel [header]="t('tabs.txtHistory')" *ngIf="providerId">
+                    <app-status-history [providerId]="providerId"></app-status-history>
+                </p-tabPanel>
+            </p-tabView>
+            <div class="mt-4 d-flex gap-2">
+                <a [routerLink]="['/providers']">
+                    <button
+                        *transloco="let buttonT"
+                        pButton
+                        type="button"
+                        class="p-button-danger"
+                        [label]="buttonT('global.txtBack')"
+                        [attr.aria-label]="buttonT('global.txtBack')"></button>
+                </a>
+                <button
+                    *ngIf="providerQuery.data?.status === this.providerStatus.Values.ReturnedForCorrection"
+                    pButton
+                    type="button"
+                    class="p-button p-button-warning"
+                    [label]="t('txtEditButton')"
+                    (click)="this.changeMode('edit')"></button>
+            </div>
+        </p-card>
+    </ng-container>
+    <ng-container *ngIf="mode === 'edit'">
+        <app-edit-provider [provider]="providerQuery.data!" (closeEdit)="this.closeEdit($event)"></app-edit-provider>
+    </ng-container>
+</section>

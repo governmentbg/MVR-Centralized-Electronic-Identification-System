@@ -1,0 +1,40 @@
+methods:
+  post:
+    tags:
+      - Naif
+    summary: Invalidate citizen electronic identity
+    description: Invalidate citizen electronic identity
+    operationId: invalidateCitizenEidByNaif
+    requestBody:
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/naif/naif_invalidate_citizen_eid_v1.yaml#/schemas/InvalidateCitizenEidDTO'
+    responses:
+      '200':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/naif/naif_invalidate_citizen_eid_response_v1.yaml#/schemas/NaifInvalidateEidResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

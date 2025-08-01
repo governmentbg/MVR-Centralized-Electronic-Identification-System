@@ -1,0 +1,150 @@
+<section class="h-100 provider-register-section" *transloco="let t">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-4 text-uppercase">
+                {{ t('modules.providers.register.title') }}
+            </h4>
+            <p-card>
+                <div class="row">
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-md-9 col-lg-8">
+                        <!-- Applicant Data -->
+                        <div class="row mb-2">
+                            <div class="col-lg-8">
+                                <label class="form-label">
+                                    {{ t('modules.providers.register.externalNumber') }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input pInputText formControlName="externalNumber" type="text" class="w-100" />
+                                <app-error-field
+                                    [formControlInstance]="form.controls.externalNumber"
+                                    translationPrefix="modules.providers.register.errors" />
+                            </div>
+                        </div>
+                        <div formGroupName="issuer">
+                            <div class="row mb-2">
+                                <div class="col-lg-3">
+                                    <label for="uidType" class="form-label">
+                                        {{ t('modules.providers.register.applicantUidType') }}
+                                    </label>
+                                    <p-dropdown
+                                        formControlName="uidType"
+                                        [options]="identifierTypes"
+                                        optionLabel="name"
+                                        optionValue="id"
+                                        styleClass="w-100"
+                                        inputId="uidType">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-lg-5">
+                                    <label for="uid" class="form-label"
+                                        >{{ t('modules.providers.register.applicantUid') }}
+                                    </label>
+                                    <span class="text-danger">*</span>
+                                    <input
+                                        pInputText
+                                        appDigitOnly
+                                        id="uid"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="uid" />
+                                    <app-error-field
+                                        [formControlInstance]="form.controls.issuer.controls.uid"
+                                        translationPrefix="modules.providers.register.errors"
+                                        [order]="['required', 'EgnError', 'EgnAdultError']" />
+                                </div>
+                            </div>
+                            <!-- Name -->
+                            <div class="row mb-2">
+                                <div class="col-lg-8">
+                                    <label for="name" class="form-label">
+                                        {{ t('modules.providers.register.applicantName') }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        pInputText
+                                        id="name"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="name"
+                                        (blur)="this.applicantNameSanitizer()" />
+                                </div>
+                                <app-error-field
+                                    [formControlInstance]="form.controls.issuer.controls.name"
+                                    translationPrefix="modules.providers.register.errors" />
+                            </div>
+                        </div>
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <form [formGroup]="providerSubjectForm" class="d-flex gap-2 mb-4">
+                            <div *ngFor="let subjectType of providerSubjectTypes" class="field-checkbox d-flex gap-2">
+                                <p-radioButton
+                                    [inputId]="subjectType.value.toString()"
+                                    [value]="subjectType.value"
+                                    formControlName="selectedProviderSubject"
+                                    [label]="subjectType.name"></p-radioButton>
+                            </div>
+                        </form>
+                        <app-administrative-body-form
+                            [form]="form.controls.administrativeBody"
+                            [subjectType]="providerSubjectForm.controls.selectedProviderSubject.value" />
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+
+                        <app-administrator-form [form]="form.controls.administrator" />
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <div class="row mb-2">
+                            <div class="col-lg-8">
+                                <h6 class="text-text-default mb-4">
+                                    {{ t('modules.providers.register.files') }}
+                                    <span class="text-danger">*</span>
+                                </h6>
+                                <p-fileUpload
+                                    id="files"
+                                    [showUploadButton]="false"
+                                    [customUpload]="true"
+                                    (onSelect)="onFileChange($event)"
+                                    (onClear)="onFileClear()"
+                                    [multiple]="true"
+                                    [previewWidth]="1"
+                                    accept=".pdf">
+                                    <ng-template let-file pTemplate="file">
+                                        <div class="d-flex gap-2">
+                                            {{ file.name }}
+                                            <i
+                                                (click)="onFileRemove(file.name)"
+                                                class="pi pi-trash text-danger"
+                                                style="cursor: pointer; font-size: 1.2rem"></i>
+                                        </div>
+                                    </ng-template>
+                                </p-fileUpload>
+                                <app-error-field
+                                    [formControlInstance]="form.controls.files"
+                                    translationPrefix="modules.providers.register.errors" />
+                            </div>
+                        </div>
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+
+                        <div class="row mb-2">
+                            <div class="col-lg-8">
+                                <label class="form-label">
+                                    {{ t('modules.providers.register.date') }}
+                                </label>
+                                <input pInputText [disabled]="true" type="text" class="w-100" [value]="currentDate" />
+                            </div>
+                        </div>
+                        <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                        <div class="d-flex gap-3 mt-4">
+                            <button
+                                pButton
+                                [loading]="registerMutation.isLoading"
+                                [disabled]="registerMutation.isLoading"
+                                [label]="t('modules.providers.register.submitButton')"
+                                type="submit"
+                                class="p-button me-3 p-button-primary"></button>
+                        </div>
+                    </form>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</section>

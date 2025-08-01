@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_empowerments_to_me"
+    app:startDestination="@id/empowermentToMeFragment">
+
+    <fragment
+        android:id="@+id/empowermentToMeFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.to.me.all.EmpowermentToMeFragment"
+        android:label="empowermentToMeFragment"
+        tools:layout="@layout/fragment_with_list_and_sort_and_actions_button">
+
+        <action
+            android:id="@+id/toEmpowermentToMeDetailsFragment"
+            app:destination="@id/empowermentToMeDetailsFragment" />
+
+
+        <action
+            android:id="@+id/toEmpowermentToMeFilterFragment"
+            app:destination="@id/empowermentToMeFilterFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentToMeCancelFragment"
+            app:destination="@id/empowermentToMeCancelFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentCreateFragment"
+            app:destination="@id/empowermentCreateFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentToMeDetailsFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.to.me.details.EmpowermentToMeDetailsFragment"
+        android:label="empowermentToMeDetailsFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toEmpowermentToMeCancelFragment"
+            app:destination="@id/empowermentToMeCancelFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentToMeFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.to.me.filter.EmpowermentToMeFilterFragment"
+        android:label="empowermentToMeFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.filter.EmpowermentFilterModel"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentToMeCancelFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.to.me.cancel.EmpowermentToMeCancelFragment"
+        android:label="empowermentToMeCancelFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

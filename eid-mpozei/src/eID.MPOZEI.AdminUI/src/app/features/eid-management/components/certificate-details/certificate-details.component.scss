@@ -1,0 +1,70 @@
+@import '../../../../styles/variables';
+
+.card-header {
+    border-bottom: 1px solid $theme-primary-light;
+    padding: 1.25rem;
+
+    .header-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 3rem;
+    }
+
+    .header-content {
+        font-size: 0.75rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px;
+
+        > div:last-child {
+            font-size: 1.25rem;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 24px;
+        }
+    }
+}
+
+.info-container > p {
+    font-size: 0.875rem;
+    line-height: 22px;
+    color: $text-default;
+    font-weight: 500;
+}
+
+.info-container ul > li {
+    margin: 24px 0;
+    color: $text-light;
+}
+
+.info-container ul > li:last-child {
+    margin-bottom: 0;
+}
+
+.dates-container {
+    background-color: $background-light-grey;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+
+    .title {
+        font-size: 0.875rem;
+    }
+}
+
+.details-title {
+    color: $text-default;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 22px;
+}
+
+table {
+    td {
+        padding-bottom: 1.5rem;
+    }
+
+    tr:last-child td {
+        padding-bottom: 0;
+    }
+}

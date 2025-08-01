@@ -1,0 +1,6 @@
+schemas:
+  DeskApplicationRequest:
+    type: object
+    properties:
+      dummyField:
+        type: string

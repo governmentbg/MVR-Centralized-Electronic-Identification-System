@@ -1,0 +1,202 @@
+<section class="h-100" *transloco="let t">
+    <app-application-details
+        [applicationId]="selectedApplication.id"
+        [personalId]="personalId"
+        [personalIdType]="personalIdType"
+        [personalIdentity]="personalIdentity"
+        [currentEid]="currentEid"
+        [restrictionsStatus]="restrictionsStatus"
+        [hideActionButtons]="true"
+        *ngIf="showApplicationDetails && selectedApplication"
+        (hide)="onHideApplicationDetails($event)"></app-application-details>
+
+    <div [hidden]="showApplicationDetails">
+        <div>
+            <div class="row">
+                <div class="col">
+                    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                </div>
+            </div>
+        </div>
+
+        <p-card>
+            <div class="mb-4 d-flex justify-content-end">
+                <app-applications-filter
+                    [isAdminPage]="true"
+                    (filteredData)="onFilteredApplicationsDataChange($event)"
+                    (exportDataEvent)="onExport($event)"></app-applications-filter>
+            </div>
+            <p-table
+                #dt
+                [value]="applications"
+                [tableStyle]="{ 'min-width': '100%' }"
+                [rowHover]="true"
+                dataKey="id"
+                [lazy]="true"
+                (onLazyLoad)="loadApplications($event)"
+                [totalRecords]="applicationsTotalRecords"
+                [rows]="applicationsPageSize"
+                [paginator]="true"
+                [showCurrentPageReport]="true"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                [currentPageReportTemplate]="
+                    t('global.txtTablePagination', {
+                        first: '{first}',
+                        last: '{last}',
+                        totalRecords: '{totalRecords}'
+                    })
+                "
+                [loading]="loadingApplications"
+                loadingIcon="pi pi-spin pi-spinner"
+                [globalFilterFields]="['id', 'createDate', 'deviceId', 'status']"
+                sortField="createDate"
+                [sortOrder]="-1"
+                [rowSelectable]="false"
+                paginatorDropdownAppendTo="body"
+                [resizableColumns]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.eidManagement.txtApplicationNumber') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.eidManagement.txtApplicationType') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.eidManagement.txtOffice') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.eidManagement.tableFilter.txtSubmissionType') }}
+                        </th>
+                        <th pResizableColumn pSortableColumn="createDate" class="text-nowrap">
+                            {{ t('modules.eidManagement.txtApplicationCreatedOn') }}
+                            <p-sortIcon field="createDate"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn pSortableColumn="deviceId" class="text-nowrap">
+                            {{ t('modules.eidManagement.txtApplicationHolderType') }}
+                            <p-sortIcon field="deviceId"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.eidManagement.tableFilter.txtAdministrator') }}
+                        </th>
+                        <th pResizableColumn pSortableColumn="status" class="text-nowrap">
+                            {{ t('modules.eidManagement.txtApplicationStatus') }}
+                            <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn class="text-nowrap text-end">
+                            {{ t('modules.eidManagement.txtApplicationPreview') }}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-application>
+                    <tr>
+                        <td style="max-width: 18rem" [attr.aria-label]="application.applicationNumber">
+                            <span class="multiline-ellipsis fw-bold">{{ application.applicationNumber }}</span>
+                        </td>
+                        <td style="max-width: 18rem" [attr.aria-label]="application.applicationType">
+                            <span class="multiline-ellipsis">{{
+                                applicationTypeText(application.applicationType)
+                            }}</span>
+                        </td>
+                        <td style="max-width: 11rem" [attr.aria-label]="application.eidAdministratorOfficeName">
+                            <span class="multiline-ellipsis">{{
+                                getOfficeName(application.eidAdministratorFrontOfficeId)
+                            }}</span>
+                        </td>
+                        <td style="max-width: 11rem" [attr.aria-label]="application.submissionType">
+                            <span class="multiline-ellipsis">{{
+                                submissionTypeTranslation(application.submissionType)
+                            }}</span>
+                        </td>
+                        <td style="max-width: 18rem" [attr.aria-label]="formatDate(application.createDate)">
+                            <span class="multiline-ellipsis">{{ formatDate(application.createDate) }}</span>
+                        </td>
+                        <td
+                            style="max-width: 11rem"
+                            [attr.aria-label]="applicationDeviceTypeTranslation(application.deviceId)">
+                            <span class="multiline-ellipsis">{{
+                                applicationDeviceTypeTranslation(application.deviceId)
+                            }}</span>
+                        </td>
+                        <td style="width: 10rem">
+                            {{ application.eidAdministratorName }}
+                        </td>
+                        <td
+                            style="max-width: 18rem"
+                            [attr.aria-label]="applicationStatusTranslation(application.status)">
+                            <div [ngSwitch]="application.status">
+                                <span
+                                    *ngSwitchCase="ApplicationStatus.COMPLETED"
+                                    class="text-button-confirm multiline-ellipsis">
+                                    {{ applicationStatusTranslation(application.status) }}
+                                </span>
+                                <span
+                                    *ngSwitchCase="ApplicationStatus.DENIED"
+                                    class="text-text-error multiline-ellipsis">
+                                    {{ applicationStatusTranslation(application.status) }}
+                                </span>
+                                <span *ngSwitchDefault class="text-text-active multiline-ellipsis">
+                                    {{ applicationStatusTranslation(application.status) }}
+                                </span>
+                            </div>
+                        </td>
+                        <td style="width: 10rem">
+                            <div class="d-flex justify-content-end">
+                                <p-button
+                                    [title]="t('modules.eidManagement.txtPreviewApplication')"
+                                    styleClass="p-button-sm p-button-text"
+                                    (onClick)="showDetails(application)">
+                                    <i class="material-icons-outlined">&#xf801;</i>
+                                </p-button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="9">
+                            <span
+                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                <img src="/assets/images/noresults.png" />
+                                <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                    {{ t('global.txtNoRecordsFound') }}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-card>
+    </div>
+</section>

@@ -1,0 +1,126 @@
+<aside role="applications-filter" *transloco="let t" class="applications-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.providers.applications.filter.txtLabel') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="number" class="form-label">
+                            {{ t('modules.providers.applications.filter.number') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="number"
+                            type="text"
+                            class="w-100"
+                            formControlName="number"
+                            [placeholder]="t('modules.providers.applications.filter.numberPlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('modules.providers.applications.filter.enums.status') }}</p>
+                        <label for="status" class="form-label"
+                            >{{ t('modules.providers.applications.filter.txtChooseStatus') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="status"
+                            [options]="statuses"
+                            optionLabel="name"
+                            optionValue="code"
+                            styleClass="w-100"
+                            inputId="status"
+                            [placeholder]="t('modules.providers.applications.filter.txtAll')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="providerName" class="form-label">
+                            {{ t('modules.providers.applications.filter.enums.providerName') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="providerName"
+                            type="text"
+                            class="w-100"
+                            formControlName="providerName"
+                            [placeholder]="t('modules.providers.applications.filter.txtProviderPlaceholder')" />
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <button
+                    pButton
+                    type="button"
+                    (click)="clearFilterValues()"
+                    [label]="t('modules.providers.applications.filter.txtCancel')"
+                    class="p-button p-button-danger me-3 app-button-small"></button>
+                <button
+                    pButton
+                    [label]="t('modules.providers.applications.filter.txtApply')"
+                    type="submit"
+                    [disabled]="!filterForm.dirty"
+                    class="p-button me-3 p-button-primary app-button-small"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="applications-filter-choice">
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-between">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('modules.providers.applications.filter.txtFilterButton')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                icon="pi pi-refresh"
+                (click)="refreshData()"
+                [label]="t('global.txtRefresh')"></button>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="appliedFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of appliedFilters">
+                <p-chip
+                    [label]="t('modules.providers.applications.filter.enums.' + filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="appliedFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearFilterValues()"
+                [attr.aria-labelledby]="t('modules.providers.applications.filter.txtClearAll')">
+                {{ t('modules.providers.applications.filter.txtClearAll') }}
+            </button>
+        </div>
+    </div>
+</section>

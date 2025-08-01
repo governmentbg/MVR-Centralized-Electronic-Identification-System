@@ -1,0 +1,152 @@
+<ng-container *transloco="let t" [formGroup]="form">
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="administrativeBodyName" class="form-label">
+                {{ t('modules.administrators.register.administrativeBodyName') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                id="administrativeBodyName"
+                pTooltip="{{ this.form.controls.companyName.value }}"
+                type="text"
+                class="w-100"
+                formControlName="companyName" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.companyName"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="companyNameLatin" class="form-label">
+                {{ t('modules.administrators.register.companyNameLatin') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                id="companyNameLatin"
+                pTooltip="{{ this.form.controls.companyNameLatin.value }}"
+                type="text"
+                class="w-100"
+                formControlName="companyNameLatin" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.companyName"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <!-- Bulstat -->
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="eikNumber" class="form-label">
+                {{ t('modules.administrators.register.administrativeBodyBulstat') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="eikNumber" type="text" class="w-100" formControlName="eikNumber" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.eikNumber"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <!-- homePage -->
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="homePage" class="form-label">
+                {{ t('modules.administrators.register.homePage') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="homePage" type="text" class="w-100" formControlName="homePage" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.homePage"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <!-- Address -->
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="administrativeBodyAddress" class="form-label">
+                {{ t('modules.administrators.register.administrativeBodyAddress') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administrativeBodyAddress" type="text" class="w-100" formControlName="address" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.address"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <!-- Email -->
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="administrativeBodyEmail" class="form-label">
+                {{ t('modules.administrators.register.administrativeBodyEmail') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administrativeBodyEmail" type="email" class="w-100" formControlName="email" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.email"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <!-- Phone -->
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="phone" class="form-label">
+                {{ t('modules.administrators.register.administrativeBodyPhone') }}
+                <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+                <input
+                    pInputText
+                    appDigitOnly
+                    appPrefixPhoneInput
+                    id="phone"
+                    type="text"
+                    class="w-100"
+                    formControlName="phone" />
+            </div>
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.phone"
+            translationPrefix="modules.administrators.register.errors" />
+    </div>
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="description" class="form-label">
+                {{ t('modules.administrators.register.generalInformation') }}
+                <span class="text-danger">*</span>
+            </label>
+            <textarea
+                class="w-100 p-2"
+                rows="5"
+                id="description"
+                pInputTextarea
+                formControlName="description"></textarea>
+            <app-error-field
+                [formControlInstance]="form.controls.description"
+                translationPrefix="modules.administrators.register.errors" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="logoUrl" class="form-label">
+                {{ t('modules.administrators.register.logo') }}
+            </label>
+            <input pInputText id="logoUrl" type="text" class="w-100" formControlName="logoUrl" />
+            <app-error-field
+                [formControlInstance]="form.controls.logoUrl"
+                translationPrefix="modules.administrators.register.errors" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-xl-6 col-xxl-5">
+            <label for="downloadUrl" class="form-label">
+                {{ t('modules.administrators.register.downloadUrl') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="downloadUrl" type="text" class="w-100" formControlName="downloadUrl" />
+            <app-error-field
+                [formControlInstance]="form.controls.downloadUrl"
+                translationPrefix="modules.administrators.register.errors" />
+        </div>
+    </div>
+</ng-container>

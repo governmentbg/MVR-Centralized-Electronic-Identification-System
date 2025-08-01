@@ -1,0 +1,8 @@
+<ng-container *transloco="let t">
+    <span *ngIf="currentStatus" [ngClass]="currentStatus.class" class="d-flex align-items-center">
+        <span class="d-flex align-items-center" [title]="label" [attr.aria-label]="label">
+            <i class="material-icons-outlined me-1" [innerHTML]="currentStatus.icon"></i>
+            {{ label }}
+        </span>
+    </span>
+</ng-container>

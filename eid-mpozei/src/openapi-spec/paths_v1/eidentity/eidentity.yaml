@@ -1,0 +1,60 @@
+methods:
+  get:
+    tags:
+      - Eidentity
+    summary: Get eID by IdentifierNumber and IdentifierType, Citizen Profile Id or email
+    description: Get eID by IdentifierNumber and IdentifierType, Citizen Profile Id or email
+    operationId: getEidentityByField
+    parameters:
+      - name: email
+        in: query
+        description: 'Citizen Profile Email'
+        schema:
+          type: string
+      - name: citizenProfileId
+        in: query
+        description: 'Citizen Profile Id'
+        schema:
+          type: string
+          format: UUID
+      - name: number
+        in: query
+        description: 'Citizen Identifier Number'
+#        x-query-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_CANNOT_BE_NULL)'
+#        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: 'Citizen Identity Type'
+#        x-query-extra-annotation: '@jakarta.validation.constraints.NotNull(message =bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_TYPE_CANNOT_BE_NULL)'
+#        required: true
+        schema:
+          $ref: '../../components/eidentity/identifier_type_v1.yaml#/schemas/IdentifierType'
+    responses:
+      '200':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/eidentity/eidentity_response_v1.yaml#/schemas/EidentityResponse'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

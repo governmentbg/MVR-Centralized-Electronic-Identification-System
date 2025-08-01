@@ -1,0 +1,18 @@
+schemas:
+  PersonalIdentityDocumentV2:
+    type: object
+    properties:
+      documentNumber:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_NUMBER_CANNOT_BE_NULL)'
+      documentType:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CITIZEN_IDENTIFIER_TYPE_CANNOT_BE_NULL)'
+      documentIssueDate:
+        type: string
+        format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.IDENTITY_ISSUE_DATE_CANNOT_BE_NULL)'
+      documentValidityToDate:
+        type: string
+        format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.IDENTITY_VALIDITY_DATE_CANNOT_BE_NULL)'

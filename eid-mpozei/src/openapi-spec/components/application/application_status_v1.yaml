@@ -1,0 +1,16 @@
+schemas:
+  ApplicationStatus:
+    type: string
+    enum:
+      - SUBMITTED
+      - PROCESSING
+      - PENDING_SIGNATURE
+      - SIGNED
+      - PENDING_PAYMENT
+      - PAYMENT_EXPIRED
+      - PAID
+      - DENIED
+      - APPROVED
+      - GENERATED_CERTIFICATE
+      - COMPLETED
+      - CERTIFICATE_STORED

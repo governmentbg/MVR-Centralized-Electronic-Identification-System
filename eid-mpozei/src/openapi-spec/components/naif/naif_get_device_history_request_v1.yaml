@@ -1,0 +1,20 @@
+schemas:
+  NaifDeviceHistoryRequest:
+    type: object
+    required:
+      - MessageID
+      - User
+      - Timestamp
+      - CarrierSerialNumber
+    properties:
+      MessageID:
+        type: string
+        format: uuid
+      User:
+        type: string
+      Timestamp:
+        type: string
+        format: date-time
+      CarrierSerialNumber:
+        type: string
+        description: Device Serial Number

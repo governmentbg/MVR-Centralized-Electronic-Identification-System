@@ -1,0 +1,20 @@
+alter table if exists mpozei.application_aud add column create_date timestamp(6);
+alter table if exists mpozei.application_aud add column created_by varchar(255);
+alter table if exists mpozei.application_aud add column last_update timestamp(6);
+alter table if exists mpozei.application_aud add column updated_by varchar(255);
+alter table if exists mpozei.application_aud alter column application_xml set data type text;
+alter table if exists mpozei.application_aud alter column citizen_identifier_number set data type bytea;
+alter table if exists mpozei.application_aud alter column detached_signature set data type text;
+alter table if exists mpozei.reason_nomenclature_aud add column create_date timestamp(6);
+alter table if exists mpozei.reason_nomenclature_aud add column created_by varchar(255);
+alter table if exists mpozei.reason_nomenclature_aud add column last_update timestamp(6);
+alter table if exists mpozei.reason_nomenclature_aud add column updated_by varchar(255);
+alter table if exists mpozei.nomenclature_type_aud add column create_date timestamp(6);
+alter table if exists mpozei.nomenclature_type_aud add column created_by varchar(255);
+alter table if exists mpozei.nomenclature_type_aud add column last_update timestamp(6);
+alter table if exists mpozei.nomenclature_type_aud add column updated_by varchar(255);
+
+update mpozei.application_aud set last_update = '2025-07-09 13:01:42' where last_update IS NULL;
+update mpozei.application_aud set updated_by = 'SYSTEM' where updated_by IS NULL;
+update mpozei.application_aud set create_date = '2025-07-09 13:01:42' where create_date IS NULL;
+update mpozei.application_aud set created_by = 'SYSTEM' where created_by IS NULL;

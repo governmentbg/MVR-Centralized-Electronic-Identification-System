@@ -1,0 +1,110 @@
+<aside class="d-sm-flex flex-column sidebar-menu h-100 flex-shrink-0" *transloco="let t">
+    <nav class="nav flex-column pt-3">
+        <ng-container
+            *appHasRole="[RoleType.OPERATOR, RoleType.RU_MVR_ADMINISTRATOR, RoleType.AEID, RoleType.APP_ADMINISTRATOR]">
+            <a
+                routerLinkActive="active"
+                class="nav-link parent-link"
+                [routerLink]="['/eid-management']"
+                #eidManagement="routerLinkActive">
+                <i class="material-icons-outlined pe-3">&#xf106;</i>
+                {{ t('sidebar.txtElectronicIdentity') }}
+            </a>
+
+            <ng-container *appHasRole="[RoleType.OPERATOR, RoleType.AEID, RoleType.RU_MVR_ADMINISTRATOR]">
+                <a
+                    class="nav-link nav-subitem d-flex justify-content-between"
+                    [routerLink]="['/eid-management/search']"
+                    routerLinkActive="active"
+                    *ngIf="eidManagement.isActive"
+                    #rla="routerLinkActive">
+                    {{ t('sidebar.txtSearchCitizen') }}
+                    <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+                </a>
+            </ng-container>
+
+            <ng-container *appHasRole="[RoleType.RU_MVR_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR]">
+                <a
+                    class="nav-link nav-subitem d-flex justify-content-between"
+                    [routerLink]="['/eid-management/applications-list']"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    *ngIf="eidManagement.isActive"
+                    #rla="routerLinkActive">
+                    {{ t('sidebar.txtApplicationsList') }}
+                    <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+                </a>
+            </ng-container>
+        </ng-container>
+        <ng-container *appHasRole="[RoleType.RU_MVR_ADMINISTRATOR, RoleType.APP_ADMINISTRATOR]">
+            <a
+                class="nav-link"
+                [routerLink]="['/reports']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <i class="material-icons-outlined">&#xe85c;</i>
+                {{ t('sidebar.txtReports') }}
+            </a>
+        </ng-container>
+        <ng-container *appHasRole="[RoleType.APP_ADMINISTRATOR]">
+            <a
+                class="nav-link"
+                [routerLink]="['/system-processes']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <i class="material-icons-outlined">&#xe8b9;</i>
+                {{ t('sidebar.txtSystemProcesses') }}
+            </a>
+            <a
+                routerLinkActive="active"
+                class="nav-link parent-link"
+                (click)="toggleSubMenu(true)"
+                [routerLink]="['/logs-viewer']"
+                #logsViewer="routerLinkActive">
+                <i class="material-icons-outlined pe-3">&#xe241;</i>
+                {{ t('sidebar.txtJournals') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/logs-viewer/journals']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #journals="routerLinkActive"
+                *ngIf="logsViewer && logsViewer.isActive">
+                {{ t('sidebar.txtLocalJournals') }}
+                <i class="material-icons-outlined" *ngIf="journals.isActive">&#xe5cc;</i>
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/logs-viewer/integrity']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #integrity="routerLinkActive"
+                *ngIf="logsViewer && logsViewer.isActive">
+                {{ t('sidebar.txtIntegrity') }}
+                <i class="material-icons-outlined" *ngIf="integrity.isActive">&#xe5cc;</i>
+            </a>
+        </ng-container>
+
+        <ng-container *appHasRole="[RoleType.APP_ADMINISTRATOR, RoleType.AUDIT_ADMIN]">
+            <a
+                routerLinkActive="active"
+                class="nav-link parent-link"
+                [routerLink]="['/audit-logs']"
+                #auditLogs="routerLinkActive">
+                <i class="material-icons-outlined pe-3">&#xe0ee;</i>
+                {{ t('sidebar.txtAuditJournals') }}
+            </a>
+            <a
+                class="nav-link nav-subitem d-flex justify-content-between"
+                [routerLink]="['/audit-logs/preview']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                *ngIf="auditLogs && auditLogs.isActive"
+                #rla="routerLinkActive">
+                {{ t('modules.logsViewer.txtPreview') }}
+                <i class="material-icons-outlined" *ngIf="rla.isActive">&#xe5cc;</i>
+            </a>
+        </ng-container>
+    </nav>
+</aside>

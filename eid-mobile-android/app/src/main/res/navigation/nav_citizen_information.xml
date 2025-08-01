@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_citizen_information"
+    app:startDestination="@id/citizenInformationFragment">
+
+    <fragment
+        android:id="@+id/citizenInformationFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.information.CitizenInformationFragment"
+        android:label="citizenInformationFragment"
+        tools:layout="@layout/fragment_with_list" >
+
+        <action
+            android:id="@+id/toChangeCitizenInformation"
+            app:destination="@id/changeCitizenInformationFragment" />
+
+        <action
+            android:id="@+id/toChangeCitizenEmail"
+            app:destination="@id/changeCitizenEmailFragment" />
+
+        <action
+            android:id="@+id/toChangeCitizenPassword"
+            app:destination="@id/changeCitizenPasswordFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeCitizenInformationFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.information.ChangeCitizenInformationFragment"
+        android:label="changeCitizenInformationFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="information"
+            app:argType="com.digitall.eid.domain.models.applications.create.ApplicationUserDetailsModel"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeCitizenEmailFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.email.ChangeCitizenEmailFragment"
+        android:label="changeCitizenEmailFragment"
+        tools:layout="@layout/fragment_with_list"/>
+
+    <fragment
+        android:id="@+id/changeCitizenPasswordFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.password.ChangeCitizenPasswordFragment"
+        android:label="changeCitizenPasswordFragment"
+        tools:layout="@layout/fragment_with_list"/>
+
+</navigation>

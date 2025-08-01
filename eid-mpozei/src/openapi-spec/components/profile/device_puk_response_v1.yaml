@@ -1,0 +1,7 @@
+#schemas:
+#  DevicePukResponse:
+#    type: object
+#    properties:
+#      pukData:
+#        type: string
+#        format: byte

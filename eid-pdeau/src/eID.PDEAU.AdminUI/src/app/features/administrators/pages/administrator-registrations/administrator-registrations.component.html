@@ -1,0 +1,375 @@
+<section class="h-100" *transloco="let t">
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-uppercase">
+                {{ t('sidebar.txtRegistrations') }}
+            </h4>
+            <p-button
+                *ngIf="currentTabIndex === 1"
+                styleClass="p-button-primary"
+                [label]="t('modules.administrators.applications.downloadTechnicalCheckFile')"
+                icon="pi pi-download"
+                (onClick)="download()"></p-button>
+        </div>
+        <p-card>
+            <p-tabView (onChange)="refreshTable($event)">
+                <p-tabPanel [header]="t('sidebar.txtRegistrations')">
+                    <div class="row">
+                        <div class="col">
+                            <p-table
+                                #applicationsTable
+                                [value]="applicationsQuery.data || []"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                [paginator]="false"
+                                [currentPageReportTemplate]="
+                                    t('global.txtTablePagination', {
+                                        first: '{first}',
+                                        last: '{last}',
+                                        totalRecords: '{totalRecords}'
+                                    })
+                                "
+                                [loading]="applicationsQuery.isLoading"
+                                loadingIcon="pi pi-spin pi-spinner">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtName') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtBulstat') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtStatus') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.applications.table.columns.txtAction') }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="loadingbody">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-application>
+                                    <tr>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.name"
+                                            [title]="application.name">
+                                            <span class="multiline-ellipsis">{{ application.name }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.eikNumber"
+                                            [title]="application.eikNumber">
+                                            <span class="multiline-ellipsis">{{ application.eikNumber }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.managerStatus"
+                                            [title]="application.managerStatus">
+                                            <span class="multiline-ellipsis">{{
+                                                t(
+                                                    'modules.administrators.circumstances.statuses.' +
+                                                        application.managerStatus
+                                                )
+                                            }}</span>
+                                        </td>
+                                        <td style="width: 10rem">
+                                            <div class="d-flex">
+                                                <a [routerLink]="[application.id]">
+                                                    <button
+                                                        pButton
+                                                        type="button"
+                                                        [title]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        [attr.aria-label]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        class="p-button-sm p-button-text">
+                                                        <i class="material-icons-outlined">&#xf801;</i>
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="5">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                <span
+                                                    class="text-text-light"
+                                                    [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                    {{ t('global.txtNoRecordsFound') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="t('modules.administrators.circumstances.txtTechnicalChanges')">
+                    <div class="row">
+                        <div class="col">
+                            <p-table
+                                #applicationsTable
+                                [value]="technicalChangesQuery.data || []"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                [paginator]="false"
+                                [currentPageReportTemplate]="
+                                    t('global.txtTablePagination', {
+                                        first: '{first}',
+                                        last: '{last}',
+                                        totalRecords: '{totalRecords}'
+                                    })
+                                "
+                                [loading]="technicalChangesQuery.isLoading"
+                                loadingIcon="pi pi-spin pi-spinner">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtName') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtBulstat') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtStatus') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.applications.table.columns.txtAction') }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="loadingbody">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-application>
+                                    <tr>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.name"
+                                            [title]="application.name">
+                                            <span class="multiline-ellipsis">{{ application.name }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.eikNumber"
+                                            [title]="application.eikNumber">
+                                            <span class="multiline-ellipsis">{{ application.eikNumber }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.managerStatus"
+                                            [title]="application.managerStatus">
+                                            <span class="multiline-ellipsis">{{
+                                                t(
+                                                    'modules.administrators.circumstances.statuses.' +
+                                                        application.managerStatus
+                                                )
+                                            }}</span>
+                                        </td>
+                                        <td style="width: 10rem">
+                                            <div class="d-flex">
+                                                <a
+                                                    [routerLink]="[application.id]"
+                                                    [state]="{ onlyActiveElements: false }">
+                                                    <button
+                                                        pButton
+                                                        type="button"
+                                                        [title]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        [attr.aria-label]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        class="p-button-sm p-button-text">
+                                                        <i class="material-icons-outlined">&#xf801;</i>
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="5">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                <span
+                                                    class="text-text-light"
+                                                    [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                    {{ t('global.txtNoRecordsFound') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="t('modules.administrators.circumstances.txtTitle')">
+                    <div class="row">
+                        <div class="col">
+                            <p-table
+                                [value]="circumstanceChangesQuery.data || []"
+                                [tableStyle]="{ 'min-width': '100%' }"
+                                [rowHover]="true"
+                                [paginator]="false"
+                                [currentPageReportTemplate]="
+                                    t('global.txtTablePagination', {
+                                        first: '{first}',
+                                        last: '{last}',
+                                        totalRecords: '{totalRecords}'
+                                    })
+                                "
+                                [loading]="circumstanceChangesQuery.isLoading"
+                                loadingIcon="pi pi-spin pi-spinner"
+                                [rowSelectable]="false">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtName') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtBulstat') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.circumstances.txtStatus') }}
+                                        </th>
+                                        <th class="text-nowrap">
+                                            {{ t('modules.administrators.applications.table.columns.txtAction') }}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="loadingbody">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton></p-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-application>
+                                    <tr>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.name"
+                                            [title]="application.name">
+                                            <span class="multiline-ellipsis">{{ application.name }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.eikNumber"
+                                            [title]="application.eikNumber">
+                                            <span class="multiline-ellipsis">{{ application.eikNumber }}</span>
+                                        </td>
+                                        <td
+                                            style="max-width: 18rem"
+                                            [attr.aria-label]="application.managerStatus"
+                                            [title]="application.managerStatus">
+                                            <span class="multiline-ellipsis">{{
+                                                t(
+                                                    'modules.administrators.circumstances.statuses.' +
+                                                        application.managerStatus
+                                                )
+                                            }}</span>
+                                        </td>
+                                        <td style="width: 10rem">
+                                            <div class="d-flex">
+                                                <a [routerLink]="['circumstance', application.id]">
+                                                    <button
+                                                        pButton
+                                                        type="button"
+                                                        [title]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        [attr.aria-label]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        class="p-button-sm p-button-text">
+                                                        <i class="material-icons-outlined">&#xf801;</i>
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="4">
+                                            <span
+                                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                <span
+                                                    class="text-text-light"
+                                                    [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                    {{ t('global.txtNoRecordsFound') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </p-tabPanel>
+            </p-tabView>
+        </p-card>
+    </div>
+</section>

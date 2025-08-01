@@ -1,0 +1,155 @@
+<div *transloco="let t; read: 'modules.providers.provider-preview'">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-4 d-flex gap-4">
+            <div>
+                <label class="w-100" for="createDateFrom">
+                    {{ t('statistics.txtStartDate') }}
+                    <span class="text-danger">*</span>
+                </label>
+                <p-calendar
+                    *transloco="let globalT"
+                    styleClass="w-100"
+                    formControlName="createDateFrom"
+                    inputId="createDateFrom"
+                    [showIcon]="true"
+                    [showTime]="true"
+                    dateFormat="yy-mm-dd"
+                    [placeholder]="globalT('global.txtInputPlaceholder')"
+                    (onSelect)="validateToDate()"
+                    appendTo="body"
+                    [baseZIndex]="1045">
+                </p-calendar>
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf=" form.controls.createDateFrom.errors?.['required'] && (form.controls.createDateFrom.dirty || form.controls.createDateFrom.touched) ">
+                        {{
+                            t('statistics.txtPleaseEnterField', {
+                                field: t('statistics.txtStartDate')
+                            })
+                        }}
+                    </span>
+                </div>
+            </div>
+            <div>
+                <label class="w-100" for="createDateTo">
+                    {{ t('statistics.txtEndDate') }}
+                    <span class="text-danger">*</span>
+                </label>
+                <p-calendar
+                    *transloco="let globalT"
+                    styleClass="w-100"
+                    formControlName="createDateTo"
+                    inputId="createDateTo"
+                    [showIcon]="true"
+                    [showTime]="true"
+                    dateFormat="yy-mm-dd"
+                    [placeholder]="globalT('global.txtInputPlaceholder')"
+                    appendTo="body"
+                    [baseZIndex]="1045">
+                </p-calendar>
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="form.controls.createDateTo.errors?.['required'] &&
+                                         (form.controls.createDateTo.dirty || form.controls.createDateTo.touched)
+                                    ">
+                        {{
+                            t('statistics.txtPleaseEnterField', {
+                                field: t('statistics.txtEndDate')
+                            })
+                        }}
+                    </span>
+                    <span
+                        *ngIf="!form.controls.createDateTo.errors?.['required'] &&
+                                        form.controls.createDateTo.errors?.['dateMoreThanValid'] &&
+                                        (form.controls.createDateTo.dirty || form.controls.createDateTo.touched)
+                                    ">
+                        {{ t('statistics.txtLaterThenStartDate') }}
+                    </span>
+                </div>
+            </div>
+            <div class="pt-4">
+                <p-button
+                    type="submit"
+                    icon="pi pi-search"
+                    iconPos="right"
+                    [label]="t('statistics.txtSearch')"
+                    [disabled]="requestsCountQuery.isLoading"
+                    styleClass="p-button p-button-primary"></p-button>
+            </div>
+        </div>
+    </form>
+    <p-table
+        [value]="requestsCountQuery.data || []"
+        [tableStyle]="{ 'min-width': '100%' }"
+        dataKey="id"
+        [loading]="requestsCountQuery.isLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+        [rowSelectable]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-nowrap">
+                    {{ t('statistics.txtStartDate') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('statistics.txtEndDate') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('statistics.txtTotalRequests') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('statistics.txtAction') }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-requestsCount>
+            <tr>
+                <td [attr.aria-label]="requestsCount.systemName">
+                    <span class="multiline-ellipsis">{{
+                        currentPeriod.createDateFrom | translocoDate : { timeStyle: 'medium' }
+                    }}</span>
+                </td>
+                <td>
+                    <span class="multiline-ellipsis">{{
+                        currentPeriod.createDateTo | translocoDate : { timeStyle: 'medium' }
+                    }}</span>
+                </td>
+                <td>
+                    <span class="multiline-ellipsis"> {{ requestsCount.totalRequests }} </span>
+                </td>
+                <td>
+                    <div class="d-flex">
+                        <p-button
+                            [title]="t('statistics.txtDownload')"
+                            styleClass="p-button-sm p-button-text"
+                            icon="pi pi-download"
+                            (click)="download(requestsCount)">
+                        </p-button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr *transloco="let globalT">
+                <td colspan="4">{{ globalT('global.txtNoRecordsFound') }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

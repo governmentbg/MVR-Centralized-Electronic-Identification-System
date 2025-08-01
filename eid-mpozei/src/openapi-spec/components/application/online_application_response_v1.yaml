@@ -1,0 +1,27 @@
+schemas:
+  OnlineApplicationResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      status:
+        $ref: './application_status_v1.yaml#/schemas/ApplicationStatus'
+      eidAdministratorName:
+        type: string
+      fee:
+        x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        type: number
+        format: double
+      feeCurrency:
+        type: string
+      secondaryFee:
+        x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        type: number
+        format: double
+      secondaryFeeCurrency:
+        type: string
+      paymentAccessCode:
+        type: string
+      isPaymentRequired:
+        type: boolean

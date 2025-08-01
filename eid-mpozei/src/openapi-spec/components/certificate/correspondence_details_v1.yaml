@@ -1,0 +1,13 @@
+#schemas:
+#  CorrespondenceDetails:
+#    type: object
+#    required:
+#      - correlationId
+#    properties:
+#      correlationId:
+#        type: string
+#        nullable: false
+#      createDate:
+#        description: date this correspondence was created
+#        type: string
+#        format: date-time

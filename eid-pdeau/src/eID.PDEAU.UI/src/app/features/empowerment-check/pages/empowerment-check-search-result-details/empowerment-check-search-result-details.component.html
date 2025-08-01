@@ -1,0 +1,488 @@
+<section *transloco="let t" class="result-details-container">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <p-dialog
+        styleClass="error-dialog"
+        header="Header"
+        [(visible)]="showDenyDialog"
+        [style]="{ width: '50vw', maxWidth: '700px' }"
+        [draggable]="false"
+        [resizable]="false"
+        [modal]="true">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold text-uppercase">
+                {{ t('empowermentCheckModule.detailsPage.txtDenyEmpowerment') }}
+            </span>
+        </ng-template>
+        <p class="mt-3 mb-4">{{ t('empowermentCheckModule.detailsPage.txtReasonForDenialTitle') }}</p>
+        <form [formGroup]="form" (ngSubmit)="onDataSubmit()" class="d-lg-flex">
+            <div class="flex-grow-1">
+                <label for="reason" class="form-label d-block">
+                    {{ t('empowermentCheckModule.detailsPage.txtReasonForDenial') }}
+                </label>
+                <p-dropdown
+                    formControlName="reason"
+                    [options]="denialReasons"
+                    optionLabel="name"
+                    optionValue="id"
+                    dataKey="id"
+                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                    inputId="reason"
+                    styleClass="w-100"
+                    appendTo="body"
+                    (onChange)="onReasonChange(form)"></p-dropdown>
+                <input
+                    *ngIf="form.controls.reason && form.controls.reason.value === customReasonId"
+                    pInputText
+                    type="text"
+                    class="w-100 mt-3"
+                    formControlName="customReason"
+                    [placeholder]="t('global.txtInputPlaceholder')" />
+
+                <div class="text-danger validation-text">
+                    <span
+                        *ngIf="
+                            form.controls.reason.invalid && (form.controls.reason.dirty || form.controls.reason.touched)
+                        ">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('empowermentCheckModule.detailsPage.txtReasonForDenial')
+                            })
+                        }}
+                    </span>
+                    <span
+                        *ngIf="form.controls.customReason.errors?.['required'] &&(form.controls.customReason.dirty ||form.controls.customReason.touched)">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('empowermentCheckModule.detailsPage.txtReasonForDenial')
+                            })
+                        }}
+                    </span>
+                </div>
+            </div>
+            <div class="ms-lg-4 pb-lg-4 align-self-end text-center text-lg-start">
+                <button
+                    pButton
+                    [loading]="loading"
+                    [label]="t('empowermentCheckModule.detailsPage.txtConfirmDenyEmpowerment')"
+                    type="submit"
+                    class="p-button p-button-danger"></button>
+            </div>
+        </form>
+        <p-divider type="solid"></p-divider>
+        <div class="text-center">
+            <button pButton type="button" (click)="showDenyDialog = false" class="p-button p-button-primary">
+                {{ t('global.txtClose') }}
+            </button>
+        </div>
+    </p-dialog>
+
+    <div class="row">
+        <div class="col">
+            <app-empowerment-check-breadcrumb [items]="breadcrumbItems"></app-empowerment-check-breadcrumb>
+            <h4 class="text-uppercase">{{ t('empowermentCheckModule.txtEmpowermentReferenceTitle') }}</h4>
+            <h6>
+                <span class="fw-normal me-5"> {{ t('empowermentCheckModule.txtEmpowerer') }}: </span>
+                {{ searchedEmpowerment.authorizerUid }}
+            </h6>
+            <h6 class="mb-4">
+                <span class="fw-normal me-3"> {{ t('empowermentCheckModule.txtEmpoweredPerson') }}: </span>
+                {{ searchedEmpowerment.empoweredUid }}
+            </h6>
+        </div>
+    </div>
+
+    <p-card styleClass="mb-4">
+        <div *ngIf="selectedEmpowerment">
+            <div class="row">
+                <div class="col-xl-8">
+                    <h5 class="subtitle text-uppercase">
+                        {{ t('empowermentCheckModule.txtEmpowerment') }} {{ t('empowermentCheckModule.txtNumber') }}:
+                        {{ selectedEmpowerment.number }}
+                    </h5>
+                </div>
+                <div class="col-xl-4 d-flex justify-content-end">
+                    <span class="bg-theme-secondary-alert text-text-dark rounded p-2 d-inline-block">
+                        {{ t('empowermentCheckModule.txtStatusTo') }}
+                        {{ searchedEmpowerment.statusOn | translocoDate : { timeStyle: 'medium' } }}:
+                        {{ t('empowermentCheckModule.statuses.' + selectedEmpowerment.calculatedStatusOn) }}
+                    </span>
+                </div>
+            </div>
+            <p-divider class="header-divider" type="solid"></p-divider>
+
+            <div class="row ps-2">
+                <!-- Left column with empowerment data -->
+                <div class="col-xl-7">
+                    <div class="row p-2 ps-0">
+                        <div class="col p-1">
+                            <h6>{{ t('empowermentCheckModule.detailsPage.txtDetailsTitle') }}:</h6>
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.txtCurrentStatus') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <ng-container [ngSwitch]="selectedEmpowerment.status">
+                                <span *ngSwitchCase="'Active'" class="d-flex align-items-center">
+                                    <span
+                                        *ngIf="ifDateIsExpired(selectedEmpowerment.expiryDate); else elseBlock"
+                                        class="text-break">
+                                        <i class="material-icons-outlined me-3">&#xe644;</i>
+                                        {{ getEmpowermentStatusTranslation('Expired') }}
+                                    </span>
+                                    <ng-template #elseBlock class="d-flex align-items-center">
+                                        <span *ngIf="ifUpcoming(); else innerElseBlock" class="text-break">
+                                            <span class="text-break text-active d-flex align-items-center">
+                                                <i class="material-icons-outlined me-3">&#xf603;</i>
+                                                <span style="width: 7rem">
+                                                    {{ getEmpowermentStatusTranslation('Signed') }}
+                                                </span>
+                                            </span>
+                                            <div>
+                                                {{ t('empowermentCheckModule.detailsPage.txtEffectiveOn') }}:
+                                                {{ empowermentStartDate }}
+                                            </div>
+                                        </span>
+                                        <ng-template #innerElseBlock class="d-flex align-items-center">
+                                            <span class="active-confirm d-flex me-3">
+                                                <i class="material-icons-outlined align-self-center">&#xe877;</i>
+                                            </span>
+                                            <span class="d-flex flex-column">
+                                                <span class="d-flex active-confirm">
+                                                    {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                                </span>
+                                                <span class="d-flex">
+                                                    {{
+                                                        selectedEmpowerment.expiryDate
+                                                            ? (selectedEmpowerment.expiryDate
+                                                              | translocoDate : { timeStyle: 'medium' })
+                                                            : ''
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </ng-template>
+                                    </ng-template>
+                                </span>
+                                <span *ngSwitchCase="'DisagreementDeclared'">
+                                    <span class="text-break reject d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe14b;</i>
+                                        <span>
+                                            {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                        </span>
+                                    </span>
+                                    <p
+                                        *ngIf="
+                                            selectedEmpowerment &&
+                                            selectedEmpowerment.empowermentDisagreements &&
+                                            selectedEmpowerment.empowermentDisagreements.length > 0
+                                        ">
+                                        {{ t('empowermentCheckModule.txtReason') }}:
+                                        {{ getDisagreementsDeclaredReason(selectedEmpowerment) }}
+                                    </p>
+                                </span>
+                                <span *ngSwitchCase="'Withdrawn'">
+                                    <span class="text-break reject d-flex align-items-center">
+                                        <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                        <span>
+                                            {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                        </span>
+                                    </span>
+                                    <p
+                                        *ngIf="
+                                            selectedEmpowerment &&
+                                            selectedEmpowerment.empowermentWithdrawals &&
+                                            selectedEmpowerment.empowermentWithdrawals.length > 0
+                                        ">
+                                        {{ t('empowermentCheckModule.txtReason') }} :
+                                        {{ getWithdrawalsReason(selectedEmpowerment) }}
+                                    </p>
+                                </span>
+                                <span
+                                    *ngSwitchCase="'CollectingAuthorizerSignatures'"
+                                    class="text-break danger d-flex align-items-center">
+                                    <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                    <span>
+                                        {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                    </span>
+                                </span>
+                                <span *ngSwitchCase="'Created'" class="text-break danger d-flex align-items-center">
+                                    <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                    <span>
+                                        {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                    </span>
+                                </span>
+                                <span *ngSwitchCase="'Denied'" class="text-break reject d-flex align-items-center">
+                                    <i class="material-icons-outlined me-3">&#xe5cd;</i>
+                                    <span>
+                                        {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                    </span>
+                                </span>
+                                <span
+                                    *ngSwitchCase="'UpComing'"
+                                    class="text-break text-active d-flex align-items-center">
+                                    <i class="material-icons-outlined me-3">&#xf238;</i>
+                                    <span style="width: 7rem">
+                                        {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                    </span>
+                                </span>
+                                <span *ngSwitchCase="'Unconfirmed'" class="text-break danger d-flex align-items-center">
+                                    <i class="material-icons-outlined me-3">&#xe001;</i>
+                                    <span style="width: 7rem">
+                                        {{ getEmpowermentStatusTranslation(selectedEmpowerment.status) }}
+                                    </span>
+                                </span>
+                                <span *ngSwitchDefault>
+                                    {{ getEmpowermentStatusTranslation('Created') }}
+                                </span>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div
+                        class="row p-2 ps-0"
+                        *ngIf="selectedEmpowerment.denialReason !== empowermentsDenialReason.None">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.detailsPage.txtDenialReasonLabel') }}</label>
+                        </div>
+                        <div class="col p-1">
+                            <span class="reject">{{
+                                t(
+                                    'empowermentCheckModule.detailsPage.txtDenialReasons.' +
+                                        selectedEmpowerment.denialReason
+                                )
+                            }}</span>
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.detailsPage.txtFromTheNameOf') }}</label>
+                        </div>
+                        <div class="col p-1" *ngIf="selectedEmpowerment.onBehalfOf">
+                            {{ t('empowermentCheckModule.detailsPage.applicants.' + selectedEmpowerment.onBehalfOf) }}
+                        </div>
+                    </div>
+
+                    <!-- If it is Individual Entity we show empowerer egn/lnch -->
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.Individual">
+                        <div class="col-5 p-1">
+                            <label>
+                                {{ t('empowermentCheckModule.detailsPage.txtEmpowererEGN') }}
+                            </label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            {{ t('empowermentCheckModule.' + selectedEmpowerment.uidType) }}:
+
+                            {{ selectedEmpowerment.uid }}
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.Individual">
+                        <div class="col-5 p-1">
+                            <label>
+                                {{ t('empowermentCheckModule.detailsPage.txtIndividualEntryName') }}
+                            </label>
+                        </div>
+                        <div class="col p-1 empowerment">{{ selectedEmpowerment.name }}</div>
+                    </div>
+                    <!-- End of Legal entity information -->
+
+                    <!-- If it is Individual Entity we show Bulstat and name of company -->
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.LegalEntity">
+                        <div class="col-5 p-1">
+                            <label>
+                                {{ t('empowermentCheckModule.txtBulstat') }}
+                            </label>
+                        </div>
+                        <div class="col p-1 empowerment">{{ selectedEmpowerment.uid }}</div>
+                    </div>
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.LegalEntity">
+                        <div class="col-5 p-1">
+                            <label>
+                                {{ t('empowermentCheckModule.detailsPage.txtLegalEntryName') }}
+                            </label>
+                        </div>
+                        <div class="col p-1 empowerment">{{ selectedEmpowerment.name }}</div>
+                    </div>
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.LegalEntity">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.detailsPage.txtWayOfRepresentation') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <p-skeleton *ngIf="loadingLegalEntityInfo" width="10rem"></p-skeleton>
+                            <ng-container *ngIf="!loadingLegalEntityInfo">
+                                {{ additionalDataFromRegistries?.wayOfRepresentation || t('global.txtNoData') }}
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.LegalEntity">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.detailsPage.txtLegalEntityRepresentatives') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <p-skeleton *ngIf="loadingLegalEntityInfo" width="10rem"></p-skeleton>
+                            <ng-container *ngIf="!loadingLegalEntityInfo">
+                                <ng-container
+                                    *ngIf="
+                                        additionalDataFromRegistries &&
+                                            additionalDataFromRegistries.legalRepresentatives &&
+                                            additionalDataFromRegistries.legalRepresentatives.length > 0;
+                                        else noRepresentativesBlock
+                                    ">
+                                    <p
+                                        *ngFor="
+                                            let legalRepresentative of additionalDataFromRegistries?.legalRepresentatives
+                                        ">
+                                        {{ t('empowermentCheckModule.' + legalRepresentative.uidType) }}:
+                                        {{ legalRepresentative.uid }} -
+                                        {{ legalRepresentative.name }}
+                                    </p>
+                                </ng-container>
+                                <ng-template #noRepresentativesBlock>{{ t('global.txtNoData') }}</ng-template>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0" *ngIf="selectedEmpowerment.onBehalfOf === onBehalfOf.LegalEntity">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.detailsPage.txtLegalEntityState') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <p-skeleton *ngIf="loadingLegalEntityInfo" width="10rem"></p-skeleton>
+                            <ng-container *ngIf="!loadingLegalEntityInfo">
+                                {{ additionalDataFromRegistries?.state || t('global.txtNoData') }}
+                            </ng-container>
+                        </div>
+                    </div>
+                    <!-- End of Legal entity information -->
+                    <div class="row p-2 ps-0">
+                        <div class="col-5 p-1">
+                            <label>
+                                {{ t('empowermentCheckModule.detailsPage.txtEmpoweredPersons') }}
+                            </label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <p
+                                *ngFor="let empoweredUid of selectedEmpowerment.empoweredUids; let last = last"
+                                [ngClass]="{ 'mb-0': last }">
+                                {{ t('empowermentCheckModule.' + empoweredUid.uidType) }}:
+                                {{ empoweredUid.uid }}
+                            </p>
+                        </div>
+                    </div>
+                    <div
+                        class="row p-2 ps-0"
+                        *ngIf="selectedEmpowerment.empoweredUids && selectedEmpowerment.empoweredUids.length > 1">
+                        <div class="col-5 p-1">
+                            <label>
+                                {{ t('empowermentCheckModule.detailsPage.txtEmpowermentType') }}
+                            </label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <span class="bg-theme-secondary-alert text-text-dark rounded p-2 d-inline-block mb-2">
+                                <i class="material-icons-outlined me-2">&#xe000;</i>
+                                {{ t('empowermentCheckModule.detailsPage.txtTogether') }}
+                            </span>
+                            <p>
+                                {{ t('empowermentCheckModule.detailsPage.txtTogetherAdditionalText') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.detailsPage.txtProvider') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">{{ selectedEmpowerment.providerName }}</div>
+                    </div>
+                    <div class="row p-2 ps-0">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.txtService') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            {{ serviceNameAndNumber }}
+                        </div>
+                    </div>
+                    <div class="row p-2 ps-0">
+                        <div class="col-5 p-1">
+                            <label>{{ t('empowermentCheckModule.txtVolume') }}</label>
+                        </div>
+                        <div class="col p-1 empowerment">
+                            <p
+                                *ngFor="
+                                    let volumeOfRepresentation of selectedEmpowerment.volumeOfRepresentation;
+                                    let last = last
+                                "
+                                [ngClass]="{ 'mb-0': last }">
+                                {{ volumeOfRepresentation.name }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right column with dates -->
+                <div class="col-xl-5 col-sm-10 col-xs-12">
+                    <div class="dates-container">
+                        <div class="row p-2 ps-0">
+                            <div class="col p-1">
+                                <h6>{{ t('empowermentCheckModule.detailsPage.txtEmpowermentHistory') }}:</h6>
+                            </div>
+                        </div>
+                        <div class="row p-2 ps-0">
+                            <div class="col-4 p-1">
+                                <label>{{ t('empowermentCheckModule.detailsPage.txtStartDate') }}:</label>
+                            </div>
+                            <div class="col p-1">
+                                {{ selectedEmpowerment.startDate | translocoDate : { timeStyle: 'medium' } }}
+                            </div>
+                        </div>
+                        <div *ngFor="let statusItem of selectedEmpowerment.statusHistory">
+                            <div
+                                class="row p-2 ps-0"
+                                *ngIf="statusItem.status !== empowermentStatementStatus.CollectingAuthorizerSignatures">
+                                <div class="col-4 p-1">
+                                    <label>{{ statusTranslation(statusItem.status) }}:</label>
+                                </div>
+                                <div class="col p-1">
+                                    {{ statusItem.dateTime | translocoDate : { timeStyle: 'medium' } }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-2 ps-0">
+                            <div class="col-4 p-1">
+                                <label>{{ t('empowermentCheckModule.detailsPage.txtEndDate') }}:</label>
+                            </div>
+                            <div class="col p-1">
+                                {{ empowermentExpiryDate }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="selectedEmpowerment.status === empowermentStatementStatus.Unconfirmed">
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <button
+                    pButton
+                    [label]="t('empowermentCheckModule.detailsPage.txtDenyEmpowerment')"
+                    class="p-button p-button-danger p-button-sm mt-2 me-4"
+                    (click)="denyEmpowerment()"></button>
+                <button
+                    pButton
+                    [label]="t('empowermentCheckModule.detailsPage.txtApproveEmpowerment')"
+                    type="button"
+                    class="p-button p-button-success p-button-sm mt-2 me-4"
+                    (click)="approveEmpowerment()"></button>
+            </ng-container>
+        </div>
+    </p-card>
+
+    <div class="d-flex">
+        <button
+            pButton
+            [label]="t('empowermentCheckModule.txtBack')"
+            [attr.aria-label]="t('empowermentCheckModule.txtBack')"
+            class="p-button-outlined me-4"
+            icon="pi pi-chevron-left"
+            (click)="navigateToSearchResults()"></button>
+        <button
+            pButton
+            [label]="t('empowermentCheckModule.txtNewReference')"
+            [attr.aria-label]="t('empowermentCheckModule.txtNewReference')"
+            [routerLink]="['/empowerment-check']"></button>
+    </div>
+</section>

@@ -1,0 +1,197 @@
+<section class="h-100" *transloco="let t">
+    <div [hidden]="!!selectedService">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-text-default">
+                {{ t('modules.services.services-table.title') }}
+            </h4>
+            <ng-container *ngIf="this.isProviderPrivateSubjectType">
+                <p-button
+                    styleClass="p-button-success"
+                    [label]="t('modules.services.services-table.addService')"
+                    icon="pi pi-plus"
+                    [ariaLabel]="t('modules.services.services-table.addService')"
+                    [routerLink]="['/services/add']"></p-button>
+            </ng-container>
+        </div>
+        <p-card>
+            <app-services-filter (filteredData)="onFilterDataChange($event)" />
+            <div class="row">
+                <div class="col">
+                    <p-table
+                        *ngIf="showTable"
+                        #servicesTable
+                        [value]="servicesQuery.data?.data || []"
+                        [tableStyle]="{ 'min-width': '100%' }"
+                        [rowHover]="true"
+                        [lazy]="true"
+                        (onLazyLoad)="onLazyLoad($event)"
+                        [totalRecords]="servicesQuery.data?.totalItems || 0"
+                        [rows]="10"
+                        [paginator]="true"
+                        [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                        [currentPageReportTemplate]="
+                            t('global.txtTablePagination', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        [loading]="servicesQuery.isLoading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        [sortField]="sortField"
+                        [sortOrder]="1"
+                        [rowSelectable]="false">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.createdOn') }}
+                                </th>
+                                <th pSortableColumn="serviceNumber" class="text-nowrap" *ngIf="!isProviderPrivateSubjectType">
+                                    {{ t('modules.services.services-table.table.columns.serviceNumber') }}
+                                    <p-sortIcon field="serviceNumber"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="name" class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.name') }}
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="isEmpowerment" class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.isEmpowerment') }}
+                                    <p-sortIcon field="isEmpowerment"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="minimumLevelOfAssurance" class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.assurance') }}
+                                    <p-sortIcon field="minimumLevelOfAssurance"></p-sortIcon>
+                                </th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.status') }}
+                                </th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.isActive') }}
+                                </th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.services.services-table.table.columns.action') }}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-service>
+                            <tr [ngClass]="{}">
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="service.createdOn | translocoDate"
+                                    [title]="service.createdOn | translocoDate">
+                                    <span class="multiline-ellipsis">{{ service.createdOn | translocoDate }}</span>
+                                </td>
+                                <td
+                                    *ngIf="!isProviderPrivateSubjectType"
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="service.serviceNumber"
+                                    [title]="service.serviceNumber">
+                                    <span class="multiline-ellipsis">{{ service.serviceNumber }}</span>
+                                </td>
+                                <td style="max-width: 18rem" [attr.aria-label]="service.name" [title]="service.name">
+                                    <span class="multiline-ellipsis">{{ service.name }}</span>
+                                </td>
+                                <td style="max-width: 18rem">
+                                    <span class="multiline-ellipsis">{{
+                                        service.isEmpowerment
+                                            ? t('modules.services.services-table.filter.yes')
+                                            : t('modules.services.services-table.filter.no')
+                                    }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="service.minimumLevelOfAssurance"
+                                    [title]="service.minimumLevelOfAssurance">
+                                    <span class="multiline-ellipsis">{{
+                                        t('modules.services.enums.' + service.minimumLevelOfAssurance)
+                                    }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="service.status"
+                                    [title]="service.status">
+                                    <app-service-status [status]="service.status"></app-service-status>
+                                </td>
+                                <td style="max-width: 18rem">
+                                    <span class="multiline-ellipsis">{{
+                                        service.isActive
+                                            ? t('modules.services.services-table.filter.yes')
+                                            : t('modules.services.services-table.filter.no')
+                                    }}</span>
+                                </td>
+                                <td style="width: 10rem">
+                                    <div class="d-flex">
+                                        <p-button
+                                            (click)="selectService(service, 'view')"
+                                            [title]="t('modules.services.services-table.table.details.viewService')"
+                                            [ariaLabel]="t('modules.services.services-table.table.details.viewService')"
+                                            styleClass="p-button-sm p-button-text">
+                                            <i class="material-icons-outlined">&#xf801;</i>
+                                        </p-button>
+                                        <p-button
+                                            *ngIf="service.status === providerServiceStatusEnum.Approved"
+                                            (click)="selectService(service, 'edit')"
+                                            [title]="t('modules.services.services-table.table.details.editService')"
+                                            [ariaLabel]="t('modules.services.services-table.table.details.editService')"
+                                            styleClass="p-button-sm p-button-text">
+                                            <i class="material-icons-outlined">&#xe3c9;</i>
+                                        </p-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </p-card>
+    </div>
+
+    <ng-template [ngIf]="selectedService && previewMode === 'view'">
+        <app-services-preview [service]="selectedService" (closePreview)="closePreview()"></app-services-preview>
+    </ng-template>
+    <ng-template [ngIf]="selectedService && previewMode === 'edit'">
+        <app-service-edit [service]="selectedService" (closePreview)="closePreview()"></app-service-edit>
+    </ng-template>
+</section>

@@ -1,0 +1,98 @@
+openapi: 3.0.1
+info:
+  description: API reference documentation for Module for Accepting and Processing Electronic Identity Applications.
+  version: '1.0'
+  title: MPOZEI Certificate REST Interface
+paths:
+  "/mpozei/api/v1/configuration/{key}":
+    $ref: 'paths_v1/configuration/configuration.yaml#/methods'
+  "/mpozei/api/v1/eidentities/find":
+    $ref: 'paths_v1/eidentity/eidentity.yaml#/methods'
+  "/mpozei/api/v1/eidentities/{id}":
+    $ref: 'paths_v1/eidentity/eidentity_id.yaml#/methods'
+  "/mpozei/api/v1/certificates/enroll":
+    $ref: 'paths_v1/certificate/certificate_enroll.yaml#/methods'
+  "/mpozei/api/v1/certificates/find":
+    $ref: 'paths_v1/certificate/certificate_find.yaml#/methods'
+  "/mpozei/api/v1/applications":
+    $ref: 'paths_v1/application/application.yaml#/methods'
+  "/mpozei/api/v1/applications/{id}":
+    $ref: 'paths_v1/application/application_id.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/status":
+    $ref: 'paths_v1/application/application_id_status.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/complete":
+    $ref: 'paths_v1/application/application_complete.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/sign":
+    $ref: 'paths_v1/application/application_sign.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/deny":
+    $ref: 'paths_v1/application/application_deny.yaml#/methods'
+  "/mpozei/api/v1/applications/find":
+    $ref: 'paths_v1/application/application_list.yaml#/methods'
+  "/mpozei/api/v1/applications/admin-find":
+    $ref: 'paths_v1/application/application_list_admin.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/export":
+    $ref: 'paths_v1/application/application_export.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/export-confirmation":
+    $ref: 'paths_v1/application/application_export_confirmation.yaml#/methods'
+  "/mpozei/api/v1/certificates/{id}":
+    $ref: 'paths_v1/certificate/certificate_summary.yaml#/methods'
+  "/mpozei/api/v1/nomenclatures/reasons":
+    $ref: 'paths_v1/nomenclature/reasons.yaml#/methods'
+  "/mpozei/api/v1/nomenclatures/applications/statuses":
+    $ref: 'paths_v1/nomenclature/application_statuses.yaml#/methods'
+  "/mpozei/api/v1/nomenclatures/certificates/statuses":
+    $ref: 'paths_v1/nomenclature/certificate_statuses.yaml#/methods'
+  "/mpozei/api/v1/certificates/{id}/history":
+    $ref: './paths_v1/certificate/citizen_certificate_history.yaml#/methods'
+  "/mpozei/api/v1/certificates/confirm":
+    $ref: 'paths_v1/certificate/confirm_certificate_desk.yaml#/methods'
+  "/mpozei/api/v1/applications/{applicationId}/add-guardians":
+    $ref: 'paths_v1/application/application_add_guardians.yaml#/methods'
+  "/mpozei/api/v1/perso-centre/applications":
+    $ref: 'paths_v1/naif/application_perso_centre.yaml#/methods'
+  "/mpozei/api/v1/perso-centre/applications/confirm":
+    $ref: 'paths_v1/naif/application_perso_centre_confirm.yaml#/methods'
+  "/mpozei/api/v1/naif/certificates/update-status":
+    $ref: 'paths_v1/naif/update_certificate_status.yaml#/methods'
+  "/mpozei/api/v1/naif/eidentities/invalidate-eid":
+    $ref: 'paths_v1/naif/invalidate_citizen_eid.yaml#/methods'
+#  "/mpozei/api/v1/naif/citizens/update-citizen-identifier":
+#    $ref: 'paths_v1/naif/naif_update_citizen_identifier.yaml#/methods'
+  "/mpozei/api/v1/naif/certificates/activate":
+    $ref: 'paths_v1/naif/naif_delivered_certificate.yaml#/methods'
+  "/mpozei/api/v1/naif/certificates/history":
+    $ref: 'paths_v1/naif/naif_get_device_history.yaml#/methods'
+  "/mpozei/api/v1/applications/reports/by-region":
+    $ref: 'paths_v1/report/application_report_by_region.yaml#/methods'
+  "/mpozei/api/v1/applications/reports/ui/by-operators":
+    $ref: 'paths_v1/report/application_report_by_operators_json.yaml#/methods'
+  "/mpozei/api/v1/applications/reports/csv/by-operators":
+    $ref: 'paths_v1/report/application_report_by_operators_csv.yaml#/methods'
+  "/mpozei/api/v1/applications/reports/csv/find-applications":
+    $ref: 'paths_v1/report/find_applications_report_csv.yaml#/methods'
+  "/mpozei/api/v1/applications/reports/by-administrator":
+    $ref: 'paths_v1/report/application_report_by_administrator.yaml#/methods'
+  "/mpozei/api/v1/applications/reports/total":
+    $ref: 'paths_v1/report/application_report_total.yaml#/methods'
+  "/mpozei/api/v1/device/puk":
+    $ref: 'paths_v1/profile/device_puk.yaml#/methods'
+  "/mpozei/api/v1/device/log":
+    $ref: 'paths_v1/profile/device_log_internal.yaml#/methods'
+  "/mpozei/api/v1/help-pages":
+    $ref: 'paths_v1/help_page/create_update_help_page.yaml#/methods'
+  "/mpozei/api/v1/help-pages/{id}/delete":
+    $ref: 'paths_v1/help_page/delete_help_page.yaml#/methods'
+  "/mpozei/api/v1/help-pages/{id}":
+    $ref: 'paths_v1/help_page/get_help_page.yaml#/methods'
+  "/mpozei/api/v1/help-pages/find":
+    $ref: 'paths_v1/help_page/find_help_pages.yaml#/methods'
+  "/mpozei/api/v1/help-pages/find-all":
+    $ref: 'paths_v1/help_page/get_all_help_pages.yaml#/methods'
+  "/mpozei/api/v1/external-administrators/certificates/enroll":
+    $ref: 'paths_v1/external_administrators/certificate_enroll.yaml#/methods'
+  "/mpozei/api/v1/external-administrators/applications":
+    $ref: 'paths_v1/external_administrators/application.yaml#/methods'
+#  "/mpozei/api/v1/external-administrators/certificates/confirm":
+#    $ref: 'paths_v1/external_administrators/confirm_certificate.yaml#/methods'
+#  "/mpozei/api/v1/external-administrators/applications/{applicationId}/complete":
+#    $ref: 'paths_v1/external_administrators/application_complete.yaml#/methods'

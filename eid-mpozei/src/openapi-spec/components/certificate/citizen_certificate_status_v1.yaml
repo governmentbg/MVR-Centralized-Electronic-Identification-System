@@ -1,0 +1,12 @@
+schemas:
+  CertificateStatus:
+    type: string
+    enum:
+      - CREATED
+      - SIGNED
+      - ACTIVE
+      - STOPPED
+      - REVOKED
+      - INVALID
+      - FAILED
+      - EXPIRED

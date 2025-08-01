@@ -1,0 +1,35 @@
+server:
+  port: ${MPOZEI_EGW_SERVER_PORT}
+  ssl:
+    enabled: false
+    trust-store: ${MPOZEI_EGW_TRUST_STORE}
+    trust-store-password: ${MPOZEI_EGW_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
+logging:
+  level:
+    org.springframework:
+      security: DEBUG
+      web: DEBUG
+  secret-key: ${MPOZEI_EGW_AUDIT_LOGGING_SECRET_KEY}
+  encryption-key:
+  module-id: mpozei-ext-gateway
+  system-id: mpozei
+  file-name-pattern-audit: ${MPOZEI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${MPOZEI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${MPOZEI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${MPOZEI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${MPOZEI_EGW_LOG_FILE_NAME}
+springdoc:
+  swagger-ui:
+    enabled: ${MPOZEI_SWAGGER_ENABLED}
+    disable-swagger-default-url: true
+    path: /docs
+spring:
+  main:
+    web-application-type: reactive
+  profiles:
+    active: ${MPOZEI_EGW_SPRING_ACTIVE_PROFILES}
+    group:
+      test: test,logging-test
+mvr:
+  external-service: true

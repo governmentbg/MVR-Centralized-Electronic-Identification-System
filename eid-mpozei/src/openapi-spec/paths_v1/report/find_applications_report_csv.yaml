@@ -1,0 +1,116 @@
+methods:
+  get:
+    tags:
+      - Report
+    summary: Csv report find applications
+    description: Get csv report for find applications
+    operationId: getCsvFindApplications
+    parameters:
+      - name: eidentityId
+        in: query
+        description: 'Eidentity ID'
+        schema:
+          type: string
+          format: uuid
+      - name: status
+        in: query
+        description: 'Application status filter'
+        schema:
+          type: array
+          items:
+            $ref: '../../components/application/application_status_v1.yaml#/schemas/ApplicationStatus'
+      - name: submissionType
+        in: query
+        description: 'Application submission type filter'
+        schema:
+          type: array
+          items:
+            $ref: '../../components/application/application_submission_type_v1.yaml#/schemas/ApplicationSubmissionType'            
+      - name: id
+        in: query
+        description: 'Application ID filter'
+        schema:
+          type: string
+      - name: applicationNumber
+        in: query
+        description: 'Application Number filter'
+        schema:
+          type: string
+      - name: deviceId
+        in: query
+        description: 'Device Id filter'
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: administratorId
+        in: query
+        description: 'AdministratorId filter'
+        schema:
+          type: string
+          format: uuid
+      - name: eidAdministratorFrontOfficeId
+        in: query
+        description: Eid Administrator front office Id filter'
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: applicationType
+        in: query
+        description: 'Application type'
+        schema:
+          type: array
+          items:
+            $ref: '../../components/application/application_type_v1.yaml#/schemas/ApplicationType'            
+      - name: createdDateFrom
+        in: query
+        description: 'Create Date From filter'
+        schema:
+          type: string
+          format: date-time
+      - name: createdDateTo
+        in: query
+        description: 'Create Date To filter'
+        schema:
+          type: string
+          format: date-time
+    responses:
+      '200':
+        description: Success
+        content:
+          text/csv; charset=UTF-8:
+            schema:
+              type: string
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Time Out
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

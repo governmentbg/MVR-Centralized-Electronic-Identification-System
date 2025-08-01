@@ -1,0 +1,217 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'primeng/resources/primeng.css';
+@import 'variables';
+@import 'typography';
+@import 'primeNG/theme';
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: $roboto-font;
+}
+
+main {
+    background: $background-light-grey;
+}
+
+a {
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+label,
+.form-label {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    color: $text-light;
+    &.disabled {
+        color: $text-inactive;
+    }
+}
+
+.validation-text {
+    font-size: 12px;
+    margin-top: 0.5rem;
+    line-height: 1;
+    min-height: 1rem;
+}
+
+@each $name, $color in $brand-colors {
+    .text-#{$name} {
+        color: $color !important;
+    }
+    .bg-#{$name} {
+        background-color: $color !important;
+    }
+}
+
+.app-button-small {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 22px;
+}
+
+// Classes with theme colors
+.active-confirm {
+    color: $button-confirm;
+}
+
+.reject {
+    color: $button-reject;
+}
+
+.text-light {
+    color: $text-light;
+}
+
+.light-grey-bg {
+    background: $background-light-grey;
+}
+
+.danger {
+    color: $button-danger;
+}
+
+.p-input-icon-left > i,
+.p-input-icon-left > .p-icon-wrapper,
+.p-input-icon-right > i,
+.p-input-icon-right > .p-icon-wrapper {
+    right: 12px;
+    scale: 1.7;
+    color: $text-active;
+}
+
+.link-style {
+    text-decoration: underline;
+    color: $text-active;
+}
+
+// Multi line truncation
+.multiline-ellipsis {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* start showing ellipsis when 2nd line is reached */
+    white-space: pre-wrap; /* let the text wrap preserving spaces */
+    word-break: break-word;
+}
+
+.text-active {
+    color: $text-active;
+}
+
+.app-main-screen-with-buttons {
+    .p-card {
+        .p-card-body {
+            padding: 24px;
+            .p-card-content {
+                .header-divider .p-divider.p-divider-horizontal:before {
+                    border-color: $theme-primary-light;
+                }
+
+                h2 {
+                    color: $text-default;
+                }
+                p {
+                    color: $text-light;
+                }
+
+                .navigation-button button {
+                    width: 235px;
+                    border-radius: 8px;
+                    border: 1px solid $theme-primary-light;
+                    &.p-button-raised {
+                        box-shadow: 0px 0px 20px -5px rgba(62, 86, 111, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04);
+                        &:hover,
+                        &:focus {
+                            box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.04), 0px 20px 25px -5px rgba(0, 0, 0, 0.1);
+                            background: $theme-secondary-light;
+                            border: 1px solid $text-active;
+                        }
+                    }
+                    div > div.text-center {
+                        & > i {
+                            padding: 24px 0px 28px;
+                            font-size: 48px;
+                            color: $text-light;
+                        }
+                        & > h5 {
+                            color: $text-light;
+                        }
+                        & > p {
+                            font-size: 14px;
+                            color: $text-light;
+                            &.confirm {
+                                color: $button-confirm;
+                                font-weight: 600;
+                            }
+                        }
+                        & > .button-divider .p-divider.p-divider-horizontal {
+                            width: 72px;
+                            &:before {
+                                border: 1px solid $theme-primary-medium;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.empty-message-container {
+    color: $text-inactive;
+    padding: 24px 0;
+    img {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 21px;
+    }
+}
+
+.logo-container {
+    color: $text-inactive;
+    padding: 12px 0;
+    img {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+label,
+.form-label,
+.p-datatable .p-datatable-thead > tr > th {
+    font-family: $roboto-condensed-medium-font;
+}
+.p-datatable .p-datatable-thead > tr > th {
+    font-weight: 500;
+}
+h5,
+h6,
+button,
+.p-button,
+.roboto-condensed {
+    font-family: $roboto-condensed-regular-font;
+}
+
+.p-button-sm {
+    font-family: $roboto-condensed-regular-font;
+}
+
+.horizontally-centered-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 1.25rem;
+    margin: 0 auto;
+}

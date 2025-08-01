@@ -1,0 +1,5 @@
+spring:
+  mail:
+    host: ${MAIL_SERVER_HOST}
+    #    port: 465
+    port: ${MAIL_SERVER_PORT}

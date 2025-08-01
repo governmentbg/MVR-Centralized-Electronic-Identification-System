@@ -1,0 +1,17 @@
+<section class="h-100 provider-register-section" *transloco="let t">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <h4 class="mb-4 text-text-default">
+        {{ t('modules.users.userEdit.title') }}
+    </h4>
+    <p-card>
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                <app-user-form
+                    [user]="user"
+                    (submitEvent)="onSubmit(user?.id, $event)"
+                    (cancelEvent)="onCancel()"
+                    [isLoading]="editUserMutation.isLoading"></app-user-form>
+            </div>
+        </div>
+    </p-card>
+</section>

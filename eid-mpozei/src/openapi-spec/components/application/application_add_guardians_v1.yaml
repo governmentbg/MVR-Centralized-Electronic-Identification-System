@@ -1,0 +1,8 @@
+schemas:
+  ApplicationAddGuardiansRequest:
+    type: object
+    properties:
+      guardians:
+        type: array
+        items:
+          $ref: './guardian_details_v1.yaml#/schemas/GuardianDetails'

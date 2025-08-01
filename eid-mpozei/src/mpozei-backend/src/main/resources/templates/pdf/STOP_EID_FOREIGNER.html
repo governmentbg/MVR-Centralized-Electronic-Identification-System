@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+    <meta charset="utf-8"></meta>
+    <title>Заявление</title>
+    <style>
+        html * {
+            font-family: Blogger Sans, Arial, Helvetica, sans-serif !important;
+        }
+
+        body {
+            font-size: 11pt;
+            margin: 0;
+        }
+
+        .form-container {
+            width: min-content;
+            justify-self: center;
+            border-collapse: collapse;
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 26pt;
+            margin: 0 0 20pt;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            font-size: 9pt;
+            margin: 0 0 20pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0pt;
+            margin-bottom: 8pt;
+        }
+
+        td,
+        th {
+            border: 0.75pt solid #000000;
+            padding: 5pt;
+            vertical-align: top;
+            background-color: #ffffff;
+        }
+
+        .label-cell {
+            width: 30%;
+            font-size: 8.5pt;
+            border-style: none;
+        }
+
+        .input-cell {
+            width: 70%;
+            font-size: 8.5pt;
+            border-style: none;
+        }
+
+        .signature-section {
+            margin-top: 20pt;
+            text-align: center;
+        }
+
+        .signature-line {
+            width: 200px;
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            margin-top: 5pt;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .note {
+            font-size: 8.5pt;
+            text-align: center;
+        }
+
+        .checkbox-cell {
+            border: 0.75pt solid #666666;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .double-border {
+            border-left: 2.25pt double #666666;
+        }
+
+        .data-row {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+<div class="form-container">
+    <p class="form-title">Заявление</p>
+    <p class="form-subtitle">за спиране на удостоверение за електронна идентичност на чуждестранни граждани в БЛД</p>
+
+    <table class="data-row">
+        <tr class="data-row" style="height: 35px;">
+            <td class="label-cell" style="vertical-align: middle;">Входящ номер:</td>
+            <td class="input-cell" style="vertical-align: middle;">[[${applicationNumber}]]</td>
+            <td class="label-cell" style="vertical-align: middle;">Дата:</td>
+            <td class="input-cell" style="vertical-align: middle;">[[${currentDate}]]</td>
+        </tr>
+        <tr class="data-row" style="height: 35px; align-items: center;">
+            <td class="label-cell" colspan="1" style="vertical-align: middle;">ЛНЧ/ЛН/ЕГН:</td>
+            <td class="input-cell" colspan="4"
+                style="text-align: center; border-bottom: 1pt solid black; vertical-align: bottom;">
+                [[${citizenIdentifierNumber}]]
+                <div style="border-bottom: 1pt solid black; margin-top: 5px;"></div>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 35px; align-items: center;">
+            <td class="label-cell" style="vertical-align: bottom;">
+                <div style="width: max-content;">
+                    <div>Гражданство:</div>
+                    <div style="text-wrap: nowrap;">Документ за задгранично пътуване</div>
+                </div>
+            </td>
+            <td class="input-cell" colspan="3"
+                style="text-align: center; vertical-align: bottom; border-bottom: 1pt solid black;">
+                [[${citizenship}]]
+                <div style="border-bottom: 1pt solid black; margin-top: 5px;"></div>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 60px; align-items: center;">
+            <td class="input-cell" colspan="5"
+                style="text-align: center; vertical-align: bottom; border-bottom: 1pt solid black;">
+                [[${names}]]
+                <div style="border-bottom: 1pt solid black; margin-top: 5px;"></div>
+                <div>Имена на кирилица (име, презиме, фамилия)</div>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 60px; align-items: center;">
+            <td class="input-cell" colspan="5"
+                style="text-align: center; vertical-align: bottom; border-bottom: 1pt solid black;">
+                [[${namesLatin}]]
+                <div style="border-bottom: 1pt solid black; margin-top: 5px;"></div>
+                <div>Имена на латиница (име, презиме, фамилия)</div>
+            </td>
+        </tr>
+        <tr class="data-row">
+            <td colspan="4">
+                <p class="note"><strong>Посочените от Вас данни може да се използват за съобщения във връзка с Вашата
+                    електронна идентичност.</strong></p>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 35px;">
+            <td colspan="1" style="border-right-style: none; vertical-align: middle;">
+                <div style="display: flex; flex-direction: row; gap: 3rem;">
+                    <div style="align-self: center;">Телефон:</div>
+                    <div style="align-self: center; text-wrap: nowrap;">[[${phone}]]</div>
+                </div>
+            </td>
+            <td colspan="3" style="vertical-align: middle;">
+                <div style="display: flex; flex-direction: row; gap: 3rem;">
+                    <div style="align-self: center;">Ел. Поща:</div>
+                    <div style="align-self: center;">[[${email}]]</div>
+                </div>
+            </td>
+        </tr>
+        <tr class="data-row">
+            <td colspan="4">
+                <div style="display: flex; flex-direction: column; font-size: 9.5pt;">
+                    <div style="display: flex; flex-direction: row; gap: 10pt;">
+                        <div>Сериен номер на УЕИ</div>
+                        <div>[[${certificateSerialNumber}]]</div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 10pt;">
+                        <div>Уникален идентификатор на електронна идентичност</div>
+                        <div>[[${eidentityId}]]</div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 10pt;">
+                        <div>Носител</div>
+                        <div>[[${deviceType}]]</div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 10pt;">
+                        <div>Сериен номер на носителя</div>
+                        <div>[[${deviceSerialNumber}]]</div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 10pt;">
+                        <div>АЕИ</div>
+                        <div>[[${eidAdministratorName}]]</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr class="data-row">
+            <td colspan="4">
+                <p class="note"><strong>Заявявам, спиране на удостоверение за електронна идентичност.</strong></p>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 35px;">
+            <td colspan="3">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 12px;">
+                    <div style="display: flex; flex-direction: row; gap: 1rem;">
+                        <div style="display: flex; flex-direction: row; gap: 1rem;">
+                            <div>БЛД:</div>
+                            <div>[[${identityNumber}]]</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; gap: 1rem;">
+                            <div>Издаден на:</div>
+                            <div>[[${identityIssueDate}]]</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 1rem;">
+                        <div style="display: flex; flex-direction: row; gap: 0.5rem; text-wrap: nowrap;">
+                            <div>Имена:</div>
+                            <div>[[${names}]]</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; gap: 1rem;">
+                            <div style="text-wrap: nowrap;">Дата на раждане:</div>
+                            <div>[[${dateOfBirth}]]</div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td colspan="1" style="vertical-align: bottom;">
+                <div style="font-size: 10px; text-align: center;">
+                    <div style="align-self: center; margin-bottom:5px; max-width: 150px; word-wrap: break-word; font-size: xx-small;">[[${signatureInfo}]]</div>
+                    <div>Подпис на заявител</div>
+                </div>
+            </td>
+        </tr>
+        <tr class="data-row">
+            <td colspan="4">
+                <p class="note"><strong>Долуподписаните родители на лица под 18-годишна възраст, настойници, попечители
+                    или други законни представители, заявяваме спиране на удостоверение за електронна
+                    идентичност.</strong></p>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 35px;">
+            <td colspan="2" style="vertical-align: middle; border-style: none;">
+                <div style="display: flex; flex-direction: row; font-size: 8.5pt;">
+                    <div>Имена:</div>
+                    <div style="text-wrap: nowrap; vertical-align: middle;">[[${guardianNames1}]]</div>
+                </div>
+            </td>
+            <td colspan="1" style="vertical-align: middle; border-style: none;">
+                <div style="display: flex; flex-direction: row; vertical-align: middle; font-size: 8.5pt; text-wrap: nowrap;min-width: 70px">
+                    ЛНЧ/ЛН/ЕГН:
+                </div>
+            </td>
+            <td style="vertical-align: middle; font-size: 8.5pt;">[[${guardianEgn1}]]</td>
+        </tr>
+        <tr class="data-row" style="height: 35px; width: fit-content;">
+            <td colspan="3" style="vertical-align: middle;">
+                <div style="display: flex; flex-direction: row; gap: 1rem; font-size: 12px;">
+                    <div style="display: flex; flex-direction: row; gap: 0.5rem; text-wrap: nowrap;">
+                        <div style="align-self: center;">БЛД №:</div>
+                        <div style="align-self: center;">[[${guardianIdentityNumber1}]]</div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; gap: 0.5rem; text-wrap: nowrap;">
+                        <div style="align-self: center;">Издадена на:</div>
+                        <div style="align-self: center;">[[${guardianIssueDate1}]]</div>
+                    </div>
+                </div>
+            </td>
+            <td colspan="1" style="vertical-align: bottom;">
+                <div style="font-size: 10px; text-align: center;">
+                    <div>Подпис</div>
+                </div>
+            </td>
+        </tr>
+        <tr class="data-row">
+            <td class="input-cell" colspan="3"
+                style="vertical-align:bottom; border-bottom: 1pt solid black">
+                <div style="margin-top: 5px">Днес.........20.....г. ............................................................................................../имена на кирилица (име, презиме, фамилия) на заявителя/ с подписа си потвърждавам, че услугата ми беше изпълнена.</div>
+            </td>
+            <td colspan="1" style="vertical-align: bottom;">
+                <div style="font-size: 8.5pt; text-align: center;">
+                    <div>Подпис на заявител</div>
+                </div>
+            </td>
+        </tr>
+        <tr class="data-row" style="height: 50px; align-items: center;">
+            <td class="input-cell" colspan="3"
+                style="text-align: center; vertical-align: bottom; border-bottom: 1pt solid black;">
+                <div style="border-bottom: 1pt solid black; margin-top: 5px;"></div>
+                <div>Имена на служителя, обработил заявлението</div>
+            </td>
+            <td style="font-size: 8.5pt; text-align: center; vertical-align: bottom; text-wrap: nowrap;">Подпис на
+                служител
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+
+</html>
+
+

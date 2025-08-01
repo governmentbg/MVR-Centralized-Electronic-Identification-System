@@ -1,0 +1,25 @@
+schemas:
+  CertificateRequest:
+    type: object
+    required:
+      - applicationId
+      - certificateSigningRequest
+      - certificateAuthorityName
+    properties:
+      applicationId:
+        type: string
+        format: uuid
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotNull(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.APPLICATION_ID_CANNOT_BE_NULL)'
+      certificateSigningRequest:
+        type: string
+        example: |-
+          -----BEGIN CERTIFICATE REQUEST-----
+          MIICh...V8shQ==
+          -----END CERTIFICATE REQUEST-----
+        description: Certificate request
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTICATE_SIGNING_REQUEST_CANNOT_BE_BLANK)'
+      certificateAuthorityName:
+        type: string
+        example: CN=ExampleCA
+        description: Certificate Authority (CA) name
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTICATE_CA_NAME_CANNOT_BE_BLANK)'

@@ -1,0 +1,12 @@
+schemas:
+  ApplicationSignRequest:
+    type: object
+    properties:
+      email:
+        type: string
+      phoneNumber:
+        type: string
+      guardians:
+        type: array
+        items:
+          $ref: './guardian_details_v1.yaml#/schemas/GuardianDetails'

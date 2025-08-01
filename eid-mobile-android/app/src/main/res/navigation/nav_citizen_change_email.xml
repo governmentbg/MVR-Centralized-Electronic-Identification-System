@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_citizen_change_email"
+    app:startDestination="@id/changeCitizenEmailFragment">
+
+    <fragment
+        android:id="@+id/changeCitizenEmailFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.email.ChangeCitizenEmailFragment"
+        android:label="changeCitizenEmailFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+</navigation>

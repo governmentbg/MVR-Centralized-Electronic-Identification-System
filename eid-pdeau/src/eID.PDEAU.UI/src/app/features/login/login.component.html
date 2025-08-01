@@ -1,0 +1,35 @@
+<section class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100 rounded-0">
+        <h3 class="m-4 text-primary text-center text-uppercase">{{ t('global.login') }}</h3>
+        <i
+            *ngIf="requestInProgress"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem; margin-right: 1rem; margin-bottom: 1rem"></i>
+        <div class="d-flex flex-wrap flex-row justify-content-center gap-5">
+            <div
+                class="p-fluid col-lg-3 col-12"
+                [innerHTML]="t('loginPage.txtAdditionalText', { url: usefulInformationUrl })"></div>
+            <p-divider class="header-divider d-none d-lg-block" layout="vertical"></p-divider>
+            <p-divider class="header-divider w-100 d-lg-none" layout="horizontal"></p-divider>
+            <div class="p-fluid col-lg-3 col-12">
+                <button
+                    pButton
+                    type="button"
+                    class="mb-4 w-fit"
+                    [disabled]="requestInProgress"
+                    [attr.aria-label]="t('loginPage.txtLoginWithEidCitizen')"
+                    [label]="t('loginPage.txtLoginWithEidCitizen')"
+                    (click)="redirectToLogin('citizen')"></button>
+
+                <button
+                    pButton
+                    type="button"
+                    class="mb-4 w-fit"
+                    [disabled]="requestInProgress"
+                    [attr.aria-label]="t('loginPage.txtLoginWithEidEmployee')"
+                    [label]="t('loginPage.txtLoginWithEidEmployee')"
+                    (click)="redirectToLogin('employee')"></button>
+            </div>
+        </div>
+    </p-card>
+</section>

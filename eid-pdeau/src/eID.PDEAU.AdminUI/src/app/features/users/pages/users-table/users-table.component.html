@@ -1,0 +1,180 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <ng-container *ngIf="!userToEdit">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-text-default">
+                {{ t('modules.users.usersTable.title') }}
+            </h4>
+            <p-button
+                styleClass="p-button-success"
+                [label]="t('modules.users.usersTable.register')"
+                icon="pi pi-plus"
+                [ariaLabel]="t('modules.users.usersTable.register')"
+                [routerLink]="['/users/register']"></p-button>
+        </div>
+        <p-card>
+            <app-users-filter (filteredData)="onFilterDataChange($event)" />
+            <div class="row">
+                <div class="col">
+                    <p-table
+                        *ngIf="showTable"
+                        #usersTable
+                        [value]="usersQuery.data?.data || []"
+                        [tableStyle]="{ 'min-width': '100%' }"
+                        [rowHover]="true"
+                        [lazy]="true"
+                        (onLazyLoad)="onLazyLoad($event)"
+                        [totalRecords]="usersQuery.data?.totalItems || 0"
+                        [rows]="10"
+                        [paginator]="true"
+                        [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                        [currentPageReportTemplate]="
+                            t('global.txtTablePagination', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        [loading]="usersQuery.isLoading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        [sortField]="sortField"
+                        [sortOrder]="1"
+                        [rowSelectable]="false"
+                        stateStorage="session"
+                        [stateKey]="sessionStorageKey">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="createdOn" class="text-nowrap">
+                                    {{ t('modules.users.usersTable.table.columns.createdOn') }}
+                                    <p-sortIcon field="createdOn"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="name" class="text-nowrap">
+                                    {{ t('modules.users.usersTable.table.columns.name') }}
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="email" class="text-nowrap">
+                                    {{ t('modules.users.usersTable.table.columns.email') }}
+                                    <p-sortIcon field="email"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="phone" class="text-nowrap">
+                                    {{ t('modules.users.usersTable.table.columns.phone') }}
+                                    <p-sortIcon field="phone"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="isAdministrator" class="text-nowrap">
+                                    {{ t('modules.users.usersTable.table.columns.role') }}
+                                    <p-sortIcon field="isAdministrator"></p-sortIcon>
+                                </th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.users.usersTable.table.columns.action') }}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-user>
+                            <tr [ngClass]="{}">
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="user.createdOn"
+                                    [title]="user.createdOn">
+                                    <span class="multiline-ellipsis">{{ user.createdOn | translocoDate }}</span>
+                                </td>
+                                <td style="max-width: 18rem" [attr.aria-label]="user.name" [title]="user.name">
+                                    <span class="multiline-ellipsis">{{ user.name }}</span>
+                                </td>
+                                <td style="max-width: 18rem" [attr.aria-label]="user.email" [title]="user.email">
+                                    <span class="multiline-ellipsis">{{ user.email }}</span>
+                                </td>
+                                <td style="max-width: 18rem" [attr.aria-label]="user.phone" [title]="user.phone">
+                                    <span class="multiline-ellipsis">{{ user.phone }}</span>
+                                </td>
+                                <td style="max-width: 18rem">
+                                    <ng-container *ngIf="user.isAdministrator">
+                                        <span
+                                            class="d-flex align-items-center"
+                                            [title]="t('modules.users.usersTable.table.roles.admin')"
+                                            [attr.aria-label]="t('modules.users.usersTable.table.roles.admin')">
+                                            {{ t('modules.users.usersTable.table.roles.admin') }}
+                                        </span>
+                                    </ng-container>
+                                    <ng-container *ngIf="!user.isAdministrator">
+                                        <span
+                                            class="d-flex align-items-center"
+                                            [title]="t('modules.users.usersTable.table.roles.user')"
+                                            [attr.aria-label]="t('modules.users.usersTable.table.roles.user')">
+                                            {{ t('modules.users.usersTable.table.roles.user') }}
+                                        </span>
+                                    </ng-container>
+                                </td>
+
+                                <td style="width: 10rem">
+                                    <div class="d-flex">
+                                        <p-button
+                                            [title]="t('modules.users.usersTable.table.details.selectUser')"
+                                            [ariaLabel]="t('modules.users.usersTable.table.details.selectUser')"
+                                            styleClass="p-button-sm p-button-text"
+                                            (click)="previewUser(user.id)">
+                                            <i class="material-icons-outlined">&#xf801;</i>
+                                        </p-button>
+                                        <p-button
+                                            [title]="t('modules.users.usersTable.table.details.editUser')"
+                                            [ariaLabel]="t('modules.users.usersTable.table.details.editUser')"
+                                            styleClass="p-button-sm p-button-text"
+                                            (click)="selectUser(user)">
+                                            <i class="material-icons-outlined">&#xe3c9;</i>
+                                        </p-button>
+                                        <p-button
+                                            [title]="t('modules.users.usersTable.table.details.deleteUser')"
+                                            [ariaLabel]="t('modules.users.usersTable.table.details.deleteUser')"
+                                            styleClass="p-button-sm p-button-text"
+                                            (click)="deleteUser(user)">
+                                            <i class="material-icons-outlined">&#xe872;</i>
+                                        </p-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="7">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </p-card>
+    </ng-container>
+
+    <ng-container *ngIf="!!userToEdit">
+        <app-user-edit [user]="userToEdit" (closeEdit)="closeEdit()"></app-user-edit>
+    </ng-container>
+</section>

@@ -1,0 +1,25 @@
+schemas:
+  CibaDelegationRequest:
+    type: object
+    required:
+      - login_hint
+      - scope
+      - is_consent_required
+    properties:
+      login_hint:
+        type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = "login_hint cannot be blank")'
+      scope:
+        type: array
+        items:
+          type: string
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = "scope cannot be blank")'
+      is_consent_required:
+        type: boolean
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = "is_consent_required cannot be blank")' 
+      binding_message:
+        type: string
+      acr_values:
+        type: array
+        items:
+          type: string

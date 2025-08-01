@@ -1,0 +1,9 @@
+schemas:
+  CertificateAlias:
+    type: object
+    properties:
+      alias:
+        type: string
+        description: 'New Certificate Alias'
+        x-field-extra-annotation: '@jakarta.validation.constraints.NotBlank(message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTIFICATES_ALIAS_NOT_VALID) 
+        @jakarta.validation.constraints.Size(max = 30, message = bg.bulsi.mvr.common.exception.ErrorCode.Fields.CERTIFICATES_ALIAS_NOT_VALID)'

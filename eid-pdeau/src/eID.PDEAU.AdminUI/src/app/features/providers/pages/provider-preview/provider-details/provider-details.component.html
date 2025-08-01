@@ -1,0 +1,98 @@
+<div class="row gap-2 mb-4" *transloco="let t; read: 'modules.providers.application-preview'">
+    <div class="mb-2 d-flex gap-3">
+        <h6 class="mb-0">{{ t('txtStatus') }}</h6>
+        <span class="col">
+            <ng-template [ngIf]="!isLoading">
+                <app-application-status [status]="application?.status" />
+            </ng-template>
+            <ng-template [ngIf]="isLoading">
+                <p-skeleton class="col" width="14rem"></p-skeleton>
+            </ng-template>
+        </span>
+    </div>
+    <div class="col">
+        <h6 class="mb-3 ps-0">{{ t('administrativeBody.txtApplicationData') }}</h6>
+        <app-preview-field
+            [label]="t('administrativeBody.txtApplicationNumber')"
+            [value]="application?.number"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrativeBody.txtSystemId')"
+            [value]="application?.id"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            *ngIf="application?.externalNumber"
+            [label]="t('administrativeBody.txtApplicationNumberInRecordKeepingSystem')"
+            [value]="application?.externalNumber"
+            [isLoading]="isLoading" />
+        <ng-template [ngIf]="historyQuery.isLoading || this.correctionComment">
+            <app-preview-field
+                [label]="t('administrativeBody.txtCorrectionComment')"
+                [value]="this.correctionComment"
+                [isLoading]="historyQuery.isLoading" />
+        </ng-template>
+        <h6 class="p-3 ps-0">{{ t('issuer.txtTitle') }}</h6>
+        <app-preview-field [label]="t('issuer.txtUid')" [value]="application?.issuerUid" [isLoading]="isLoading" />
+        <app-preview-field [label]="t('issuer.txtName')" [value]="application?.issuerName" [isLoading]="isLoading" />
+        <p-skeleton class="p-3" *ngIf="isLoading" width="14rem">
+            <h6>loading</h6>
+        </p-skeleton>
+        <h6 *ngIf="application?.type" class="p-3 ps-0">
+            {{ t('administrativeBody.txt' + application?.type + 'Title') }}
+        </h6>
+        <app-preview-field
+            [label]="t('administrativeBody.txtName')"
+            [value]="application?.name"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrativeBody.txtBulstat')"
+            [value]="application?.bulstat"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            *ngIf="!!application?.identificationNumber"
+            [label]="t('administrativeBody.txtIdentificationNumber')"
+            [value]="application?.identificationNumber!"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrativeBody.txtHeadquarters')"
+            [value]="application?.headquarters"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrativeBody.txtAddress')"
+            [value]="application?.address"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrativeBody.txtEmail')"
+            [value]="application?.email"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrativeBody.txtPhone')"
+            [value]="application?.phone"
+            [isLoading]="isLoading" />
+    </div>
+    <div class="col">
+        <h6 class="mb-3 ps-0">{{ t('administrator.txtTitle') }}</h6>
+        <app-preview-field [label]="t('administrator.txtUid')" [value]="administrator?.uid" [isLoading]="isLoading" />
+        <app-preview-field [label]="t('administrator.txtName')" [value]="administrator?.name" [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrator.txtEmail')"
+            [value]="administrator?.email"
+            [isLoading]="isLoading" />
+        <app-preview-field
+            [label]="t('administrator.txtPhone')"
+            [value]="administrator?.phone"
+            [isLoading]="isLoading" />
+
+        <ng-template [ngIf]="isCreatedByAdmin">
+            <h6 class="p-3 ps-0">{{ t('createdByAdmin.txtTitle') }}</h6>
+            <app-preview-field
+                [label]="t('createdByAdmin.txtName')"
+                [value]="application?.createdByAdministratorName!"
+                [isLoading]="isLoading" />
+            <app-preview-field
+                [label]="t('createdByAdmin.txtId')"
+                [value]="application?.createdByAdministratorId!"
+                [isLoading]="isLoading" />
+        </ng-template>
+    </div>
+</div>

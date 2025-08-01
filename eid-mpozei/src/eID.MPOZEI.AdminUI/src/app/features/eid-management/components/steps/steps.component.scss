@@ -1,0 +1,46 @@
+@import '../../../../styles/variables';
+
+.steps-column {
+    border-right: 1px solid $theme-primary-light;
+    min-width: 300px;
+
+    .step-circle {
+        border: 1px solid $text-light;
+    }
+
+    .step-circle.active {
+        border-color: $text-active;
+    }
+
+    .step-circle.finished {
+        border-color: $background-light-grey;
+        background: $background-light-grey;
+    }
+
+    .inner-steps {
+        padding-left: 2rem;
+        font-size: 14px;
+
+        & > li {
+            line-height: 24px;
+            color: $text-inactive;
+            padding-left: 24px;
+
+            &.active {
+                color: $text-active;
+                padding-left: 0;
+            }
+
+            &.finished {
+                color: $text-default;
+            }
+        }
+    }
+
+    .inner-step-arrow {
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+    }
+}

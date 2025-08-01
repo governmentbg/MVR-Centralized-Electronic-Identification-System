@@ -1,0 +1,6 @@
+schemas:
+  ApplicationConfirmationStatus:
+    type: string
+    enum:
+      - OK
+      - ERROR

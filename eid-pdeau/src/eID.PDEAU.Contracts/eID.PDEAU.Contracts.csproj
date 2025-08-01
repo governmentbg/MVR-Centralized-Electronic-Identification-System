@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Events\**" />
+    <Compile Remove="External\**" />
+    <EmbeddedResource Remove="Events\**" />
+    <EmbeddedResource Remove="External\**" />
+    <None Remove="Events\**" />
+    <None Remove="External\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.0.14" />
+  </ItemGroup>
+
+</Project>

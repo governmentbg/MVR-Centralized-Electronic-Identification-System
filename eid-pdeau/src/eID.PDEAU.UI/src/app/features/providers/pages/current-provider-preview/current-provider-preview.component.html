@@ -1,0 +1,45 @@
+<section id="provider-preview" class="h-100" *transloco="let t; read: 'modules.providers.provider-preview'">
+    <div class="d-flex mb-4 align-items-center">
+        <h4 class="text-text-default mb-0">
+            {{ t('txtTitle') }}
+        </h4>
+    </div>
+    <p-card>
+        <ng-container *ngIf="!providerIsLoading; else elseBlock">
+            <p-tabView>
+                <p-tabPanel [header]="t('tabs.txtDetails')">
+                    <app-provider-details [application]="providerData"></app-provider-details>
+                </p-tabPanel>
+                <p-tabPanel [header]="t('tabs.txtFiles')">
+                    <app-files-table [files]="providerFiles || []"></app-files-table>
+                </p-tabPanel>
+                <p-tabPanel [header]="t('tabs.txtHistory')" *ngIf="providerData">
+                    <app-status-history [providerId]="providerData.id"></app-status-history>
+                </p-tabPanel>
+                <ng-container
+                    *ngIf="
+                        providerData?.status !== providerStatus.enum.ReturnedForCorrection &&
+                        providerData?.status !== providerStatus.enum.InReview
+                    ">
+                    <p-tabPanel [header]="t('tabs.txtStatistics')">
+                        <app-statistics-table></app-statistics-table>
+                    </p-tabPanel>
+                </ng-container>
+            </p-tabView>
+        </ng-container>
+        <ng-template #elseBlock>
+            <p-tabView>
+                <p-tabPanel [header]="t('tabs.txtDetails')">
+                    <p-skeleton styleClass="mb-3" height="1rem" width="8rem"></p-skeleton>
+                    <p-skeleton styleClass="mb-3" height="1rem" width="16rem"></p-skeleton>
+
+                    <p-skeleton styleClass="mb-3" height="1rem" width="8rem"></p-skeleton>
+                    <p-skeleton styleClass="mb-3" height="1rem" width="16rem"></p-skeleton>
+
+                    <p-skeleton styleClass="mb-3" height="1rem" width="8rem"></p-skeleton>
+                    <p-skeleton styleClass="mb-3" height="1rem" width="16rem"></p-skeleton>
+                </p-tabPanel>
+            </p-tabView>
+        </ng-template>
+    </p-card>
+</section>

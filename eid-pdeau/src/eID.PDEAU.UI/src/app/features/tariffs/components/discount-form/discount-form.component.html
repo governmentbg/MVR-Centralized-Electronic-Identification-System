@@ -1,0 +1,137 @@
+<section class="h-100" *transloco="let t">
+    <p-confirmDialog [style]="{ width: '50vw' }" class="confirmation-header"></p-confirmDialog>
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <h4 class="mb-4">
+        <ng-template [ngIf]="isEditMode">{{ t('modules.tariffs.discountEdit.title') }}</ng-template>
+        <ng-template [ngIf]="!isEditMode">{{ t('modules.tariffs.discountCreate.title') }}</ng-template>
+    </h4>
+    <p-card>
+        <div class="row">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col col-xl-8">
+                <div class="row mb-3">
+                    <div class="col-xl-8">
+                        <label for="startDate" class="form-label">
+                            {{ t('modules.tariffs.startDate') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-calendar
+                            class="w-100"
+                            styleClass="w-100"
+                            formControlName="startDate"
+                            inputId="startDate"
+                            name="startDate"
+                            [tabindex]="15"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            [minDate]="minDate"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [placeholder]="t('global.txtDropdownPlaceholder')">
+                        </p-calendar>
+                        <app-error-field
+                            [formControlInstance]="form.controls.startDate"
+                            translationPrefix="modules.tariffs.discountEdit.errors" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-xl-8">
+                        <label for="ageFrom" class="form-label">
+                            {{ t('modules.tariffs.ageFrom') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-inputNumber
+                            inputId="ageFrom"
+                            class="w-100"
+                            styleClass="w-100"
+                            autocomplete="off"
+                            formControlName="ageFrom"
+                            [useGrouping]="false"
+                            [min]="1"
+                            [max]="130" />
+                        <app-error-field
+                            [formControlInstance]="form.controls.ageFrom"
+                            translationPrefix="modules.tariffs.discountEdit.errors" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-xl-8">
+                        <label for="ageUntil" class="form-label">
+                            {{ t('modules.tariffs.ageUntil') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-inputNumber
+                            inputId="ageUntil"
+                            class="w-100"
+                            styleClass="w-100"
+                            autocomplete="off"
+                            formControlName="ageUntil"
+                            [useGrouping]="false"
+                            [min]="1"
+                            [max]="130" />
+                        <app-error-field
+                            [formControlInstance]="form.controls.ageUntil"
+                            translationPrefix="modules.tariffs.discountEdit.errors" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-xl-8">
+                        <label for="discount" class="form-label">
+                            {{ t('modules.tariffs.discount') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-inputNumber
+                            formControlName="discount"
+                            class="w-100"
+                            styleClass="w-100"
+                            inputId="discount"
+                            autocomplete="off"
+                            mode="decimal"
+                            [maxFractionDigits]="2"
+                            [min]="0"></p-inputNumber>
+                        <app-error-field
+                            [formControlInstance]="form.controls.discount"
+                            translationPrefix="modules.tariffs.discountEdit.errors" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-xl-8">
+                        <label for="providedServiceId" class="form-label">
+                            {{ t('modules.tariffs.serviceName') }} <span class="text-danger">*</span>
+                        </label>
+                        <p-dropdown
+                            formControlName="providedServiceId"
+                            [options]="providedServices"
+                            [optionLabel]="providedServicesNameKey"
+                            optionValue="id"
+                            styleClass="w-100"
+                            inputId="providedServiceId"
+                            appendTo="body"
+                            [placeholder]="t('global.txtDropdownPlaceholder')">
+                        </p-dropdown>
+                        <app-error-field
+                            [formControlInstance]="form.controls.providedServiceId"
+                            translationPrefix="modules.tariffs.tariffEdit.errors" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-xl-8">
+                        <p-checkbox
+                            formControlName="disability"
+                            inputId="disability"
+                            [binary]="true"
+                            [label]="t('modules.tariffs.disability')"></p-checkbox>
+                    </div>
+                </div>
+                <div class="d-flex gap-4 mt-4">
+                    <p-button
+                        [label]="t('global.txtCancel')"
+                        styleClass="p-button p-button-danger"
+                        [loading]="addDiscountQuery.isLoading || updateDiscountQuery.isLoading"
+                        [routerLink]="['/tariffs/discounts']"></p-button>
+                    <p-button
+                        [label]="t('global.txtSubmit')"
+                        type="submit"
+                        [loading]="addDiscountQuery.isLoading || updateDiscountQuery.isLoading"
+                        styleClass="p-button p-button-primary"></p-button>
+                </div>
+            </form>
+        </div>
+    </p-card>
+</section>

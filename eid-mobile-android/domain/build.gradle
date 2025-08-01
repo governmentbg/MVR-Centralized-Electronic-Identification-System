@@ -1,0 +1,86 @@
+/**
+ * Please follow code style when editing project
+ * Please follow principles of clean architecture
+ * Created 2023 by Roman Kryvolapov
+ **/
+
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+}
+
+android {
+
+    namespace = 'com.digitall.eid.domain'
+
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 24
+        targetSdk = 36
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlin {
+        jvmToolchain(17)
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled = false
+            jniDebuggable = true
+        }
+
+        release {
+            minifyEnabled = true
+            jniDebuggable = false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions += "version"
+
+    productFlavors {
+        environmentTest {
+        }
+        environmentRelease {
+        }
+        configureEach {
+            dimension = "version"
+        }
+    }
+
+    packaging {
+        resources.excludes.add("META-INF/**")
+    }
+
+}
+
+dependencies {
+
+    // common
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2'
+    implementation 'io.insert-koin:koin-android:4.1.0'
+    implementation 'javax.inject:javax.inject:1'
+    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.firebase:firebase-installations-ktx:18.0.0'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+
+    // tests
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.insert-koin:koin-test:4.1.0'
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    testImplementation 'io.insert-koin:koin-test-junit4:4.1.0'
+    testImplementation 'org.mockito:mockito-core:5.18.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:6.0.0'
+}

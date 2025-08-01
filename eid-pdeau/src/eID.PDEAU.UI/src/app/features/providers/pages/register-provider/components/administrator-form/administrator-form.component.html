@@ -1,0 +1,92 @@
+<ng-container *transloco="let t" [formGroup]="form">
+    <div class="row">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.providers.register.administrator') }}
+            </h6>
+        </div>
+    </div>
+    <!-- Uid -->
+    <div class="row mb-2">
+        <div class="col-lg-3">
+            <label for="administratorUidType" class="form-label">
+                {{ t('modules.providers.register.administratorUidType') }}
+            </label>
+            <p-dropdown
+                formControlName="uidType"
+                [options]="identifierTypes"
+                optionLabel="name"
+                optionValue="id"
+                styleClass="w-100"
+                inputId="administratorUidType">
+            </p-dropdown>
+        </div>
+        <div class="col-lg-5">
+            <label for="administratorUid" class="form-label"
+                >{{ t('modules.providers.register.administratorUid') }}
+                <span class="text-danger">*</span>
+            </label>
+
+            <input pInputText appDigitOnly id="administratorUid" type="text" class="w-100" formControlName="uid" />
+
+            <app-error-field
+                [formControlInstance]="form.controls.uid"
+                translationPrefix="modules.providers.register.errors"
+                [order]="['required', 'EgnError', 'EgnAdultError']" />
+        </div>
+    </div>
+    <!-- Name -->
+    <div class="row mb-2">
+        <div class="col-xl-8">
+            <label for="administratorName" class="form-label">
+                {{ t('modules.providers.register.administratorName') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                (blur)="nameInputSanitizer?.()"
+                pInputText
+                id="administratorName"
+                type="text"
+                class="w-100"
+                formControlName="name" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.name"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Email -->
+    <div class="row mb-2">
+        <div class="col-xl-8">
+            <label for="administratorEmail" class="form-label">
+                {{ t('modules.providers.register.administratorEmail') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administratorEmail" type="email" class="w-100" formControlName="email" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.email"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Phone -->
+    <div class="row mb-2">
+        <div class="col-xl-8">
+            <label for="administratorPhone" class="form-label">
+                {{ t('modules.providers.register.administratorPhone') }}
+                <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+                <input
+                    pInputText
+                    appDigitOnly
+                    appPrefixPhoneInput
+                    id="administratorPhone"
+                    type="text"
+                    class="w-100"
+                    formControlName="phone" />
+            </div>
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.phone"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+</ng-container>

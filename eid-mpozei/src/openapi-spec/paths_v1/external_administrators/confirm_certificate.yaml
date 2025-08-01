@@ -1,0 +1,40 @@
+#methods:
+#  post:
+#    tags:
+#      - ExternalAdministrators
+#    summary: Confirm storage of certificate
+#    description: Confirm storage of certificate
+#    operationId: confirmCertificateStorage
+#    requestBody:
+#      required: true
+#      content:
+#        application/json;charset=UTF-8:
+#          schema:
+#            $ref: '../../components/certificate/certificate_eid_confirmation_request_v1.yaml#/schemas/CertificateEidConfirmationRequest'
+#    responses:
+#      '200':
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/application/application_status_v1.yaml#/schemas/ApplicationStatus'
+#        description: Success
+#      '400':
+#        description: Bad Request
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+#      '500':
+#        description: Server Error
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      '504':
+#        description: Gateway Timeout
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      default:
+#        description: successful operation

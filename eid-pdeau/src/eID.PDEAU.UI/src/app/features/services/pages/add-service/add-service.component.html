@@ -1,0 +1,165 @@
+<section class="h-100 provider-register-section" *transloco="let t; read: 'modules.services.service-add'">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <h4 class="mb-4 text-text-default">
+        {{ t('txtTitle') }}
+    </h4>
+    <p-card>
+        <div class="row">
+            <form
+                [formGroup]="form"
+                (ngSubmit)="onSubmit()"
+                class="col-md-9 col-lg-8 col-xl-7 d-flex flex-column gap-3">
+                <!-- Name -->
+                <div class="d-flex flex-column">
+                    <label for="name" class="form-label">
+                        {{ t('txtName') }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input pInputText id="name" type="text" class="w-100" formControlName="name" />
+                    <app-error-field
+                        [formControlInstance]="form.controls.name"
+                        translationPrefix="modules.services.service-add.errors" />
+                </div>
+                <!-- Description -->
+                <div class="d-flex flex-column">
+                    <label for="description" class="form-label">
+                        {{ t('txtDescription') }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <textarea
+                        id="description"
+                        class="w-100 p-2"
+                        rows="5"
+                        pInputTextarea
+                        formControlName="description"></textarea>
+                    <app-error-field
+                        [formControlInstance]="form.controls.description"
+                        translationPrefix="modules.services.service-add.errors" />
+                </div>
+                <!-- IsEmpowerment -->
+                <div>
+                    <label for="isEmpowerment" class="form-label">
+                        {{ t('txtIsEmpowerment') }}
+                    </label>
+                    <div>
+                        <p-checkbox
+                            [binary]="true"
+                            formControlName="isEmpowerment"
+                            inputId="isEmpowerment"></p-checkbox>
+                    </div>
+                </div>
+                <!-- Assurance level -->
+                <div>
+                    <label class="form-label">{{ t('txtAssuranceLevel') }}</label>
+                    <div class="d-flex flex-column gap-2">
+                        <div *ngFor="let assuranceLevel of assuranceLevelOptions" class="field-checkbox d-flex gap-2">
+                            <p-radioButton
+                                [ngModelOptions]="{ standalone: true }"
+                                [inputId]="assuranceLevel.value"
+                                name="category"
+                                [value]="assuranceLevel.value"
+                                [(ngModel)]="selectedAssuranceLevel"></p-radioButton>
+                            <label [for]="assuranceLevel.value">{{ assuranceLevel.name }}</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Personal Information -->
+                <div class="d-flex flex-column">
+                    <label for="personalData" class="form-label">
+                        {{ t('txtPersonalInformation') }} <span class="text-danger">*</span>
+                    </label>
+                    <ng-container *transloco="let globalT; read: ''">
+                        <p-multiSelect
+                            [style]="{ 'min-width': '300px' }"
+                            [options]="personalDataOptions"
+                            formControlName="personalData"
+                            optionLabel="name"
+                            [filter]="false"
+                            inputId="personalData"
+                            [placeholder]="globalT('global.txtDropdownPlaceholder')" />
+                    </ng-container>
+                    <app-error-field
+                        [formControlInstance]="form.controls.personalData"
+                        translationPrefix="modules.services.service-preview.errors" />
+                </div>
+                <!-- Scopes -->
+                <div formArrayName="scopes" class="mb-4">
+                    <label class="form-label">
+                        {{ t('txtVolume') }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <ng-container *ngIf="isLoading">
+                        <div class="d-flex flex-column gap-2 mb-2">
+                            <p-skeleton width="100%" height="3rem"> </p-skeleton>
+                            <p-skeleton width="100%" height="3rem"></p-skeleton>
+                            <p-skeleton width="100%" height="3rem"></p-skeleton>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="!isLoading">
+                        <div *ngFor="let scope of scopes.controls; let i = index" class="d-flex flex-column">
+                            <div class="d-flex flex-column mb-2">
+                                <div class="gap-2 p-inputgroup w-100">
+                                    <p-autoComplete
+                                        [inputId]="i.toString()"
+                                        [formControlName]="i"
+                                        [dropdown]="true"
+                                        styleClass="w-100"
+                                        [completeOnFocus]="true"
+                                        (completeMethod)="searchSuggestions($event)"
+                                        [suggestions]="suggestions"
+                                        appendTo="body"></p-autoComplete>
+
+                                    <button
+                                        *transloco="let globalT; read: 'global'"
+                                        (click)="removeScope(i)"
+                                        type="button"
+                                        pButton
+                                        icon="pi pi-times"
+                                        [attr.aria-label]="globalT('txtDelete')"
+                                        class="p-button-danger p-button-text border-light"></button>
+                                </div>
+                                <app-error-field
+                                    [formControlInstance]="form.controls.scopes.controls[i]"
+                                    translationPrefix="modules.services.service-preview.errors" />
+                            </div>
+                        </div>
+                    </ng-container>
+                    <p-button
+                        [loading]="isLoading"
+                        [disabled]="isLoading"
+                        [label]="t('addButton')"
+                        [ariaLabel]="t('addButton')"
+                        icon="pi pi-plus"
+                        [iconPos]="'left'"
+                        styleClass="p-button-success "
+                        (click)="addScope()">
+                    </p-button>
+                    <app-error-field
+                        [formControlInstance]="form.controls.scopes"
+                        translationPrefix="modules.services.service-preview.errors" />
+                </div>
+                <div class="d-flex gap-4 mt-4">
+                    <a [routerLink]="['/services']">
+                        <button
+                            pButton
+                            type="button"
+                            [disabled]="addServiceMutation.isLoading"
+                            [label]="t('cancelButton')"
+                            class="p-button p-button-danger"></button>
+                    </a>
+                    <button
+                        pButton
+                        [loading]="addServiceMutation.isLoading"
+                        [label]="t('submitButton')"
+                        type="submit"
+                        class="p-button p-button-primary"></button>
+                </div>
+            </form>
+            <div class="col-md-3 col-lg-4 col-xl-5 mt-4 mt-lg-0">
+                <div
+                    class="h-100 p-3 bg-background-light-grey text-theme-primary-medium rounded-4 help-section"
+                    [innerHTML]="t('helpText')"></div>
+            </div>
+        </div>
+    </p-card>
+</section>

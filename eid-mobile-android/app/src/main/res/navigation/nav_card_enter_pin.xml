@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_card_enter_pin"
+    app:startDestination="@id/cardEnterPinFragment">
+
+    <fragment
+        android:id="@+id/cardEnterPinFragment"
+        android:name="com.digitall.eid.ui.fragments.card.enter.pin.login.CardEnterPinFragment"
+        android:label="cardEnterPinFragment"
+        tools:layout="@layout/fragment_card_enter_pin" />
+
+</navigation>

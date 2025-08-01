@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_payment_history"
+    app:startDestination="@id/paymentsHistoryFragment">
+
+    <fragment
+        android:id="@+id/paymentsHistoryFragment"
+        android:name="com.digitall.eid.ui.fragments.payments.history.PaymentsHistoryFragment"
+        android:label="paymentsHistoryFragment"
+        tools:layout="@layout/fragment_with_list_and_sort" >
+
+        <action
+            android:id="@+id/toPaymentsHistoryFilterFragment"
+            app:destination="@id/paymentsHistoryFilterFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/paymentsHistoryFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.payments.filter.PaymentsHistoryFilterFragment"
+        android:label="paymentsHistoryFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.payments.history.filter.PaymentsHistoryFilterModel"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

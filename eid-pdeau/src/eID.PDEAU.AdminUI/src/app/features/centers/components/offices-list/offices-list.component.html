@@ -1,0 +1,271 @@
+<div *transloco="let t">
+    <div class="d-flex justify-content-end mb-4">
+        <p-button
+            (onClick)="showDialog = true"
+            styleClass="p-button-success"
+            [label]="t('global.txtAdd')"
+            icon="pi pi-plus"></p-button>
+    </div>
+    <p-table
+        [value]="form.value || []"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        [rowSelectable]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name" class="text-nowrap">
+                    {{ t('modules.centers.register.officeName') }}
+                    <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="location" class="text-nowrap">
+                    {{ t('modules.centers.register.officeAddress') }}
+                    <p-sortIcon field="location"></p-sortIcon>
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.officeCoordinates') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.officeGeneralInformation') }}
+                </th>
+                <th class="text-nowrap">
+                    {{ t('modules.centers.register.workingHours') }}
+                </th>
+                <th pSortableColumn="contact" class="text-nowrap">
+                    {{ t('modules.centers.register.contact') }}
+                    <p-sortIcon field="contact"></p-sortIcon>
+                </th>
+                <th pSortableColumn="email" class="text-nowrap">
+                    {{ t('modules.centers.register.email') }}
+                    <p-sortIcon field="email"></p-sortIcon>
+                </th>
+                <th class="text-nowrap"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-office let-rowIndex="rowIndex">
+            <tr>
+                <td style="max-width: 18rem" [attr.aria-label]="office.name" [title]="office.name">
+                    <span class="multiline-ellipsis">{{ office.name }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.location" [title]="office.location">
+                    <span class="multiline-ellipsis">{{ office.location }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.longitude" [title]="office.longitude">
+                    <span class="multiline-ellipsis">{{ office.longitude }} {{ office.latitude }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.description" [title]="office.description">
+                    <span class="multiline-ellipsis">{{ office.description }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.workingHours" [title]="office.workingHours">
+                    <span class="multiline-ellipsis">{{ office.workingHours }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.contact" [title]="office.contact">
+                    <span class="multiline-ellipsis">{{ office.contact }}</span>
+                </td>
+                <td style="max-width: 18rem" [attr.aria-label]="office.email" [title]="office.email">
+                    <span class="multiline-ellipsis">{{ office.email }}</span>
+                </td>
+                <td>
+                    <button pButton type="button" class="p-button-sm p-button-text" (click)="remove(rowIndex)">
+                        <i class="pi pi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="8">
+                    <span
+                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoData')">
+                            {{ t('global.txtNoData') }}
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-dialog
+        header="Header"
+        [(visible)]="showDialog"
+        [style]="{ width: '50vw', maxWidth: '960px' }"
+        [draggable]="false"
+        [resizable]="false"
+        [modal]="true">
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold text-uppercase">
+                {{ t('modules.administrators.txtAddOfficeBtn') }}
+            </span>
+        </ng-template>
+        <form [formGroup]="officeForm" (ngSubmit)="onSubmit()">
+            <div class="row row-cols-1 row-cols-lg-2">
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="name" class="form-label">{{ t('modules.centers.register.officeName') }} </label>
+                            <span class="text-danger">*</span>
+                            <input pInputText id="name" type="text" class="w-100" formControlName="name" />
+                            <app-error-field
+                                [formControlInstance]="officeForm.controls.name"
+                                translationPrefix="modules.users.userForm.errors" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="location" class="form-label">
+                                {{ t('modules.centers.register.officeAddress') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input pInputText id="location" type="text" class="w-100" formControlName="location" />
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.location"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="region" class="form-label">
+                                {{ t('modules.centers.register.region') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <p-dropdown
+                                formControlName="region"
+                                [options]="regions"
+                                optionLabel="name"
+                                optionValue="value"
+                                styleClass="w-100"
+                                [placeholder]="t('global.txtDropdownPlaceholder')"
+                                inputId="region">
+                            </p-dropdown>
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.region"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="longitude" class="form-label">
+                                {{ t('modules.centers.register.longitude') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                pInputText
+                                appCoordinates
+                                id="longitude"
+                                type="text"
+                                class="w-100"
+                                formControlName="longitude" />
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.longitude"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="latitude" class="form-label">
+                                {{ t('modules.centers.register.latitude') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                pInputText
+                                appCoordinates
+                                id="latitude"
+                                type="text"
+                                class="w-100"
+                                formControlName="latitude" />
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.longitude"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="workingHours" class="form-label">
+                                {{ t('modules.centers.register.workingHours') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                id="workingHours"
+                                class="w-100 p-2"
+                                rows="1"
+                                pInputTextarea
+                                formControlName="workingHours"></textarea>
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.workingHours"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="latitude" class="form-label">
+                                {{ t('modules.centers.register.contact') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                pInputText
+                                appDigitOnly
+                                appPrefixPhoneInput
+                                id="contact"
+                                type="text"
+                                class="w-100"
+                                formControlName="contact" />
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.contact"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="email" class="form-label">
+                                {{ t('modules.centers.register.email') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input pInputText id="email" type="text" class="w-100" formControlName="email" />
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.email"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="description" class="form-label">
+                                {{ t('modules.centers.register.officeGeneralInformation') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                id="description"
+                                class="w-100 p-2"
+                                rows="5"
+                                pInputTextarea
+                                formControlName="description"></textarea>
+                        </div>
+                        <app-error-field
+                            [formControlInstance]="officeForm.controls.description"
+                            translationPrefix="modules.users.userForm.errors" />
+                    </div>
+                </div>
+            </div>
+
+            <p-divider type="solid"></p-divider>
+            <div class="d-flex gap-3 justify-content-center" *transloco="let tGlobal">
+                <button pButton type="button" (click)="showDialog = false" class="p-button p-button-danger">
+                    {{ tGlobal('global.txtClose') }}
+                </button>
+                <button
+                    pButton
+                    [label]="tGlobal('global.txtSubmit')"
+                    type="submit"
+                    class="p-button me-3 p-button-primary"></button>
+            </div>
+        </form>
+    </p-dialog>
+</div>

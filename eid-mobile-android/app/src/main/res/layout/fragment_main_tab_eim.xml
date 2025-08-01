@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_EFF6FF"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.digitall.eid.ui.view.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_background_color="@color/color_295999"
+        app:toolbar_elements_color="@color/color_white"
+        app:toolbar_title="@string/eim_intro_title" />
+
+    <com.digitall.eid.ui.view.ButtonImageTwoFieldsView
+        android:id="@+id/btnApplications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_20"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:elevation="8dp"
+        app:button_image_two_fields_description="@string/eim_intro_applications_subtitle"
+        app:button_image_two_fields_icon="@drawable/ic_application"
+        app:button_image_two_fields_title="@string/eim_intro_applications_title" />
+
+    <com.digitall.eid.ui.view.ButtonImageTwoFieldsView
+        android:id="@+id/btnCertificates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_20"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:elevation="8dp"
+        app:button_image_two_fields_description="@string/eim_intro_certificates_subtitle"
+        app:button_image_two_fields_icon="@drawable/ic_certificate"
+        app:button_image_two_fields_title="@string/eim_intro_certificates_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+<!--    <androidx.appcompat.widget.AppCompatButton-->
+<!--        android:id="@+id/btnScanQR"-->
+<!--        style="@style/ButtonStyle.background_transparent_text_0C53B2_stroke"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:layout_marginStart="@dimen/margin_20"-->
+<!--        android:layout_marginEnd="@dimen/margin_20"-->
+<!--        android:layout_marginBottom="@dimen/margin_20"-->
+<!--        android:text="@string/eim_intro_scan_qr_code_button_title" />-->
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnCreateNew"
+        style="@style/ButtonStyle.background_018930_text_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="@dimen/margin_20"
+        android:layout_marginEnd="@dimen/margin_20"
+        android:layout_marginBottom="@dimen/margin_20"
+        android:text="@string/eim_intro_create_certificate_button_title" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

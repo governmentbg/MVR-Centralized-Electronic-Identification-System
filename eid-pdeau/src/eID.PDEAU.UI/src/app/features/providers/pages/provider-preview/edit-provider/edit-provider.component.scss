@@ -1,0 +1,11 @@
+.edit-provider {
+    .static-file-name {
+        overflow: hidden;
+        text-wrap: nowrap;
+        text-overflow: ellipsis;
+    }
+    .edit-divider {
+        width: 70%;
+        display: block;
+    }
+}

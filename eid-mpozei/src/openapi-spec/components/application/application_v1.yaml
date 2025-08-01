@@ -1,0 +1,31 @@
+schemas:
+  ApplicationDTO:
+    properties:
+      id:
+        type: string
+        format: uuid
+      applicationNumber:
+        type: string
+      status:
+        $ref: './application_status_v1.yaml#/schemas/ApplicationStatus'
+      createDate:
+        type: string
+        format: date-time
+      eidentityId:
+        type: string
+        format: uuid
+      eidAdministratorName:
+        type: string
+      eidAdministratorFrontOfficeId:
+        type: string
+        format: uuid
+      deviceId:
+        type: string
+        format: uuid
+      applicationType:
+        $ref: './application_type_v1.yaml#/schemas/ApplicationType'
+      submissionType:
+        $ref: './application_submission_type_v1.yaml#/schemas/ApplicationSubmissionType'
+      paymentAccessCode:
+        type: string        
+      

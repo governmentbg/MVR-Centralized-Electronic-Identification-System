@@ -1,0 +1,111 @@
+<aside role="users-filter" *transloco="let t" class="users-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('filters.txtLabel') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="name" class="form-label">
+                            {{ t('modules.users.usersTable.filter.name') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="name"
+                            type="text"
+                            class="w-100"
+                            formControlName="name"
+                            [placeholder]="t('modules.users.usersTable.filter.namePlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="email" class="form-label">
+                            {{ t('modules.users.usersTable.filter.email') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="email"
+                            type="text"
+                            class="w-100"
+                            formControlName="email"
+                            [placeholder]="t('modules.users.usersTable.filter.emailPlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="isAdministartor" class="form-label"
+                            >{{ t('modules.users.usersTable.filter.isAdministrator') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="isAdministrator"
+                            [options]="roles"
+                            optionLabel="name"
+                            optionValue="isAdministartor"
+                            styleClass="w-100"
+                            inputId="isAdministartor"
+                            [placeholder]="t('filters.txtAll')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <p-button
+                    (click)="clearFilterValues()"
+                    [label]="t('filters.txtCancel')"
+                    styleClass="p-button p-button-danger me-3 app-button-small"></p-button>
+                <p-button
+                    [label]="t('filters.txtApply')"
+                    type="submit"
+                    [disabled]="!filterForm.dirty"
+                    styleClass="p-button me-3 p-button-primary app-button-small"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></p-button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="users-filter-choice">
+    <div class="row mb-4">
+        <div class="col">
+            <p-button
+                styleClass="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('filters.txtFilterButton')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </p-button>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="appliedFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of appliedFilters">
+                <p-chip
+                    [label]="t('modules.users.usersTable.filter.' + filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="appliedFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearFilterValues()"
+                [attr.aria-labelledby]="t('filters.txtClearAll')">
+                {{ t('filters.txtClearAll') }}
+            </button>
+        </div>
+    </div>
+</section>

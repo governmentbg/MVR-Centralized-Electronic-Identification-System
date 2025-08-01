@@ -1,0 +1,1904 @@
+{
+    "global": {
+        "login": "Вход",
+        "logout": "Изход",
+        "txtSave": "Запази",
+        "txtCancel": "Отказ",
+        "txtAdd": "Добавяне",
+        "txtEdit": "Редактиране",
+        "txtDelete": "Изтриване",
+        "txtConfirmation": "Потвърждаване",
+        "txtErrorTitle": "Грешка",
+        "txtSuccessTitle": "Успех",
+        "txtDropdownPlaceholder": "Моля изберете",
+        "txtUnsavedChangesConfirmation": "Има незапазени промени, искате ли да ги отхвърлите?",
+        "txtUnexpectedError": "Неочаквана грешка",
+        "txtInvalidDataError": "Невалидни данни",
+        "txtInputPlaceholder": "Моля въведете",
+        "txtTablePagination": "Показани са от {{first}} до {{last}} от {{totalRecords}} записа",
+        "txtClose": "Затвори",
+        "txtBack": "Назад",
+        "txtNoPermissionsMessage": "Нямате права да извършите операцията",
+        "txtNoData": "Няма данни",
+        "txtNoRecordsFound": "Няма намерени записи",
+        "txtSomethingWentWrong": "Нещо се обърка. Моля опитайте отново",
+        "txtRefresh": "Обнови",
+        "txtContinue": "Продължи",
+        "txtSubmit": "Запази",
+        "txtApplicationValidationError": "Всички задължителни полета трябва да бъдат попълнени. Моля, прегледайте заявлението и попълнете липсващите полета.",
+        "txtYes": "Да",
+        "txtNo": "Не"
+    },
+    "filters": {
+        "txtLabel": "Филтри",
+        "txtFilterButton": "Филтър",
+        "txtAll": "Всички",
+        "txtApply": "Приложи филтри",
+        "txtCancel": "Изчисти",
+        "txtClearAll": "Изчисти всички"
+    },
+    "navbar": {
+        "title": "Портал за интеграция с държавна схема за електронна идентификация"
+    },
+    "sidebar": {
+        "txtEmpowermentReference": "Справка за овластяване",
+        "txtRegisterApplications": "Заявления",
+        "txtSystemProcesses": "Системни процеси",
+        "txtProviders": "Доставчици на електронни административни услуги",
+        "txtCenters": "Центрове за електронна идентификация",
+        "txtAdministrators": "Администратори на електронна идентичност",
+        "txtJournals": "Журнали",
+        "txtLocalJournals": "Локални журнали",
+        "txtIntegrity": "Интегритет",
+        "txtTariffs": "Тарифи",
+        "txtTariffsForServices": "Тарифи на услуги",
+        "txtDiscounts": "Отстъпки",
+        "txtApplications": "Заявления",
+        "txtRegistrations": "Регистрации",
+        "txtDocuments": "Типове документи"
+    },
+    "footer": {
+        "txtMainText": "Министерство на вътрешните работи"
+    },
+    "pageNotFound": {
+        "txtPageNotFoundTitle": "Страницата не е намерена.",
+        "txtPageNotFoundInformationText": "Страницата, която търсите, не съществува",
+        "txtPageNotFoundGoHome": "Върнете се към началната страница"
+    },
+    "pageUnauthorized": {
+        "txtPageUnauthorizedTitle": "Unauthorized",
+        "txtPageUnauthorizedInformationText": "Нямате права да достъпите тази страница"
+    },
+    "validations": {
+        "txtPleaseEnterField": "Моля въведете {{field}}",
+        "txtInvalidField": "Невалидни данни за {{field}}",
+        "txtExceedingMaximumLength": "Полето не може да надвишава {{length}} символа"
+    },
+    "primeng": {
+        "accept": "Да",
+        "reject": "Не",
+        "choose": "Избор",
+        "upload": "Качване",
+        "cancel": "Изчисти",
+        "dayNames": ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"],
+        "dayNamesShort": ["Нед", "Пон", "Вто", "Сря", "Чет", "Пет", "Съб"],
+        "dayNamesMin": ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+        "monthNames": [
+            "Януари",
+            "Февруари",
+            "Март",
+            "Април",
+            "Май",
+            "Юни",
+            "Юли",
+            "Август",
+            "Септември",
+            "Октомври",
+            "Ноември",
+            "Декември"
+        ],
+        "monthNamesShort": ["Яну", "Фев", "Мар", "Апр", "Май", "Юни", "Юли", "Авг", "Сеп", "Окт", "Ное", "Дек"],
+        "today": "Днес",
+        "clear": "Изчистване",
+        "weekHeader": "Сд",
+        "firstDayOfWeek": 1,
+        "dateFormat": "dd/mm/yyyy",
+        "weak": "Слаба",
+        "medium": "Средна",
+        "strong": "Добра",
+        "passwordPrompt": "Въведете парола",
+        "startsWith": "Започва с",
+        "contains": "Съдържа",
+        "notContains": "Не съдържа",
+        "endsWith": "Завършва на",
+        "equals": "Равно е на",
+        "notEquals": "Не е равно на",
+        "noFilter": "Без филтър",
+        "lt": "По-малко от",
+        "lte": "По-малко или равно на",
+        "gt": "По-голямо от",
+        "gte": "По-голямо или равно на",
+        "dateIs": "Датата е",
+        "dateIsNot": "Дататата не е",
+        "dateBefore": "Датата е преди",
+        "dateAfter": "Датата е след",
+        "custom": "Персонализиран",
+        "apply": "Приложи",
+        "matchAll": "Съвпадение на всички",
+        "matchAny": "Съвпадение на някое ",
+        "addRule": "Добавяне на условие",
+        "removeRule": "Премахване на условие",
+        "emptyFilterMessage": "Няма налична информация",
+        "emptyMessage": "Не са открити резултати"
+    },
+    "empowermentCheckModule": {
+        "txtMainModuleTitle": "ПОРТАЛ ЗА ДОСТАВЧИЦИ НА ЕЛЕКТРОННИ АДМИНИСТРАТИВНИ УСЛУГИ",
+        "txtEmpowermentReferenceTitle": "Справка за овластяване",
+        "txtEGN": "ЕГН/ЛНЧ/ЕИК/БУЛСТАТ на овластител",
+        "txtService": "Услуга",
+        "txtCreateReference": "Направи справка",
+        "txtVolume": "Обем на представителната власт",
+        "txtProxyPersonalNumber": "ЕГН/ЛНЧ на овластено лице",
+        "txtBulstat": "ЕИК/Булстат на юридическото лице",
+        "txtStatementFrom": "От името на",
+        "txtDateReference": "Справка към дата",
+        "txtOnBehalfOfDropdownPlaceholder": "Физическо/Юридическо лице",
+        "txtDropdownPlaceholder": "Моля изберете",
+        "txtReferences": "Справки",
+        "txtEmpowerment": "Овластяване",
+        "txtEmpoweredPerson": "Овластено лице",
+        "txtEmpowerer": "Овластител",
+        "txtEmpowermentNumber": "Овластяване Номер",
+        "txtProvider": "Доставчик",
+        "txtFromTheNameOf": "От името на",
+        "txtOtherEmpoweredPeople": "Други oвластени лица",
+        "txtValidTo": "Валидно до",
+        "txtDetails": "Детайли",
+        "txtNewReference": "Нова справка",
+        "txtEmpowerments": "Овластявания",
+        "txtPreview": "Преглед",
+        "txtNoEmpowermentsFound": "Няма намерени овластявания",
+        "txtNumber": "Номер",
+        "txtBack": "Назад",
+        "txtStatus": "Статус",
+        "txtMoreThenOneEGN": "и още {{value}} лица",
+        "txtPreviewEmpowerment": "Преглед на овластяването",
+        "txtCurrentStatus": "Текущ статус",
+        "txtStatusTo": "Статус към",
+        "txtCurrentInformation": "Информацията е актуална към дата",
+        "txtToDate": "Към дата {{value}}",
+        "statuses": {
+            "CollectingAuthorizerSignatures": "Събиране на подписи",
+            "Active": "Активно",
+            "Expired": "Изтекло",
+            "DisagreementDeclared": "Декларирано несъгласие",
+            "Withdrawn": "Оттеглено",
+            "Created": "В обработка",
+            "Denied": "Отказано",
+            "UpComing": "Предстоящо",
+            "Signed": "Подписано",
+            "Unconfirmed": "Непотвърдено"
+        },
+        "detailsPage": {
+            "txtDetailsTitle": "Детайли на овластяването",
+            "txtEmpowermentHistory": "История на овластяването",
+            "txtEmpoweredPersons": "ЕГН/ЛНЧ на овластени лица",
+            "txtEmpowermentType": "Тип овластяване",
+            "txtTogether": "Само заедно",
+            "txtTogetherAdditionalText": "Овластяването е валидно само в присъствието на всички овластени лица!",
+            "txtFromTheNameOf": "От името на",
+            "txtEmpowererEGN": "ЕГН/ЛНЧ на овластител",
+            "txtProvider": "Доставчик",
+            "txtLegalEntryName": "Име на юридическото лице",
+            "txtIndividualEntryName": "Име",
+            "applicants": {
+                "LegalEntity": "Юридическо лице",
+                "Individual": "Физическо лице"
+            },
+            "txtStatementPeriod": "Период на валидност",
+            "txtFrom": "От",
+            "txtTo": "До",
+            "txtSubmittedTo": "Подадено на",
+            "txtEffectiveOn": "Влиза в сила на",
+            "txtExpiresOn": "Изтича на",
+            "txtWithdrawnOn": "Оттеглено на",
+            "txtDeclaredDisagreementOf": "Декларирано несъгласие на",
+            "txtDeniedOn": "Отказано на",
+            "txtCollectingAuthorizerSignaturesOn": "Очаква подписване на",
+            "txtDenialReasonLabel": "Причини за отхвърляне на изявление",
+            "txtSignedOn": "Подписано на",
+            "txtUnconfirmedOn": "Вписано на",
+            "txtDenialReasons": {
+                "DeceasedUid": "Овластител или овластено лице е починал/о",
+                "ProhibitedUid": "Овластител или овластено лице е под запрещение",
+                "NTRCheckFailed": "Несъответствие на попълнените данни с Търговския регистър",
+                "TimedOut": "Неуспешна проверка в Търговския регистър",
+                "BelowLawfulAge": "Овластител или овластено лице е под 18 години",
+                "NoPermit": "Овластител или овластено лице няма право на пребиваване",
+                "LawfulAgeInfoNotAvailable": "Информация за законната възраст не е налична",
+                "UnsuccessfulRestrictionsCheck": "Неуспешна проверка на ограничения и запор",
+                "LegalEntityNotActive": "Юридическото лице не е активно",
+                "LegalEntityRepresentationNotMatch": "Несъответствие в законните представители",
+                "UnsuccessfulLegalEntityCheck": "Неуспешна проверка на юридическото лице",
+                "EmpowermentStatementNotFound": "Овластяването не е намерено",
+                "BulstatCheckFailed": "Неуспешна проверка на юридическото лице в БУЛСТАТ",
+                "ReregisteredInNTR": "Пререгистриран в Търговски Регистър",
+                "ArchivedInBulstat": "Архивиран в БУЛСТАТ",
+                "InInsolvencyProceedingsInBulstat": "В производство по несъстоятелност",
+                "InsolventInBulstat": "В несъстоятелност",
+                "InLiquidationInBulstat": "В ликвидация",
+                "InactiveInBulstat": "Неактивен в БУЛСТАТ",
+                "ClosedInBulstat": "Закрит в БУЛСТАТ",
+                "TerminatedThroughMergerInBulstat": "Прекратен чрез сливане",
+                "TerminatedThroughIncorporationInBulstat": "Прекратен чрез вливане",
+                "TerminatedThroughDivisionInBulstat": "Прекратен чрез разделяне",
+                "DeletedFromJudicialRegister": "Заличен в съдебен регистър",
+                "DeletedFromBTPPRegister": "Заличен в регистъра на БТПП",
+                "RegistrationAnnulledInBulstat": "Анулирана регистрация в БУЛСТАТ",
+                "TerminatedDueToEnterpriseTransactionInBulstat": "Прекратен при сделка с предприятие",
+                "DeregisteredInBulstat": "Заличен в БУЛСТАТ",
+                "UnsuccessfulTimestamping": "Неуспешно полагане на времеви печат",
+                "SignatureCollectionTimeOut": "Неуспешно събиране на подписи",
+                "DeniedByDeauAdministrator": "Отказано от доставчик на електронни услуги"
+            },
+            "txtStartDate": "Начална дата",
+            "txtEndDate": "Крайна дата",
+            "txtWayOfRepresentation": "Тип представителство",
+            "txtLegalEntityState": "Състояние",
+            "txtLegalEntityRepresentatives": "Законни представители",
+            "txtDenyEmpowerment": "Откажи овластяване",
+            "txtApproveEmpowerment": "Одобри овластяване",
+            "txtReasonForDenialTitle": "Моля, посочете причина за отказване на овластяване:",
+            "txtReasonForDenial": "Причина за отказ",
+            "txtReason": "Причина",
+            "txtConfirmDenyEmpowerment": "Потвърди отказ",
+            "txtApplicationDenySuccess": "Овластяването беше отказано успешно.",
+            "txtApplicationApproveSuccess": "Овластяването беше одобрено успешно.",
+            "txtConfirmApproveEmpowerment": "Потвърди одобрение",
+            "txtConfirmApproveEmpowermentMessage": "Сигурни ли сте, че искате да одобрите избраното овластяване?"
+        },
+        "validationForm": {
+            "txtPleaseEnterField": "Моля въведете {{field}}",
+            "txtInvalidField": "Невалидни данни за {{field}}"
+        },
+        "txtIdentifier": "Идентификатор",
+        "EGN": "ЕГН",
+        "LNCh": "ЛНЧ",
+        "NotSpecified": "ЕИК/Булстат",
+        "txtLNCHInvalid": "Невалидно ЛНЧ",
+        "txtEGNInvalid": "Невалидно ЕГН",
+        "txtBulstatInvalid": "Невалидно ЕИК/Булстат",
+        "txtEGNEmpoweredPerson": "ЕГН на овластено лице",
+        "txtLNCHEmpoweredPerson": "ЛНЧ на овластено лице",
+        "txtEGNEmpowererPerson": "ЕГН на овластител",
+        "txtLNCHEmpowererPerson": "ЛНЧ на овластител",
+        "txtEGNAdultError": "Овластеното лице трябва да има навършени 18 години",
+        "txtCreateStatementIndividual": "Физическо лице",
+        "txtCreateStatementEntity": "Юридическо лице",
+        "txtReason": "Причина",
+        "txtIndefinitely": "Безсрочно"
+    },
+    "modules": {
+        "providers": {
+            "register": {
+                "title": "Регистрирайте нов доставчик",
+                "applicantData": "Данни на заявител",
+                "applicantUidType": "Идентификатор",
+                "applicantUid": "ЕГН/ЛНЧ на заявител",
+                "applicantName": "Имена на заявител",
+                "EGN": "ЕГН",
+                "LNCh": "ЛНЧ",
+                "administrativeBody": "Държавен орган",
+                "administrativeBodyName": "Име",
+                "administrativeBodyBulstat": "ЕИК/Булстат",
+                "administrativeBodyIdentificationNumber": "Идентификационен номер",
+                "administrativeBodyHeadquarters": "Седалище на управление",
+                "administrativeBodyAddress": "Адрес на управление",
+                "administrativeBodyEmail": "Имейл",
+                "administrativeBodyPhone": "Телефон",
+                "administrator": "Администратор",
+                "administratorUidType": "Идентификатор",
+                "administratorUid": "ЕГН/ЛНЧ на администратор",
+                "administratorName": "Име",
+                "administratorEmail": "Имейл",
+                "administratorPhone": "Телефон",
+                "privateLawSubject": "Частно-правен субект",
+                "systemName": "Име на системата",
+                "projectName": "Име на проекта",
+                "sourceIp": "IP адрес на източника",
+                "destinationIp": "IP адрес на дестинацията",
+                "destinationIpType": "Тип на дестинацията",
+                "protocolPort": "Протокол / Порт",
+                "terms": "Текст за спазване на общи условия за ползване и други",
+                "oneway": "Еднопосочно",
+                "twoway": "Двупосочно",
+                "AIS": "АИС",
+                "webInterface": "Уеб интерфейс",
+                "date": "Дата",
+                "files": "Файлове",
+                "submitButton": "Подай",
+                "externalNumber": "Номер на заявление в деловодната система на МВР",
+                "errors": {
+                    "required": "Полето е задължително",
+                    "bulstatError": "Невалиден ЕИК/Булстат",
+                    "email": "Невалиден имейл",
+                    "EgnAdultError": "Администраторът трябва да има навършени 18 години",
+                    "EgnError": "Невалидно ЕГН",
+                    "PinError": "Невалиден ЛНЧ",
+                    "invalidIp": "Невалиден IP адрес",
+                    "cyrillic": "Позволени са само символи на кирилица",
+                    "phone": "Невалиден телефонен номер",
+                    "maxlength": "Полето не може да надвишава {{requiredLength}} символа",
+                    "twoCyrillicNamesWithUppercase": "Полето трябва да съдържа поне две имена на кирилица",
+                    "pattern": "Невалиден формат"
+                },
+                "toasts": {
+                    "successfulRegistration": "Успешна регистрация",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново",
+                    "failedRegistryCheck": "Неуспешна проверка в регистрите ИИСДА/БУЛСТАТ",
+                    "Eid": "Посоченият администратор няма валидна електрона идентичност!",
+                    "EidInactive": "Посоченият администратор е с неактивен профил"
+                }
+            },
+            "applications": {
+                "txtTitle": "Заявления",
+                "register": "Подай заявление",
+                "table": {
+                    "columns": {
+                        "txtCreatedOn": "Дата на подаване",
+                        "txtIssuer": "Име на Подател",
+                        "txtProvider": "Доставчик",
+                        "txtStatus": "Статус",
+                        "txtAction": "Действие",
+                        "txtNumber": "Номер"
+                    },
+                    "details": {
+                        "txtPreviewApplication": "Преглед на заявление"
+                    }
+                },
+                "filter": {
+                    "txtLabel": "Филтри",
+                    "txtFilterButton": "Филтър",
+                    "txtAll": "Всички",
+                    "txtChooseStatus": "Изберете статус",
+                    "txtProviderPlaceholder": "Име на Доставчик",
+                    "txtIssuerPlaceholder": "Име на Подател",
+                    "number": "Номер",
+                    "numberPlaceholder": "Номер на заявление",
+                    "txtApply": "Приложи филтри",
+                    "txtCancel": "Изчисти",
+                    "txtClearAll": "Изчисти всички",
+                    "enums": {
+                        "status": "Статус",
+                        "providerName": "Доставчик",
+                        "issuer": "Подател",
+                        "number": "Номер"
+                    }
+                },
+                "statuses": {
+                    "denied": "Отказано",
+                    "active": "Активно",
+                    "inReview": "В обработка",
+                    "returnedForCorrection": "За Корекция"
+                }
+            },
+            "application-preview": {
+                "txtTitle": "Преглед на заявление",
+                "txtStatus": "Статус",
+                "tabs": {
+                    "txtDetails": "Детайли",
+                    "txtUsers": "Служители",
+                    "txtFiles": "Файлове",
+                    "txtHistory": "История",
+                    "txtStatistics": "Статистика"
+                },
+                "issuer": {
+                    "txtTitle": "Данни на заявител",
+                    "txtUid": "ЕГН/ЛНЧ на заявител",
+                    "txtName": "Име"
+                },
+                "administrativeBody": {
+                    "txtAdministrationTitle": "Данни на Държавен орган",
+                    "txtPrivateLawSubjectTitle": "Данни на Частно-правен субект",
+                    "txtCorrectionComment": "Служебна информация",
+                    "txtName": "Име",
+                    "txtBulstat": "ЕИК/Булстат",
+                    "txtIdentificationNumber": "Идентификационен номер",
+                    "txtHeadquarters": "Седалище на управление",
+                    "txtAddress": "Адрес ",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон",
+                    "txtApplicationData": "Детайли на заявлението",
+                    "txtApplicationNumber": "Номер на заявлението",
+                    "txtApplicationNumberInRecordKeepingSystem": "Номер на заявлението в деловодна система на МВР",
+                    "txtSystemId": "Системен идентификатор"
+                },
+                "administrator": {
+                    "txtTitle": "Данни на администратор",
+                    "txtUid": "ЕГН/ЛНЧ на администратор",
+                    "txtName": "Име",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон"
+                },
+                "ais": {
+                    "txtTitle": "Данни за АИС",
+                    "txtSystemName": "Име на системата",
+                    "txtProjectName": "Име на проекта",
+                    "txtSourceIp": "IP адрес на източника",
+                    "txtDestinationIp": "IP адрес на дестинацията",
+                    "txtDestinationIpType": "Тип на дестинацията",
+                    "txtProtocolPort": "Протокол / Порт"
+                },
+                "createdByAdmin": {
+                    "txtTitle": "Създадено от служител:",
+                    "txtName": "Име",
+                    "txtId": "Идентификатор"
+                },
+
+                "users-table": {
+                    "searchPlaceholder": "Търсене...",
+                    "txtName": "Име",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон",
+                    "txtRole": "Роля",
+                    "txtAction": "Действие"
+                },
+                "files-table": {
+                    "txtUploaderName": "Име на потребител",
+                    "txtUploaderUid": "ЕГН/ЛНЧ на потребител",
+                    "txtFileName": "Име на файл",
+                    "txtUploadedOn": "Качен на"
+                },
+                "statistics": {
+                    "txtStartDatePlaceholder": "От дата",
+                    "txtEndDatePlaceholder": "До дата",
+                    "txtStartDate": "Начална дата",
+                    "txtEndDate": "Крайна дата",
+                    "txtSearch": "Търси",
+                    "txtTotalRequests": "Брой автентикации",
+                    "txtPleaseEnterField": "Моля въведете {{field}}",
+                    "txtLaterThenStartDate": "Моля изберете дата и час след началната дата",
+                    "txtDownload": "Изтегли файл",
+                    "txtAction": "Действие"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Одобри заявление",
+                    "txtDescription": "Сигурни ли сте, че искате да одобрите избраното заявление?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Одобри",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Заявлението беше одобрено успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Id": "Доставчикът вече е регистриран"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Откажи заявление",
+                    "txtDescription": "Моля, посочете причина за отказване на заявление за регистрация на ДЕАУ!",
+                    "txtInputPlaceholder": "Причина за отказ",
+                    "txtDeny": "Потвърди отказ",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше отказано успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Uid": "Потребителят няма валидна електронна идентичност",
+                        "Id": "Заявлението вече е в статус Отказано"
+                    }
+                },
+                "terminate-dialog": {
+                    "txtTitle": "Прекрати регистрация",
+                    "txtDescription": "Моля, посочете причина за прекратяване на регистрация на ДЕАУ!",
+                    "txtInputPlaceholder": "Причина за прекратяване",
+                    "txtDeny": "Потвърди прекратяване",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше прекратено успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Uid": "Потребителят няма валидна електронна идентичност",
+                        "Id": "Заявлението вече е в статус Отказано"
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Върни за корекция",
+                    "txtDescription": "Моля, посочете причина за корекция.",
+                    "txtInputPlaceholder": "Причина за корекция",
+                    "txtReturn": "Потвърди корекция",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше върнато за корекция успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "errors": {
+                    "file-unavailable": "Файлът не е наличен"
+                }
+            },
+            "provider-history": {
+                "txtTitle": "История на заявление",
+                "txtDate": "Дата",
+                "txtStatus": "Статус",
+                "txtComment": "Служебна информация",
+                "txtUser": "Потребител"
+            }
+        },
+        "services": {
+            "services-table": {
+                "title": "Услуги",
+                "addService": "Добави услуга",
+                "table": {
+                    "columns": {
+                        "serviceNumber": "Номер на услуга",
+                        "name": "Име на услуга",
+                        "isEmpowerment": "Овластяване (Да/Не)",
+                        "assurance": "Ниво на осигуреност",
+                        "action": "Действие",
+                        "status": "Статус",
+                        "isActive": "Активна (Да/Не)",
+                        "administrator": "ДЕАУ",
+                        "createdOn": "Дата на създаване"
+                    },
+                    "details": {
+                        "editService": "Редакция на услуга",
+                        "viewService": "Преглед на услуга"
+                    },
+                    "errors": {
+                        "general": "Нещо се обърка. Моля, опитайте отново"
+                    }
+                },
+                "filter": {
+                    "yes": "Да",
+                    "no": "Не",
+                    "isEmpowerment": "Подлежи на овластяване",
+                    "isNotEmpowerment": "Не подлежи на овластяване",
+                    "serviceNumber": "Номер на услуга",
+                    "serviceNumberPlaceholder": "Номер на услуга",
+                    "name": "Име",
+                    "namePlaceholder": "Име на услуга",
+                    "IncludeEmpowermentOnly": "Овластяване",
+                    "chooseEmpowerment": "Овластяване",
+                    "all": "Всички",
+                    "includeApprovedOnly": "Само одобрените услуги",
+                    "includeInactive": "Покажи неактивните услуги",
+                    "includeEmpowermentOnly": "Само услуги подлежащи на овластяване",
+                    "includeDeleted": "Покажи изтритите",
+                    "includeWithoutScope": "Покажи услуги без обем на представителната власт"
+                }
+            },
+            "service-preview": {
+                "title": "Преглед на Услуга",
+                "name": "Име",
+                "description": "Описание",
+                "serviceNumber": "Номер",
+                "isEmpowerment": "Подлежи на овластяване",
+                "assuranceLevel": "Ниво на осигуреност",
+                "requiredPersonalInformation": "Необходими лични данни",
+                "volume": "Обем на представителната власт",
+                "add": "Добави",
+                "submit": "Запази",
+                "backDialogTitle": "Сигурни ли сте, че искате да откажете направените промени?",
+                "editDialogTitle": "Сигурни ли сте, че искате да запазите промените?",
+                "submitDialogButton": "Потвърди",
+                "cancelDialogButton": "Откажи",
+                "status": "Статус",
+                "isActive": "Активна",
+                "denialReason": "Причина за отказ",
+                "denialDate": "Дата на отказ",
+                "createdOn": "Дата на създаване",
+                "errors": {
+                    "duplicateScope": "Дублиращи се полета не са разрешени",
+                    "required": "Полето е задължително"
+                },
+                "toasts": {
+                    "defaultScopeFetchFail": "Неуспешно извличане на стойности",
+                    "serviceScopeFetchFail": "Неуспешно извличане на стойности за услуга",
+                    "serviceEditFail": "Неуспешно редактиране на услуга",
+                    "serviceEditSuccess": "Успешно редактиране на услуга"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Одобри услуга",
+                    "txtDescription": "Сигурни ли сте, че искате да одобрите избраната услуга?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Одобри",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Услугата беше одобрена успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Id": "Услугата вече е регистрирана"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Откажи услуга",
+                    "txtDescription": "Моля, посочете причина за отказване на услугата",
+                    "txtInputPlaceholder": "Причина за отказ",
+                    "txtDeny": "Потвърди отказ",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Услугата беше отказано успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "toggle-dialog": {
+                    "txtConfirm": "Потвърди",
+                    "txtCancel": "Затвори",
+                    "Activate": {
+                        "txtTitle": "Активирай услуга",
+                        "txtDescription": "Сигурни ли сте, че искате да активирате избраната услуга?",
+                        "toasts": {
+                            "success": "Услугата беше активирана успешно.",
+                            "error": "Нещо се обърка. Моля, опитайте отново."
+                        }
+                    },
+                    "Deactivate": {
+                        "txtTitle": "Деактивирай услуга",
+                        "txtDescription": "Сигурни ли сте, че искате да деактиврате избраната услуга?",
+                        "toasts": {
+                            "success": "Услугата беше деактивирана успешно.",
+                            "error": "Нещо се обърка. Моля, опитайте отново."
+                        }
+                    }
+                }
+            },
+            "service-edit": {
+                "txtTitle": "Корекция на Услуга",
+                "txtName": "Име",
+                "txtDescription": "Описание",
+                "txtIsEmpowerment": "Подлежи на овластяване",
+                "txtAssuranceLevel": "Ниво на осигуреност",
+                "txtPersonalInformation": "Необходими лични данни",
+                "txtVolume": "Обем на представителната власт",
+                "add": "Добави",
+                "submit": "Запази",
+                "backDialogTitle": "Сигурни ли сте, че искате да откажете направените промени?",
+                "editDialogTitle": "Сигурни ли сте, че искате да запазите промените?",
+                "submitDialogButton": "Потвърди",
+                "cancelDialogButton": "Откажи",
+
+                "errors": {
+                    "duplicateScope": "Дублиращи се полета не са разрешени",
+                    "required": "Полето е задължително",
+                    "invalidAssuranceLevel": "Моля, изберете ниво на сигурност"
+                },
+                "toasts": {
+                    "defaultScopeFetchFail": "Неуспешно извличане на стойности",
+                    "serviceScopeFetchFail": "Неуспешно извличане на стойности за услуга",
+                    "serviceEditFail": "Неуспешно редактиране на услуга",
+                    "serviceEditSuccess": "Успешно редактиране на услуга"
+                }
+            },
+            "service-add": {
+                "txtTitle": "Добавяне на услуга",
+                "txtName": "Име",
+                "txtDescription": "Описание",
+                "txtIsEmpowerment": "Подлежи на овластяване",
+                "txtAssuranceLevel": "Ниво на осигуреност",
+                "txtPersonalInformation": "Необходими лични данни",
+                "txtVolume": "Обем на представителната власт",
+                "addButton": "Добави",
+                "submitButton": "Запази",
+                "cancelButton": "Отказ",
+
+                "toasts": {
+                    "addSuccessful": "Успешно добавяне на услуга",
+                    "addFailed": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "duplicateScope": "Дублиращи се полета не са разрешени"
+                }
+            },
+            "enums": {
+                "High": "Високо",
+                "Substantial": "Съществено",
+                "Low": "Ниско",
+                "None": "Неопределено",
+                "Uid": "ЕГН",
+                "Names": "Имена",
+                "Denied": "Отказана",
+                "Approved": "Одобрена",
+                "InReview": "В обработка"
+            }
+        },
+        "administrators": {
+            "register": {
+                "title": "Подаване на заявление",
+                "applicantData": "Данни на заявител",
+                "applicantUidType": "Идентификатор",
+                "applicantUid": "ЕГН/ЛНЧ на заявител",
+                "applicantName": "Име на заявител",
+                "EGN": "ЕГН",
+                "LNCh": "ЛНЧ",
+                "administrativeBody": "Държавен орган",
+                "administrativeBodyName": "Име",
+                "administrativeBodyBulstat": "ЕИК/Булстат",
+                "administrativeBodyIdentificationNumber": "Идентификационен номер",
+                "administrativeBodyHeadquarters": "Седалище на управление",
+                "administrativeBodyAddress": "Адрес на управление",
+                "administrativeBodyEmail": "Имейл за кореспонденция с АЕУ",
+                "administrativeBodyPhone": "Телефон за кореспонденция с АЕУ",
+                "administrator": "Администратор",
+                "administratorUidType": "Идентификатор",
+                "administratorUid": "ЕГН/ЛНЧ на администратор",
+                "administratorName": "Име",
+                "administratorEmail": "Имейл",
+                "administratorPhone": "Телефон",
+                "privateLawSubject": "Частно-правен субект",
+                "systemName": "Име на системата",
+                "projectName": "Име на проекта",
+                "sourceIp": "IP адрес на източника",
+                "destinationIp": "IP адрес на дестинацията",
+                "destinationIpType": "Тип на дестинацията",
+                "protocolPort": "Протокол / Порт",
+                "terms": "Текст за спазване на общи условия за ползване и други",
+                "oneway": "Еднопосочно",
+                "twoway": "Двупосочно",
+                "date": "Дата",
+                "files": "Документи",
+                "submitButton": "Подай",
+                "applicantLegalData": "Данни на организация",
+                "applicantAdminData": "Данни на администратор",
+                "addAdminData": "Добави администратор",
+                "as": "В качеството на",
+                "addLegalRepresentativeData": "Добави представител",
+                "addDeviceData": "Добави носител",
+                "addEmployeeData": "Добави служител",
+                "identifierNumber": "Номер на идентификатор",
+                "deviceName": "Име на носител",
+                "levelOfAssurance": "Ниво на сигурност",
+                "fee": "Такса в лева",
+                "officeName": "Име на офис",
+                "officeAddress": "Адрес на офис",
+                "officeCoordinates": "GPS координати",
+                "officeGeneralInformation": "Обща информация",
+                "longitude": "Географска дължина",
+                "latitude": "Географска ширина",
+                "generalInfo": "Обща информация",
+                "legalRepresentatives": "Представители",
+                "devices": "Носители",
+                "offices": "Офиси",
+                "employees": "Служители",
+                "documents": "Документи",
+                "preview": "Преглед",
+                "generalInformation": "Обща информация",
+                "nameLatin": "Име на латиница",
+                "companyNameLatin": "Име на латиница",
+                "homePage": "Уебсайт",
+                "description": "Описание",
+                "deviceType": "Тип носител",
+                "link": "Линк",
+                "code": "Идентификационен номер",
+                "email": "Имейл",
+                "workingHours": "Работно време",
+                "region": "Регион",
+                "contact": "Телефон за контакт",
+                "phoneNumber": "Телефонен номер",
+                "authorizationLink": "Връзка за оторизация",
+                "backchannelAuthorizationLink": "Връзка за оторизация чрез backchannel",
+                "details": "Детайли",
+                "txtAddOfficeBtn": "Добави офис",
+                "logo": "URL към лого на организацията",
+                "txtAddFile": "Добави документ",
+                "downloadUrl": "Линк за сваляне на инсталатори и драйвери",
+                "errors": {
+                    "required": "Полето е задължително",
+                    "bulstatError": "Невалиден ЕИК/Булстат",
+                    "email": "Невалиден имейл",
+                    "EgnAdultError": "Администраторът трябва да има навършени 18 години",
+                    "EgnError": "Невалидно ЕГН",
+                    "PinError": "Невалиден ЛНЧ",
+                    "invalidIp": "Невалиден IP адрес",
+                    "cyrillic": "Позволени са само символи на кирилица",
+                    "phone": "Невалиден телефонен номер",
+                    "maxlength": "Полето не може да надвишава {{requiredLength}} символа",
+                    "maxFileSize": "Файлът не може да надвишава {{maxFileSize}} MB",
+                    "pattern": "Невалиден формат",
+                    "codeExists": "Този идентификационен номер вече съществува"
+                },
+                "toasts": {
+                    "successfulRegistration": "Успешна регистрация",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново",
+                    "failedRegistryCheck": "Неуспешна проверка в регистрите ИИСДА/БУЛСТАТ",
+                    "Uid": "Посоченият администратор няма валидна електронна идентичност!",
+                    "fileNotSigned": "Файлът {{ fileName }} не е подписан"
+                }
+            },
+            "administrator-preview": {
+                "txtTitle": "Преглед на заявление",
+                "txtEditButton": "Корекция на заявление",
+                "txtStatus": "Статус",
+                "tabs": {
+                    "txtDetails": "Детайли",
+                    "txtUsers": "Потребители",
+                    "txtFiles": "Документи",
+                    "txtHistory": "История"
+                },
+                "issuer": {
+                    "txtTitle": "Данни на заявител",
+                    "txtUid": "ЕГН/ЛНЧ на заявител",
+                    "txtName": "Име"
+                },
+                "administrativeBody": {
+                    "txtCorrectionComment": "Служебна информация",
+                    "txtName": "Име",
+                    "txtBulstat": "ЕИК/Булстат",
+                    "txtIdentificationNumber": "Идентификационен номер",
+                    "txtHeadquarters": "Седалище на управление",
+                    "txtAddress": "Адрес ",
+                    "txtEmail": "Имейл за кореспонденция с АЕИ",
+                    "txtPhone": "Телефон за кореспонденция с АЕИ",
+                    "txtApplicationData": "Детайли на заявлението",
+                    "txtApplicationNumber": "Номер на заявлението",
+                    "txtApplicationNumberInRecordKeepingSystem": "Номер на заявлението в деловодна система на МВР"
+                },
+                "administrator": {
+                    "txtTitle": "Данни на администратор",
+                    "txtUid": "ЕГН/ЛНЧ на администратор",
+                    "txtName": "Име",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон"
+                },
+                "ais": {
+                    "txtTitle": "Данни за АИС",
+                    "txtSystemName": "Име на системата",
+                    "txtProjectName": "Име на проекта",
+                    "txtSourceIp": "IP адрес на източника",
+                    "txtDestinationIp": "IP адрес на дестинацията",
+                    "txtDestinationIpType": "Тип на дестинацията",
+                    "txtProtocolPort": "Протокол / Порт"
+                },
+                "users-table": {
+                    "searchPlaceholder": "Търсене...",
+                    "txtName": "Имена по личен документ",
+                    "txtNameLatin": "Имена на латиница",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон",
+                    "txtRole": "Роля"
+                },
+                "files-table": {
+                    "txtType": "Тип документ",
+                    "txtFileName": "Име на документ",
+                    "txtUploadedOn": "Качен на",
+                    "txtOutgoing": "Изходящ",
+                    "txtIncoming": "Входящ"
+                },
+                "errors": {
+                    "file-unavailable": "Файлът не е наличен, Моля свържете се с администратор"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Впиши в регистър",
+                    "txtDescription": "Сигурни ли сте, че искате да одобрите избраното заявление?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Одобри",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Заявлението беше одобрено успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Id": "Доставчикът вече е регистриран"
+                    }
+                },
+                "activate-dialog": {
+                    "txtTitle": "Активирай регистрация",
+                    "txtDescription": "Сигурни ли сте, че искате да активиране избраното заявление?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Активирай",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Заявлението беше активирано успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Id": "Доставчикът вече е регистриран"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Откажи заявление",
+                    "txtDescription": "Моля, посочете причина за отказване на заявление за регистрация на АЕИ!",
+                    "txtInputPlaceholder": "Причина за отказ",
+                    "txtDeny": "Потвърди отказ",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше отказано успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Uid": "Потребителят няма валидна електронна идентичност",
+                        "Id": "Заявлението вече е в статус Отказано"
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Върни за корекция",
+                    "txtDescription": "Моля, посочете причина за корекция.",
+                    "txtInputPlaceholder": "Причина за корекция",
+                    "txtReturn": "Потвърди корекция",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше върнато за корекция успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "stop-dialog": {
+                    "txtTitle": "Прекрати регистрация",
+                    "txtDescription": "Моля, посочете причина за прекратяване на регистрация",
+                    "txtInputPlaceholder": "Причина за прекратяване",
+                    "txtDeny": "Потвърди прекратяване",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Регистрацията беше прекратена успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "suspend-dialog": {
+                    "txtTitle": "Спри регистрация",
+                    "txtDescription": "Моля, посочете причина за спиране на регистрация",
+                    "txtInputPlaceholder": "Причина за спиране",
+                    "txtDeny": "Потвърди спиране",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Регистрацията беше спиряна успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "resume-dialog": {
+                    "txtTitle": "Възобнови регистрация",
+                    "txtDescription": "Моля, посочете причина за възобновяване на регистрация",
+                    "txtInputPlaceholder": "Причина за възобновяване",
+                    "txtDeny": "Потвърди възобновяване",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Регистрацията беше възобновена успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "helpText": "<p><strong>Тук ще има информация</strong></p>",
+                "txtScrollToHelpSection": "Навигирай към помощната секция"
+            },
+            "applications": {
+                "title": "Заявления",
+                "register": "Подай заявление",
+                "applicationTypeStop": "Спиране",
+                "applicationTypeResume": "Възобновяване",
+                "applicationTypeRevoke": "Прекратяване",
+                "downloadTechnicalCheckFile": "Сваляне на протокол за техническа свързаност",
+                "txtApplicationPreview": "Преглед на заявление за",
+                "txtApplicationData": "Детайли на заявлението",
+                "txtApplicationNumber": "Номер на заявлението",
+                "txtApplicationType": "Тип на заявлението",
+                "txtApplicationStatus": "Статус на заявлението",
+                "table": {
+                    "columns": {
+                        "txtNumber": "Номер",
+                        "txtType": "Тип",
+                        "txtName": "Име",
+                        "txtStatus": "Статус",
+                        "txtAction": "Действие",
+                        "txtCreateDate": "Дата на създаване"
+                    },
+                    "details": {
+                        "txtPreviewApplication": "Преглед на заявление"
+                    }
+                },
+                "filter": {
+                    "label": "Филтри",
+                    "filterButton": "Филтър",
+                    "all": "Всички",
+                    "status": "Статус",
+                    "chooseStatus": "Изберете статус",
+                    "eidName": "Име",
+                    "applicationNumber": "Номер",
+                    "applicationType": "Тип",
+                    "numberPlaceholder": "Номер на заявление",
+                    "typePlaceholder": "Тип на заявление",
+                    "namePlaceholder": "Наименование на АЕИ",
+                    "apply": "Приложи филтри",
+                    "cancel": "Изчисти",
+                    "clearAll": "Изчисти всички"
+                },
+                "statuses": {
+                    "denied": "Отказано",
+                    "approved": "Одобрено",
+                    "active": "Активно",
+                    "inReview": "В обработка",
+                    "returnedForCorrection": "За Корекция"
+                },
+                "types": {
+                    "REGISTER": "Регистрация",
+                    "RESUME": "Възобновяване",
+                    "REVOKE": "Прекратяване",
+                    "STOP": "Спиране"
+                }
+            },
+            "circumstances": {
+                "txtTitle": "Промяна в обстоятелствата",
+                "txtName": "Име",
+                "txtBulstat": "ЕИК/Булстат",
+                "txtCode": "Идентификационен номер",
+                "txtStatus": "Статус",
+                "txtApprove": "Одобри промяната",
+                "txtDeny": "Откажи промяната",
+                "txtActivate": "Активирай",
+                "txtReturnForCorrection": "Върни за редакция",
+                "txtTechnicalChanges": "За техническа проверка",
+                "statuses": {
+                    "ACTIVE": "Активно",
+                    "SUSPENDED": "Спряно",
+                    "STOP": "Прекратено",
+                    "IN_REVIEW": "В обработка",
+                    "PENDING_ATTACHMENTS": "Чака прикачени документи",
+                    "TECHNICAL_CHECK": "За техническа проверка"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Одобри промените",
+                    "txtDescription": "Сигурни ли сте, че искате да одобрите промените?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Одобри",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Промените бяха одобрени успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Откажи промените",
+                    "txtDescription": "Моля, посочете причина за отказване на промените.",
+                    "txtInputPlaceholder": "Причина за отказ",
+                    "txtDeny": "Потвърди отказ",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Промените бяха отказани успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Върни за корекция",
+                    "txtDescription": "Моля, посочете причина за корекция.",
+                    "txtInputPlaceholder": "Причина за корекция",
+                    "txtReturn": "Потвърди корекция",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Промените бяха върнати за корекция успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "active-dialog": {
+                    "txtTitle": "Активирай",
+                    "txtDescription": "Сигурни ли сте, че искате да активирате регистрацията?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Активирай",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Активирането беше успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                }
+            },
+            "registrations": {
+                "title": "Регистрации",
+                "preview": "Преглед на регистрация"
+            },
+            "history": {
+                "txtTitle": "Движение по заявление",
+                "txtDate": "Дата",
+                "txtDirection": "Посока",
+                "txtComment": "Служебна информация",
+                "txtUser": "Потребител",
+                "txtOutgoing": "Изходящ",
+                "txtIncoming": "Входящ"
+            }
+        },
+        "centers": {
+            "register": {
+                "title": "Подаване на заявление",
+                "applicantData": "Данни на заявител",
+                "applicantUidType": "Идентификатор",
+                "applicantUid": "ЕГН/ЛНЧ на заявител",
+                "applicantName": "Име на заявител",
+                "EGN": "ЕГН",
+                "LNCh": "ЛНЧ",
+                "administrativeBody": "Държавен орган",
+                "administrativeBodyName": "Име",
+                "administrativeBodyBulstat": "ЕИК/Булстат",
+                "administrativeBodyIdentificationNumber": "Идентификационен номер",
+                "administrativeBodyHeadquarters": "Седалище на управление",
+                "administrativeBodyAddress": "Адрес на управление",
+                "administrativeBodyEmail": "Имейл за кореспонденция с ЦЕИ",
+                "administrativeBodyPhone": "Телефон за кореспонденция с ЦЕИ",
+                "administrator": "Администратор",
+                "administratorUidType": "Идентификатор",
+                "administratorUid": "ЕГН/ЛНЧ на администратор",
+                "administratorName": "Име",
+                "administratorEmail": "Имейл",
+                "administratorPhone": "Телефон",
+                "privateLawSubject": "Частно-правен субект",
+                "systemName": "Име на системата",
+                "projectName": "Име на проекта",
+                "sourceIp": "IP адрес на източника",
+                "destinationIp": "IP адрес на дестинацията",
+                "destinationIpType": "Тип на дестинацията",
+                "protocolPort": "Протокол / Порт",
+                "terms": "Текст за спазване на общи условия за ползване и други",
+                "oneway": "Еднопосочно",
+                "twoway": "Двупосочно",
+                "date": "Дата",
+                "files": "Документи",
+                "submitButton": "Подай",
+                "applicantLegalData": "Данни на организация",
+                "applicantAdminData": "Данни на администратор",
+                "addAdminData": "Добави администратор",
+                "as": "В качеството на",
+                "addLegalRepresentativeData": "Добави представител",
+                "addDeviceData": "Добави носител",
+                "addEmployeeData": "Добави служител",
+                "identifierNumber": "Номер на идентификатор",
+                "deviceName": "Име на носител",
+                "levelOfAssurance": "Ниво на сигурност",
+                "fee": "Такса в лева",
+                "officeName": "Име на офис",
+                "officeAddress": "Адрес на офис",
+                "officeCoordinates": "GPS координати",
+                "officeGeneralInformation": "Обща информация",
+                "longitude": "Географска дължина",
+                "latitude": "Географска ширина",
+                "generalInfo": "Обща информация",
+                "legalRepresentatives": "Представители",
+                "devices": "Носители",
+                "offices": "Офиси",
+                "employees": "Служители",
+                "documents": "Документи",
+                "preview": "Преглед",
+                "generalInformation": "Обща информация",
+                "nameLatin": "Име на латиница",
+                "companyNameLatin": "Име на латиница",
+                "homePage": "Уебсайт",
+                "description": "Описание",
+                "deviceType": "Тип носител",
+                "link": "Линк",
+                "code": "Идентификационен номер",
+                "email": "Имейл",
+                "workingHours": "Работно време",
+                "region": "Регион",
+                "contact": "Телефон за контакт",
+                "phoneNumber": "Телефонен номер",
+                "authorizationLink": "Връзка за оторизация",
+                "backchannelAuthorizationLink": "Връзка за оторизация чрез backchannel",
+                "details": "Детайли",
+                "logo": "URL към лого на организацията",
+                "txtAddFile": "Добави документ",
+                "errors": {
+                    "required": "Полето е задължително",
+                    "bulstatError": "Невалиден ЕИК/Булстат",
+                    "email": "Невалиден имейл",
+                    "EgnAdultError": "Администраторът трябва да има навършени 18 години",
+                    "EgnError": "Невалидно ЕГН",
+                    "PinError": "Невалиден ЛНЧ",
+                    "invalidIp": "Невалиден IP адрес",
+                    "cyrillic": "Позволени са само символи на кирилица",
+                    "phone": "Невалиден телефонен номер",
+                    "maxlength": "Полето не може да надвишава {{requiredLength}} символа",
+                    "maxFileSize": "Файлът не може да надвишава {{maxFileSize}} MB",
+                    "pattern": "Невалиден формат",
+                    "codeExists": "Този идентификационен номер вече съществува"
+                },
+                "toasts": {
+                    "successfulRegistration": "Успешна регистрация",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново",
+                    "failedRegistryCheck": "Неуспешна проверка в регистрите ИИСДА/БУЛСТАТ",
+                    "Uid": "Посоченият администратор няма валидна електронна идентичност!",
+                    "fileNotSigned": "Файлът {{ fileName }} не е подписан"
+                }
+            },
+            "center-preview": {
+                "txtTitle": "Преглед на заявление",
+                "txtEditButton": "Корекция на заявление",
+                "txtStatus": "Статус",
+                "tabs": {
+                    "txtDetails": "Детайли",
+                    "txtUsers": "Потребители",
+                    "txtFiles": "Документи",
+                    "txtHistory": "История"
+                },
+                "issuer": {
+                    "txtTitle": "Данни на заявител",
+                    "txtUid": "ЕГН/ЛНЧ на заявител",
+                    "txtName": "Име"
+                },
+                "administrativeBody": {
+                    "txtCorrectionComment": "Служебна информация",
+                    "txtName": "Име",
+                    "txtBulstat": "ЕИК/Булстат",
+                    "txtIdentificationNumber": "Идентификационен номер",
+                    "txtHeadquarters": "Седалище на управление",
+                    "txtAddress": "Адрес ",
+                    "txtEmail": "Имейл за кореспонденция с ЦЕИ",
+                    "txtPhone": "Телефон за кореспонденция с ЦЕИ",
+                    "txtApplicationData": "Детайли на заявлението",
+                    "txtApplicationNumber": "Номер на заявлението",
+                    "txtApplicationNumberInRecordKeepingSystem": "Номер на заявлението в деловодна система на МВР"
+                },
+                "administrator": {
+                    "txtTitle": "Данни на администратор",
+                    "txtUid": "ЕГН/ЛНЧ на администратор",
+                    "txtName": "Име",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон"
+                },
+                "users-table": {
+                    "searchPlaceholder": "Търсене...",
+                    "txtName": "Имена по личен документ",
+                    "txtNameLatin": "Имена на латиница",
+                    "txtEmail": "Имейл",
+                    "txtPhone": "Телефон",
+                    "txtRole": "Роля"
+                },
+                "files-table": {
+                    "txtType": "Тип документ",
+                    "txtFileName": "Име на документ",
+                    "txtUploadedOn": "Качен на",
+                    "txtOutgoing": "Изходящ",
+                    "txtIncoming": "Входящ"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Впиши в регистър",
+                    "txtDescription": "Сигурни ли сте, че искате да одобрите избраното заявление?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Одобри",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Заявлението беше одобрено успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Id": "Доставчикът вече е регистриран"
+                    }
+                },
+                "activate-dialog": {
+                    "txtTitle": "Активирай регистрация",
+                    "txtDescription": "Сигурни ли сте, че искате да активиране избраното заявление?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Активирай",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Заявлението беше активирано успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Id": "Доставчикът вече е регистриран"
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Откажи заявление",
+                    "txtDescription": "Моля, посочете причина за отказване на заявление за регистрация на ЦЕИ!",
+                    "txtInputPlaceholder": "Причина за отказ",
+                    "txtDeny": "Потвърди отказ",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше отказано успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново.",
+                        "Uid": "Потребителят няма валидна електронна идентичност",
+                        "Id": "Заявлението вече е в статус Отказано"
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Върни за корекция",
+                    "txtDescription": "Моля, посочете причина за корекция.",
+                    "txtInputPlaceholder": "Причина за корекция",
+                    "txtReturn": "Потвърди корекция",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Заявлението беше върнато за корекция успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "errors": {
+                    "file-unavailable": "Файлът не е наличен, Моля свържете се с администратор"
+                },
+                "stop-dialog": {
+                    "txtTitle": "Прекрати регистрация",
+                    "txtDescription": "Моля, посочете причина за прекратяване на регистрация",
+                    "txtInputPlaceholder": "Причина за прекратяване",
+                    "txtDeny": "Потвърди прекратяване",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Регистрацията беше прекратена успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "suspend-dialog": {
+                    "txtTitle": "Спри регистрация",
+                    "txtDescription": "Моля, посочете причина за спиране на регистрация",
+                    "txtInputPlaceholder": "Причина за спиране",
+                    "txtDeny": "Потвърди спиране",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Регистрацията беше спиряна успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "resume-dialog": {
+                    "txtTitle": "Възобнови регистрация",
+                    "txtDescription": "Моля, посочете причина за възобновяване на регистрация",
+                    "txtInputPlaceholder": "Причина за възобновяване",
+                    "txtDeny": "Потвърди възобновяване",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Регистрацията беше възобновена успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "helpText": "<p><strong>Тук ще има информация</strong></p>",
+                "txtScrollToHelpSection": "Навигирай към помощната секция"
+            },
+            "applications": {
+                "title": "Заявления",
+                "register": "Подай заявление",
+                "downloadTechnicalCheckFile": "Сваляне на протокол за техническа свързаност",
+                "txtApplicationPreview": "Преглед на заявление за",
+                "txtApplicationData": "Детайли на заявлението",
+                "txtApplicationNumber": "Номер на заявлението",
+                "txtApplicationType": "Тип на заявлението",
+                "txtApplicationStatus": "Статус на заявлението",
+                "table": {
+                    "columns": {
+                        "txtNumber": "Номер",
+                        "txtType": "Тип",
+                        "txtName": "Име",
+                        "txtStatus": "Статус",
+                        "txtAction": "Действие",
+                        "txtCreateDate": "Дата на създаване"
+                    },
+                    "details": {
+                        "txtPreviewApplication": "Преглед на заявление"
+                    }
+                },
+                "filter": {
+                    "label": "Филтри",
+                    "filterButton": "Филтър",
+                    "all": "Всички",
+                    "status": "Статус",
+                    "chooseStatus": "Изберете статус",
+                    "eidName": "Име",
+                    "applicationNumber": "Номер",
+                    "applicationType": "Тип",
+                    "numberPlaceholder": "Номер на заявление",
+                    "typePlaceholder": "Тип на заявление",
+                    "namePlaceholder": "Наименование на ЦЕИ",
+                    "apply": "Приложи филтри",
+                    "cancel": "Изчисти",
+                    "clearAll": "Изчисти всички"
+                },
+                "statuses": {
+                    "denied": "Отказано",
+                    "approved": "Одобрено",
+                    "active": "Активно",
+                    "inReview": "В обработка",
+                    "returnedForCorrection": "За Корекция"
+                },
+                "types": {
+                    "REGISTER": "Регистрация",
+                    "RESUME": "Възобновяване",
+                    "REVOKE": "Прекратяване",
+                    "STOP": "Спиране"
+                }
+            },
+            "circumstances": {
+                "txtTitle": "Промяна в обстоятелствата",
+                "txtName": "Име",
+                "txtBulstat": "ЕИК/Булстат",
+                "txtCode": "Идентификационен номер",
+                "txtStatus": "Статус",
+                "txtApprove": "Одобри промяната",
+                "txtDeny": "Откажи промяната",
+                "txtReturnForCorrection": "Върни за редакция",
+                "txtActivate": "Активирай",
+                "txtTechnicalChanges": "За техническа проверка",
+                "statuses": {
+                    "ACTIVE": "Активно",
+                    "SUSPENDED": "Спряно",
+                    "STOP": "Прекратено",
+                    "IN_REVIEW": "В обработка",
+                    "PENDING_ATTACHMENTS": "Чака прикачени документи",
+                    "TECHNICAL_CHECK": "За техническа проверка"
+                },
+                "approve-dialog": {
+                    "txtTitle": "Одобри промените",
+                    "txtDescription": "Сигурни ли сте, че искате да одобрите промените?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Одобри",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Промените бяха одобрени успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "deny-dialog": {
+                    "txtTitle": "Откажи промените",
+                    "txtDescription": "Моля, посочете причина за отказване на промените.",
+                    "txtInputPlaceholder": "Причина за отказ",
+                    "txtDeny": "Потвърди отказ",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Промените бяха отказани успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "return-dialog": {
+                    "txtTitle": "Върни за корекция",
+                    "txtDescription": "Моля, посочете причина за корекция.",
+                    "txtInputPlaceholder": "Причина за корекция",
+                    "txtReturn": "Потвърди корекция",
+                    "txtCancel": "Затвори",
+                    "errors": {
+                        "required": "Полето е задължително"
+                    },
+                    "toasts": {
+                        "success": "Промените бяха върнати за корекция успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                },
+                "active-dialog": {
+                    "txtTitle": "Активирай",
+                    "txtDescription": "Сигурни ли сте, че искате да активирате регистрацията?",
+                    "txtInputPlaceholder": "Можете да въведете коментар...",
+                    "txtApprove": "Активирай",
+                    "txtCancel": "Затвори",
+                    "toasts": {
+                        "success": "Активирането беше успешно.",
+                        "error": "Нещо се обърка. Моля, опитайте отново."
+                    }
+                }
+            },
+            "registrations": {
+                "title": "Регистрации",
+                "preview": "Преглед на регистрация"
+            }
+        },
+        "users": {
+            "userForm": {
+                "uidType": "Идентификатор",
+                "uid": "ЕГН/ЛНЧ на служител",
+                "name": "Имена",
+                "nameLatin": "Име на латиница",
+                "email": "Имейл",
+                "phone": "Телефон",
+                "role": "Роля",
+                "submitButton": "Запази",
+                "cancelBUtton": "Отказ",
+                "as": "В качеството на",
+                "comment": "Служебна информация",
+                "errors": {
+                    "required": "Полето е задължително",
+                    "email": "Невалиден имейл",
+                    "EgnAdultError": "Служителят трябва да има навършени 18 години",
+                    "EgnError": "Невалидно ЕГН",
+                    "PinError": "Невалиден ЛНЧ",
+                    "cyrillic": "Позволени са само символи на кирилица",
+                    "phone": "Невалиден телефонен номер",
+                    "maxlength": "Полето не може да надвишава {{requiredLength}} символа",
+                    "pattern": "Невалиден формат"
+                }
+            },
+            "userRegister": {
+                "title": "Регистрирайте нов служител",
+                "users": "Служители",
+                "newUser": "Нов служител",
+                "editUser": "Редакция на служител",
+                "toasts": {
+                    "successfulRegistration": "Успешна регистрация",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново",
+                    "Eid": "Служителят няма валидна електронна идентичност",
+                    "Uid": "Служителят вече е регистриран",
+                    "EidInactive": "Служителят е с неактивен профил"
+                }
+            },
+            "userEdit": {
+                "title": "Редакция на служител",
+                "users": "Служители",
+                "toasts": {
+                    "successfulEdit": "Успешна редакция",
+                    "failedEdit": "Нещо се обърка. Моля, опитайте отново",
+                    "Id": "Не се разрешава понижаване на ролята на единствения администратор"
+                }
+            },
+            "userPreview": {
+                "title": "Преглед на служител",
+                "users": "Служители",
+                "id": "Идентификатор",
+                "uidType": "ЕГН/ЛНЧ",
+                "name": "Име",
+                "email": "Имейл",
+                "phone": "Телефон",
+                "role": "Роля",
+                "details": "Детайли"
+            },
+            "usersTable": {
+                "title": "Служители",
+                "register": "Нов служител",
+                "table": {
+                    "columns": {
+                        "createdOn": "Дата на създаване",
+                        "name": "Име",
+                        "email": "Имейл",
+                        "phone": "Телефон",
+                        "role": "Роля",
+                        "action": "Действие"
+                    },
+                    "details": {
+                        "history": "История на промените",
+                        "editUser": "Редактирай служител",
+                        "previewUser": "Преглед"
+                    },
+                    "roles": {
+                        "admin": "Администратор",
+                        "user": "Потребител"
+                    }
+                },
+                "filter": {
+                    "name": "Име",
+                    "namePlaceholder": "Име на служител",
+                    "email": "Имейл",
+                    "emailPlaceholder": "Имейл на служител",
+                    "isAdministrator": "Роля"
+                }
+            },
+            "userHistory": {
+                "txtTitle": "История на промените",
+                "txtDate": "Дата",
+                "txtComment": "Служебна информация",
+                "txtUser": "Потребител",
+                "txtUid": "ЕГН/ЛНЧ на потребител"
+            }
+        },
+        "tariffs": {
+            "startDate": "Начална дата",
+            "price": "Цена",
+            "serviceName": "Услуга",
+            "ageFrom": "Възраст от",
+            "ageUntil": "Възраст до",
+            "discount": "Отстъпка",
+            "disability": "Лице с увреждания",
+            "confirmChange": "Искате ли да запазите промените?",
+            "servicesTariffsTable": {
+                "title": "Тарифи за услуги",
+                "register": "Нова тарифа",
+                "table": {
+                    "columns": {
+                        "startDate": "Начална дата",
+                        "price": "Цена",
+                        "serviceName": "Услуга"
+                    },
+                    "details": {
+                        "delete": "Изтрий",
+                        "edit": "Редактирай",
+                        "preview": "Преглед"
+                    }
+                }
+            },
+            "discountsTable": {
+                "title": "Отстъпки",
+                "register": "Нова отстъпка",
+                "table": {
+                    "columns": {
+                        "startDate": "Начална дата",
+                        "discount": "Отстъпка",
+                        "age": "Възрастов диапазон"
+                    },
+                    "details": {
+                        "delete": "Изтрий",
+                        "edit": "Редактирай",
+                        "preview": "Преглед"
+                    }
+                }
+            },
+            "tariffCreate": {
+                "title": "Създаване на нова тарифа",
+                "toasts": {
+                    "successfulCreation": "Успешо създаване",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "pattern": "Невалиден формат"
+                }
+            },
+            "tariffEdit": {
+                "title": "Редакция на тарифа",
+                "toasts": {
+                    "successfulEdit": "Успешна редакция",
+                    "failedEdit": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "pattern": "Невалиден формат"
+                }
+            },
+            "tariffDelete": {
+                "title": "Изтриване на тарифа",
+                "description": "Сигурни ли сте, че искате да изтриете избраната тарифа?",
+                "toasts": {
+                    "successfulDelete": "Успешно изтриване на тарифа",
+                    "failedDelete": "Нещо се обърка. Моля, опитайте отново"
+                }
+            },
+            "discountCreate": {
+                "title": "Създаване на нова отстъпка",
+                "toasts": {
+                    "successfulCreation": "Успешо създаване",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "pattern": "Невалиден формат",
+                    "moreThanOrEqualValid": "Невалиден възрастов диапазон",
+                    "max": "Невалиден диапазон",
+                    "min": "Невалиден диапазон"
+                }
+            },
+            "discountEdit": {
+                "title": "Редакция на отстъпка",
+                "toasts": {
+                    "successfulEdit": "Успешна редакция",
+                    "failedEdit": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "pattern": "Невалиден формат",
+                    "moreThanOrEqualValid": "Невалиден възрастов диапазон",
+                    "max": "Невалиден диапазон",
+                    "min": "Невалиден диапазон"
+                }
+            },
+            "discountDelete": {
+                "title": "Изтриване на отстъпка",
+                "description": "Сигурни ли сте, че искате да изтриете избраната отстъпка?",
+                "toasts": {
+                    "successfulDelete": "Успешно изтриване на отстъпка",
+                    "failedDelete": "Нещо се обърка. Моля, опитайте отново"
+                }
+            }
+        },
+        "documentTypes": {
+            "title": "Типове документи",
+            "register": "Нов документ",
+            "descriptionBG": "Описание на български",
+            "descriptionEN": "Описание на английски",
+            "table": {
+                "columns": {
+                    "name": "Име",
+                    "descriptions": "Описание",
+                    "requiredForAdministrator": "Задължителен за АЕИ",
+                    "requiredForCenter": "Задължителен за ЦЕИ"
+                },
+                "details": {
+                    "delete": "Изтрий",
+                    "edit": "Редактирай",
+                    "preview": "Преглед"
+                }
+            },
+            "create": {
+                "title": "Създаване на нов тип документ",
+                "toasts": {
+                    "successfulCreation": "Успешо създаване",
+                    "failedRegistration": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "pattern": "Невалиден формат"
+                }
+            },
+            "edit": {
+                "title": "Редакция на тип документ",
+                "toasts": {
+                    "successfulEdit": "Успешна редакция",
+                    "failedEdit": "Нещо се обърка. Моля, опитайте отново"
+                },
+                "errors": {
+                    "required": "Полето е задължително",
+                    "pattern": "Невалиден формат"
+                }
+            },
+            "delete": {
+                "title": "Изтриване на тип документ",
+                "description": "Сигурни ли сте, че искате да изтриете избрания тип документ?",
+                "toasts": {
+                    "successfulDelete": "Успешно изтриване на документ",
+                    "failedDelete": "Нещо се обърка. Моля, опитайте отново"
+                }
+            }
+        },
+        "systemProcesses": {
+            "txtStatusOfInternalSystems": "Статус на вътрешни услуги",
+            "txtConfigurationsAndLimits": "Конфигурации и лимити",
+            "txtAddress": "Адрес",
+            "txtDescription": "Описание",
+            "descriptions": {
+                "Prometheus": "Инструмент за мониторинг и известяване, предназначен за събиране на данни в реално време от приложенията.",
+                "Grafana": "Инструмент за визуално представяне на метрики в реално време.",
+                "DDOSProtectionServer1": "Лозенец (Primary) - инструмент за защита от злонамерен трафик и конфигурация на лимит на заявки.",
+                "DDOSProtectionServer2": "Банкя - инструмент за защита от злонамерен трафик и конфигурация на лимит на заявки.",
+                "keycloak_internal": "Система за управление на идентичност за потребители и системи във вътрешна среда на ЦСЕИ",
+                "keycloak_external": "Система за управление на идентичност за граждани и външни системи"
+            },
+            "txtMissingConfig": "Липсваща конфигурация"
+        },
+        "journalLogs": {
+            "txtLogFiles": "Лог файлове",
+            "txtLogFile": "Лог файл",
+            "txtDate": "Дата",
+            "txtJournal": "Журнал",
+            "txtSearchLogFilesInJournal": "Търси лог файл в журнала",
+            "txtSearching": "Търсене",
+            "txtSearchingOfLogFile": "Търсене в журнал",
+            "txtStartDate": "Начална дата",
+            "txtEndDate": "Крайна дата",
+            "txtStartDatePlaceholder": "Изберете начална дата",
+            "txtEndDatePlaceholder": "Изберете крайна дата",
+            "txtRemove": "Премахни",
+            "txtKey": "Ключ",
+            "txtValue": "Стойност",
+            "txtConfigurator": "Конфигуратор",
+            "txtSearchResults": "Резултати от търсенето",
+            "txtResults": "Резултати",
+            "txtSearchFound": "Намерени са {{value}} съвпадения за",
+            "txtNoLogsFound": "Няма намерени логове",
+            "txtPreviewFile": "Преглед на файл",
+            "txtReject": "Откажи",
+            "txtSearch": "Търси",
+            "txtOperator": "Оператор",
+            "txtOperatorPlaceholder": "Изберете оператор",
+            "txtPeriod": "Период",
+            "txtChangeSearch": "Промени търсенето",
+            "txtBack": "Назад",
+            "txtOperators": "Оператори",
+            "operators": {
+                "txtEqual": "Равно",
+                "txtLessThan": "По-малко от",
+                "txtGreaterThan": "По-голямо от",
+                "txtGreaterThanOrEqual": "По-голямо или равно",
+                "txtLessThanOrEqual": "По-малко или равно",
+                "txtContains": "Съдържа",
+                "txtStartsWith": "Започва с",
+                "txtEndsWith": "Завършва с"
+            },
+            "descriptionTexts": {
+                "txtEqualDescription": "Равно - операция равно на. Поддържа числови, текстови, boolean данни и дата (с валиден формат [YYYY-MM-DD])",
+                "txtGreaterThanDescription": "По-голямо от - операция по-голямо от. Поддържа числови, boolean данни и дата (с валиден формат [YYYY-MM-DD])",
+                "txtLessThanDescription": "По-малко от - операция по-малко от. Поддържа числови, boolean данни и дата (с валиден формат [YYYY-MM-DD])",
+                "txtGreaterThanOrEqualDescription": "По-голямо или равно - операция по-голямо или равно на. Поддържа числови, boolean данни и дата (с валиден формат [YYYY-MM-DD])",
+                "txtLessThanOrEqualDescription": "По-малко или равно - операция по-малко или равно на. Поддържа числови, boolean данни и дата (с валиден формат [YYYY-MM-DD])",
+                "txtContainsDescription": "Съдържа - операция съдържа подтекст в текста. Поддържа текстови данни",
+                "txtStartsWithDescription": "Започва с - стойността на полето започва с. Поддържа текстови данни",
+                "txtEndsWithDescription": "Завършва с - стойността на полето завършва с. Поддържа текстови данни"
+            },
+            "validationForm": {
+                "txtPleaseEnterField": "Моля въведете {{field}}",
+                "txtPleaseChoose": "Моля изберете {{field}}",
+                "txtLaterThenStartDate": "Моля изберете дата и час след началната дата"
+            },
+            "errors": {
+                "txtError": "Възникна грешка, моля свържете се с администратор",
+                "txtSpecifySearch": "Намерени са прекалено много данни, моля направете по-конкретно търсене"
+            }
+        },
+        "integrity": {
+            "txtIntegrity": "Интегритет",
+            "txtStartDatePlaceholder": "От дата",
+            "txtEndDatePlaceholder": "До дата",
+            "txtStartDate": "Начална дата",
+            "txtEndDate": "Крайна дата",
+            "txtCheckIntegrity": "Провери интегритет",
+            "txtCheckIntegrityProcessing": "В процес на проверка на интегритет на журналите в системата",
+            "txtSystemJournalsIntegrity": "Интегритет на журналите в системата",
+            "txtPeriod": "Период",
+            "txtIntegrityStatus": "Статус на интегритет",
+            "txtDataIntegrityIsNotCompromised": "Интегритетът на данните не е нарушен",
+            "txtDataIntegrityIsCompromised": "Интегритетът на данните е нарушен",
+            "txtSubSystemJournalsIntegrity": "Интегритет на журналите в подсистемата",
+            "txtLastLaunched": "Последно стартирана",
+            "txtSystemIdentifier": "Идентификатор на системата",
+            "txtIndexName": "Име на индекс",
+            "txtLocalLogsLocation": "Път до журналите",
+            "txtSystemStatus": "Статус на системата",
+            "txtSubSystemStatus": "Статус на подсистемата",
+            "txtRefresh": "Обнови",
+            "txtPleaseConfirmYourAction": "Моля потвърдете действието. Този процес е времеемък и може да доведе до деградация на работоспособността на системата.",
+            "txtSubSystemName": "Име на подсистема",
+            "txtSubSystemId": "ID на подсистема",
+            "txtDownload": "Изтегли файл",
+            "txtLoadingPleaseWait": "Ще отнеме време, моля изчакайте.",
+            "txtExpandCollapseLabel": "разширяване/свиване",
+            "txtCompromised": "Нарушен",
+            "txtNotCompromised": "Ненарушен",
+            "txtUnableToVisualize": "Невъзможна визуализация",
+            "txtCheckIntegrityLastStateUnknown": "Няма информация за интегритета на журналите в системата",
+            "periods": {
+                "Disabled": "Неактивен",
+                "All": "Всички",
+                "Week": "Седмица",
+                "TwoWeeks": "Две седмици",
+                "Month": "Месец",
+                "Quarter": "Тримесечие",
+                "Year": "Година",
+                "Day": "Ден"
+            },
+            "validationForm": {
+                "txtPleaseChoose": "Моля изберете {{field}}",
+                "txtNotLaterThenEndDate": "Началната дата трябва да е преди крайната",
+                "txtNotMoreThanThreeMonths": "Максималният времеви интервал е 3 месеца"
+            },
+            "errors": {
+                "txtError": "Възникна грешка, моля свържете се с администратор",
+                "txtTaskAlreadyInProgressError": "Системата обработва данни, моля опитайте след няколко минути"
+            },
+            "txtHide": "Скриване",
+            "txtShow": "Показване",
+            "txtDaysWithoutLogs": "дни без данни",
+            "txtDaysThatDoesntHaveLogFile": "Дни за които няма логове",
+            "txtNoLogsDateBefore": "Няма данни преди"
+        }
+    },
+    "enums": {
+        "identifierType": {
+            "EGN": "ЕГН",
+            "LNCh": "ЛНЧ"
+        },
+        "userRole": {
+            "administrator": "Администратор",
+            "user": "Потребител",
+            "applicant": "Заявител",
+            "employee": "Служител"
+        },
+        "administratorsAndCentersRoles": {
+            "administrator": "Администратор потребители",
+            "user": "Потребител на ПИДСЕИ"
+        }
+    },
+    "aria": {
+        "txtLogo": "Лого",
+        "txtTitle": "Заглавие",
+        "txtSubTitle": "Под заглавие",
+        "txtNavigationButton": "Бутон за навигиране",
+        "txtBreadcrumb": "Навигационна лента"
+    }
+}

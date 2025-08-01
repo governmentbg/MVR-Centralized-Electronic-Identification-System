@@ -1,0 +1,12 @@
+#administrativeBodyName {
+    .administrative-body-dropdown-item {
+        width: 100%;
+        max-width: 500px;
+
+        .administrative-body-dropdown-item-content {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

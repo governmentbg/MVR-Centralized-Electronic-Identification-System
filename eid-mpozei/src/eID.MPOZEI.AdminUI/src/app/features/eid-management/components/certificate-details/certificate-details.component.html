@@ -1,0 +1,318 @@
+<app-certificate-history
+    [certificate]="certificate"
+    [hidden]="!isCertificateHistoryVisible"
+    [fullBreadcrumb]="!shouldLoadRegixData"
+    (hide)="closeCertificateHistory($event)"></app-certificate-history>
+<section class="h-100" *transloco="let t" [hidden]="isCertificateHistoryVisible">
+    <div class="row">
+        <div class="col">
+            <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+            <h4 class="mb-4 text-text-active">
+                {{ certificateTitleText() }}
+            </h4>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <div class="d-flex justify-content-between card-header">
+                        <h5 class="d-flex m-0">
+                            <img
+                                *ngIf="personalIdentity && personalIdentity.picture; else elseBlock"
+                                class="header-icon rounded me-3"
+                                [alt]="t('modules.eidManagement.txtCitizenPicture')"
+                                [src]="'data:image/jpg;base64,' + personalIdentity.picture" />
+                            <ng-template #elseBlock>
+                                <i class="material-icons-outlined me-3 header-icon display-4">&#xe853;</i>
+                            </ng-template>
+                            <div class="header-info align-self-center">
+                                <p-skeleton width="20rem" height="3rem" *ngIf="loading"></p-skeleton>
+                                <span
+                                    class="text-uppercase align-self-center d-block text-theme-primary-medium"
+                                    *ngIf="!loading && personalIdType && personalId">
+                                    <span>{{ personalIdTypesTranslation(personalIdType) }}:</span> {{ personalId }}
+                                </span>
+                                <span
+                                    class="align-self-center d-block text-condensed text-theme-primary-medium"
+                                    *ngIf="!loading && personalIdentity">
+                                    <span>
+                                        {{ personalIdentity.personNames?.firstName }}
+                                        {{ personalIdentity.personNames?.surname }}
+                                        {{ personalIdentity.personNames?.familyName }}
+                                    </span>
+                                </span>
+                            </div>
+                        </h5>
+                        <div class="align-self-center">
+                            <p-button
+                                [label]="t('modules.eidManagement.txtClose')"
+                                icon="pi pi-times"
+                                iconPos="right"
+                                styleClass="p-button p-button-danger p-button-text p-button-sm d-print-none"
+                                (onClick)="navigateToSearchResults()"></p-button>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="content">
+                    <div class="info-container row">
+                        <div class="col-xl-8">
+                            <p class="details-title mb-4">
+                                {{ t('modules.eidManagement.details.txtCertificateDetails') }}:
+                            </p>
+                            <table>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.txtCertificateSerialNumber') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span *ngIf="!loading">{{ certificate.serialNumber }}</span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="8rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.txtCertificateName') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span *ngIf="!loading">{{ certificate.alias }}</span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="16rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtEIDNumber') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!loading">{{ certificate.eidentityId }}</span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="8rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtNames') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!loading">{{ certificate.commonName }}</span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="16rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtStatus') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <div [ngSwitch]="certificate.status" *ngIf="!loading">
+                                            <span *ngSwitchCase="'ACTIVE'" class="fw-bold text-button-confirm">
+                                                {{ certificateStatusTranslation(certificate.status) }}
+                                                <i
+                                                    *ngIf="isCertificateExpired(certificate)"
+                                                    class="material-icons-outlined cursor-default"
+                                                    [pTooltip]="
+                                                        t(
+                                                            'modules.eidManagement.txtCertificateExpiredButNotChangedInDB'
+                                                        )
+                                                    "
+                                                    tooltipPosition="bottom"
+                                                    >&#xe88e;</i
+                                                >
+                                            </span>
+                                            <span *ngSwitchCase="'STOPPED'" class="fw-bold text-theme-secondary-alert">
+                                                {{ certificateStatusTranslation(certificate.status) }}
+                                            </span>
+                                            <span *ngSwitchCase="'EXPIRED'" class="fw-bold text-theme-secondary-alert">
+                                                {{ certificateStatusTranslation(certificate.status) }}
+                                            </span>
+                                            <span *ngSwitchCase="'FAILED'" class="fw-bold text-text-error">
+                                                {{ certificateStatusTranslation(certificate.status) }}
+                                            </span>
+                                            <span *ngSwitchCase="'REVOKED'" class="fw-bold text-text-error">
+                                                {{ certificateStatusTranslation(certificate.status) }}
+                                            </span>
+                                            <span *ngSwitchDefault>
+                                                {{ certificateStatusTranslation(certificate.status) }}
+                                            </span>
+                                        </div>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="8rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtCertificateIssuedBy') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!loading">{{
+                                            certificate.eidAdministratorName
+                                        }}</span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="16rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtCertificateDeviceType') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!loading">{{
+                                            deviceTypeTranslation(certificate.deviceId)
+                                        }}</span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="8rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtDeviceNumber') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!carrierLoading">{{ carrier?.serialNumber }}</span>
+                                        <p-skeleton
+                                            *ngIf="carrierLoading"
+                                            height="1rem"
+                                            width="8rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.details.txtCertificateDeviceAssuranceLevel') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!loading">
+                                            {{
+                                                t(
+                                                    'modules.eidManagement.assuranceLevel.' +
+                                                        certificate.levelOfAssurance
+                                                )
+                                            }}
+                                        </span>
+
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="16rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.txtCertificateValidFrom') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span class="fw-bold" *ngIf="!loading">
+                                            {{ formatDate(certificate.validityFrom) }}
+                                        </span>
+
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="16rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="pe-5 text-secondary">
+                                        {{ t('modules.eidManagement.txtCertificateValidTo') }}:
+                                    </td>
+                                    <td class="fw-bold text-secondary align-top">
+                                        <span *ngIf="!loading">{{ formatDate(certificate.validityUntil) }}</span>
+                                        <span
+                                            class="ms-3 badge text-uppercase text-black bg-button-danger-hover"
+                                            *ngIf="
+                                                certificate &&
+                                                certificate.isExpiring &&
+                                                certificate.status === CertificateStatus.ACTIVE
+                                            ">
+                                            {{ t('modules.eidManagement.details.txtExpiresSoon') }}
+                                        </span>
+                                        <p-skeleton
+                                            *ngIf="loading"
+                                            height="1rem"
+                                            width="16rem"
+                                            styleClass="d-inline-block"></p-skeleton>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="dates-container">
+                                <div>
+                                    <h6>{{ t('modules.eidManagement.details.txtCertificateHistory') }}:</h6>
+                                </div>
+                                <div class="d-flex my-4">
+                                    <span class="flex-grow-1 pe-4 text-text-light title">
+                                        {{ t('modules.eidManagement.details.txtCertificateIssuedOn') }}:
+                                    </span>
+                                    <div>
+                                        <span *ngIf="!loading" class="text-theme-primary-dark">{{
+                                            formatDate(certificate.createDate)
+                                        }}</span>
+                                        <p-skeleton *ngIf="loading" height="1rem" width="8rem"></p-skeleton>
+                                    </div>
+                                </div>
+                                <p-divider class="header-divider" type="solid"></p-divider>
+                                <p-button
+                                    [label]="t('modules.eidManagement.details.txtSeeCertificateHistory')"
+                                    icon="pi pi-chevron-right"
+                                    iconPos="right"
+                                    styleClass="p-button p-button-primary p-button-sm d-print-none"
+                                    (onClick)="showCertificateHistory()"></p-button>
+                            </div>
+                        </div>
+                    </div>
+                    <p-divider class="header-divider d-print-none" type="solid"></p-divider>
+                    <div *ngIf="action && (loading || loadingRegixData)">
+                        <p-skeleton styleClass="mb-4" height="1rem" width="20rem"></p-skeleton>
+                        <p-skeleton styleClass="mb-4" height="1rem" width="10rem"></p-skeleton>
+                        <p-skeleton height="1rem" width="20rem"></p-skeleton>
+                    </div>
+                    <div *ngIf="action && personalIdentity && currentEid && !loading && !loadingRegixData">
+                        <app-certificate-action-form
+                            [action]="action"
+                            [personalId]="personalId"
+                            [personalIdentity]="personalIdentity"
+                            [personalIdType]="personalIdType"
+                            [eIdentity]="currentEid"
+                            [certificate]="certificate"
+                            [restrictionsStatus]="restrictionsStatus"
+                            [applicationId]="applicationId"
+                            (actionExecuted)="closePreviewAndRefresh()"></app-certificate-action-form>
+                    </div>
+                    <p-button
+                        *ngIf="!action"
+                        [label]="t('modules.eidManagement.txtPrintCertificate')"
+                        type="button"
+                        icon="pi pi-print"
+                        styleClass="p-button p-button-primary p-button-sm mt-2 d-print-none"
+                        (onClick)="printCertificate()"></p-button>
+                </ng-template>
+            </p-card>
+        </div>
+    </div>
+</section>

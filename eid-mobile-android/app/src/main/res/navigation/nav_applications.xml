@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_applications"
+    app:startDestination="@id/applicationsFragment">
+
+    <fragment
+        android:id="@+id/applicationsFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.show.all.ApplicationsFragment"
+        android:label="applicationsFragment"
+        tools:layout="@layout/fragment_with_list_and_sort_and_actions_button">
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="certificateId"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/toApplicationDetailsFragment"
+            app:destination="@id/applicationDetailsFragment" />
+
+        <action
+            android:id="@+id/toApplicationDetailsFilterFragment"
+            app:destination="@id/applicationDetailsFilterFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationDetailsFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.show.details.ApplicationDetailsFragment"
+        android:label="applicationDetailsFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="applicationId"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="certificateId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/applicationDetailsFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.applications.show.filter.ApplicationFilterFragment"
+        android:label="applicationDetailsFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.models.applications.filter.ApplicationsFilterModel"
+            app:nullable="false" />
+
+    </fragment>
+
+
+</navigation>

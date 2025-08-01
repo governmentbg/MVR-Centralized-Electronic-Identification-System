@@ -1,0 +1,12 @@
+schemas:
+  PageAttachmentDTO:
+    type: object
+    properties:
+      id:
+        type: string
+      fileName:
+        type: string
+      metaTags:
+        type: array
+        items:
+          type: string

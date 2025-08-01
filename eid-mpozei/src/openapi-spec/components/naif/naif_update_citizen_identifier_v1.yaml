@@ -1,0 +1,28 @@
+#schemas:
+#  UpdateCitizenIdentifierDTO:
+#    type: object
+#    required:
+#      - MessageID
+#      - User
+#      - Timestamp
+#      - OldUIDType
+#      - OldPersonalId
+#      - NewUIDType
+#      - NewPersonalId
+#    properties:
+#      MessageID:
+#        type: string
+#        format: uuid
+#      User:
+#        type: string
+#      Timestamp:
+#        type: string
+#        format: date-time
+#      OldPersonalId:
+#        type: string
+#      OldUIDType:
+#        $ref: './naif_identifier_type_v1.yaml#/schemas/NaifIdentifierType'
+#      NewPersonalId:
+#        type: string
+#      NewUIDType:
+#        $ref: './naif_identifier_type_v1.yaml#/schemas/NaifIdentifierType'

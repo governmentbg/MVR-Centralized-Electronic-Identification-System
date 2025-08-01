@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main_tab_requests"
+    app:startDestination="@id/mainTabRequestsFragment">
+
+    <fragment
+        android:id="@+id/mainTabRequestsFragment"
+        android:name="com.digitall.eid.ui.fragments.main.tabs.requests.MainTabRequestsFragment"
+        android:label="mainTabRequestsFragment"
+        tools:layout="@layout/fragment_main_tab_requests" />
+
+</navigation>

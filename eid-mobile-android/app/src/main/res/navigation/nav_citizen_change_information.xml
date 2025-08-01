@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_citizen_change_phone"
+    app:startDestination="@id/changeCitizenPhoneFragment">
+
+    <fragment
+        android:id="@+id/changeCitizenPhoneFragment"
+        android:name="com.digitall.eid.ui.fragments.citizen.change.information.ChangeCitizenInformationFragment"
+        android:label="changeCitizenPhoneFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+</navigation>

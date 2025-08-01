@@ -1,0 +1,26 @@
+#schemas:
+#  EidentityRequest:
+#    type: object
+#    properties:
+#      firstName:
+#        type: string
+#        minLength: 1
+#        maxLength: 255
+#        description: First Name
+#      secondName:
+#        type: string
+#        minLength: 1
+#        maxLength: 255
+#        description: Second Name
+#      lastName:
+#        type: string
+#        minLength: 1
+#        maxLength: 255
+#        description: Last Name
+#      citizenIdentifierType:
+#        $ref: './identifier_type_v1.yaml#/schemas/IdentifierType'
+#      citizenIdentifierNumber:
+#        type: string
+#        minLength: 1
+#        maxLength: 255
+#        description: Citizen Number

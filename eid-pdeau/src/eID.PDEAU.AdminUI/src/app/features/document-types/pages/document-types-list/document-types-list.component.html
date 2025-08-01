@@ -1,0 +1,109 @@
+<section *transloco="let t" class="h-100 datasets-container">
+    <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [ngClass]="isConfirm ? 'confirmation-header' : 'deletion-header'"></p-confirmDialog>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-uppercase">
+            {{ t('modules.documentTypes.title') }}
+        </h4>
+        <div class="col-3 d-flex justify-content-end align-items-end">
+            <p-button
+                [label]="t('modules.documentTypes.register')"
+                type="submit"
+                [disabled]="documentTypesQuery.isLoading"
+                styleClass="p-button-success"
+                icon="pi pi-plus"
+                iconPos="left"
+                [routerLink]="['new']"></p-button>
+        </div>
+    </div>
+    <p-card>
+        <p-table
+            [value]="documentTypes"
+            [tableStyle]="{ 'min-width': '100%' }"
+            dataKey="id"
+            [loading]="documentTypesQuery.isLoading"
+            loadingIcon="pi pi-spin pi-spinner"
+            [rowSelectable]="false">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-nowrap">
+                        {{ t('modules.documentTypes.table.columns.name') }}
+                    </th>
+                    <th class="text-nowrap">
+                        {{ t('modules.documentTypes.table.columns.descriptions') }}
+                    </th>
+                    <th class="text-nowrap">
+                        {{ t('modules.documentTypes.table.columns.requiredForAdministrator') }}
+                    </th>
+                    <th class="text-nowrap">
+                        {{ t('modules.documentTypes.table.columns.requiredForCenter') }}
+                    </th>
+                    <th class="text-nowrap"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                    <td>
+                        <p-skeleton></p-skeleton>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-documentType>
+                <tr>
+                    <td [attr.aria-label]="documentType.name">
+                        <span class="multiline-ellipsis">{{ documentType.name }}</span>
+                    </td>
+                    <td>
+                        <span class="multiline-ellipsis">
+                            {{ documentType.descriptions.BG }} / {{ documentType.descriptions.EN }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="multiline-ellipsis">{{
+                            documentType.requiredForAdministrator ? t('global.txtYes') : t('global.txtNo')
+                        }}</span>
+                    </td>
+                    <td>
+                        <span class="multiline-ellipsis">{{
+                            documentType.requiredForCenter ? t('global.txtYes') : t('global.txtNo')
+                        }}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <p-button
+                                [title]="t('modules.tariffs.discountsTable.table.details.edit')"
+                                styleClass="p-button-sm p-button-text"
+                                (click)="navigateToEdit(documentType)">
+                                <i class="material-icons-outlined">&#xe3c9;</i>
+                            </p-button>
+                            <p-button
+                                [title]="t('modules.tariffs.discountsTable.table.details.delete')"
+                                styleClass="p-button-sm p-button-text text-text-error"
+                                (click)="deleteDiscountConfirmation(documentType.id)">
+                                <i class="material-icons-outlined">&#xe872;</i>
+                            </p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5">{{ t('global.txtNoRecordsFound') }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</section>

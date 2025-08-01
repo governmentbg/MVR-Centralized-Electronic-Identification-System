@@ -1,0 +1,27 @@
+<section class="h-100 provider-register-section" *transloco="let t; read: 'modules.users.userPreview'">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <h4 class="mb-4 text-text-default">
+        {{ t('title') }}
+    </h4>
+    <p-card>
+        <app-preview-field [label]="t('id')" [value]="userQuery.data?.id" [isLoading]="userQuery.isLoading" />
+        <app-preview-field [label]="t('uidType')" [value]="userQuery.data?.uid" [isLoading]="userQuery.isLoading" />
+        <app-preview-field [label]="t('name')" [value]="userQuery.data?.name" [isLoading]="userQuery.isLoading" />
+        <app-preview-field [label]="t('email')" [value]="userQuery.data?.email" [isLoading]="userQuery.isLoading" />
+        <app-preview-field [label]="t('phone')" [value]="userQuery.data?.phone" [isLoading]="userQuery.isLoading" />
+        <app-preview-field
+            *transloco="let roleTranslate; read: 'enums.userRole'"
+            [label]="t('role')"
+            [value]="userQuery.data?.isAdministrator ? roleTranslate('administrator') : roleTranslate('user')"
+            [isLoading]="userQuery.isLoading" />
+
+        <button
+            pButton
+            type="button"
+            *transloco="let buttonT"
+            class="btn-outline-primary"
+            [label]="buttonT('global.txtBack')"
+            [attr.aria-label]="buttonT('global.txtBack')"
+            (click)="onClose()"></button>
+    </p-card>
+</section>

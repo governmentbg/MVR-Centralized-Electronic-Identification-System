@@ -1,0 +1,28 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${INTERNAL_KEYCLOAK_BASE_URL}/realms/${INTERNAL_KEYCLOAK_REALM}
+          principal-claim-name: preferred_username
+          audiences:
+            - eid_iscei
+            
+mvr:
+  oauth-clients:
+    eid_android_app: 
+      name: 'Андроид Мобилно Приложение за Гражданите'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+    eid_ios_app: 
+      name: 'IOS Мобилно Приложение за Граждание'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+    eid_pdeau_app: 
+      name: 'Портал за доставчици на услуги'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'
+    eid_pg_app:
+      name: 'Портал за гражданите'
+      system_id: 941abb24-c919-44d9-84df-3fb738875b3a
+      system_name: 'Министерство на вътрешните работи'

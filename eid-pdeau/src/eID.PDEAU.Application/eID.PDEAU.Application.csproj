@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="logs\**" />
+        <Compile Remove="log\**" />
+        <Content Remove="logs\**" />
+        <Content Remove="log\**" />
+        <EmbeddedResource Remove="logs\**" />
+        <EmbeddedResource Remove="log\**" />
+        <None Remove="logs\**" />
+        <None Remove="log\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="PDEAU.db" />
+      <None Remove="PDEAU.db-shm" />
+      <None Remove="PDEAU.db-wal" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MassTransit.Analyzers" Version="8.0.14">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MassTransit.Newtonsoft" Version="8.0.13" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.13" />
+        <PackageReference Include="MassTransit.Prometheus" Version="8.0.13" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.15" />
+        <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="6.0.2" />
+        <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="6.0.2" />
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="6.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.7" />
+        <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+        <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="9.0.0" />
+        <PackageReference Include="Serilog.Sinks.Http" Version="8.0.0" />
+        <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
+        <PackageReference Include="Quartz.AspNetCore" Version="3.6.2" />
+        <PackageReference Include="Quartz.Plugins.TimeZoneConverter" Version="3.6.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\eID.PDEAU.Service\eID.PDEAU.Service.csproj" />
+    </ItemGroup>
+
+</Project>

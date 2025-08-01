@@ -1,0 +1,140 @@
+<div class="imprint h-100">
+    <section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+        <p-card styleClass="h-100">
+            <ng-container *ngIf="!showLoginMenu">
+                <div class="horizontally-centered-container w-fit h-100">
+                    <form
+                        [formGroup]="form"
+                        class="p-fluid"
+                        (ngSubmit)="submit()"
+                        *ngIf="!requestInProgress && originUrl">
+                        <h3 class="my-4 text-primary text-center">{{ t('global.txtAdminSignIn') }}</h3>
+                        <div>
+                            <label for="type" class="form-label"
+                                >{{ t('modules.eidManagement.form.labels.txtAdminSignType') }}
+                                <span class="text-danger">*</span></label
+                            >
+                            <p-dropdown
+                                formControlName="scope"
+                                [options]="requestScopeTypesList"
+                                [optionLabel]="isLangBG() ? 'name' : 'nameLatin'"
+                                optionValue="value"
+                                [placeholder]="t('global.txtDropdownPlaceholder')"
+                                styleClass="w-100"
+                                (onChange)="onOptionChange($event)"
+                                inputId="scope">
+                                <ng-template pTemplate="dropdownicon">
+                                    <i
+                                        *ngIf="requestInProgress"
+                                        class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                        style="font-size: 1rem"></i>
+                                    <i
+                                        *ngIf="!requestInProgress"
+                                        class="pi pi-chevron-down p-dropdown-trigger"
+                                        style="font-size: 1rem"></i>
+                                </ng-template>
+                            </p-dropdown>
+                            <div class="text-danger validation-text">
+                                <span *ngIf="form.controls['scope'].invalid && form.controls['scope'].dirty">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.eidManagement.form.labels.txtAdminSignType')
+                                        })
+                                    }}
+                                </span>
+                            </div>
+                        </div>
+                        <!-- ////////////////////////////////////////////////////////////////// -->
+                        <div>
+                            <label for="type" class="form-label"
+                                >{{ t('modules.eidManagement.form.labels.txtServiceMemberType') }}
+                                <span class="text-danger">*</span></label
+                            >
+                            <p-dropdown
+                                formControlName="systemId"
+                                [options]="options"
+                                [optionLabel]="isLangBG() ? 'name' : 'nameLatin'"
+                                optionValue="id"
+                                [placeholder]="t('global.txtDropdownPlaceholder')"
+                                styleClass="w-100"
+                                inputId="type">
+                                <ng-template pTemplate="dropdownicon">
+                                    <i
+                                        *ngIf="requestInProgress"
+                                        class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                        style="font-size: 1rem"></i>
+                                    <i
+                                        *ngIf="!requestInProgress"
+                                        class="pi pi-chevron-down p-dropdown-trigger"
+                                        style="font-size: 1rem"></i>
+                                </ng-template>
+                            </p-dropdown>
+                            <div class="text-danger validation-text">
+                                <span *ngIf="form.controls['systemId'].invalid && form.controls['systemId'].dirty">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.eidManagement.form.labels.txtServiceMemberType')
+                                        })
+                                    }}
+                                </span>
+                            </div>
+                        </div>
+                        <!-- ///////////////////////////////// -->
+                        <button
+                            pButton
+                            type="submit"
+                            class="mt-4"
+                            [disabled]="requestInProgress"
+                            [attr.aria-label]="t('global.txtContinue')"
+                            [label]="t('global.txtContinue')"></button>
+                    </form>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="showLoginMenu">
+                <div class="d-flex flex-wrap flex-row justify-content-center gap-5" *ngIf="originUrl">
+                    <div class="p-fluid">
+                        <button
+                            pButton
+                            type="button"
+                            class="mt-4"
+                            [disabled]="requestInProgress"
+                            [attr.aria-label]="t('loginPage.txtLoginWithMobileeID')"
+                            routerLink="/login/mobile-eid"
+                            [queryParams]="{
+                                origin: originUrl,
+                                realm: realm,
+                                client_id: client_id,
+                                scope: form.value.scope,
+                                system_id: form.value.systemId
+                            }"
+                            [label]="t('loginPage.txtLoginWithMobileeID')"></button>
+                        <button
+                            pButton
+                            type="button"
+                            class="mt-4"
+                            [disabled]="requestInProgress"
+                            [attr.aria-label]="t('loginPage.txtLoginWithDocumenteID')"
+                            [label]="t('loginPage.txtLoginWithDocumenteID')"
+                            routerLink="/login/personal-document-eid"
+                            [queryParams]="{
+                                origin: originUrl,
+                                realm: realm,
+                                client_id: client_id,
+                                scope: form.value.scope,
+                                system_id: form.value.systemId
+                            }"></button>
+
+                        <button
+                            pButton
+                            type="button"
+                            class="mt-4 p-button-danger"
+                            [disabled]="requestInProgress"
+                            [attr.aria-label]="t('global.txtBack')"
+                            [label]="t('global.txtBack')"
+                            (click)="hideDetails()"></button>
+                    </div>
+                </div>
+            </ng-container>
+        </p-card>
+    </section>
+</div>

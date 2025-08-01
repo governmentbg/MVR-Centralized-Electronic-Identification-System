@@ -1,0 +1,215 @@
+<section class="h-100" *transloco="let t">
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-4 text-uppercase" [attr.aria-label]="t('modules.logsViewer.txtPreview')">
+                {{ t('modules.logsViewer.txtPreview') }}
+            </h4>
+        </div>
+    </div>
+    <p-card styleClass="h-100">
+        <div>
+            <div class="row">
+                <div class="col">
+                    <app-logs-filter
+                        (filteredData)="onFilteredDataChange($event)"
+                        (exportDataEvent)="onExportData($event)"
+                        [disableExportBtn]="exportCsvRunning"></app-logs-filter>
+                </div>
+            </div>
+            <p-table
+                [value]="logs"
+                [tableStyle]="{ 'min-width': '100%' }"
+                [rowHover]="true"
+                dataKey="id"
+                [paginator]="false"
+                [rows]="20"
+                [showCurrentPageReport]="false"
+                [loading]="loading"
+                loadingIcon="pi pi-spin pi-spinner"
+                [rowSelectable]="false"
+                [resizableColumns]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.logsViewer.txtEventDate') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.logsViewer.txtEventId') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.logsViewer.txtEventType') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.logsViewer.txtMessage') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.logsViewer.txtModule') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap">
+                            {{ t('modules.logsViewer.txtRequesterSystemName') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap" style="width: 25rem">
+                            {{ t('modules.logsViewer.txtRequesterUserId') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap" style="width: 25rem">
+                            {{ t('modules.logsViewer.txtTargetUserId') }}
+                        </th>
+                        <th pResizableColumn class="text-nowrap text-end">
+                            {{ t('modules.eidManagement.txtActions') }}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-log>
+                    <tr>
+                        <td
+                            style="width: 8rem"
+                            [attr.aria-label]="log.eventDate | translocoDate : { timeStyle: 'medium' }"
+                            [title]="log.eventDate | translocoDate : { timeStyle: 'medium' }">
+                            <span class="multiline-ellipsis">{{
+                                log.eventDate | translocoDate : { timeStyle: 'medium' }
+                            }}</span>
+                        </td>
+                        <td [attr.aria-label]="log.eventId">
+                            <span class="multiline-ellipsis">{{ log.eventId }}</span>
+                        </td>
+                        <td [attr.aria-label]="log.eventType" [title]="log.eventType">
+                            <span class="multiline-ellipsis">{{ log.eventType }}</span>
+                        </td>
+                        <td [attr.aria-label]="log.message">
+                            <span class="multiline-ellipsis">{{ log.message }}</span>
+                        </td>
+                        <td [attr.aria-label]="log.systemId">
+                            <span>{{ log.systemId }}</span>
+                        </td>
+                        <td [attr.aria-label]="log.requesterSystemName">
+                            <span class="multiline-ellipsis">{{ log.requesterSystemName }}</span>
+                        </td>
+                        <td [attr.aria-label]="log.requesterUserId">
+                            <ul class="m-0">
+                                <li *ngIf="log.requesterUserId">
+                                    {{ t('modules.logsViewer.txtRequesterUserId') }}:
+                                    <span class="multiline-ellipsis">{{ log.requesterUserId }}</span>
+                                </li>
+                                <li *ngIf="log.eventPayload?.RequesterUid">
+                                    {{ t('modules.logsViewer.txtRequesterUid') }}:
+                                    <span class="multiline-ellipsis">{{ log.eventPayload.RequesterUid }}</span>
+                                </li>
+                            </ul>
+                        </td>
+                        <td [attr.aria-label]="log.targetUserId">
+                            <ul class="m-0">
+                                <li *ngIf="log.targetUserId">
+                                    {{ t('modules.logsViewer.txtTargetUserId') }}:
+                                    <span class="multiline-ellipsis">{{ log.targetUserId }}</span>
+                                </li>
+                                <li *ngIf="log.eventPayload?.TargetUid">
+                                    {{ t('modules.logsViewer.txtTargetUid') }}:
+                                    <span class="multiline-ellipsis">{{ log.eventPayload.TargetUid }}</span>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-end">
+                                <p-button
+                                    [title]="t('modules.eidManagement.txtPreviewApplication')"
+                                    styleClass="p-button-sm p-button-text"
+                                    (onClick)="showLogDetails(log)">
+                                    <i class="material-icons-outlined">&#xf801;</i>
+                                </p-button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                        <td>
+                            <p-skeleton></p-skeleton>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr *ngIf="logs.length === 0 && !loading">
+                        <td colspan="9">
+                            <span
+                                class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                <img src="/assets/images/noresults.png" />
+                                <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                    {{ t('global.txtNoRecordsFound') }}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="text-center mt-4" *ngIf="logs.length > 0 && !loadMoreDisabled">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button"
+                    [loading]="loading"
+                    [disabled]="loading"
+                    (click)="loadLogs()"
+                    [label]="t('global.txtLoadMore')"></button>
+            </div>
+        </div>
+    </p-card>
+    <p-dialog
+        [modal]="true"
+        [(visible)]="isDialogVisible"
+        [draggable]="false"
+        [breakpoints]="{ '992px': '85vw', '1200px': '85vw', '1400px': '85vw' }"
+        [style]="{ width: '50vw' }">
+        <ng-template pTemplate="content">
+            <p-panel [header]="t('modules.logsViewer.txtLogData')">
+                <code class="text-break text-theme-primary-dark" style="white-space: pre-wrap">
+                    {{ selectedLog }}
+                </code>
+            </p-panel>
+            <ul class="list-unstyled legend mt-4">
+                <li><span class="form-label">eventId:</span> {{ t('modules.logsViewer.txtEventId') }}</li>
+                <li><span class="form-label">eventDate:</span> {{ t('modules.logsViewer.txtEventDate') }}</li>
+                <li><span class="form-label">eventType:</span> {{ t('modules.logsViewer.txtEventType') }}</li>
+                <li><span class="form-label">eventPayload:</span> {{ t('modules.logsViewer.txtPayload') }}</li>
+                <li><span class="form-label">message:</span> {{ t('modules.logsViewer.txtMessage') }}</li>
+                <li><span class="form-label">moduleId:</span> {{ t('modules.logsViewer.txtModule') }}</li>
+                <li><span class="form-label">systemId:</span> {{ t('modules.logsViewer.txtSystem') }}</li>
+                <li>
+                    <span class="form-label">requesterSystemId:</span>
+                    {{ t('modules.logsViewer.txtRequesterSystemId') }}
+                </li>
+                <li>
+                    <span class="form-label">requesterSystemName:</span>
+                    {{ t('modules.logsViewer.txtRequesterSystemName') }}
+                </li>
+                <li>
+                    <span class="form-label">requesterUserId:</span> {{ t('modules.logsViewer.txtRequesterUserId') }}
+                </li>
+                <li><span class="form-label">targetUserId:</span> {{ t('modules.logsViewer.txtTargetUserId') }}</li>
+            </ul>
+        </ng-template>
+    </p-dialog>
+</section>

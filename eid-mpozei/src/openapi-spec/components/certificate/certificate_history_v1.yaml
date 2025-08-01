@@ -1,0 +1,32 @@
+schemas:
+  CertificateHistoryDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Citizen Certificate ID
+      createdDateTime:
+        type: string
+        format: date-time
+      validityUntil:
+        type: string
+        format: date-time
+      validityFrom:
+        type: string
+        format: date-time
+      status:
+        $ref: './citizen_certificate_status_v1.yaml#/schemas/CertificateStatus'
+      applicationId:
+        type: string
+        format: uuid
+      applicationNumber:
+        type: string
+      modifiedDateTime:
+        type: string
+        format: date-time
+      reasonId:
+        type: string
+        format: uuid
+      reasonText:
+        type: string

@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_BASE_URL}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000         # Max wait time for a connection (ms)
+      minimum-idle: 3                   # Minimum idle connections in pool
+      maximum-pool-size: 10             # Maximum pool size
+      idle-timeout: 15000               # Max idle time (ms)
+      max-lifetime: 1000                # Connection lifetime (ms)
+      auto-commit: true                # Auto-commit default behavior
+  jpa:
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: false
+    # Disable automatic DDL generation—Liquibase will handle schema changes
+    hibernate:
+#      ddl-auto: create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: iscei
+#    generate-ddl: true
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+    default-schema: iscei
+    liquibase-schema: iscei

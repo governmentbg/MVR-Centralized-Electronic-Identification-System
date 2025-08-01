@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_empowerments"
+    app:startDestination="@id/empowermentIntroFragment">
+
+    <fragment
+        android:id="@+id/empowermentIntroFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.all.intro.EmpowermentIntroFragment"
+        android:label="empowermentIntroFragment"
+        tools:layout="@layout/fragment_empowerment_intro">
+    </fragment>
+
+</navigation>

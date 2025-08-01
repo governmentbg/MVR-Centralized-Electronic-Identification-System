@@ -1,0 +1,107 @@
+<ng-container *transloco="let t">
+    <h5 class="text-primary text-uppercase text-text-active">{{ t('modules.eidManagement.txtSearchSubtitle') }}</h5>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row mb-3">
+            <div class="col">
+                <label for="type" class="form-label"
+                    >{{ t('modules.eidManagement.txtPersonalIdTypeLabel') }} <span class="text-danger">*</span></label
+                >
+                <div class="row">
+                    <div class="col-lg-6 col-xl-4 col-xxl-4">
+                        <div class="search-control">
+                            <p-dropdown
+                                formControlName="type"
+                                inputId="type"
+                                [options]="personalIdTypes"
+                                optionLabel="name"
+                                optionValue="id"
+                                styleClass="w-100"
+                                appendTo="body"
+                                (onChange)="personalIdTypeChange()"></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label for="personalId" class="form-label"
+                    >{{ t('modules.eidManagement.txtPersonalIdLabel') }} <span class="text-danger">*</span></label
+                >
+                <div class="row">
+                    <div class="col-lg-6 col-xl-4 col-xxl-4">
+                        <input
+                            type="text"
+                            pInputText
+                            digitOnly
+                            id="personalId"
+                            autocomplete="off"
+                            formControlName="personalId"
+                            class="w-100 search-control" />
+                    </div>
+                </div>
+
+                <div class="text-danger validation-text">
+                    <span
+                        *ngIf="
+                            form.controls.personalId.invalid &&
+                            (form.controls.personalId.dirty || form.controls.personalId.touched)
+                        ">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('modules.eidManagement.txtPersonalIdLabel')
+                            })
+                        }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="form.controls.type.value === PersonalIdTypes.EGN">
+            <div class="col">
+                <label for="personalDocumentNumber" class="form-label"
+                    >{{ t('modules.eidManagement.txtPersonalDocumentNumberLabel') }}
+                    <span class="text-danger">*</span></label
+                >
+                <div class="row">
+                    <div class="col-lg-6 col-xl-4 col-xxl-4">
+                        <input
+                            type="text"
+                            pInputText
+                            appAllowedCharacters="A-Za-z0-9"
+                            [appAllowedCharactersConvertUppercase]="true"
+                            id="personalDocumentNumber"
+                            autocomplete="off"
+                            formControlName="personalDocumentNumber"
+                            class="w-100 search-control" />
+                    </div>
+                </div>
+
+                <div class="text-danger validation-text">
+                    <span
+                        *ngIf="
+                            form.controls.personalDocumentNumber.errors?.['required'] &&
+                            (form.controls.personalDocumentNumber.dirty || form.controls.personalDocumentNumber.touched)
+                        ">
+                        {{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('modules.eidManagement.txtPersonalDocumentNumberLabel')
+                            })
+                        }}
+                    </span>
+                    <span
+                        *ngIf="form.controls.personalDocumentNumber.errors?.['pattern'] && (form.controls.personalDocumentNumber.dirty || form.controls.personalDocumentNumber.touched)">
+                        {{ t('global.txtInvalidDataError') }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p-button
+                [label]="t('modules.eidManagement.txtSearchSubmit')"
+                type="submit"
+                [disabled]="form.invalid"
+                styleClass="p-button p-button-primary p-button-sm"></p-button>
+        </div>
+    </form>
+</ng-container>

@@ -1,0 +1,173 @@
+<ng-container *transloco="let t" [formGroup]="form">
+    <!-- <div class="row">
+        <div class="col">
+            <h6 class="text-text-default mb-4">
+                {{ t('modules.providers.register.administrativeBody') }}
+            </h6>
+        </div>
+    </div> -->
+    <!-- Name -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="administrativeBodyName" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyName') }}
+                <span class="text-danger">*</span>
+            </label>
+            <ng-container *ngIf="subjectType === subjectTypesEnum.enum.PrivateLawSubject">
+                <input
+                    pInputText
+                    id="administrativeBodyName"
+                    pTooltip="{{ this.form.controls.name.value }}"
+                    type="text"
+                    class="w-100"
+                    formControlName="name" />
+            </ng-container>
+            <ng-container *ngIf="subjectType === subjectTypesEnum.enum.Administration">
+                <p-dropdown
+                    id="administrativeBodyName"
+                    formControlName="name"
+                    [options]="providerDetailsOptions"
+                    optionLabel="name"
+                    optionValue="name"
+                    styleClass="w-100"
+                    inputId="administrativeBodyName"
+                    [filter]="true"
+                    filterBy="name"
+                    [showClear]="true"
+                    (onChange)="onServiceSelect($event)"
+                    [placeholder]="t('global.txtDropdownPlaceholder')">
+                    <ng-template pTemplate="dropdownicon">
+                        <i
+                            *ngIf="providersDetailsQuery.isLoading"
+                            class="pi pi-spin pi-spinner p-dropdown-trigger"
+                            style="font-size: 1rem"></i>
+                        <i
+                            *ngIf="!providersDetailsQuery.isLoading"
+                            class="pi pi-chevron-down p-dropdown-trigger"
+                            style="font-size: 1rem"></i>
+                    </ng-template>
+
+                    <ng-template let-item pTemplate="item">
+                        <div
+                            pTooltip="{{ item.name }}"
+                            class="d-flex justify-content-between administrative-body-dropdown-item">
+                            <div class="administrative-body-dropdown-item-content">
+                                {{ item.name }}
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-selectedItem pTemplate="selectedItem">
+                        <div pTooltip="{{ selectedItem.name }}" class="administrative-body-dropdown-item-content">
+                            {{ selectedItem.name }}
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </ng-container>
+        </div>
+        <!-- <div class="col-lg-8">
+            <label for="administrativeBodyName" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyName') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administrativeBodyName" type="text" class="w-100" formControlName="name" />
+        </div> -->
+        <app-error-field
+            [formControlInstance]="form.controls.name"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Bulstat -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="administrativeBodyBulstat" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyBulstat') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administrativeBodyBulstat" type="text" class="w-100" formControlName="bulstat" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.bulstat"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- IdentificationNumber -->
+    <div *ngIf="form.get('identificationNumber')" class="row mb-2">
+        <div class="col-lg-8">
+            <label for="identificationNumber" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyIdentificationNumber') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                id="identificationNumber"
+                type="text"
+                class="w-100"
+                formControlName="identificationNumber" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.identificationNumber"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Headquarters -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="administrativeBodyHeadquarters" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyHeadquarters') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                id="administrativeBodyHeadquarters"
+                type="text"
+                class="w-100"
+                formControlName="headquarters" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.headquarters"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Address -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="administrativeBodyAddress" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyAddress') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administrativeBodyAddress" type="text" class="w-100" formControlName="address" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.address"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Email -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="administrativeBodyEmail" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyEmail') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input pInputText id="administrativeBodyEmail" type="email" class="w-100" formControlName="email" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.email"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+    <!-- Phone -->
+    <div class="row mb-2">
+        <div class="col-lg-8">
+            <label for="phone" class="form-label">
+                {{ t('modules.providers.register.administrativeBodyPhone') }}
+                <span class="text-danger">*</span>
+            </label>
+            <input
+                pInputText
+                appDigitOnly
+                appPrefixPhoneInput
+                id="phone"
+                type="text"
+                class="w-100"
+                formControlName="phone" />
+        </div>
+        <app-error-field
+            [formControlInstance]="form.controls.phone"
+            translationPrefix="modules.providers.register.errors" />
+    </div>
+</ng-container>

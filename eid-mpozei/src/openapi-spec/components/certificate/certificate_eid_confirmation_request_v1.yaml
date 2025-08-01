@@ -1,0 +1,13 @@
+schemas:
+  CertificateEidConfirmationRequest:
+    type: object
+    properties:
+      applicationId:
+        type: string
+        format: uuid
+      status:
+        $ref: '../application/application_confirmation_status_v1.yaml#/schemas/ApplicationConfirmationStatus'
+      reason:
+        type: string
+      reasonText:
+        type: string

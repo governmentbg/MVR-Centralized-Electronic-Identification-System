@@ -1,0 +1,150 @@
+<section class="h-100" id="general-information-container" *transloco="let t; read: 'modules.general-information'">
+    <div class="d-flex mb-4 align-items-center">
+        <h4 class="text-text-default mb-0">
+            {{ t('txtTitle') }}
+        </h4>
+    </div>
+    <!-- <div class="p-2 ps-0 d-flex align-items-center">
+            <h6 class="col-3">{{ t('name') }}</h6>
+            <span>{{ service.name }}</span>
+        </div>
+        <div class="p-2 ps-0 d-flex align-items-center mb-4">
+            <h6 class="col-3">{{ t('serviceNumber') }}</h6>
+            <span>{{ service.serviceNumber }}</span>
+        </div> -->
+    <p-card>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-md-9 col-lg-8 d-flex flex-column gap-3">
+            <div class="pt-4 d-flex flex-column gap-2">
+                <h6 class="form-label">
+                    {{ t('txtGeneralInformation') }}
+                    <span class="text-danger">*</span>
+                </h6>
+                <textarea class="w-100 p-2" rows="5" pInputTextarea formControlName="generalInformation"></textarea>
+                <app-error-field
+                    [formControlInstance]="form.controls.generalInformation"
+                    translationPrefix="modules.general-information.errors" />
+            </div>
+
+            <div formArrayName="offices" class="mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="form-label">
+                        {{ t('txtOffices') }}
+                        <span class="text-danger">*</span>
+                    </h6>
+                    <p-button
+                        [disabled]="generalInformationQuery.isLoading || generalInformationMutation.isLoading"
+                        [loading]="generalInformationQuery.isLoading || generalInformationMutation.isLoading"
+                        [label]="t('txtAddOfficeBtn')"
+                        [ariaLabel]="t('txtAddOfficeBtn')"
+                        icon="pi pi-plus"
+                        [iconPos]="'left'"
+                        styleClass="p-button-success "
+                        (click)="addOffice()">
+                    </p-button>
+                </div>
+                <ng-container *ngIf="generalInformationQuery.isLoading">
+                    <div class="d-flex flex-column gap-2 mb-2">
+                        <p-skeleton width="100%" height="10rem"> </p-skeleton>
+                        <p-skeleton width="100%" height="10rem"></p-skeleton>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!generalInformationQuery.isLoading">
+                    <div
+                        *ngFor="let office of offices.controls; let i = index"
+                        class="d-flex flex-column"
+                        [formGroupName]="i"
+                        [attr.data-office-index]="i">
+                        <!-- Office form -->
+                        <div class="mb-2" *transloco="let tGlobal">
+                            <ng-template pTemplate="header">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h6>{{ t('txtOffice', { number: i + 1 }) }}</h6>
+                                    <button
+                                        *ngIf="offices.length > 1"
+                                        (click)="removeOffice(i)"
+                                        type="button"
+                                        pButton
+                                        icon="pi pi-times"
+                                        [attr.aria-label]="tGlobal('global.txtDelete')"
+                                        [attr.title]="tGlobal('global.txtDelete')"
+                                        class="p-button-danger p-button-text"></button>
+                                </div>
+                            </ng-template>
+                            <div class="row mb-2">
+                                <div>
+                                    <label for="name" class="form-label">
+                                        {{ t('txtName') }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input pInputText type="text" class="w-100" formControlName="name" />
+                                </div>
+                                <app-error-field
+                                    [formControlInstance]="form.controls.offices.controls[i].controls['name']"
+                                    translationPrefix="modules.general-information.errors" />
+                            </div>
+                            <div class="row mb-2">
+                                <div>
+                                    <label for="name" class="form-label">
+                                        {{ t('txtAddress') }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input pInputText type="text" class="w-100" formControlName="address" />
+                                </div>
+                                <app-error-field
+                                    [formControlInstance]="form.controls.offices.controls[i].controls['address']"
+                                    translationPrefix="modules.general-information.errors" />
+                            </div>
+                            <div class="d-flex gap-2">
+                                <div class="col mb-2">
+                                    <div>
+                                        <label for="name" class="form-label">
+                                            {{ t('txtLat') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            appCoordinates
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="lat" />
+                                    </div>
+                                    <app-error-field
+                                        [formControlInstance]="form.controls.offices.controls[i].controls['lat']"
+                                        translationPrefix="modules.general-information.errors" />
+                                </div>
+                                <div class="col mb-2">
+                                    <div>
+                                        <label for="name" class="form-label">
+                                            {{ t('txtLong') }}
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            pInputText
+                                            appCoordinates
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="lon" />
+                                    </div>
+                                    <app-error-field
+                                        [formControlInstance]="form.controls.offices.controls[i].controls['lon']"
+                                        translationPrefix="modules.general-information.errors" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Office form -->
+                    </div>
+                </ng-container>
+            </div>
+            <div class="d-flex gap-2">
+                <p-button
+                    [disabled]="generalInformationQuery.isLoading || generalInformationMutation.isLoading"
+                    [loading]="generalInformationQuery.isLoading || generalInformationMutation.isLoading"
+                    type="submit"
+                    styleClass="p-button-primary"
+                    [attr.aria-label]="t('txtSubmitBtn')"
+                    [attr.title]="t('txtSubmitBtn')"
+                    [label]="t('txtSubmitBtn')"></p-button>
+            </div>
+        </form>
+    </p-card>
+</section>

@@ -1,0 +1,25 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+custom:
+  rabbitmq:
+    queue-prefix: mpozei.rpcqueue.
+    routing-key-prefix: mpozei.routingkey.
+    rpc-exchange: mpozei.rpc.exchange
+    #replies have to be different if we have 2 gateways for the same module
+    reply-exchange: mpozei-ext.reply.exchange
+    reply-queue: mpozei-ext.reply.rpcqueue
+    skipped-queues: >
+      GET/mpozei/external/api/v1/applications/find,
+      GET/mpozei/external/api/v1/nomenclatures/applications/statuses,
+      GET/mpozei/external/api/v1/nomenclatures/certificates/statuses,
+      GET/mpozei/external/api/v1/certificates/{id},
+      GET/mpozei/external/api/v1/certificates/find,
+      GET/mpozei/external/api/v1/nomenclatures/reasons,
+      POST/mpozei/external/api/v1/applications/eid-verify,
+      GET/mpozei/external/api/v1/certificates/{id}/history,
+      GET/mpozei/external/api/v1/help-pages/find-all,
+      GET/mpozei/external/api/v1/help-pages/find,
+      GET/mpozei/external/api/v1/help-pages/{id}

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_fragment_landing"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.digitall.eid.ui.view.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbar_background_color="@color/color_transparent"
+        app:toolbar_elements_color="@color/color_295999"
+        app:toolbar_navigation_icon="@drawable/ic_arrow_left" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_1"
+        android:background="@drawable/bg_horizontal_separator" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_32"
+                    android:layout_marginTop="@dimen/margin_32"
+                    android:layout_marginEnd="@dimen/margin_32"
+                    android:background="@color/color_white"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvEnterPinTitle"
+                        style="@style/TextStyle.16sp.Bold.0C53B2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16"
+                        android:layout_marginTop="@dimen/margin_32"
+                        android:layout_marginEnd="@dimen/margin_16"
+                        android:gravity="center"
+                        android:text="@string/enter_certificate_pin_title" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvEnterPinDescription"
+                        style="@style/TextStyle.16sp.Regular.1C3050"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16"
+                        android:layout_marginTop="@dimen/margin_16"
+                        android:layout_marginEnd="@dimen/margin_16"
+                        android:gravity="center"
+                        android:text="@string/enter_certificate_pin_current_pin_title" />
+
+
+                    <com.digitall.eid.ui.view.PinSixDigitsView
+                        android:id="@+id/pinView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/margin_32"
+                        android:layout_marginTop="@dimen/margin_32"
+                        android:layout_marginEnd="@dimen/margin_32"
+                        android:gravity="center" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnLogin"
+                        style="@style/ButtonStyle.background_295999_text_white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="@dimen/margin_32"
+                        android:layout_marginTop="@dimen/margin_32"
+                        android:layout_marginEnd="@dimen/margin_32"
+                        android:layout_marginBottom="@dimen/margin_32"
+                        android:text="@string/enter_certificate_pin_login_button_title"
+                        android:enabled="false"
+                        android:visibility="visible" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.digitall.eid.ui.view.ErrorView
+                android:id="@+id/errorView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/color_white"
+                android:visibility="gone"
+                tools:visibility="gone" />
+
+            <com.digitall.eid.ui.view.LoaderView
+                android:id="@+id/loaderView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:visibility="gone" />
+
+        </FrameLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

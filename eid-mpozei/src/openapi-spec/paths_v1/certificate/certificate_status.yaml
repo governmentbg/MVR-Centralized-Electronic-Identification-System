@@ -1,0 +1,40 @@
+#methods:
+#  put:
+#    tags:
+#      - Certificate
+#    summary: Change certificate status
+#    description: Certificate status.
+#    operationId: changeStatus
+#    requestBody:
+#      description: on Successful and on ERROR state of new certificate handing over.
+#      content:
+#        application/json;charset=UTF-8:
+#          schema:
+#            $ref: '../../components/certificate/certificate_status_request_v1.yaml#/schemas/CertificateStatusRequest'
+#    responses:
+#      '200':
+#        description: Status changed
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/certificate/certificate_status_response_v1.yaml#/schemas/CertificateStatusResponse'
+#      '400':
+#        description: Bad Request
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+#      '500':
+#        description: Server Error
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      '504':
+#        description: Gateway Timeout
+#        content:
+#          application/json;charset=UTF-8:
+#            schema:
+#              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+#      default:
+#        description: successful operation

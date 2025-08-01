@@ -1,0 +1,11 @@
+/**
+ * Please follow code style when editing project
+ * Please follow principles of clean architecture
+ * Created 2024 by Roman Kryvolapov
+ **/
+package com.digitall.eid.models.applications.create
+
+import com.digitall.eid.models.common.DiffEquals
+import com.digitall.eid.models.list.CommonModelWithId
+
+interface ApplicationCreatePreviewAdapterMarker : DiffEquals, CommonModelWithId

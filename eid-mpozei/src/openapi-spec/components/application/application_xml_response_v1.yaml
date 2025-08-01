@@ -1,0 +1,6 @@
+schemas:
+  ApplicationXmlResponse:
+    type: object
+    properties:
+      xml:
+        type: string

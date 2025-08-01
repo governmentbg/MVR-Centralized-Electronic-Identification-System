@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main_tab_home"
+    app:startDestination="@id/mainTabHomeFragment">
+
+    <fragment
+        android:id="@+id/mainTabHomeFragment"
+        android:name="com.digitall.eid.ui.fragments.main.tabs.home.MainTabHomeFragment"
+        android:label="mainTabHomeFragment"
+        tools:layout="@layout/fragment_main_tab_home" />
+
+</navigation>

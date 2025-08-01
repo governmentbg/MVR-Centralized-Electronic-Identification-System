@@ -1,0 +1,392 @@
+<section class="h-100" *transloco="let t">
+    <div>
+        <div [hidden]="!!selectedProvider || !!selectedService">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-uppercase">
+                    {{ t('modules.providers.applications.txtTitle') }}
+                </h4>
+                <p-button
+                    styleClass="p-button-success"
+                    [label]="t('modules.providers.applications.register')"
+                    icon="pi pi-plus"
+                    [ariaLabel]="t('modules.providers.applications.register')"
+                    [routerLink]="['/providers/register']"></p-button>
+            </div>
+            <p-card>
+                <p-tabView (onChange)="refreshTable($event)">
+                    <p-tabPanel [header]="t('modules.providers.applications.txtTitle')">
+                        <app-providers-filter (filteredData)="onFilterDataChange($event)" />
+                        <div class="row">
+                            <div class="col">
+                                <p-table
+                                    #applicationsTable
+                                    [value]="applicationsQuery.data?.data || []"
+                                    [tableStyle]="{ 'min-width': '100%' }"
+                                    [rowHover]="true"
+                                    [lazy]="true"
+                                    (onLazyLoad)="onLazyLoad($event)"
+                                    [totalRecords]="applicationsQuery.data?.totalItems || 0"
+                                    [rows]="10"
+                                    [paginator]="true"
+                                    [showCurrentPageReport]="true"
+                                    [rowsPerPageOptions]="[10, 25, 50]"
+                                    [currentPageReportTemplate]="
+                                        t('global.txtTablePagination', {
+                                            first: '{first}',
+                                            last: '{last}',
+                                            totalRecords: '{totalRecords}'
+                                        })
+                                    "
+                                    [loading]="applicationsQuery.isLoading"
+                                    loadingIcon="pi pi-spin pi-spinner"
+                                    sortField="createdOn"
+                                    [sortOrder]="-1"
+                                    [rowSelectable]="false">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th pSortableColumn="number" class="text-nowrap">
+                                                {{ t('modules.providers.applications.table.columns.txtNumber') }}
+                                                <p-sortIcon field="number"></p-sortIcon>
+                                            </th>
+                                            <th pSortableColumn="createdOn" class="text-nowrap">
+                                                {{ t('modules.providers.applications.table.columns.txtCreatedOn') }}
+                                                <p-sortIcon field="createdOn"></p-sortIcon>
+                                            </th>
+                                            <th pSortableColumn="issuerName" class="text-nowrap">
+                                                {{ t('modules.providers.applications.table.columns.txtIssuer') }}
+                                                <p-sortIcon field="issuerName"></p-sortIcon>
+                                            </th>
+                                            <th pSortableColumn="name" class="text-nowrap">
+                                                {{ t('modules.providers.applications.table.columns.txtProvider') }}
+                                                <p-sortIcon field="name"></p-sortIcon>
+                                            </th>
+                                            <th pSortableColumn="status" class="text-nowrap">
+                                                {{ t('modules.providers.applications.table.columns.txtStatus') }}
+                                                <p-sortIcon field="status"></p-sortIcon>
+                                            </th>
+                                            <th class="text-nowrap">
+                                                {{ t('modules.providers.applications.table.columns.txtAction') }}
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="loadingbody">
+                                        <tr>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-application>
+                                        <tr [ngClass]="{}">
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="application.number"
+                                                [title]="application.number">
+                                                <span class="multiline-ellipsis">{{ application.number }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="application.createdOn | translocoDate"
+                                                [title]="application.createdOn | translocoDate">
+                                                <span class="multiline-ellipsis">{{
+                                                    application.createdOn | translocoDate
+                                                }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="application.issuerName"
+                                                [title]="application.issuerName">
+                                                <span class="multiline-ellipsis">{{ application.issuerName }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="application.name"
+                                                [title]="application.name">
+                                                <span class="multiline-ellipsis">{{ application.name }}</span>
+                                            </td>
+                                            <td style="max-width: 18rem">
+                                                <app-application-status
+                                                    [status]="application.status"></app-application-status>
+                                            </td>
+                                            <td style="width: 10rem">
+                                                <div class="d-flex">
+                                                    <button
+                                                        pButton
+                                                        type="button"
+                                                        (click)="selectProvider(application.id, 'view')"
+                                                        [title]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        [attr.aria-label]="
+                                                            t(
+                                                                'modules.providers.applications.table.details.txtPreviewApplication'
+                                                            )
+                                                        "
+                                                        class="p-button-sm p-button-text">
+                                                        <i class="material-icons-outlined">&#xf801;</i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="8">
+                                                <span
+                                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                    <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                    <span
+                                                        class="text-text-light"
+                                                        [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                        {{ t('global.txtNoRecordsFound') }}
+                                                    </span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel [header]="t('modules.services.services-table.title')">
+                        <app-services-filter (filteredData)="onServicesFilterDataChange($event)" />
+                        <div class="row">
+                            <div class="col">
+                                <p-table
+                                    #servicesTable
+                                    [value]="servicesQuery.data?.data || []"
+                                    [tableStyle]="{ 'min-width': '100%' }"
+                                    [rowHover]="true"
+                                    [lazy]="true"
+                                    (onLazyLoad)="onServicesLazyLoad($event)"
+                                    [totalRecords]="servicesQuery.data?.totalItems || 0"
+                                    [rows]="10"
+                                    [paginator]="true"
+                                    [showCurrentPageReport]="true"
+                                    [rowsPerPageOptions]="[10, 25, 50]"
+                                    [currentPageReportTemplate]="
+                                        t('global.txtTablePagination', {
+                                            first: '{first}',
+                                            last: '{last}',
+                                            totalRecords: '{totalRecords}'
+                                        })
+                                    "
+                                    [loading]="servicesQuery.isLoading"
+                                    loadingIcon="pi pi-spin pi-spinner"
+                                    sortField="serviceNumber"
+                                    [sortOrder]="1"
+                                    [rowSelectable]="false">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.createdOn') }}
+                                            </th>
+                                            <th
+                                                pSortableColumn="serviceNumber"
+                                                class="text-nowrap"
+                                                *appHasRole="[
+                                                    RoleType.CIS_BACKOFFICE,
+                                                    RoleType.APP_ADMINISTRATOR,
+                                                    RoleType.OPERATOR
+                                                ]">
+                                                {{ t('modules.services.services-table.table.columns.serviceNumber') }}
+                                                <p-sortIcon field="serviceNumber"></p-sortIcon>
+                                            </th>
+                                            <th pSortableColumn="name" class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.name') }}
+                                                <p-sortIcon field="name"></p-sortIcon>
+                                            </th>
+                                            <th class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.administrator') }}
+                                            </th>
+                                            <th pSortableColumn="isEmpowerment" class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.isEmpowerment') }}
+                                                <p-sortIcon field="isEmpowerment"></p-sortIcon>
+                                            </th>
+                                            <th pSortableColumn="minimumLevelOfAssurance" class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.assurance') }}
+                                                <p-sortIcon field="minimumLevelOfAssurance"></p-sortIcon>
+                                            </th>
+                                            <th class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.status') }}
+                                            </th>
+                                            <th class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.isActive') }}
+                                            </th>
+                                            <th class="text-nowrap">
+                                                {{ t('modules.services.services-table.table.columns.action') }}
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="loadingbody">
+                                        <tr>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td
+                                                *appHasRole="[
+                                                    RoleType.CIS_BACKOFFICE,
+                                                    RoleType.APP_ADMINISTRATOR,
+                                                    RoleType.OPERATOR
+                                                ]">
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton></p-skeleton>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-service>
+                                        <tr [ngClass]="{}">
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="service.createdOn | translocoDate"
+                                                [title]="service.createdOn | translocoDate">
+                                                <span class="multiline-ellipsis">{{
+                                                    service.createdOn | translocoDate
+                                                }}</span>
+                                            </td>
+                                            <td
+                                                *appHasRole="[
+                                                    RoleType.CIS_BACKOFFICE,
+                                                    RoleType.APP_ADMINISTRATOR,
+                                                    RoleType.OPERATOR
+                                                ]"
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="service.serviceNumber"
+                                                [title]="service.serviceNumber">
+                                                <span class="multiline-ellipsis">{{ service.serviceNumber }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="service.name"
+                                                [title]="service.name">
+                                                <span class="multiline-ellipsis">{{ service.name }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="service.provider?.name"
+                                                [title]="service.provider?.name">
+                                                <span class="multiline-ellipsis">{{ service.provider?.name }}</span>
+                                            </td>
+                                            <td style="max-width: 18rem">
+                                                <span class="multiline-ellipsis">{{
+                                                    service.isEmpowerment
+                                                        ? t('modules.services.services-table.filter.yes')
+                                                        : t('modules.services.services-table.filter.no')
+                                                }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="service.minimumLevelOfAssurance"
+                                                [title]="service.minimumLevelOfAssurance">
+                                                <span class="multiline-ellipsis">{{
+                                                    t('modules.services.enums.' + service.minimumLevelOfAssurance)
+                                                }}</span>
+                                            </td>
+                                            <td
+                                                style="max-width: 18rem"
+                                                [attr.aria-label]="service.status"
+                                                [title]="service.status">
+                                                <app-service-status [status]="service.status"></app-service-status>
+                                            </td>
+                                            <td style="max-width: 18rem">
+                                                <span class="multiline-ellipsis">{{
+                                                    service.isActive
+                                                        ? t('modules.services.services-table.filter.yes')
+                                                        : t('modules.services.services-table.filter.no')
+                                                }}</span>
+                                            </td>
+                                            <td style="width: 10rem">
+                                                <div class="d-flex">
+                                                    <p-button
+                                                        (click)="selectService(service, 'view')"
+                                                        [title]="
+                                                            t(
+                                                                'modules.services.services-table.table.details.viewService'
+                                                            )
+                                                        "
+                                                        [ariaLabel]="
+                                                            t(
+                                                                'modules.services.services-table.table.details.viewService'
+                                                            )
+                                                        "
+                                                        styleClass="p-button-sm p-button-text">
+                                                        <i class="material-icons-outlined">&#xf801;</i>
+                                                    </p-button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="9">
+                                                <span
+                                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                                    <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                                    <span
+                                                        class="text-text-light"
+                                                        [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                        {{ t('global.txtNoRecordsFound') }}
+                                                    </span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                </p-tabView>
+            </p-card>
+        </div>
+
+        <ng-template [ngIf]="selectedProvider && previewMode === 'view'">
+            <app-provider-preview
+                [standalone]="false"
+                [providerId]="selectedProvider"
+                (closePreview)="closePreview()"></app-provider-preview>
+        </ng-template>
+
+        <ng-template [ngIf]="selectedService && previewMode === 'view'">
+            <app-services-preview
+                [service]="selectedService"
+                (closePreview)="closeServicesPreview()"></app-services-preview>
+        </ng-template>
+    </div>
+</section>

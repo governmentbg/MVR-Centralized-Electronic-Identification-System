@@ -1,0 +1,122 @@
+// Application colors
+$theme-primary-dark: #295999;
+$theme-primary-medium: #4a6484;
+$theme-primary-light: #c6d9f0;
+$theme-secondary-dark: #295999;
+$theme-secondary-light: #eff6ff;
+$theme-secondary-alert: #f59e0b;
+$background-white: #ffffff;
+$background-light-grey: #f5f5f5;
+$button-default: #295999;
+$button-default-hover: #337ab7;
+$button-dark: #1c3050;
+$button-dark-hover: #337ab7;
+$button-disabled: #c5ccd4;
+$button-confirm: #018930;
+$button-confirm-hover: #22ac52;
+$button-danger: #f59e0b;
+$button-danger-hover: #ffc107;
+$button-reject: #bf1212;
+$button-reject-hover: #dc2b2b;
+$text-dark: #221f20;
+$text-default: #1c3050;
+$text-light: #4a6484;
+$text-active: #0c53b2;
+$text-inactive: #94a3b8;
+$text-white: #ffffff;
+$text-error: #bf1212;
+
+$button-confirm-02-opacity: rgba(1, 137, 48, 0.2);
+
+$brand-colors: (
+    'theme-primary-dark': $theme-primary-dark,
+    'theme-primary-medium': $theme-primary-medium,
+    'theme-primary-light': $theme-primary-light,
+    'theme-secondary-dark': $theme-secondary-dark,
+    'theme-secondary-light': $theme-secondary-light,
+    'theme-secondary-alert': $theme-secondary-alert,
+    'background-white': $background-white,
+    'background-light-grey': $background-light-grey,
+    'button-default': $button-default,
+    'button-default-hover': $button-default-hover,
+    'button-dark': $button-dark,
+    'button-dark-hover': $button-dark-hover,
+    'button-disabled': $button-disabled,
+    'button-confirm': $button-confirm,
+    'button-confirm-hover': $button-confirm-hover,
+    'button-danger': $button-danger,
+    'button-danger-hover': $button-danger-hover,
+    'button-reject': $button-reject,
+    'button-reject-hover': $button-reject-hover,
+    'text-dark': $text-dark,
+    'text-default': $text-default,
+    'text-light': $text-light,
+    'text-active': $text-active,
+    'text-inactive': $text-inactive,
+    'text-white': $text-white,
+    'text-error': $text-error,
+);
+
+// Application dimensions
+$unauthorized-header-height: 150px;
+$authorized-header-height: 103px;
+$authorized-sub-header-height: 49px;
+$sidebar-width: 280px;
+$footer-height: 50px;
+
+// Application Font
+$roboto-font: 'Roboto', sans-serif;
+$roboto-condensed-regular-font: 'RobotoCondensed', 'Roboto', sans-serif;
+$roboto-condensed-medium-font: 'RobotoCondensed-Medium', 'Roboto', sans-serif;
+
+// Bootstrap override
+$primary: $text-active;
+$secondary: $text-light;
+$light: $theme-primary-light;
+$input-border-color: $text-active;
+$input-color: $text-active;
+$input-placeholder-color: $input-color;
+$btn-font-weight: 500;
+$input-btn-font-size-lg: 1rem;
+$input-btn-padding-y-lg: 0.75rem;
+$input-btn-padding-x-lg: 1.5rem;
+$input-font-size-lg: 1rem;
+$input-padding-y-lg: 0.75rem;
+$input-padding-x-lg: 0.75rem;
+$danger: $text-error;
+
+// PrimeNG override
+$fontFamily: $roboto-font;
+$tableHeaderCellBg: $theme-secondary-light;
+$primaryColor: $theme-secondary-dark;
+$primaryDarkColor: $theme-primary-dark;
+$tableBodyRowTextColor: $theme-primary-dark;
+$inputSwitchSliderOnBg: $button-default;
+$inputSwitchSliderOnHoverBg: $theme-secondary-dark;
+$toggleButtonTextColor: $theme-secondary-dark;
+$buttonPadding: 0.75rem 0.75rem;
+$buttonHoverBg: $button-default-hover;
+$buttonHoverBorderColor: $button-default-hover;
+$buttonActiveBg: $button-default-hover;
+$buttonActiveBorderColor: $button-default-hover;
+$dangerButtonBg: $button-reject;
+$dangerButtonHoverBg: $button-reject-hover;
+$successButtonBg: $button-confirm;
+$successButtonHoverBg: $button-confirm-hover;
+//$buttonBorder: none;
+//$dangerButtonBorder: none;
+//$secondaryButtonBorder: none;
+//$infoButtonBorder: none;
+//$successButtonBorder: none;
+//$warningButtonBorder: none;
+//$helpButtonBorder: none;
+$buttonSMPadding: 0.5rem 0.75rem;
+$buttonSMLineHeight: 1.375rem;
+$borderRadius: 4px;
+$inputTextColor: $text-light;
+$inputBorder: 1px solid $theme-primary-light;
+$inputIconColor: $inputTextColor;
+$inputHoverBorderColor: $text-active;
+$errorColor: $text-error;
+$maskBg: rgba(255, 255, 255, 0.4);
+$cardContentPadding: 0;

@@ -1,0 +1,62 @@
+#!/bin/bash
+set -e
+
+VERSION_FILE="VERSION"
+# Set default local version
+LOCAL_VERSION="1.0.0"
+
+# If VERSION file exists, override default
+if [ -f VERSION ]; then
+  LOCAL_VERSION=$(cat VERSION)
+fi
+
+# Fetch origin/dev without merging
+git fetch origin dev > /dev/null 2>&1 || true
+
+# Try to read remote VERSION
+REMOTE_VERSION=$(git show origin/dev:VERSION 2>/dev/null || echo "")
+
+
+# Parse versions
+version_to_number() {
+  IFS='.' read -r MAJOR MINOR FIX <<< "$1"
+  echo $((MAJOR * 1000000 + MINOR * 1000 + FIX))
+}
+
+
+if [ -n "$REMOTE_VERSION" ]; then
+  echo "Found VERSION in origin/dev: $REMOTE_VERSION"
+  LOCAL_NUM=$(version_to_number "$LOCAL_VERSION")
+  REMOTE_NUM=$(version_to_number "$REMOTE_VERSION")
+  if [ "$REMOTE_NUM" -le "$LOCAL_NUM" ]; then
+    echo "REMOTE VERSION less than or equal to LOCAL VERSION. $REMOTE_VERSION → $LOCAL_VERSION. Taking LOCAL VERSION $LOCAL_VERSION as base"
+    REMOTE_VERSION=$LOCAL_VERSION
+  fi
+  IFS='.' read -r R_MAJOR R_MINOR R_FIX <<< "$REMOTE_VERSION"
+  R_FIX=$((R_FIX + 1))
+  NEW_VERSION="${R_MAJOR}.${R_MINOR}.${R_FIX}"
+  echo "$NEW_VERSION" > "$VERSION_FILE"
+  git add "$VERSION_FILE"
+  echo "VERSION bumped: $REMOTE_VERSION → $NEW_VERSION"
+  exit 0
+fi
+
+# If VERSION does not exist, create and block commit
+if [ ! -f "$VERSION_FILE" ]; then
+  echo "$LOCAL_VERSION" > "$VERSION_FILE"
+  git add "$VERSION_FILE"
+  echo "Initialized VERSION file"
+  exit 0
+fi
+
+# Read current version and bump fix
+VERSION=$(cat "$VERSION_FILE")
+IFS='.' read -r MAJOR MINOR FIX <<< "$VERSION"
+
+FIX=$((FIX + 1))
+NEW_VERSION="${MAJOR}.${MINOR}.${FIX}"
+
+echo "$NEW_VERSION" > "$VERSION_FILE"
+git add "$VERSION_FILE"  # Add to staging (safe on most git configs)
+
+echo "VERSION bumped: $VERSION → $NEW_VERSION"

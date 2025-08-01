@@ -1,0 +1,56 @@
+server:
+  port: 8889
+
+spring:
+  application:
+    name: iscei-ext-gateway
+  profiles:
+    active: postgres, redis, keycloak, logging-dev, logging-audit
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}  
+
+logging:
+  level: 
+    root: DEBUG
+  secret-key:
+  encryption-key:
+  module-id: iscei-external-gateway
+  system-id: iscei
+  file-name-pattern-audit: ${ISCEI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${ISCEI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${ISCEI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${ISCEI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${ISCEI_EGW_LOG_FILE_NAME}
+
+services:
+  ruei-gateway-base-url: ${RUEI_GATEWAY_BASE_URL}
+  rei-gateway-base-url: ${REI_GATEWAY_BASE_URL}
+  raeicei-gateway-base-url:
+  pdeau-gateway-base-url:
+  
+springdoc:
+  swagger-ui:
+    enabled: true
+    disable-swagger-default-url: true
+    path: /docs
+
+mvr:
+  supported-scopes: eid_cei,eid_aei,eid_deau
+  iscei_ui_base_url:
+  2fa:
+    otp:
+      ttl: 150
+  pan_client:
+    enabled: true
+    base_url: ${PAN_BASE_URL}
+    register_system: true
+    client_registration_id:
+#  disable-certificate-chain-validation: true
+#  check-revocation-for-untrusted-chains: false

@@ -1,0 +1,44 @@
+methods:
+  get:
+    tags:
+      - Certificate
+    summary: Get citizen certificate history by ID
+    description: Get citizen certificate history by ID
+    operationId: getCitizenCertificateHistoryById
+    parameters:
+      - name: id
+        in: path
+        description: 'Certificate ID'
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '201':
+        description: Success Created
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              type: array
+              items:
+                $ref: '../../components/certificate/certificate_history_v1.yaml#/schemas/CertificateHistoryDTO'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Gateway Timeout
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      default:
+        description: successful operation

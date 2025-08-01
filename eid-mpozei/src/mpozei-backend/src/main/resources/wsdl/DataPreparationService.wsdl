@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="services.dp.tidis.muehlbauer.de" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="DataPreparationService" targetNamespace="services.dp.tidis.muehlbauer.de">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="services.dp.tidis.muehlbauer.de" targetNamespace="services.dp.tidis.muehlbauer.de" version="1.0">
+
+  <xs:element name="dataPreparationResult" type="tns:dataPreparationResult"/>
+
+  <xs:complexType name="dataPreparationResult">
+    <xs:sequence>
+      <xs:element name="success" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+      <xs:element name="errorCode" type="xs:int"/>
+      <xs:element minOccurs="0" name="errorLocation" type="xs:string"/>
+      <xs:element minOccurs="0" name="byteData" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="prepareDataAsByteArrayUMResponse">
+    <wsdl:part name="return" type="tns:dataPreparationResult">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="prepareDataAsByteArray">
+    <wsdl:part name="arg0" type="xsd:base64Binary">
+    </wsdl:part>
+    <wsdl:part name="arg1" type="xsd:string">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="prepareDataAsByteArrayResponse">
+    <wsdl:part name="return" type="tns:dataPreparationResult">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="prepareDataAsByteArrayUM">
+    <wsdl:part name="arg0" type="xsd:base64Binary">
+    </wsdl:part>
+    <wsdl:part name="arg1" type="xsd:string">
+    </wsdl:part>
+    <wsdl:part name="arg2" type="xsd:string">
+    </wsdl:part>
+    <wsdl:part name="arg3" type="xsd:string">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="DataPreparationIfc">
+    <wsdl:operation name="prepareDataAsByteArray">
+      <wsdl:input message="tns:prepareDataAsByteArray" name="prepareDataAsByteArray">
+    </wsdl:input>
+      <wsdl:output message="tns:prepareDataAsByteArrayResponse" name="prepareDataAsByteArrayResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prepareDataAsByteArrayUM">
+      <wsdl:input message="tns:prepareDataAsByteArrayUM" name="prepareDataAsByteArrayUM">
+    </wsdl:input>
+      <wsdl:output message="tns:prepareDataAsByteArrayUMResponse" name="prepareDataAsByteArrayUMResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DataPreparationServiceSoapBinding" type="tns:DataPreparationIfc">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="prepareDataAsByteArray">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="prepareDataAsByteArray">
+        <soap:body namespace="services.dp.tidis.muehlbauer.de" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="prepareDataAsByteArrayResponse">
+        <soap:body namespace="services.dp.tidis.muehlbauer.de" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prepareDataAsByteArrayUM">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="prepareDataAsByteArrayUM">
+        <soap:body namespace="services.dp.tidis.muehlbauer.de" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="prepareDataAsByteArrayUMResponse">
+        <soap:body namespace="services.dp.tidis.muehlbauer.de" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DataPreparationService">
+    <wsdl:port binding="tns:DataPreparationServiceSoapBinding" name="DataPreparationWebserviceSoap11Port">
+      <soap:address location="http://eidd01puk01.bgidentity-dev.eid:21000/data_preparation_webapp/DataPreparationService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

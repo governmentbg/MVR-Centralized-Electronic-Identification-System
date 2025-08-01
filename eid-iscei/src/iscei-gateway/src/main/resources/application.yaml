@@ -1,0 +1,34 @@
+server:
+  port: 8890
+spring:
+  application:
+    name: iscei-gateway
+  profiles:
+    active:  postgres, redis, keycloak, logging-dev, logging-audit
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}  
+
+logging:
+  level: 
+    root: DEBUG
+  secret-key:
+  encryption-key:
+  module-id: iscei-gateway
+  system-id: iscei
+  file-name-pattern-audit: ${ISCEI_AUDIT_LOG_FILE_NAME}
+  file-name-pattern-audit-unsigned:  ${ISCEI_AUDIT_LOG_FILE_NAME_UNSIGNED}
+  max-file-size-audit: ${ISCEI_AUDIT_MAX_FILE_SIZE}
+  max-file-history-audit: ${ISCEI_AUDIT_MAX_FILE_HISTORY}
+  file-name-pattern: ${ISCEI_GW_LOG_FILE_NAME}
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    disable-swagger-default-url: true
+    path: /docs

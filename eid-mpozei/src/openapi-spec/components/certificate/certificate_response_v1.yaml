@@ -1,0 +1,23 @@
+schemas:
+  CertificateResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      serialNumber:
+        type: string
+        example: 1234567890ABCDEF
+        description: Hex Serial Number
+      certificate:
+        type: string
+        example: MIIDXzCCA...eW1Zro0=
+        description: Certificate
+      certificateChain:
+        type: array
+        example: '[ “ABC123efg...345xyz0=“ ]'
+        description: Certificate chain
+        items:
+          type: string
+      replacedExistingCertificate:
+        type: boolean

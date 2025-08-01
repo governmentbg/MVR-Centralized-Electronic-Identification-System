@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 minutes">
+    <include resource="bg/bulsi/mvr/common/logback-common-parent.xml"/>
+    <include resource="bg/bulsi/mvr/audit_logger/logback-audit-logger-parent.xml"/>
+
+    <springProperty name="fileNamePatternAudit" source="logging.file-name-pattern-audit"/>
+    <springProperty name="fileNamePatternAuditUnsigned" source="logging.file-name-pattern-audit-unsigned"/>
+    <springProperty name="maxFileSizeAudit" source="logging.max-file-size-audit"/>
+    <springProperty name="maxHistoryAudit" source="logging.max-file-history-audit"/>
+    
+    <springProperty name="fileNamePattern" source="logging.file-name-pattern"/>
+
+    <property name="logLevelTest" value="DEBUG"/>
+    <property name="logLevelDev" value="INFO"/>
+</configuration>

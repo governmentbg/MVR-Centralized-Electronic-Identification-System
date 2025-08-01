@@ -1,0 +1,1 @@
+alter table if exists authentication_statistic ADD COLUMN IF NOT EXISTS device_id uuid;

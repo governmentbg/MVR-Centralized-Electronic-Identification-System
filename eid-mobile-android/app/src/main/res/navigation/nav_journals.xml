@@ -1,0 +1,36 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_journal"
+    app:startDestination="@id/journalIntroFragment">
+
+    <fragment
+        android:id="@+id/journalIntroFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.intro.JournalIntroFragment"
+        android:label="journalIntroFragment"
+        tools:layout="@layout/fragment_journal_intro">
+
+        <action
+            android:id="@+id/toJournalFromMeFragment"
+            app:destination="@id/journalFromMeFragment" />
+
+        <action
+            android:id="@+id/toJournalToMeFragment"
+            app:destination="@id/journalToMeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/journalFromMeFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.from.me.all.JournalFromMeFragment"
+        android:label="journalFromMeFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+    <fragment
+        android:id="@+id/journalToMeFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.to.me.all.JournalToMeFragment"
+        android:label="journalToMeFragment"
+        tools:layout="@layout/fragment_with_list" />
+
+
+</navigation>

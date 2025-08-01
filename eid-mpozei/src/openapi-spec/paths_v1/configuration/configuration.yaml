@@ -1,0 +1,96 @@
+methods:
+  get:
+    tags:
+      - Configurations
+    summary: Gets configuration by key
+    operationId: getConfigByKey
+    parameters:
+      - name: key
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/configuration_v1.yaml#/schemas/ConfigurationResult'
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+  put:
+    tags:
+      - Configurations
+    summary: Updates configuration by key
+    operationId: updateConfig
+    parameters:
+      - name: key
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      description: ''
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '../../components/common/configuration_v1.yaml#/schemas/UpdateConfigurationRequest'
+    responses:
+      '204':
+        description: No Content
+      '400':
+        description: Bad Request
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/validation_problem_details_v1.yaml#/schemas/ValidationProblemDetails'
+      '404':
+        description: Not Found
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '409':
+        description: Conflict
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '500':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'
+      '504':
+        description: Server Error
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '../../components/common/problem_details_v1.yaml#/schemas/ProblemDetails'

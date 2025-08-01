@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_journals_from_me"
+    app:startDestination="@id/journalFromMeFragment">
+
+    <fragment
+        android:id="@+id/journalFromMeFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.from.me.all.JournalFromMeFragment"
+        android:label="journalFromMeFragment"
+        tools:layout="@layout/fragment_with_list_and_filter" >
+
+        <action
+            android:id="@+id/toJournalFromMeFilterFragment"
+            app:destination="@id/journalFromMeFilterFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/journalFromMeFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.journal.from.me.filter.JournalFromMeFilterFragment"
+        android:label="journalFromMeFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="filter"
+            app:argType="com.digitall.eid.domain.models.journal.filter.JournalFilterModel"
+            app:nullable="false" />
+
+        <argument
+            android:name="localizations"
+            app:argType="com.digitall.eid.domain.models.assets.localization.logs.LogLocalizationModel[]"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

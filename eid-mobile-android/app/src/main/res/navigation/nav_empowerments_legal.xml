@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_empowerments_legal"
+    app:startDestination="@id/empowermentsLegalEntitySearchFragment">
+
+
+    <fragment
+        android:id="@+id/empowermentsLegalEntitySearchFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.legal.search.EmpowermentLegalSearchFragment"
+        android:label="empowermentsLegalEntitySearchFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <action
+            android:id="@+id/toEmpowermentLegalFragment"
+            app:destination="@id/empowermentsLegalFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentsLegalFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.legal.all.EmpowermentLegalFragment"
+        android:label="empowermentsLegalFragment"
+        tools:layout="@layout/fragment_with_list_and_sort_and_actions_button">
+
+        <action
+            android:id="@+id/toEmpowermentFromMeFilterFragment"
+            app:destination="@id/empowermentFromMeFilterFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeDetailsFragment"
+            app:destination="@id/empowermentFromMeDetailsFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentCreateFragment"
+            app:destination="@id/empowermentCreateFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeCancelFragment"
+            app:destination="@id/empowermentFromMeCancelFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeSigningFragment"
+            app:destination="@id/empowermentFromMeSigningFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentsLegalEntitySearchFragment"
+            app:destination="@id/empowermentsLegalEntitySearchFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentLegalFilterFragment"
+            app:destination="@id/empowermentLegalFilterFragment" />
+
+        <argument
+            android:name="legalNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentLegalFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.legal.filter.EmpowermentLegalFilterFragment"
+        android:label="empowermentLegalFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.filter.EmpowermentFilterModel"
+            app:nullable="false" />
+
+        <argument
+            android:name="legalNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/empowermentFromMeDetailsFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.details.EmpowermentFromMeDetailsFragment"
+        android:label="empowermentFromMeDetailsFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toEmpowermentCreateFragment"
+            app:destination="@id/empowermentCreateFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeCancelFragment"
+            app:destination="@id/empowermentFromMeCancelFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeSigningFragment"
+            app:destination="@id/empowermentFromMeSigningFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentFromMeCancelFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.cancel.EmpowermentFromMeCancelFragment"
+        android:label="empowermentFromMeCancelFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentFromMeSigningFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.signing.EmpowermentFromMeSigningFragment"
+        android:label="empowermentFromMeSigningFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

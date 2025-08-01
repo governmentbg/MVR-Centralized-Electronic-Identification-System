@@ -1,0 +1,27 @@
+<ng-container *ngIf="!statusHistoryQuery.isLoading">
+    <div class="status-history-container" *transloco="let t; read: 'modules.providers.provider-history'">
+        <h6 class="p-3 ps-0">
+            {{ t('txtTitle') }}
+        </h6>
+
+        <div class="flex flex-col" *ngFor="let statusHistory of statusHistoryQuery.data || []; index as idx">
+            <div *ngIf="idx > 0" class="separator"></div>
+            <div class="col d-flex p-1 ps-0">
+                <label class="col-3">{{ t('txtDate') }}:</label>
+                <span class="">{{ statusHistory.dateTime | translocoDate : { timeStyle: 'medium' } }}</span>
+            </div>
+            <div class="col d-flex p-1 ps-0">
+                <label class="col-3">{{ t('txtStatus') }}:</label>
+                <app-application-status [status]="statusHistory.status"></app-application-status>
+            </div>
+            <div class="col d-flex flex-column p-1 ps-0">
+                <label class="col-3">{{ t('txtUser') }}:</label>
+                <span class="">{{ statusHistory.modifierFullName }}</span>
+            </div>
+            <div class="col d-flex flex-column p-1 ps-0">
+                <label class="col-3">{{ t('txtComment') }}:</label>
+                <span class="">{{ statusHistory.comment }}</span>
+            </div>
+        </div>
+    </div>
+</ng-container>

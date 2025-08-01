@@ -1,0 +1,1270 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">eID</string>
+    <string name="loader_wait_message">Търсим вашите данни, може да отнеме малко време.</string>
+
+    <!-- Common errors -->
+    <string name="error">Нещо се обърка</string>
+    <string name="error_loading_error">Съжаляваме, изглежда нещо се обърка. Моля, опитайте отново.</string>
+    <string name="error_server_error_short">Грешка в сървъра</string>
+    <string name="error_internal_error_short">Глобална грешка</string>
+    <string name="error_server_error">Грешка при получаване на данни от сървъра, моля опитайте отново по-късно</string>
+    <string name="error_network_error_short">Грешка в мрежата</string>
+    <string name="error_network_error">Грешка по време на мрежова заявка, моля, опитайте отново по-късно</string>
+    <string name="error_network_not_available">Няма интернет връзка</string>
+    <string name="error_network_not_available_description">Свържете се към интернет и опитайте отново</string>
+    <string name="error_invalid_format">Невалиден формат</string>
+    <string name="error_not_enough_characters">Няма достатъчно знаци в полето.</string>
+    <string name="error_cannot_be_empty">Това поле не може да бъде празно.</string>
+    <string name="error_password_must_contain_only_numbers">Паролата трябва да съдържа само цифри</string>
+    <string name="must_contain_only_numbers">Тук са разрешени само числа</string>
+    <string name="error_empty_state_tile">Нищо не е намерено</string>
+    <string name="error_empty_state_description">Презаредите, ако трябва да има съдържание</string>
+    <string name="error_no_consent_to_share_data">Няма съгласие за споделяне на данни</string>
+    <string name="error_pin_code_not_setup">Пин кодът не е настроен</string>
+    <string name="error_user_not_setup_correct">Потребителят не е настроен</string>
+    <string name="error_user_is_not_identified">Потребителят не е идентифициран</string>
+    <string name="error_user_name_not_found">Потребителското име не е намерено</string>
+    <string name="error_user_email_not_found">Потребителският имейл не е намерен</string>
+    <string name="error_user_phone_not_found">Потребителският телефон не е намерен</string>
+    <string name="error_user_personal_identification_number_not_found">Личният идентификационен номер на потребителя не е намерен</string>
+    <string name="error_request_is_being_processed">Заявката се обработва, моля, изчакайте и щракнете върху актуализиране</string>
+    <string name="error_server_fetch_information">Не успяхме да вземем необходимата информация</string>
+    <string name="error_api_general">Възникна грешка. Опитайте отново. (%s)</string>
+    <string name="error_field_required">Полето е задължително</string>
+    <string name="error_valid_email_format">Невалиден имейл формат</string>
+    <string name="error_names_uppercase">Името трябва да започва с главна буква</string>
+    <string name="error_field_symbols_length">Полето трябва да е поне %s симбола</string>
+    <string name="error_valid_phone_number">Въведете валиден телефонен номер</string>
+    <string name="error_valid_password_format">Паролата трябва да бъде с дължина поне 8 символа като съдържа поне 1 главна буква, 1 малка буква, 1 число и 1 специален символ.</string>
+    <string name="error_password_mismatch">Паролите не съвпадат</string>
+    <string name="error_names_combination">Трябва да въведете комбинация от първо име и презиме или първо име и фамилия</string>
+    <string name="error_invalid_egn">Невалидно ЕГН</string>
+    <string name="error_invalid_lnch">Невалидно ЛНЧ</string>
+    <string name="error_invalid_personal_identifier_format">Невалиден формат на идентификатора</string>
+    <string name="error_invalid_personal_identifier">Невалиден идентификатор</string>
+    <string name="error_card_chip_unsupported">Картата с този номер не поддържа електронна идентичност</string>
+    <string name="error_pin_code_mismatch">Пин кодовете не съответстват</string>
+    <string name="error_pin_code_length">Пин кодът трябва да е %s цифри</string>
+    <string name="error_invalid_bulstat">Невалиден БУЛСТАТ</string>
+    <string name="error_value_already_used">Въведената стойност е вече използвана</string>
+    <string name="error_personal_identifier_already_used">Въведеният идентификатор е вече използван</string>
+    <string name="error_empowerment_self">Не може да овластявате себе си</string>
+    <string name="error_empowerment_self_as_representative">Не може да овластявате себе си когато сте единствен законен представител</string>
+    <string name="error_pin_code_incorrect">ПИН кодът е неправилен. Брой оставащи опити: %s</string>
+    <string name="error_biometrics_enable">Невързможност за активиране на биометрия</string>
+    <string name="error_biometrics_not_available">Биометрията не е достъпна</string>
+    <string name="error_biometrics_system">Системна грешка свързана с биометрията</string>
+
+    <!-- Blocked -->
+    <string name="error_blocked_title">Входът е блокиран</string>
+    <string name="error_blocked_description">Отключване за %s секунди</string>
+
+    <!-- Common -->
+    <string name="cancel">Отказ</string>
+    <string name="exit">Изход</string>
+    <string name="back">Назад</string>
+    <string name="apply">Прилагане</string>
+    <string name="retry" tools:override="true">Опитайте отново</string>
+    <string name="reload">Презареждане</string>
+    <string name="next">Следващ</string>
+    <string name="proceed">Напред</string>
+    <string name="start">Стартиране</string>
+    <string name="hide">Скриване</string>
+    <string name="show">Покажи</string>
+    <string name="save">Запазване</string>
+    <string name="close">Затваряне</string>
+    <string name="remove">Премахване</string>
+    <string name="share">Споделяне</string>
+    <string name="select">Изберете</string>
+    <string name="invite">Покани</string>
+    <string name="delete">Изтриване</string>
+    <string name="skip">Пропускане</string>
+    <string name="clear">Изчистване</string>
+    <string name="clear_all">Изчистване на всички</string>
+    <string name="view_all">Преглед на всички</string>
+    <string name="see_all">Виж всички</string>
+    <string name="all">Всички</string>
+    <string name="search">Търсене</string>
+    <string name="edit">Редактиране</string>
+    <string name="edit_data">Редактиране на данни</string>
+    <string name="verify">Потвърдете</string>
+    <string name="done">Готово</string>
+    <string name="bullet">•</string>
+    <string name="confirm">Потвърдете</string>
+    <string name="continue_label">Продължи</string>
+    <string name="optional">По избор</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="need_help">Нуждаете се от помощ?</string>
+    <string name="are_you_sure">Сигурни ли сте?</string>
+    <string name="oops">Ами сега</string>
+    <string name="oops_with_dots">Ами сега…</string>
+    <string name="sorry">Съжаляваме</string>
+    <string name="logout">Изход</string>
+    <string name="try_again">Опитайте отново</string>
+    <string name="ok" tools:override="true">Добре</string>
+    <string name="no">Не</string>
+    <string name="yes">Да</string>
+    <string name="update">Актуализиране</string>
+    <string name="wait">Моля, изчакайте</string>
+    <string name="please_select">Моля изберете стойност</string>
+    <string name="please_input">Моля въведете стойност</string>
+    <string name="information">Информация</string>
+    <string name="certificate_stop">Спри</string>
+    <string name="certificate_resume">Възобнови</string>
+    <string name="certificate_change_pin">Смяна ПИН</string>
+    <string name="certificate_revoke">Прекрати</string>
+    <string name="application_payment">Плащане</string>
+    <string name="mobile_applicatipon">Мобилно приложение</string>
+    <string name="identity_card">Лична карта</string>
+    <string name="egn">ЕГН</string>
+    <string name="lnch">ЛНЧ</string>
+    <string name="certificate">Удостоверение</string>
+    <string name="not_specified">Неопределено</string>
+    <string name="send">Изпрати</string>
+    <string name="no_value">Без стойност</string>
+    <string name="no_search_results">Няма намерени съвпадения</string>
+    <string name="required_sign">*</string>
+    <string name="sign">Подпиши</string>
+    <string name="begin">Начало</string>
+    <string name="more">Още</string>
+    <string name="filters">Филтри</string>
+    <string name="sort_by_with_dots">Сортирай по:</string>
+    <string name="authentication_type">Начин на автентикация</string>
+    <string name="signing_type">Подпис</string>
+    <string name="select_all">Избери всички</string>
+    <string name="unspecified">Не е посочено</string>
+    <string name="apply_filters">Приложи филтри</string>
+    <string name="clear_filters">Изчисти</string>
+    <string name="pin_creation_message">Искате ли да защитите профила си с ПИН?</string>
+
+    <!-- Notifications -->
+    <string name="channel_name">Eid</string>
+    <string name="channel_description">Известия от приложението Eid</string>
+    <string name="warning_label">Предупреждение</string>
+    <string name="notifications_window_label">За да работи приложението правилно, трябва да разрешите известия. Текущо известие: %s</string>
+    <string name="settings_label">Настройки</string>
+
+    <!-- Pin -->
+    <string name="passcode_btn_1">1</string>
+    <string name="passcode_btn_2">2</string>
+    <string name="passcode_btn_3">3</string>
+    <string name="passcode_btn_4">4</string>
+    <string name="passcode_btn_5">5</string>
+    <string name="passcode_btn_6">6</string>
+    <string name="passcode_btn_7">7</string>
+    <string name="passcode_btn_8">8</string>
+    <string name="passcode_btn_9">9</string>
+    <string name="passcode_btn_0">0</string>
+
+    <!-- Permissions -->
+    <string name="permissions_modal_title">Изисква се достъп</string>
+    <string name="permissions_modal_description">Моля, коригирайте настройките си, за да разрешите на GTWorld достъп до вашите %s, без него не можете да продължите.</string>
+    <string name="permissions_modal_step_1">Включете «%s» в настройките.</string>
+    <string name="permissions_modal_step_2">След това се върнете към приложението.</string>
+    <string name="permissions_modal_open_settings">Отворете настройките</string>
+    <string name="permissions_contacts">Контакти</string>
+    <string name="permissions_camera">Камера</string>
+    <string name="permissions_location">Местоположение</string>
+
+    <!-- Biometric error -->
+    <string name="biometric_error_title">Биометрична грешка</string>
+    <string name="biometric_error_description">Грешка при идентификацията на потребителя, може да сте отключили устройството чрез алтернативен метод, отключете устройството с вашия пръстов отпечатък и опитайте отново</string>
+
+    <!-- Registration enter PIN -->
+    <string name="registration_enter_pin_title">Здравейте</string>
+    <string name="registration_enter_pin_forgot_title">Забравили сте своя ПИН?</string>
+    <string name="registration_enter_pin_incorrect">ПИН кодът е неправилен. Броят оставащи опити: %s\nОпитайте отново или натиснете бутон за забравена парола.</string>
+
+    <!-- Create pin -->
+    <string name="create_pin_title">Създайте парола</string>
+    <string name="create_pin_description">За да защитите по-добре приложението си, избягвайте използването на последователни номера, повтарящи се цифри, датата ви на раждане или телефонния ви номер.</string>
+    <string name="create_pin_error_pass_code_not_secure">Паролата ви е твърде проста. Използвайте различни числа, за да създадете по-силно.</string>
+    <string name="create_pin_error_pass_code_cannot_be_set_as_sequential_numbers">Не използвайте последователни номера. Твърде лесно е да се познае. Направете по-надеждна парола.</string>
+    <string name="create_pin_error_pass_code_repeating_digits_more_than_2">Не използвайте повтарящи се цифри повече от два пъти. Твърде лесно е да се познае. Направете по-надеждна парола.</string>
+    <string name="create_pin_error_pass_code_your_date_of_birth">Не използвайте рождения си ден. Твърде лесно е да се познае. Направете по-надеждна парола.</string>
+    <string name="create_pin_error_pass_code_your_part_phone_number">Не използвайте никаква част от телефонния си номер. Твърде лесно е да се познае. Направете по-надеждна парола.</string>
+    <string name="create_pin_error_pass_code_already_used">Вече сте използвали тази комбинация за парола. Моля, създайте нов. </string>
+
+    <!-- Confirm pin -->
+    <string name="confirm_pin_title">Потвърдете паролата</string>
+    <string name="confirm_pin_description">Въведете паролата си още веднъж, за да сте сигурни, че е правилна.</string>
+    <string name="confirm_pin_error_password_not_match">Вашата парола не съвпада с тази, която предоставихте по-рано.</string>
+
+    <!-- Auth Enable biometric -->
+    <string name="enable_biometric_title">Активиране на биометричните данни</string>
+    <string name="enable_biometric_for_faster_login_description">Искате ли да активирате биометрично влизане?</string>
+    <string name="enable_biometric_for_faster_transactions_and_in_app_actions_description">Можете да включите биометричните данни за по-бързи транзакции и действия в приложението.</string>
+    <string name="enable_biometric_btn_later">Настройте го по-късно</string>
+    <string name="enable_biometric_btn_enable">Активиране</string>
+
+    <!-- Auth Enter pin -->
+    <string name="auth_enter_pin_title">Здравейте, %s,</string>
+    <string name="auth_enter_pin_forgot_title">Забравили сте своя ПИН?</string>
+    <string name="auth_enter_pin_incorrect">ПИН кодът е неправилен. Броят оставащи опити: %s\nОпитайте отново или натиснете бутон за забравена парола.</string>
+    <string name="auth_enter_pin_error_check_remote">ПИН кодът е неправилен. Опитайте отново или натиснете бутон за забравена парола.</string>
+
+    <!-- Enter biometric -->
+    <string name="enter_biometric_title">Здравейте, %s,</string>
+    <string name="enter_biometric_use_pin">Използване на ПИН</string>
+    <string name="enter_biometric_confirm">Още</string>
+
+    <!-- Auth Biometric -->
+    <string name="auth_biometric_scanner_description">Използвайте биометрични данни за отключване на приложението</string>
+    <string name="auth_biometric_scanner_title">Удостоверяване</string>
+    <string name="auth_biometric_scanner_failed">Пръстовият отпечатък не е разпознат.</string>
+    <string name="auth_biometric_scanner_many_attempts">Твърде много опити. Моля, опитайте отново по-късно.</string>
+
+    <!-- Landing -->
+    <string name="landing_bg_eid">BGeID</string>
+    <string name="landing_republic_of_bulgaria">Република България</string>
+    <string name="landing_mvr">Министерство на вътрешните работи</string>
+    <string name="landing_login_password">Вход с парола</string>
+    <string name="landing_login_pin">Вход с ПИН</string>
+    <string name="landing_login_biometric">Вход с биометрия</string>
+    <string name="landing_login_mobile_eid">Вход с мобилно eID</string>
+    <string name="landing_login_eid_document">Вход с електронна идентичност</string>
+    <string name="landing_create_profile">Създай профил</string>
+
+    <!-- Login -->
+    <string name="login_email_title">Имейл:</string>
+    <string name="login_password_title">Парола:</string>
+    <string name="login_authenticate_button_title">Вход</string>
+    <string name="login_forgotten_password_button_title">Забравена парола</string>
+    <string name="login_wrong_credentials_error">Невалидно потребителско име или парола. Опитайте отново или натиснете бутон за забравена парола.</string>
+
+    <!-- Languages -->
+    <string name="language_bulgarian">Български</string>
+    <string name="language_english">Английски</string>
+
+    <!-- Registration -->
+    <string name="registration_title">Рергистрация</string>
+    <string name="registration_name">Име по документ за самоличност:</string>
+    <string name="registration_surname">Фамилия по документ за самоличност:</string>
+    <string name="registration_fathers_name">Презиме по документ за самоличност:</string>
+    <string name="registration_name_latin">Име на латиница по документ за самоличност:</string>
+    <string name="registration_fathers_name_latin">Презиме на латиница по документ за самоличност:</string>
+    <string name="registration_surname_latin">Фамилия на латиница по документ за самоличност:</string>
+    <string name="registration_email">Имейл:</string>
+    <string name="registration_password">Парола:</string>
+    <string name="registration_confirm_password">Потвърди парола:</string>
+    <string name="registration_create_profile">Създай профил</string>
+    <string name="registration_phone_number">Телефон:</string>
+    <string name="registration_names_length_error">Полето трябва да е поне %s симбола</string>
+    <string name="registration_names_uppercase_error">Името трябва да започва с главна буква</string>
+    <string name="registration_leading_trailing_whitespace_error">Стойността не трябва за започва или завършва с празно място</string>
+    <string name="registration_email_error">Въведете валиден имейл</string>
+    <string name="registration_phone_error">Въведете валиден телефон</string>
+    <string name="registration_password_mismatch_error">Паролите не съвпадат</string>
+    <string name="registration_names_disclaimer">Моля да въведете имена по документ за самоличност.</string>
+    <string name="registration_success_message">Успешно създадохте Вашият профил. Моля, проверете Вашата поща, на която сме изпратили имейл за активация.</string>
+
+    <!-- Lorem ipsum -->
+    <string name="lorem_ipsum_size_1">Lorem ipsum</string>
+    <string name="lorem_ipsum_size_2">Lorem ipsum dolor</string>
+    <string name="lorem_ipsum_size_3">Lorem ipsum dolor sit amet</string>
+    <string name="lorem_ipsum_size_4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut</string>
+    <string name="lorem_ipsum_size_5">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</string>
+    <string name="lorem_ipsum_size_6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="lorem_ipsum_size_7">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
+    <!-- Empowerment from me list items -->
+    <string name="empowerment_from_me_title">Овластявания от мен</string>
+    <string name="empowerment_from_me_number_title">Номер на овластяване:\n%s</string>
+    <string name="empowerment_from_me_service_provider_title">Доставчик на услуги:</string>
+    <string name="empowerment_from_me_from_title">От името на:</string>
+    <string name="empowerment_from_me_service_title">Услуга:</string>
+    <string name="empowerment_from_me_empowerer_title">Овластено лице:</string>
+    <string name="empowerment_from_me_status_title">Статус:</string>
+    <string name="empowerment_from_me_type_egn">ЕГН:%s</string>
+    <string name="empowerment_from_me_type_egn_and_name">ЕГН:%1$s - %2$s</string>
+    <string name="empowerment_from_me_type_lnch">ЛНЧ:%s</string>
+    <string name="empowerment_from_me_type_lnch_and_name">ЛНЧ:%1$s - %2$s</string>
+    <string name="empowerment_from_me_additional_empowerers">и още %s лица…</string>
+    <string name="empowerment_from_me_creation_date_title">Дата на създаване:</string>
+
+    <!-- Empowerment to me list items -->
+    <string name="empowerment_to_me_title">Овластявания към мен</string>
+    <string name="empowerment_to_me_service_provider_title">Доставчик на услуги:</string>
+    <string name="empowerment_to_me_service_title">Услуга:</string>
+    <string name="empowerment_to_me_empowerer_title">Овластител:</string>
+    <string name="empowerment_to_me_status_title">Статус:</string>
+    <string name="empowerment_to_me_number_title">Номер на овластяване:\n%s</string>
+    <string name="empowerment_to_me_creation_date_title">Дата на създаване:</string>
+
+    <!-- Empowerment Cancel Screen -->
+    <string name="empowerment_cancel_to_me_success">Успешно декларирано несъгласие.</string>
+    <string name="empowerment_cancel_from_me_success">Успешно оттегляне.</string>
+    <string name="empowerment_cancel_empowerment_details_title">Детайли на овластяването</string>
+    <string name="empowerment_cancel_reason_title">Причина:</string>
+    <string name="empowerment_cancel_number_title">Номер:</string>
+    <string name="empowerment_cancel_status_title">Статус:</string>
+    <string name="empowerment_cancel_from_title">От името на:</string>
+    <string name="empowerment_cancel_individual">Физическо лице</string>
+    <string name="empowerment_cancel_legal_entity">Юридическо лице</string>
+    <string name="empowerment_cancel_name_title">Име:</string>
+    <string name="empowerment_cancel_egn_lnch_empowerer_title">ЕГН/ЛНЧ на овластител:</string>
+    <string name="empowerment_cancel_eik_bulstat_empowerer_title">ЕИК/Булстат на юридическото лице:</string>
+    <string name="empowerment_cancel_egn_lnch_empowered_people">ЕГН/ЛНЧ на овластени лица:</string>
+    <string name="empowerment_cancel_legal_representatives_title">Законни представители:</string>
+    <string name="empowerment_cancel_supplier_title">Доставчик:</string>
+    <string name="empowerment_cancel_service_title">Услуга:</string>
+    <string name="empowerment_cancel_extent_representative_power_title">Обем на представителната власт:</string>
+    <string name="empowerment_cancel_history_of_empowerment_title">История на овластяването</string>
+    <string name="empowerment_cancel_start_date_title">Валидно от:</string>
+    <string name="empowerment_cancel_submitted_date_title">Подадено на:</string>
+    <string name="empowerment_cancel_end_date_title">Валидно до:</string>
+    <string name="empowerment_cancel_unlimited">Безсрочно</string>
+    <string name="empowerment_cancel_to_me_title">Деклариране на несъгласие</string>
+    <string name="empowerment_cancel_to_me_button_title">Декларирай несъгласие</string>
+    <string name="empowerment_cancel_from_me_title">Оттегляне на овластяване</string>
+    <string name="empowerment_cancel_from_me_button_title">Потвърди оттеглянето</string>
+    <string name="empowerment_cancel_reasons_wont_be_used_type">Няма да бъде използвано</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_screen_title">Удостоверение</string>
+    <string name="certificate_details_title">Преглед на удостоверение за електронна идентичност</string>
+    <string name="certificate_details_certificate_id">Номер на удостоверението:</string>
+    <string name="certificate_details_alias">Наименование:</string>
+    <string name="certificate_details_eid_idenity_id">Номер на електронна идентичност:</string>
+    <string name="certificate_details_serial_number">Сериен номер:</string>
+    <string name="certificate_details_certificate_common_name">Имена:</string>
+    <string name="certificate_details_certificate_status">Статус:</string>
+    <string name="certificate_details_certificate_issued_on">Издаден на:</string>
+    <string name="certificate_details_certificate_valid_from">Валиден от:</string>
+    <string name="certificate_details_certificate_valid_until">Валиден до:</string>
+    <string name="certificate_details_certificate_issued_from">Издаден от:</string>
+    <string name="certificate_details_certificate_carrier">Носител:</string>
+    <string name="certificate_details_certificate_carrier_number">Номер на носител:</string>
+    <string name="certificate_details_certificate_carrier_level_of_assurance">Ниво на осигуреност на носителя:</string>
+    <string name="certificate_details_certificate_stop_button">Спри удостоверение</string>
+    <string name="certificate_details_certificate_revoke_button">Прекрати удостоверение</string>
+    <string name="certificate_details_certificate_resume_button">Поднови удостоверение</string>
+    <string name="certificate_details_certificate_stop_reason">Причина за спиране:</string>
+    <string name="certificate_details_certificate_resume_reason">Причина за подновяване:</string>
+    <string name="certificate_details_certificate_revocation_reason">Причина за прекратяване:</string>
+    <string name="certificate_details_full_history_title">Пълна история на удостоверението</string>
+    <string name="certificate_details_full_history_element_status_title">Статус:</string>
+    <string name="certificate_details_full_history_element_created_application_create_date_title">Подадено заявление на:</string>
+    <string name="certificate_details_full_history_element_created_application_number_title">Заявление №:</string>
+    <string name="certificate_details_full_history_element_created_application_modified_date_title">Издадено удостоверение на:</string>
+    <string name="certificate_details_full_history_element_revoked_application_create_date_title">Подадено заявление на:</string>
+    <string name="certificate_details_full_history_element_revoked_application_number_title">Заявление №:</string>
+    <string name="certificate_details_full_history_element_revoked_application_modified_date_title">Прекратено удостоверение на:</string>
+    <string name="certificate_details_full_history_element_stopped_application_create_date_title">Подадено заявление за спиране:</string>
+    <string name="certificate_details_full_history_element_stopped_application_number_title">Заявление №:</string>
+    <string name="certificate_details_full_history_element_stopped_application_modified_date_title">Спряно удостоверение на:</string>
+    <string name="certificate_details_full_history_element_expired_application_create_date_title">Подадено заявление на:</string>
+    <string name="certificate_details_full_history_element_expired_application_number_title">Заявление №:</string>
+    <string name="certificate_details_full_history_element_expired_application_modified_date_title">Изтекъл сертификат на:</string>
+    <string name="certificate_details_full_history_element_active_application_create_date_title">Подадено заявление на:</string>
+    <string name="certificate_details_full_history_element_active_application_number_title">Заявление №:</string>
+    <string name="certificate_details_full_history_element_active_application_modified_date_title">Издадено/подновено удостоверение на:</string>
+    <string name="certificate_details_full_history_element_valid_from_title">Валидно от:</string>
+    <string name="certificate_details_full_history_element_valid_until_title">Валидно до:</string>
+    <string name="certificate_details_full_history_element_reason_title">Причина:</string>
+
+    <!-- Certificate edit name -->
+    <string name="certificate_edit_alias_screen_title">Наименование на удостоверение</string>
+    <string name="certificate_edit_alias_title">Име:</string>
+    <string name="certificate_edit_alias_empty_error">Наименованието на удостоверението не може да бъде празно</string>
+    <string name="certificate_edit_alias_confirm_button">Потвърди</string>
+    <string name="certificate_edit_alias_success_message">Успешно зададохте ново име на удостоверението</string>
+
+    <!-- Certificate Stop -->
+    <string name="certificate_stop_screen_title">Заявление</string>
+    <string name="certificate_stop_title">Заявление за спиране на удостоверение</string>
+    <string name="certificate_stop_reason_title">Причина:</string>
+    <string name="certificate_stop_input_reason_title">Описание:</string>
+    <string name="certificate_stop_personal_data_title">Лични данни</string>
+    <string name="certificate_stop_name_title">Име:</string>
+    <string name="certificate_stop_fathers_name_title">Презиме:</string>
+    <string name="certificate_stop_surname_title">Фамилия:</string>
+    <string name="certificate_stop_name_latin_title">Име (латиница):</string>
+    <string name="certificate_stop_fathers_name_latin_title">Презиме (латиница):</string>
+    <string name="certificate_stop_surname_latin_title">Фамилия (латиница):</string>
+    <string name="certificate_stop_date_of_birth_title">Дата на раждане:</string>
+    <string name="certificate_stop_personal_document_title">Личен документ</string>
+    <string name="certificate_stop_identifier_title">Идентификатор:</string>
+    <string name="certificate_stop_identifier_type_title">Тип на идентификатор:</string>
+    <string name="certificate_stop_citizenship_title">Гражданство:</string>
+    <string name="certificate_stop_document_number_title">Номер на документ:</string>
+    <string name="certificate_stop_document_type_title">Тип на документ:</string>
+    <string name="certificate_stop_issued_on_title">Издаден на:</string>
+    <string name="certificate_stop_issued_from_title">Издаден от:</string>
+    <string name="certificate_stop_valid_until_title">Валиден до:</string>
+    <string name="certificate_stop_confirm_termination_title">Потвърди спирането</string>
+    <string name="certificate_stop_required_length_value_error">Стойността трябва да бъде поне %s символа</string>
+    <string name="certificate_stop_success_message">Удостоверението е спряно</string>
+    <string name="certificate_stop_invalid_identifier_egn_error">Индентификаторът не е валидно ЕГН</string>
+    <string name="certificate_stop_invalid_identifier_lnch_error">Индентификаторът не е валидно ЛНЧ</string>
+
+    <!-- Certificate Revoke -->
+    <string name="certificate_revoke_screen_title">Заявление</string>
+    <string name="certificate_revoke_title">Заявление за прекратяване на удостоверение</string>
+    <string name="certificate_revoke_reason_title">Причина:</string>
+    <string name="certificate_revoke_input_reason_title">Описание:</string>
+    <string name="certificate_revoke_personal_data_title">Лични данни</string>
+    <string name="certificate_revoke_name_title">Име:</string>
+    <string name="certificate_revoke_fathers_name_title">Презиме:</string>
+    <string name="certificate_revoke_surname_title">Фамилия:</string>
+    <string name="certificate_revoke_name_latin_title">Име (латиница):</string>
+    <string name="certificate_revoke_fathers_name_latin_title">Презиме (латиница):</string>
+    <string name="certificate_revoke_surname_latin_title">Фамилия (латиница):</string>
+    <string name="certificate_revoke_date_of_birth_title">Дата на раждане:</string>
+    <string name="certificate_revoke_personal_document_title">Личен документ</string>
+    <string name="certificate_revoke_identifier_title">Идентификатор:</string>
+    <string name="certificate_revoke_identifier_type_title">Тип на идентификатор:</string>
+    <string name="certificate_revoke_citizenship_title">Гражданство:</string>
+    <string name="certificate_revoke_document_number_title">Номер на документ:</string>
+    <string name="certificate_revoke_document_type_title">Тип на документ:</string>
+    <string name="certificate_revoke_issued_on_title">Издаден на:</string>
+    <string name="certificate_revoke_issued_from_title">Издаден от:</string>
+    <string name="certificate_revoke_valid_until_title">Валиден до:</string>
+    <string name="certificate_revoke_signing_type_title">Подписване на заявлението с:</string>
+    <string name="certificate_revoke_confirm_termination_title">Потвърди прекратяването</string>
+    <string name="certificate_revoke_required_length_value_error">Стойността трябва да бъде поне %s символа</string>
+    <string name="certificate_revoke_success_message">Удостоверението е прекратено</string>
+    <string name="certificate_revoke_invalid_identifier_egn_error">Индентификаторът не е валидно ЕГН</string>
+    <string name="certificate_revoke_invalid_identifier_lnch_error">Индентификаторът не е валидно ЛНЧ</string>
+
+    <!-- Certificate Resume -->
+    <string name="certificate_resume_screen_title">Заявление</string>
+    <string name="certificate_resume_title">Заявление за подновяване на удостоверение</string>
+    <string name="certificate_resume_reason_title">Причина:</string>
+    <string name="certificate_resume_input_reason_title">Описание:</string>
+    <string name="certificate_resume_personal_data_title">Лични дади</string>s
+    <string name="certificate_resume_name_title">Име:</string>
+    <string name="certificate_resume_fathers_name_title">Презиме:</string>
+    <string name="certificate_resume_surname_title">Фамилия:</string>
+    <string name="certificate_resume_name_latin_title">Име (латиница):</string>
+    <string name="certificate_resume_fathers_name_latin_title">Презиме (латиница):</string>
+    <string name="certificate_resume_surname_latin_title">Фамилия (латиница):</string>
+    <string name="certificate_resume_date_of_birth_title">Дата на раждане:</string>
+    <string name="certificate_resume_personal_document_title">Личен документ</string>
+    <string name="certificate_resume_identifier_title">Идентификатор:</string>
+    <string name="certificate_resume_identifier_type_title">Тип на идентификатор:</string>
+    <string name="certificate_resume_citizenship_title">Гражданство:</string>
+    <string name="certificate_resume_document_number_title">Номер на документ:</string>
+    <string name="certificate_resume_document_type_title">Тип на документ:</string>
+    <string name="certificate_resume_issued_on_title">Издаден на:</string>
+    <string name="certificate_resume_issued_from_title">Издаден от:</string>
+    <string name="certificate_resume_valid_until_title">Валиден до:</string>
+    <string name="certificate_resume_signing_type_title">Подписване на заявлението с:</string>
+    <string name="certificate_resume_confirm_termination_title">Потвърди подновяването</string>
+    <string name="certificate_resume_required_length_value_error">Стойността трябва да бъде поне %s символа</string>
+    <string name="certificate_resume_success_message">Удостоверението е възобновено</string>
+    <string name="certificate_resume_invalid_identifier_egn_error">Индентификаторът не е валидно ЕГН</string>
+    <string name="certificate_resume_invalid_identifier_lnch_error">Индентификаторът не е валидно ЛНЧ</string>
+
+    <!-- Tab More -->
+    <string name="tab_more_profile_section_title">МОЯТ ПРОФИЛ</string>
+    <string name="tab_more_profile_section_information">Информация за профила</string>
+    <string name="tab_more_profile_section_security">Сигурност на профила</string>
+    <string name="tab_more_profile_section_notifications_settings">Управление на нотификации</string>
+    <string name="tab_more_profile_section_change_email">Смяна на имейл</string>
+    <string name="tab_more_profile_section_change_password">Смяна на парола</string>
+    <string name="tab_more_profile_section_change_phone">Добави/Промени телефон</string>
+    <string name="tab_more_profile_section_payment_history">История на плащанията</string>
+    <string name="tab_more_services_section_title">УСЛУГИ</string>
+    <string name="tab_more_services_section_eid_management">Управление на електронна идентичност</string>
+    <string name="tab_more_services_section_empowerment_register">Регистър на овластяванията</string>
+    <string name="tab_more_services_section_journals">История на събития</string>
+    <string name="tab_more_useful_section_title">ПОЛЕЗНО</string>
+    <string name="tab_more_useful_section_faq">Често задавани въпроси</string>
+    <string name="tab_more_settings_section_title">НАСТРОЙКИ</string>
+    <string name="tab_more_settings_section_settings">Настройки</string>
+    <string name="tab_more_contacts">Контакти</string>
+    <string name="tab_more_terms_and_conditions">Общи условия</string>
+    <string name="tab_more_administrators">Администратори</string>
+    <string name="tab_more_centers_certification_services">Центрове на удостоверителни услуги</string>
+    <string name="tab_more_providers_electronic_administrative_services">Доставчици на ЕАУ</string>
+    <string name="tab_more_online_help_system">Система за онлайн помощ</string>
+    <string name="tab_more_electronic_delivery_system">Система за сигурно елекронно връчване</string>
+
+    <!-- Change user email -->
+    <string name="change_user_email_title">Смяна на имейл</string>
+    <string name="change_user_email_input_email_title">Нов адрес на електронна поща:</string>
+    <string name="change_user_email_confirm_button_title">Потвърди</string>
+    <string name="change_user_email_back_button_title">Откажи</string>
+    <string name="change_user_email_email_error">Въведете валиден имейл</string>
+    <string name="change_user_email_leading_trailing_whitespace_error">Стойността не трябва за започва или завършва с празно място</string>
+    <string name="change_user_email_success_message">За да потвърдите смяната на Вашия имейл, моля проверете Вашата електронна поща за активационен линк.</string>
+
+    <!-- Change user password -->
+    <string name="change_user_password_title">Смяна на парола</string>
+    <string name="change_user_password_input_old_password_title">Стара парола:</string>
+    <string name="change_user_password_input_new_password_title">Нова парола:</string>
+    <string name="change_user_password_input_confirm_new_password_title">Потвърди новата парола:</string>
+    <string name="change_user_password_confirm_button_title">Потвърди</string>
+    <string name="change_user_password_back_button_title">Откажи</string>
+    <string name="change_user_password_mismatch_error">Паролите не съответстват</string>
+    <string name="change_user_password_leading_trailing_whitespace_error">Стойността не трябва за започва или завършва с празно място</string>
+    <string name="change_user_password_pattern_error">Паролата трябва да бъде с дължина поне 8 символа като съдържа поне 1 главна буква, 1 малка буква, 1 число и 1 специален символ.</string>
+    <string name="change_user_password_success_message">Успешно променихте Вашата парола.</string>
+
+    <!-- Certificates -->
+    <string name="certificate_expiring_soon">Изтича скоро</string>
+
+    <!-- Empowerments from me -->
+    <string name="empowerments_from_me_inquiry_legal_entity_option">Справка за юридическо лице</string>
+    <string name="empowerments_from_me_create_new_empowerment_option">Заяви ново овластяване</string>
+    <string name="empowerments_from_me_options">Опции</string>
+
+    <!-- Empowerments legal entity search -->
+    <string name="empowerments_inquiry_legal_entity_search_title">Справка по ЕИК</string>
+    <string name="empowerments_inquiry_legal_entity_search_input_title">ЕИК/Булстат на юридическо лице</string>
+    <string name="empowerments_inquiry_legal_entity_search_confirm_button_title">Направи справка</string>
+    <string name="empowerments_inquiry_legal_entity_search_invalid_input">Невалидна дължина на ЕИК/Булстат</string>
+
+    <!-- Empowerments legal entity -->
+    <string name="empowerments_legal_entity_title">Справка по ЕИК: %s</string>
+
+    <!-- Empowerments entity filter -->
+    <string name="empowerments_entity_filter_status_title">Изберете статус:</string>
+    <string name="empowerments_entity_filter_on_behalf_off_title">От името на:</string>
+    <string name="empowerments_entity_filter_legal_entity_name_title">Име на юридическо лице:</string>
+    <string name="empowerments_entity_filter_empowerer_title">Овластител:</string>
+    <string name="empowerments_entity_filter_supplier_title">Доставчик ЕАУ:</string>
+    <string name="empowerments_entity_filter_service_title">Услуга:</string>
+    <string name="empowerments_entity_filter_eik_bulstat_title">ЕИК/Булстат:</string>
+    <string name="empowerments_entity_filter_unlimited_title">Безсрочно</string>
+    <string name="empowerments_entity_filter_end_date_title">Най-късно до:</string>
+    <string name="empowerments_entity_filter_add_empowered_person_button_title">+ Добави овластено лице</string>
+    <string name="empowerments_entity_filter_identifier_title">Идентификатор:</string>
+    <string name="empowerments_entity_filter_egn_lnch_empowered_person_title">ЕГН/ЛНЧ на овластено лице:</string>
+    <string name="empowerments_entity_filter_apply_filters_button_title">Приложи филтри</string>
+    <string name="empowerments_entity_filter_clear_button_title">Изчисти</string>
+    <string name="empowerments_entity_filter_empowerment_number_section_title">Номер</string>
+    <string name="empowerments_entity_filter_empowerment_number_title">Овластяване номер:</string>
+    <string name="empowerments_entity_filter_status_section_title">Статус</string>
+    <string name="empowerments_entity_filter_authorizer_section_title">Овластител</string>
+    <string name="empowerments_entity_filter_service_section_title">Услуга</string>
+    <string name="empowerments_entity_filter_empowered_people_section_title">Овластени лица</string>
+    <string name="empowerments_entity_filter_empty_supplier_title">Първо въведете доставчик ЕАУ</string>
+    <string name="empowerments_entity_filter_period_section_title">Срок на валидност</string>
+    <string name="empowerments_entity_filter_invalid_egn_error">Невалидно ЕГН</string>
+    <string name="empowerments_entity_filter_invalid_lnch_error">Невалидно ЛНЧ</string>
+
+    <!-- Empowerments entity sorting enum -->
+    <string name="empowerments_entity_by_default_sorting_enum">По подразбиране</string>
+    <string name="empowerments_entity_created_on_asc_sorting_enum">Създадено на(възх.)</string>
+    <string name="empowerments_entity_created_on_desc_sorting_enum">Създадено на(низх.)</string>
+    <string name="empowerments_entity_on_behalf_off_asc_sorting_enum">От името на(възх.)</string>
+    <string name="empowerments_entity_on_behalf_off_desc_sorting_enum">От името на(низх.)</string>
+    <string name="empowerments_entity_provider_asc_sorting_enum">Доставчик(възх.)</string>
+    <string name="empowerments_entity_provider_desc_sorting_enum">Доставчик(низх.)</string>
+    <string name="empowerments_entity_service_asc_sorting_enum">Услуга(възх.)</string>
+    <string name="empowerments_entity_service_desc_sorting_enum">Услуга(низх.)</string>
+    <string name="empowerments_entity_status_asc_sorting_enum">Статус(възх.)</string>
+    <string name="empowerments_entity_status_desc_sorting_enum">Статус(низх.)</string>
+    <string name="empowerments_entity_number_asc_sorting_enum">Номер(възх.)</string>
+    <string name="empowerments_entity_number_desc_sorting_enum">Номер(низх.)</string>
+    <string name="empowerments_entity_empowerer_asc_sorting_enum">Овластител(възх.)</string>
+    <string name="empowerments_entity_empowerer_desc_sorting_enum">Овластител(низх.)</string>
+    <string name="empowerments_entity_identifier_asc_sorting_enum">Идентификатор(възх.)</string>
+    <string name="empowerments_entity_identifier_desc_sorting_enum">Идентификатор(низх.)</string>
+
+    <!-- Empowerments entity statuses -->
+    <string name="empowerments_entity_statuses_all_status_title">Всички</string>
+    <string name="empowerments_entity_statuses_active_status_title">Активно</string>
+    <string name="empowerments_entity_statuses_disagreement_declared_status_title">Декларирано несъгласие</string>
+    <string name="empowerments_entity_statuses_withdrawn_status_title">Оттеглено</string>
+    <string name="empowerments_entity_statuses_verified_status_title">Проверено</string>
+    <string name="empowerments_entity_statuses_created_status_title">В обработка</string>
+    <string name="empowerments_entity_statuses_expired_status_title">Изтекло</string>
+    <string name="empowerments_entity_statuses_denied_status_title">Отказано</string>
+    <string name="empowerments_entity_statuses_collecting_authorizer_signatures_status_title">Очаква подписване</string>
+    <string name="empowerments_entity_statuses_collecting_withdrawal_signatures_status_title">Очаква подписване</string>
+    <string name="empowerments_entity_statuses_awaiting_signature_status_title">Очаква подписване</string>
+    <string name="empowerments_entity_statuses_unconfirmed_status_title">Непотвърдено</string>
+    <string name="empowerments_entity_statuses_upcoming_status_title">Предстоящо</string>
+
+    <!-- Empowerments entity on behalf off enum -->
+    <string name="empowerments_entity_on_behalf_off_individual_enum_type">Физическо лице</string>
+    <string name="empowerments_entity_on_behalf_off_legal_entity_enum_type">Юридическо лице</string>
+
+    <!-- Empowerement create -->
+    <string name="empowerment_create_screen_title">Овластявания</string>
+    <string name="empowerment_create_required_length_value_error">Стойността трябва да бъде поне %s символа</string>
+    <string name="empowerment_create_names_uppercase_error">Името трябва да започва с главна буква</string>
+    <string name="empowerment_create_names_leading_trailing_whiespace_error">Стойността не трябва да започва или завършва с празно място</string>
+    <string name="empowerment_create_invalid_identifier_egn_error">Индентификаторът не е валидно ЕГН</string>
+    <string name="empowerment_create_duplicate_identifier_egn_error">Въведенето ЕГН вече е използвано</string>
+    <string name="empowerment_create_empowerment_self_error">Не може да овластявате себе си</string>
+    <string name="empowerment_create_empowerment_self_as_representative_error">Не може да овластявате себе си когато сте единствен законен представител</string>
+    <string name="empowerment_create_invalid_identifier_lnch_error">Индентификаторът не е валидно ЛНЧ</string>
+    <string name="empowerment_create_duplicate_identifier_lnch_error">Въведенето ЛНЧ вече е използвано</string>
+    <string name="empowerment_create_required_bulstat_length_error">Булстатът не може да бъде по-малко от %s символа</string>
+    <string name="empowerment_create_invalid_bulstat_error">Невалиден БУЛСТАТ</string>
+    <string name="empowerment_create_choose_value_error">Моля изберете стойност</string>
+    <string name="empowerment_create_submit_application_title">Подай заявление</string>
+    <string name="empowerment_create_applicant_title">Заявител</string>
+    <string name="empowerment_create_identifier_title">Идентификатор:</string>
+    <string name="empowerment_create_choose_identifier_type_hint">Първо изберете тип на идентификатор</string>
+    <string name="empowerment_create_identifier_number_title">Номер на идентификатор:</string>
+    <string name="empowerment_create_legal_representative_names_title">Имена по личен документ:</string>
+    <string name="empowerment_create_legal_representatives_title">Законни представители</string>
+    <string name="empowerment_create_names_title">Имена по личен документ:</string>
+    <string name="empowerment_create_empowerment_title">Овластяване</string>
+    <string name="empowerment_create_empowered_persons_title">Овластени лица</string>
+    <string name="empowerment_create_on_behalf_of_title">От името на:</string>
+    <string name="empowerment_create_add_empowered_person_button_title">+ Добави овластено лице</string>
+    <string name="empowerment_create_add_legal_representative_button_title">+ Добави представител</string>
+    <string name="empowerment_create_type_of_empowerment_title">Тип овластяване:</string>
+    <string name="empowerment_create_supplier_name_title">Доставчик на ЕАУ:</string>
+    <string name="empowerment_create_service_title">Услуга:</string>
+    <string name="empowerment_create_volume_of_representation_title">Обем на представителната власт:</string>
+    <string name="empowerment_create_start_date_title">Начална дата:</string>
+    <string name="empowerment_create_end_date_title">Крайна дата:</string>
+    <string name="empowerment_create_issuer_position_title">В качеството си на:</string>
+    <string name="empowerment_create_company_number_title">Номер на ЕИК по БУЛСТАТ:</string>
+    <string name="empowerment_create_legal_entity_name">Име на юридическо лице:</string>
+    <string name="empowerment_create_preview_and_save_button_title">Преглед и записване</string>
+    <string name="empowerment_create_preview_button_title">Преглед</string>
+    <string name="empowerment_create_submission_button_title">Подаване</string>
+    <string name="empowerment_create_success_message">Създадохте овластяване, моля подпишете в страницата „От Мен“</string>
+    <string name="empowerment_create_empowerment_type_separate_enum_type">Отделно</string>
+    <string name="empowerment_create_empowerment_type_together_enum_type">Заедно</string>
+    <string name="empowerment_create_indefinite_empowerment_message">Овластяването, което правите ще е безсрочно.</string>
+
+    <!-- Empowerment signing -->
+    <string name="empowerment_signing_sign_button_title">Подписване на овластяване</string>
+
+    <!-- Empowerments legal entity filter -->
+    <string name="empowerments_legal_entity_filter_status_title">Статус:</string>
+    <string name="empowerments_legal_entity_filter_service_title">Услига:</string>
+    <string name="empowerments_legal_entity_filter_empty_supplier_title">Първо въведете доставчик ЕАУ</string>
+    <string name="empowerments_legal_entity_filter_term_title">Срок:</string>
+    <string name="empowerments_legal_entity_filter_empty_type_title">Първо изберете тип на идентификатор</string>
+
+    <!-- Forgotten password -->
+    <string name="forgotten_password_title">Забравена парола</string>
+    <string name="forgotten_password_disclaimer">Моля, въведете имената на кирилица, както са изписани в документа Ви за самоличност.</string>
+    <string name="forgotten_password_input_name_title">Име по документ за самоличност:</string>
+    <string name="forgotten_password_input_surname_title">Фамилия по документ за самоличност:</string>
+    <string name="forgotten_password_input_fathers_name_title">Презиме по документ за самоличност:</string>
+    <string name="forgotten_password_input_email_title">Имейл:</string>
+    <string name="forgotten_password_change_password_button_title">Смени парола</string>
+    <string name="forgotten_password_success_message">Успешно нулирахте паролата си. Моля, проверете Вашата поща, на която сме изпратили линк за промяна.</string>
+
+    <!-- Create application -->
+    <string name="create_application_field_length_error">Полето трябва да е поне %s символа</string>
+    <string name="create_application_leading_trailing_whitespace_error">Стойността не трябва за започва или завършва с празно място</string>
+    <string name="create_application_names_uppercase_error">Името трябва да започва с главна буква</string>
+    <string name="create_application_forname_latin_title">Име на латиница:</string>
+    <string name="create_application_father_name_latin_title">Презиме на латиница:</string>
+    <string name="create_application_surname_latin_title">Фамилия на латиница:</string>
+    <string name="create_application_citizenship_title">Гражданство:</string>
+    <string name="create_application_identifier_type_title">Тип на идентификатор:</string>
+    <string name="create_application_identifier_number_title">Номер на идентификатор:</string>
+    <string name="create_application_date_of_birth_title">Дата на раждане:</string>
+    <string name="create_application_document_type_title">Тип на документ:</string>
+    <string name="create_application_document_number_title">Номер на документ:</string>
+    <string name="create_application_date_of_issue_title">Дата на издаване:</string>
+    <string name="create_application_valid_until_title">Валидно до:</string>
+    <string name="create_application_issued_from_title">Издадено от:</string>
+    <string name="create_application_electronic_identity_administrator_title">Администратор на електронна идентичност:</string>
+    <string name="create_application_administrator_office_title">Офис на администратор:</string>
+    <string name="create_application_carrier_title">Носител:</string>
+    <string name="create_application_comment_title">Коментар:</string>
+    <string name="create_application_comment">Ако нямате регистрация в системата за сигурно електронно връчване (ССЕВ) и не сте задали телефон във Вашия профил, при издаване на удостоверение за електронна идентичност, то ще бъде записано само върху избрания електронен носител и няма да бъде връчено през ССЕВ.</string>
+    <string name="create_application_certificate_alias_title">Име на удостоверение:</string>
+    <string name="create_application_signing_type_title">Подписване на заявлението с:</string>
+    <string name="create_application_preview_button_title">Преглед</string>
+    <string name="create_application_cancel_button_title">Отказ</string>
+    <string name="create_application_sign_button_title">Подпиши</string>
+    <string name="create_application_send_button_title">Изпрати</string>
+    <string name="create_application_edit_button_title">Редактирай</string>
+    <string name="create_application_document_type_enum_identity_card_title">Лична карта</string>
+    <string name="create_application_screen_title">Заявление</string>
+    <string name="create_application_title">Създаване на заявление за издаване/подновяване на удостоверение за електронна идентичност</string>
+    <string name="create_application_personal_data_title">Лични данни по документ за самоличност</string>
+    <string name="create_application_additional_information_title">Допълнителна информация</string>
+    <string name="create_application_choose_administrator_warning">Моля изберете първо администратор</string>
+    <string name="create_application_choose_carrier_warning">Моля изберете първо носител</string>
+    <string name="create_application_personal_document_title">Личен документ</string>
+    <string name="create_application_invalid_egn_error">Невалидно ЕГН</string>
+    <string name="create_application_invalid_lnch_error">Невалидно ЛНЧ</string>
+    <string name="create_application_invalid_identifier_error">Невалиден идентификатор</string>
+    <string name="create_application_success_message">Успешно изпратено заявление</string>
+    <string name="create_application_success_confirm_message">Успешно потвърдено заявление и записан сертификат</string>
+    <string name="create_application_create_pin_title">За достъп трябва да създадете PIN. Моля, въведете PIN</string>
+    <string name="create_application_confirm_pin_title">Моля, потвърдете PIN</string>
+    <string name="create_application_finish_pin_title">Моля натиснете "Завърши"</string>
+
+    <!-- Change user information -->
+    <string name="change_citizen_information_screen_title">Промяна на лични данни</string>
+    <string name="change_citizen_information_name_title">Име по документ за самоличност:</string>
+    <string name="change_citizen_information_surname_title">Фамилия по документ за самоличност:</string>
+    <string name="change_citizen_information_fathers_name_title">Презиме по документ за самоличност:</string>
+    <string name="change_citizen_information_name_latin_title">Име на латиница по документ за самоличност:</string>
+    <string name="change_citizen_information_fathers_name_latin_title">Презиме на латиница по документ за самоличност:</string>
+    <string name="change_citizen_information_surname_latin_title">Фамилия на латиница по документ за самоличност:</string>
+    <string name="change_citizen_information_phone_title">Телефон:</string>
+    <string name="change_citizen_information_success_message">Успешно променихте Вашата информация.</string>
+    <string name="change_citizen_information_names_length_error">Полето трябва да е поне %s симбола</string>
+    <string name="change_citizen_information_names_uppercase_error">Името трябва да започва с главна буква</string>
+    <string name="change_citizen_information_phone_error">Въведете валиден телефон</string>
+
+    <!-- Citizen information -->
+    <string name="citizen_information_screen_title">Информация за профила</string>
+    <string name="citizen_information_personal_data_title">ЛИЧНИ ДАННИ</string>
+    <string name="citizen_information_name_title">Име по документ за самоличност:</string>
+    <string name="citizen_information_fathers_name_title">Презиме по документ за самоличност:</string>
+    <string name="citizen_information_surname_title">Фамилия по документ за самоличност:</string>
+    <string name="citizen_information_name_latin_title">Име на латиница по документ за самоличност:</string>
+    <string name="citizen_information_fathers_name_latin_title">Презиме на латиница по документ за самоличност:</string>
+    <string name="citizen_information_surname_latin_title">Фамилия на латиница по документ за самоличност:</string>
+    <string name="citizen_information_contacts_title">КОНТАКТИ</string>
+    <string name="citizen_information_profile_security_title">СИГУРНОСТ НА ПРОФИЛА</string>
+    <string name="citizen_information_multi_factor_authentication_title">Двуфакторна автентикация</string>
+    <string name="citizen_information_electronic_identity_title">ЕЛЕКТРОННА ИДЕНТИЧНОСТ</string>
+    <string name="citizen_information_electronic_identity_number_title">Номер на електронна идентичност:</string>
+    <string name="citizen_information_email_title">Имейл:</string>
+    <string name="citizen_information_mobile_phone_title">Телефон:</string>
+    <string name="citizen_information_change_password_button_title">Промяна на парола</string>
+    <string name="citizen_information_change_associate_eid_button_title">Добавяне на\nелектронен идентификатор</string>
+    <string name="citizen_information_change_associate_eid_successful_message">Успешно добавихте електронна идентичност към базов профил.</string>
+
+    <!-- FAQ -->
+    <string name="faq_title">Често задавани въпроси</string>
+
+    <!-- Contacts -->
+    <string name="contacts_title">Контакти</string>
+
+    <!-- Terms and conditions -->
+    <string name="terms_and_conditions_title">Общи условия</string>
+
+    <!-- Tab application/certificates -->
+    <string name="tab_applications_certificates_change_card_pin">Смяна на ПИН на картата</string>
+
+    <!-- Online help system -->
+    <string name="online_help_system">Онлайн система за помощ</string>
+
+    <!-- Change card pin -->
+    <string name="change_certificate_pin_title">Смяна на ПИН</string>
+    <string name="change_certificate_pin_disclaimer_text">Въведете ПИН кода на личния документ</string>
+    <string name="change_certificate_pin_enter_current_pin_title">Въведете текущия ПИН</string>
+    <string name="change_certificate_pin_enter_can_title">Въведете КАН</string>
+    <string name="change_certificate_pin_enter_new_pin_title">Въведете новия ПИН</string>
+    <string name="change_certificate_pin_confirm_new_pin_title">Потвърдете новия ПИН</string>
+    <string name="change_certificate_pin_change_pin_button_title">Сменете ПИН</string>
+    <string name="change_certificate_pin_pin_length_error">Пин кодът трябва да е %s цифри</string>
+    <string name="change_certificate_pin_current_pin_match_stored_pin_error">Въведеният ПИН не съответства на този на сертификата</string>
+    <string name="change_certificate_pin_current_pin_match_error">Новият ПИН съответства със стария и не може да бъде използван</string>
+    <string name="change_certificate_pin_pin_mismatch_error">Пин кодовете не съответстват</string>
+    <string name="change_certificate_pin_card_success_message">Пинът е успешно сменен</string>
+    <string name="change_certificate_pin_certificate_success_message">Пинът е успешно сменен</string>
+
+    <!-- Bottom sheet scna NFC card -->
+    <string name="bottom_sheet_scan_nfc_card_scan_title">Моля доближете картата до телефона</string>
+    <string name="bottom_sheet_scan_nfc_card_processing_title">Моля дръжте картата стабилно</string>
+    <string name="bottom_sheet_scan_nfc_card_scan_succees_title">Операцията беше успешна</string>
+    <string name="bottom_sheet_scan_nfc_card_scan_error_title">Настъпи грешка по време на операцията</string>
+
+    <!-- NFC card error -->
+    <string name="nfc_card_scan_pin_not_activated_error">ПИН на картата не е активиран. Моля посетете офис на издателя на картата.</string>
+    <string name="nfc_card_scan_pace_malformed_certificate_failed_error">Записаният сертификат на картата е неправилно зададен.</string>
+    <string name="nfc_card_scan_pace_someone_else_eid_card_failed_error">Опитвате се да промените ПИН на карта, която не ви принадлежи.</string>
+    <string name="nfc_card_scan_communication_failed_error">Изграждането на комуникация с картата беше неуспешно. Моля опитайте отново.</string>
+    <string name="nfc_card_scan_communication_lost_error">Комуникацията с картата се разпадна. Моля опитайте отново.</string>
+    <string name="nfc_card_scan_wrong_pin_last_try_error">Настъпи грешка при обработката на пина. Не са ви останали повече опити.</string>
+    <string name="nfc_card_scan_wrong_pin_next_try_error">Настъпи грешка при обработката на пина. Остава ви един опит.</string>
+    <string name="nfc_card_scan_suspended_error">Въведеният пин е грешен.</string>
+    <string name="nfc_card_scan_block_card_error">Картата е блокирана. Моля посетете офис на издателя на картата.</string>
+
+    <!-- Empowerment details -->
+    <string name="empowerment_details_preview_title">Преглед на овластяване</string>
+    <string name="empowerment_details_signing_title">Подписване на овластяване</string>
+    <string name="empowerment_details_title">Детайли на овластяването</string>
+    <string name="empowerment_details_number_title">Номер:</string>
+    <string name="empowerment_details_status_title">Статус:</string>
+    <string name="empowerment_details_reason_title">Причина:</string>
+    <string name="empowerment_details_onbehalfof_title">От името на:</string>
+    <string name="empowerment_details_onbehalfof_individual_enum_type">Физическо лице</string>
+    <string name="empowerment_details_onbehalfof_legal_entity_enum_type">Юридическо лице</string>
+    <string name="empowerment_details_from_id_individual_title">ЕГН/ЛНЧ на овластител:</string>
+    <string name="empowerment_details_empowerment_type_title">Тип овластяване:</string>
+    <string name="empowerment_details_empowerment_type_together_title">Само заедно</string>
+    <string name="empowerment_details_empowerment_type_together_description">Овластяването е валидно само при изявление на всички овластени лица!</string>
+    <string name="empowerment_details_from_id_legal_entity_title">ЕИК/Булстат на юридическото лице:</string>
+    <string name="empowerment_details_name_title">Име:</string>
+    <string name="empowerment_details_legal_entity_name_title">Име на юридическо лице:</string>
+    <string name="empowerment_details_legal_representatives_title">Законни представители:</string>
+    <string name="empowerment_details_empowered_people_ids_title">ЕГН/ЛНЧ на овластени лица:</string>
+    <string name="empowerment_details_services_provider_title">Доставчик на услуги:</string>
+    <string name="empowerment_details_service_title">Услуга:</string>
+    <string name="empowerment_details_scope_title">Обем на представителната власт:</string>
+    <string name="empowerment_details_empowerment_history_title">История на овластяването</string>
+    <string name="empowerment_details_start_date_title">Валидно от:</string>
+    <string name="empowerment_details_submitted_on_title">Подадено на:</string>
+    <string name="empowerment_details_end_date_title">Валидно до:</string>
+    <string name="empowerment_details_indefinitely">Безсрочно</string>
+
+    <!-- Empowerment details statement statuses -->
+    <string name="empowerment_details_statement_statuses_none_status_title">Неизвестно</string>
+    <string name="empowerment_details_statement_statuses_active_status_title">Влиза в сила на:</string>
+    <string name="empowerment_details_statement_statuses_disagreement_declared_status_title">Декларирано несъгласие на:</string>
+    <string name="empowerment_details_statement_statuses_withdrawn_status_title">Оттеглено на:</string>
+    <string name="empowerment_details_statement_statuses_created_status_title">Подадено на:</string>
+    <string name="empowerment_details_statement_statuses_denied_status_title">Отказано на:</string>
+    <string name="empowerment_details_statement_statuses_collecting_authorizer_signatures_status_title">Подписано на:</string>
+    <string name="empowerment_details_statement_statuses_collecting_withdrawal_signatures_status_title">Очаква подписване на оттеглянето на:</string>
+    <string name="empowerment_details_statement_statuses_awaiting_signature_status_title">Очаква подписване на:</string>
+    <string name="empowerment_details_statement_statuses_unconfirmed_status_title">Вписано на:</string>
+
+    <!-- Empowerment details denial reason statuses -->
+    <string name="empowerment_details_denial_reason_deceased_uid_enum_type">Овластител или овластено лице е починал/о.</string>
+    <string name="empowerment_details_denial_reason_prohibited_uid_enum_type">Овластител или овластено лице е под запрещение.</string>
+    <string name="empowerment_details_denial_reason_ntr_check_failed_enum_type">Несъответствие на попълнените данни с Търговския регистър.</string>
+    <string name="empowerment_details_denial_reason_timed_out_enum_type">Неуспешна проверка в Търговския регистър.</string>
+    <string name="empowerment_details_denial_reason_below_lawful_age_enum_type">Овластител или овластено лице е под 18 години.</string>
+    <string name="empowerment_details_denial_reason_no_permit_enum_type">Овластител или овластено лице няма право на пребиваване.</string>
+    <string name="empowerment_details_denial_reason_lawful_age_info_not_available_enum_type">Информация за законната възраст не е налична.</string>
+    <string name="empowerment_details_denial_reason_unsuccessful_restrictions_check_enum_type">Неуспешна проверка на ограничения и запор.</string>
+    <string name="empowerment_details_denial_reason_legal_entity_not_active_enum_type">Юридическото лице не е активно.</string>
+    <string name="empowerment_details_denial_reason_legal_entity_representation_not_match_enum_type">Несъответствие в законните представители.</string>
+    <string name="empowerment_details_denial_reason_unsuccessful_legal_entity_check_enum_type">Неуспешна проверка на юридическото лице.</string>
+    <string name="empowerment_details_denial_reason_empowerment_statement_not_found_enum_type">Овластяването не е намерено.</string>
+    <string name="empowerment_details_denial_reason_bulstat_check_failed_enum_type">Неуспешна проверка на юридическото лице в БУЛСТАТ.</string>
+    <string name="empowerment_details_denial_reason_reregistered_in_ntr_enum_type">Пререгистриран в Търговски Регистър.</string>
+    <string name="empowerment_details_denial_reason_archived_in_bulstat_enum_type">Архивиран в БУЛСТАТ.</string>
+    <string name="empowerment_details_denial_reason_in_insolvency_proceedings_in_bulstat_enum_type">В производство по несъстоятелност.</string>
+    <string name="empowerment_details_denial_reason_insolvent_in_bulstat_enum_type">В несъстоятелност.</string>
+    <string name="empowerment_details_denial_reason_in_liquidation_in_bulstat_enum_type">В ликвидация.</string>
+    <string name="empowerment_details_denial_reason_inactive_in_bulstat_enum_type">Неактивен в БУЛСТАТ.</string>
+    <string name="empowerment_details_denial_reason_closed_in_bulstat_enum_type">Закрит в БУЛСТАТ.</string>
+    <string name="empowerment_details_denial_reason_terminated_through_merger_in_bulstat_enum_type">Прекратен чрез сливане.</string>
+    <string name="empowerment_details_denial_reason_terminated_through_incorporation_in_bulstat_enum_type">Прекратен чрез вливане.</string>
+    <string name="empowerment_details_denial_reason_terminated_through_division_in_bulstat_enum_type">Прекратен чрез разделяне.</string>
+    <string name="empowerment_details_denial_reason_deleted_from_judicial_register_enum_type">Заличен в съдебен регистър.</string>
+    <string name="empowerment_details_denial_reason_deleted_from_btpp_register_enum_type">Заличен в регистъра на БТПП.</string>
+    <string name="empowerment_details_denial_reason_registration_annulled_in_bulstat_enum_type">Анулирана регистрация в БУЛСТАТ.</string>
+    <string name="empowerment_details_denial_reason_terminated_due_to_enterprise_transaction_in_bulstat_enum_type">Прекратен при сделка с предприятие.</string>
+    <string name="empowerment_details_denial_reason_deregistered_in_bulstat_enum_type">Заличен в БУЛСТАТ.</string>
+    <string name="empowerment_details_denial_reason_unsuccessful_timestamping_enum_type">Неуспешно полагане на времеви печат.</string>
+    <string name="empowerment_details_denial_reason_signature_collection_time_out_enum_type">Неуспешно събиране на подписи.</string>
+    <string name="empowerment_details_denial_reason_invalid_uid_registration_status_detected_enum_type">В списъка с овластени лица има такива с несъответстващи имена.</string>
+    <string name="empowerment_details_denial_reason_denied_by_deau_administrator_enum_type">Отказано от администратор на ДЕАУ.</string>
+    <string name="empowerment_details_denial_reason_uids_registration_status_info_not_available_enum_type">Не е получена информация за профилите на овластените лица.</string>
+    <string name="empowerment_details_denial_reason_registration_status_unavailable_enum_type">Системна грешка.</string>
+    <string name="empowerment_details_denial_reason_inactive_profile_enum_type">В списъка с описаните лица има такива, които нямат електронна идентичност, регистриран профил в ЦСЕИ или двете не са обвързани.</string>
+    <string name="empowerment_details_denial_reason_no_base_profile_enum_type">В списъка с описаните лица има такива, които нямат електронна идентичност, регистриран профил в ЦСЕИ или двете не са обвързани.</string>
+    <string name="empowerment_details_denial_reason_name_mismatch_enum_type">В списъка с описаните лица има такива с несъответстващи имена.</string>
+    <string name="empowerment_details_denial_reason_no_registration_enum_type">В списъка с описаните лица има такива, които нямат електронна идентичност, регистриран профил в ЦСЕИ или двете не са обвързани.</string>
+
+    <!-- Empowerment signing -->
+    <string name="empowerment_signing_no_option_error">Изберете начин на подписване</string>
+    <string name="empowerment_signing_signed_status">Подписано</string>
+    <string name="empowerment_signing_success_message">Овластяването е подписано успешно</string>
+
+    <!-- Enter card pin -->
+    <string name="enter_card_pin_title">Вход</string>
+    <string name="enter_card_pin_current_pin_title">Въведете ПИН кода на личния документ</string>
+    <string name="enter_card_can_title">Въведете КАН кода на личния документ</string>
+    <string name="enter_card_pin_login_button_title">Вход</string>
+
+    <!-- Tab requests -->
+    <string name="tab_requests_title">Чакащи заявки</string>
+    <string name="tab_requests_element_accept_button_title">Потвърди</string>
+    <string name="tab_requests_element_decline_button_title">Откажи</string>
+
+    <!-- Card pin bottom sheet -->
+    <string name="bottom_sheet_card_pin_title">Идентифицирайте се</string>
+    <string name="bottom_sheet_card_pin_description_title">Въведете ПИН кода на личния документ</string>
+    <string name="bottom_sheet_card_can_description_title">Въведете КАН кода на личния документ</string>
+    <string name="bottom_sheet_card_pin_button_title">Идентифицирайте се</string>
+
+    <!-- Application confirm pin bottom sheet -->
+    <string name="bottom_sheet_application_confirm_pin_title">Завършете издаване на мобилно eID</string>
+    <string name="bottom_sheet_application_confirm_pin_description">За достъп трябва да създадете PIN. Моля, въведете PIN.</string>
+    <string name="bottom_sheet_application_confirm_pin_description_confirm">Моля потвърдете PIN.</string>
+    <string name="bottom_sheet_application_confirm_pin_description_ready">Моля натиснете `Завърши` бутона</string>
+    <string name="bottom_sheet_application_confirm_pin_button_title">Завърши</string>
+    <string name="bottom_sheet_application_confirm_pin_cancelation_message">На път сте да прекъснете процеса по създаване на ПИН код за мобилния сертификат. Правийки това ще трябва да започнете целия процес отначало. Сигурни ли сте?</string>
+
+    <!-- Pin creation errors -->
+    <string name="confirm_pin_error_not_match">Текущо въведеният ПИН не съответства с предишно въведения такъв.</string>
+    <string name="confirm_pin_error_repetition_or_consecutive_digits">ПИН кодът, който сте избрали, е твърде лесен. Вашият код не трябва да съдържа еднакви и/или последователни числа.</string>
+
+    <!-- Enter certificate pin -->
+    <string name="enter_certificate_pin_title">Вход</string>
+    <string name="enter_certificate_pin_current_pin_title">Въведете ПИН</string>
+    <string name="enter_certificate_pin_login_button_title">Вход</string>
+
+    <!-- Certificates filter -->
+    <string name="certificates_filter_serial_number_title">Номер на удостоверение:</string>
+    <string name="certificates_filter_alias_title">Наименование:</string>
+    <string name="certificates_filter_issued_on_title">Издадено на:</string>
+    <string name="certificates_filter_valid_until_title">Валидно до:</string>
+    <string name="certificates_filter_status_title">Статус:</string>
+    <string name="certificates_filter_carrier_title">Носител:</string>
+    <string name="certificates_filter_administrator_title">Администратор:</string>
+    <string name="certificates_filter_apply_filter_button_title">Приложи филтри</string>
+    <string name="certificates_filter_clear_button_title">Изчисти</string>
+
+    <!-- Applications filter -->
+    <string name="applications_filter_identifier_title">Идентификатор:</string>
+    <string name="applications_filter_application_number_title">Номер на заявлението:</string>
+    <string name="applications_filter_creation_date_title">Дата на подаване:</string>
+    <string name="applications_filter_status_title">Статус:</string>
+    <string name="applications_filter_carrier_title">Носител:</string>
+    <string name="applications_filter_administrator_title">Администратор:</string>
+    <string name="applications_filter_subject_title">Предмет на:</string>
+    <string name="applications_filter_apply_filter_button_title">Приложи филтри</string>
+    <string name="applications_filter_clear_button_title">Изчисти</string>
+
+    <!-- Application details -->
+    <string name="application_details_screen_title">Заявление</string>
+    <string name="application_details_title">Детайли на заявлението:</string>
+    <string name="application_details_application_number_title">Номер на заявлението:</string>
+    <string name="application_details_certificate_number_title">Номер на удостоверението:</string>
+    <string name="application_details_status_title">Статус:</string>
+    <string name="application_details_payment_code_title">Код за плащане:</string>
+    <string name="application_details_reason_title">Причина:</string>
+    <string name="application_details_created_on_title">Подадено на:</string>
+    <string name="application_details_submitted_to_title">Подадено към:</string>
+    <string name="application_details_administrator_office_title">Офис на администратор:</string>
+    <string name="application_details_carrier_title">Носител:</string>
+    <string name="application_details_applicant_personal_details_title">Лични данни по документ за самоличност на заявител:</string>
+    <string name="application_details_names_title">Имена:</string>
+    <string name="application_details_date_of_birth_title">Дата на раждане:</string>
+    <string name="application_details_email_title">Имейл:</string>
+    <string name="application_details_phone_number_title">Телефон:</string>
+    <string name="application_details_identification_number_type_title">Тип на идентификационния номер:</string>
+    <string name="application_details_identification_number_title">Идентификационен номер:</string>
+    <string name="application_details_document_type_title">Тип на документа:</string>
+    <string name="application_details_document_number_title">Номер на документа:</string>
+    <string name="application_details_issued_on_title">Издаден на:</string>
+    <string name="application_details_valid_until_title">Валиден до:</string>
+    <string name="application_details_continue_creation_process_button_title">Продължи процеса по издаване</string>
+    <string name="application_details_confirm_certificate_revoke_button_title">Потвърди прекратяване на УЕИ</string>
+    <string name="application_details_confirm_certificate_stop_button_title">Потвърди спиране на УЕИ</string>
+    <string name="application_details_confirm_certificate_resume_button_title">Потвърди подновяване на УЕИ</string>
+    <string name="application_details_payment_button_title">Плащане</string>
+    <string name="application_details_back_button_title">Назад</string>
+
+    <!-- Languages -->
+    <string name="bulgarian">Български</string>
+    <string name="english">English</string>
+
+    <!-- Certificate statuses -->
+    <string name="certificate_statuses_enum_active_title">Активно</string>
+    <string name="certificate_statuses_enum_invalid_title">Грешно</string>
+    <string name="certificate_statuses_enum_stopped_title">Спряно</string>
+    <string name="certificate_statuses_enum_signed_title">Подписано</string>
+    <string name="certificate_statuses_enum_created_title">Издадено</string>
+    <string name="certificate_statuses_enum_revoked_title">Прекратено</string>
+    <string name="certificate_statuses_enum_expired_title">Изтекло</string>
+
+    <!-- Application statuses -->
+    <string name="application_statuses_enum_paid_title">Платено</string>
+    <string name="application_statuses_enum_denied_title">Отказано</string>
+    <string name="application_statuses_enum_signed_title">Подписано</string>
+    <string name="application_statuses_enum_approved_title">Одобрено</string>
+    <string name="application_statuses_enum_submitted_title">Подадено</string>
+    <string name="application_statuses_enum_completed_title">Изпълнено</string>
+    <string name="application_statuses_enum_processing_title">Обработва се</string>
+    <string name="application_statuses_enum_pending_payment_title">Очаква плащане</string>
+    <string name="application_statuses_enum_payment_expired_title">Изтекло плащане</string>
+    <string name="application_statuses_enum_pending_signature_title">Очаква подписване</string>
+    <string name="application_statuses_enum_stored_certificate_title">Записан сертификат</string>
+    <string name="application_statuses_enum_generated_certificate_title">Генериран сертификат</string>
+
+    <!-- Information bottom sheet -->
+    <string name="bottom_sheet_information_registration"><![CDATA[<p>Този портал Ви предоставя възможност да създадете потребителски профил, като използвате електронен адрес (email), парола и Вашите имена, така както са вписани в документа Ви за самоличност. Паролата трябва да бъде с дължина осем символа и да съдържа поне две букви, едната от които главна, число и специален символ. Чрез създадения уникален потребителски профил имате достъп до:</p><ul><li><p>Преглед на данни и добавяне на средства за автентикация към профила</p></li><li><p>Заявяване на електронни административни услуги</p></li><li><p>Преглед на статус по заявени от Вас услуги</p></li><li><p>Преглед на извършени плащания</p></li><li><p>История на събитията в системата</p></li><li><p>Управление на известия</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_empowerment_creation"><![CDATA[<p><strong>Попълване на изявление за овластяване</strong> - На този етап, трябва да попълните информацията за овластяването:</p><p><strong>Данни на заявител</strong>:</p><ul><li><p><strong>От името на:</strong> Имате възможност да изберете една от следните опции:<br/>* “Физическо лице” - за да издадете изявление от ваше име.<br/>* “Юридическо лице”- за да издадете изявление от името на юридическото лице от което сте част.</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_empowerment_creation_individual"><![CDATA[<p><strong>Попълване на изявление за овластяване -</strong> Попълнете информацията за овластяването:</p><p><strong>Данни на заявител</strong>:</p><ul><li><p><strong>&nbsp;&nbsp;От името на:</strong> Изберете опцията “Физическо лице”, за да издадете изявление от Ваше име.</p></li></ul><p><strong>Овластени лица:</strong></p><ul><li><p><strong>&nbsp;&nbsp;Идентификатор:</strong> Изберете ЕГН или ЛНЧ.</p></li><li><p><strong>&nbsp;&nbsp;ЕГН/ЛНЧ на овластено лице:</strong> Въведете валидни данни за физическите лица, които желаете да овластите – ЕГН или ЛНЧ.</p><p>*Може да овластите повече от едно лице чрез бутона ”Добави овластено лице +”</p></li></ul><p><strong>Овластяване:</strong></p><ul><li><p><strong>&nbsp;&nbsp;Тип овластяване:</strong> Когато се добави повече от едно овластено лице, се появява полето “Тип овластяване”, в което трябва да изберете дали овластените лица ще могат да използват овластяването “Само заедно” или “Поотделно”:</p></li></ul><p>*При “Само заедно” се създава едно овластяване, което трябва да бъде подписано от Вас. Овластяването може да се използва единствено и само, когато овластените лица се идентифицират пред Доставчик на електронни административни услуги заедно.</p><p>*При “Поотделно” се създават толкова овластявания, колкото са овластените лица. Всяко овластяване се подписва отделно.</p><ul><li><p><strong>&nbsp;&nbsp;Доставчик на услуги:</strong> Изберете доставчикът на услугата, към която искате да е валидно овластяването.</p></li><li><p><strong>&nbsp;&nbsp;Услуга:</strong> Изберете услуга, която овластеното лице може да извърши от Ваше име.</p></li><li><p><strong>&nbsp;&nbsp;Обем на представителната власт:</strong> Изберете обема на представителната власт за конкретната услуга.</p></li><li><p><strong>&nbsp;&nbsp;Начална дата:&nbsp;</strong>Изберете датата, от която овластяването ще влезе в сила.</p></li><li><p><strong>&nbsp;&nbsp;Крайна дата:</strong> Изберете датата, до която овластяването ще е валидно.<br/><strong>*Важно!:</strong> Ако не е посочена крайна дата овластяването автоматично става безсрочно.</p></li></ul><p><strong>Подаване на овластителното изявление -</strong> Проверете внимателно въведената информация, убедете се, че всички данни са коректни и подайте изявлението.</p><ul><li><p>&nbsp;&nbsp;След успешното подаване на изявление за овластяване то ще бъде видимо в секция „Овластявания от мен“ със статус „Подпиши“.</p></li><li><p>&nbsp;&nbsp;За да завършите процеса по подаване на новото овластяване, трябва да следвате стъпките за подписване с Квалифициран електронен подпис.</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_empowerment_creation_legal_entity"><![CDATA[<p><strong>Попълване на изявление за овластяване -&nbsp;</strong>На този етап, трябва да попълните информацията за овластяването:</p><ul><li><p><strong>От името на:</strong> Изберете опцията “Юридическо лице” за да издадете изявление от името на юридическото лице от което сте част.</p></li></ul><p><strong>Данни на заявител:</strong></p><ul><li><p><strong>Имена:</strong> Попълнете пълното име на овластителя по лична карта на български език.&nbsp;</p></li><li><p><strong>Идентификатор:</strong> Изберете от падащото меню ЕГН или ЛНЧ.</p></li><li><p><strong>ЕГН/ЛНЧ на овластителя:&nbsp;</strong>Въведете валидно &nbsp;ЕГН или ЛНЧ (в зависимост от избрания идентификатор) на овластителя.<br/><strong>*Важно!:&nbsp;</strong>Ако представителството на юридическото лице е от тип “Заедно” или “По друг начин”, задължително трябва да попълните данните за всеки законен представител, който има право да овластява. Можете да добавите допълнителни полета, като използвате бутона „Добави представител +“.</p></li><li><p><strong>ЕИК/Булстат на юридическото лице:&nbsp;</strong>Въведете валиден ЕИК/Булстат на юридическото лице</p></li><li><p><strong>Име на юридическото лице:&nbsp;</strong>Попълнете името на юридическото лице.</p></li></ul><p><strong>Овластени лица:</strong></p><ul><li><p><strong>Идентификатор:</strong> Изберете от падащото меню ЕГН или ЛНЧ.</p></li><li><p><strong>ЕГН/ЛНЧ на овластено лице:</strong> Въведете данни за физическите лица, които желаете да овластите. Трябва да предоставите техен валиден единен граждански номер (ЕГН) или личен номер на чужденец (ЛНЧ) (в зависимост от избрания идентификатор);</p><p>*В случай че искате да овластите повече от едно лице, можете да добавите допълнително поле за овластено лице с помощта на ”Добави овластено лице +” бутона до полето.</p></li></ul><p><strong>Овластяване:</strong></p><ul><li><p><strong>Тип овластяване:&nbsp;</strong>Когато се добави повече от едно овластено лице, се появява полето “Тип овластяване”, в което трябва да изберете дали овластените лица ще могат да използват пълномощното “Само заедно” или “Поотделно”:</p></li></ul><div><p>*При “Само заедно” се генерира едно овластяване, което трябва да бъде подписано от вас. Съответно пълномощното може да се използва единствено и само, когато двамата овластени се идентифицират пред ДЕАУ заедно.</p><p>*При “Поотделно” се генерират толкова овластявания, колкото пълномощници има въведени. Всяко едно пълномощно се подписва отделно и важи самостоятелно.</p></div><ul><li><p><strong>Доставчик на услуги:</strong> Изберете доставчикът на услугата към която искате да е валидно пълномощното.</p></li><li><p><strong>Услуга:&nbsp;</strong>Определете за коя услуга желаете да овластите избраните лица да извършват действия от ваше име.&nbsp;</p></li><li><p><strong>Обем на представителната власт:&nbsp;</strong>Изберете обема на тяхната представителна власт.</p></li><li><p><strong>Начална дата:</strong> Изберете датата от която овластяването ще влезне в сила.</p></li><li><p><strong>Крайна дата:</strong> Посочете дата от която овластяването ще е валидно.<br/><strong>*Важно!:&nbsp;</strong>Ако не е посочена крайна дата овластяването автоматично става безсрочно.</p></li><li><p><strong>Преглед и подаване:</strong> След попълване на овластяването натиснете бутон “Преглед и подаване” за да прегледате готовия документ.</p></li></ul><p><strong>Подаване на овластителното изявление</strong>- Проверете внимателно въведената информация, убедете се, че всички данни са коректни. Ако всичко е наред натиснете “Подай изявление”:</p><ul><li><p>След натискане на бутона ще се появи прозорец с предупреждение,че изявлението ще бъде подадено, натиснете “Подай”.</p></li><li><p>След успешното подаване, новото заявление за овластяване ще бъде видимо в секция „От мен“ със статус „Подпиши“. За да завършите процеса по подаване на новото овластяване, трябва да следвате стъпките за подписване с „Квалифициран Електронен Подпис“ (КЕП) или „Облачен Квалифициран Електронен Подпис“ (ОКЕП).</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_nfc"><![CDATA[<p>1. За да използвате телефона като четец, моля да се уверите, че той разполага с NFC скенер и го включете.</p><p>2. Установете точната позиция на четеца.</p><p>3. Допрете плътно документа без да го движите и не го премахвайте докато текат процесите за четене.</p>]]></string>
+    <string name="bottom_sheet_information_change_citizen_information"><![CDATA[<p><strong>Внимание!</strong></p><p>Моля, при промяна на имената, въвеждайте данните по български документ за самоличност, за да може да използвате онлайн услугите на Централизираната система за електронна идентификация.</p>]]></string>
+    <string name="bottom_sheet_information_notifications_information"><![CDATA[<p>На този екран можете да настроите Вашите предпочитания за получаване на известия, които по подразбиране се изпращат на електронната поща, посочена в профила. Системата предлага възможност за избор на алтернативни комуникационни канали, осигурявайки гъвкавост и удобство. Вие имате контрол върху част от известията, като можете да ги активирате или деактивирате. Определени системни известия са задължителни и не подлежат на промяна, тъй като са от критично значение за Вашата сигурност при използване на услугите в системата. Те имат защитна функция, която позволява да реагирате незабавно в случай на подозрително събитие или действие.</p>]]></string>
+    <string name="bottom_sheet_information_empowerement_registry_information"><![CDATA[<p>Регистърът на овластяванията е:</p><ul><li><p>&nbsp;&nbsp;Електронна база данни, съдържаща информация за овластяванията при упражняването на права пред държавен орган, организация, предоставяща обществени услуги, и лица, осъществяващи публични функции.</p></li><li><p>&nbsp;&nbsp;Овластено може да бъде само физическо лице с регистрация в Портала на гражданите и електронна идентичност, асоциирана към профила.</p></li><li><p>&nbsp;&nbsp;Овластяването се извършва чрез подписване на овластително изявление с квалифициран електронен подпис.</p></li><li><p>&nbsp;&nbsp;Овластителят посочва действията, за които предоставя права на овластения и срока на овластяването.</p></li><li><p>&nbsp;&nbsp;Овластяване от името на юридическо лице може да се извърши само от законния му представител.</p></li></ul>]]></string>
+    <string name="bottom_sheet_information_applications_certificates_information"><![CDATA[<p>Процесът по издаване на Удостоверение за електронна идентичност започва с подаване на заявление. Това може да стане, както по електронен път, така и чрез администратор на електронната идентичност (АЕИ).</p><ul><li><p>&nbsp;&nbsp;Удостоверение за електронна идентичност се издава, ако лицето се е явило лично в център за административно обслужване на МВР или офис на АЕИ.</p></li><li><p>&nbsp;&nbsp;Удостоверение за електронна идентичност на непълнолетно лице или лице, поставено под запрещение, се издава, ако са спазени изискванията:<br>&nbsp;&nbsp;1.&nbsp;&nbsp;Заявлението е подадено само лично.<br>&nbsp;&nbsp;2.&nbsp;&nbsp;Заявлението е подписано и от родител, съответно попечител или настойник.<br>&nbsp;&nbsp;3.&nbsp;&nbsp;Родител, съответно попечител или настойник се е явил лично и е представил валиден документ за самоличност.</p></li><li><p>&nbsp;&nbsp;Удостоверението за електронна идентичност се издава със срок на валидност 5 години.</p></li><li><p>&nbsp;&nbsp;Удостоверението за електронна идентичност се записва само върху електронен носител, който отговаря на изискванията, определени с Правилника за прилагане на Закона за електронната идентификация.</p></li><li><p>&nbsp;&nbsp;Удостоверението за електронна идентичност се вписва в Регистъра на удостоверенията за електронна идентичност.</p></li><li><p>&nbsp;&nbsp;Носителят на удостоверението се предава лично на титуляра му, а по изключение – на упълномощено лице, след представяне на нотариално заверено изрично пълномощно.</p></li><li><p>&nbsp;&nbsp;Когато заявлението за издаване на удостоверение е подадено чрез администратор на електронна идентичност, различен от МВР, отношенията между него и лицето се уреждат с договор.</p></li><li><p>&nbsp;&nbsp;Чужденците с разрешено продължително, постоянно или дългосрочно пребиваване в Република България следва да посещават лично Дирекция „Миграция“ - МВР, отдел/сектор/група „Миграция“ при СДВР и ОДМВР по адрес на пребиваване за подаване на заявление за издаване на Удостоверение за електронна идентичност.</p></li></ul>]]></string>
+
+    <!-- Empowerments intro -->
+    <string name="empowerments_intro_title">Овластявания</string>
+    <string name="empowerments_intro_from_me_title">От мен</string>
+    <string name="empowerments_intro_from_me_subtitle">Упълномощител</string>
+    <string name="empowerments_intro_to_me_title">Към мен</string>
+    <string name="empowerments_intro_to_me_subtitle">Упълномощено лице</string>
+    <string name="empowerments_intro_create_button_title">Заяви ново овластяване</string>
+
+    <!-- Jounals intro -->
+    <string name="journals_intro_title">История на събития</string>
+    <string name="journals_intro_from_me_title">От мен</string>
+    <string name="journals_intro_to_me_title">Към мен</string>
+    <string name="journals_intro_from_me_subtitle">Събития, възникнали от моите действия</string>
+    <string name="journals_intro_to_me_subtitle">Събития, възникнали от вътрешни проверки или други системи</string>
+
+    <!-- Bottom navigation items -->
+    <string name="bottom_navigation_begin_item_title">Начало</string>
+    <string name="bottom_navigation_eim_item_title">УЕИ</string>
+    <string name="bottom_navigation_pending_item_title">Чакащи</string>
+    <string name="bottom_navigation_more_item_title">Още</string>
+
+    <!-- EIM intro -->
+    <string name="eim_intro_title">Управление на удостоверения за електронна идентичност</string>
+    <string name="eim_intro_applications_title">Заявления</string>
+    <string name="eim_intro_applications_subtitle">Заявления за удостоверения на електронна идентичност</string>
+    <string name="eim_intro_certificates_title">Удостоверения</string>
+    <string name="eim_intro_certificates_subtitle">История на удостоверения за електронна идентичност</string>
+    <string name="eim_intro_scan_qr_code_button_title">Сканирай QR код</string>
+    <string name="eim_intro_create_certificate_button_title">Заяви ново удостоверение</string>
+
+    <!-- Scan QR code -->
+    <string name="scan_qr_code_title">Сканирай QR код</string>
+    <string name="scan_qr_code_hint_title">В готовност за сканиране</string>
+    <string name="scan_qr_code_scan_button_title">Сканирай</string>
+    <string name="scan_qr_code_instructions">Поставете QR кода пред камерата</string>
+
+    <!-- Empowerment легал list items -->
+    <string name="empowerment_legal_service_title">Услуга:</string>
+    <string name="empowerment_legal_empowerer_title">Овластено лице:</string>
+    <string name="empowerment_legal_status_title">Статус:</string>
+    <string name="empowerment_legal_from_title">От името на:</string>
+
+    <!-- Application list items -->
+    <string name="applications_title">Заявления за удостоверения на електронна идентичност</string>
+    <string name="application_created_on_title">Подадено на:</string>
+    <string name="application_subject_title">Предмет на:</string>
+    <string name="application_administrator_title">Администратор:</string>
+    <string name="application_carrier_title">Носител:</string>
+    <string name="application_status_title">Статус:</string>
+
+    <!-- Certificate list items -->
+    <string name="certificates_title">Удостоверения за електронна идентичност</string>
+    <string name="certificate_valid_from_title">Издадено на:</string>
+    <string name="certificate_valid_until_title">Валидно до:</string>
+    <string name="certificate_alias_title">Име на УЕИ:</string>
+    <string name="certificate_carrier_title">Носител:</string>
+    <string name="certificate_status_title">Статус:</string>
+
+    <!-- Journals from me list items -->
+    <string name="journals_from_me_title">История на събития от мен</string>
+    <string name="journal_from_me_identifier_title">Идентификатор:</string>
+    <string name="journal_from_me_date_title">Дата:</string>
+
+    <!-- Journals to me list items-->
+    <string name="journals_to_me_title">История на събития към мен</string>
+    <string name="journal_to_me_identifier_title">Идентификатор:</string>
+    <string name="journal_to_me_system_title">Система:</string>
+    <string name="journal_to_me_date_title">Дата:</string>
+
+    <!-- Signing methods -->
+    <string name="signing_method_evrotrust_enum_type">Мобилен КЕП Евротръст</string>
+    <string name="signing_method_borica_enum_type">Мобилен КЕП B-Trust</string>
+
+    <!-- Application action types -->
+    <string name="application_action_type_issue">Издаване/Подновяване на УЕИ</string>
+    <string name="application_action_type_resume">Подновявне на УЕИ</string>
+    <string name="application_action_type_revoke">Оттегляне на УЕИ</string>
+    <string name="application_action_type_stop">Спиране на УЕИ</string>
+
+    <!-- Empowerment action types -->
+    <string name="empowerment_action_type_copy">Копирай</string>
+    <string name="empowerment_action_type_cancel_to_me">Декларирай несъгласие</string>
+    <string name="empowerment_action_type_cancel_from_me">Оттегли</string>
+    <string name="empowerment_action_type_sign">Подпиши</string>
+
+    <!-- Application details type enums -->
+    <string name="application_details_enum_type_issue">Заявление за издаване/подновяване на УЕИ</string>
+    <string name="application_details_enum_type_resume">Заявление за подновяване на УЕИ</string>
+    <string name="application_details_enum_type_revoke">Заявление за прекратяване на УЕИ</string>
+    <string name="application_details_enum_type_stop">Заявление за спиране на УЕИ</string>
+
+    <!-- Applications sorting enum -->
+    <string name="applications_by_default_sorting_enum">По подразбиране</string>
+    <string name="applications_application_number_asc_sorting_enum">Заявление №(въз.)</string>
+    <string name="applications_application_number_desc_sorting_enum">Заявление №(низ.)</string>
+    <string name="applications_creation_date_asc_sorting_enum">Подадено на(въз.)</string>
+    <string name="applications_creation_date_desc_sorting_enum">Подадено на(низ.)</string>
+    <string name="applications_application_type_asc_sorting_enum">Предмет на(въз.)</string>
+    <string name="applications_application_type_desc_sorting_enum">Предмет на(низ.)</string>
+    <string name="applications_administrator_asc_sorting_enum">Администратор(въз.)</string>
+    <string name="applications_administrator_desc_sorting_enum">Администратор(низ.)</string>
+    <string name="applications_device_type_asc_sorting_enum">Носител(въз.)</string>
+    <string name="applications_device_type_desc_sorting_enum">Носител(низ.)</string>
+    <string name="applications_status_asc_sorting_enum">Статус(въз.)</string>
+    <string name="applications_status_desc_sorting_enum">Статус(низ.)</string>
+
+    <!-- Certificates sorting enum -->
+    <string name="certificates_by_default_sorting_enum">По подразбиране</string>
+    <string name="certificates_serial_number_asc_sorting_enum">Сериан номер(въз.)</string>
+    <string name="certificates_serial_number_desc_sorting_enum">Сериен номер(низ.)</string>
+    <string name="certificates_alias_asc_sorting_enum">Име на УЕИ(въз.)</string>
+    <string name="certificates_alias_desc_sorting_enum">Име на УЕИ(низ.)</string>
+    <string name="certificates_valid_from_asc_sorting_enum">Издадено на(възх.)</string>
+    <string name="certificates_valid_from_desc_sorting_enum">Издадено на(низ.)</string>
+    <string name="certificates_valid_until_asc_sorting_enum">Валидно до(въз.)</string>
+    <string name="certificates_valid_until_desc_sorting_enum">Валидно до(низ.)</string>
+    <string name="certificates_administrator_asc_sorting_enum">Администратор(възх.)</string>
+    <string name="certificates_administrator_desc_sorting_enum">Администратор(низ.)</string>
+    <string name="certificates_device_type_asc_sorting_enum">Носител(възх.)</string>
+    <string name="certificates_device_type_desc_sorting_enum">Носител(низ.)</string>
+    <string name="certificates_status_asc_sorting_enum">Статус(възх.)</string>
+    <string name="certificates_status_desc_sorting_enum">Статус(низ.)</string>
+
+    <!-- Application device types enum -->
+    <string name="application_device_type_enum_mobile_application">Мобилно приложение</string>
+    <string name="application_device_type_enum_identity_card">Лична карта</string>
+
+    <!-- Requests list items -->
+    <string name="request_title">Потвърдена идентичност</string>
+
+    <!-- Notifications types -->
+    <string name="notifications_type_channels">Канали</string>
+    <string name="notifications_type_notifications">Известия</string>
+
+    <!-- Journals filter -->
+    <string name="journals_filter_start_date_title">Начална дата:</string>
+    <string name="journals_filter_end_date_title">Крайна дата:</string>
+    <string name="journals_filter_event_type_title">Тип на събитие:</string>
+
+    <!-- Application payment -->
+    <string name="application_payment_title">Успешно подаване на заявление</string>
+    <string name="application_payment_description">За да завършите процеса, финализирайте генерираното плащане и посетете удобен за Вас офис.</string>
+    <string name="application_payment_item_title">Не забравяйте да носите:</string>
+    <string name="application_payment_item_description">  • Личен документ за самоличност</string>
+    <string name="application_payment_receipt_title">Разписка на плащането:</string>
+    <string name="application_payment_receipt_price_title">Цена:</string>
+    <string name="application_payment_receipt_price_carrier_title">Цена за носител:</string>
+    <string name="application_payment_receipt_currency_title">Валута:</string>
+
+    <!-- Application exit -->
+    <string name="application_exit_message">Искате ли да затворите приложението?</string>
+
+    <!-- Application create pin mobile -->
+    <string name="application_create_pin_title">Завършете издаване на мобилно eID</string>
+    <string name="application_create_pin_description">За достъп трябва да създадете ПИН. Моля, въведете ПИН.</string>
+    <string name="application_create_pin_description_confirm">Моля потвърдете ПИН.</string>
+    <string name="application_create_pin_description_ready">Моля натиснете `Завърши` бутона</string>
+    <string name="application_create_pin_button_title">Завърши</string>
+    <string name="application_create_pin_cancellation_message">На път сте да прекъснете процеса по създаване на ПИН код за мобилния сертификат. Правийки това ще трябва да започнете целия процес отначало. Сигурни ли сте?</string>
+
+    <!-- Create empowerment indefinite information -->
+    <string name="create_empowerment_indefinite_section_1_title">Подаване на изявление</string>
+    <string name="create_empowerment_indefinite_section_1_description">Преди да потвърдите подаването на ново безсрочно овластяване, моля да имате предвид следните рискове:</string>
+    <string name="create_empowerment_indefinite_section_2_title">Няма автоматично прекратяване:</string>
+    <string name="create_empowerment_indefinite_section_2_description">Безсрочното овластяване е валидно докато не бъде оттеглено от Вас или докато овластеното лице не декларира несъгласие с него.</string>
+    <string name="create_empowerment_indefinite_section_3_title">Повишен риск от неупълномощени действия:</string>
+    <string name="create_empowerment_indefinite_section_3_description">При безсрочно овластяване съществува риск да забравите, че неговото действие е валидно и може да бъде използвано със злонамерена цел.</string>
+    <string name="create_empowerment_indefinite_section_4_title">Излагане на рискове за сигурността:</string>
+    <string name="create_empowerment_indefinite_section_4_description">Безсрочното овластяване може да даде на овластените от Вас лица продължителен достъп до Вашата информация или активи, което може да повиши риска от измами или злоупотреби.</string>
+    <string name="create_empowerment_indefinite_section_5_description">Вашето изявление ще бъде обработено в най-кратък срок. Моля подпишете го в страница "От мен".</string>
+
+    <!-- Environments -->
+    <string name="environment_digitall_dev">DIGITALL_DEV</string>
+    <string name="environment_mvr_dev">MVR_DEV</string>
+    <string name="environment_mvr_test">MVR_TEST</string>
+    <string name="environment_mvr_stage">MVR_STAGE</string>
+
+    <!-- Signing applications -->
+    <string name="evrotrust_open_application_message">Моля отворете приложението на Евротръст</string>
+    <string name="borica_open_application_message">Моля отворете приложението на Борика</string>
+
+    <!-- Payment history status -->
+    <string name="payment_history_status_enum_pending">Чакащо</string>
+    <string name="payment_history_status_enum_authorized">Одобрено</string>
+    <string name="payment_history_status_enum_ordered">Поръчано</string>
+    <string name="payment_history_status_enum_paid">Платено</string>
+    <string name="payment_history_status_enum_expired">Отменено</string>
+    <string name="payment_history_status_enum_canceled">Отказано</string>
+    <string name="payment_history_status_enum_suspended">Прекратено</string>
+    <string name="payment_history_status_enum_inprocess">В процес</string>
+    <string name="payment_history_status_enum_timedout">Изтекло</string>
+
+    <!-- Payment history reason -->
+    <string name="payment_history_reason_enum_stopeid">Спиране на УЕИ</string>
+    <string name="payment_history_reason_enum_resumeeid">Подновяване на УЕИ</string>
+    <string name="payment_history_reason_enum_revokeeid">Оттегляне на УЕИ</string>
+    <string name="payment_history_reason_enum_issueeid">Издаване/Подновяване на УЕИ</string>
+
+    <!-- Payment history amount -->
+    <string name="payment_history_amount_enum_below">Сума под %s лв</string>
+    <string name="payment_history_amount_enum_between">Сума между %1$s и %1$s лв</string>
+    <string name="payment_history_amount_enum_over">Сума над %s лв</string>
+
+    <!-- Payment history list item -->
+    <string name="payments_history_screen_title">История на плащанията</string>
+    <string name="payment_history_payment_number_title">Плащане №:</string>
+    <string name="payment_history_created_on_title">Подадено на:</string>
+    <string name="payment_history_subject_title">Предмет на:</string>
+    <string name="payment_history_payment_date_title">Дата на плащане:</string>
+    <string name="payment_history_valid_until_title">Валидно до:</string>
+    <string name="payment_history_status_title">Статус:</string>
+    <string name="payment_history_amount_title">Сума:</string>
+    <string name="payment_history_last_updated_title">Последна актуализация:</string>
+
+    <!-- Payment history sorting enum -->
+    <string name="payment_history_sorting_enum_by_default">По подразбиране</string>
+    <string name="payment_history_sorting_enum_created_on_asc">Подадено на(въз.)</string>
+    <string name="payment_history_sorting_enum_created_on_desc">Подадено на(низ.)</string>
+    <string name="payment_history_sorting_enum_subject_asc">Предмет на(въз.)</string>
+    <string name="payment_history_sorting_enum_subject_desc">Предмет на(низ.)</string>
+    <string name="payment_history_sorting_enum_payment_date_asc">Дата на плащане(въз.)</string>
+    <string name="payment_history_sorting_enum_payment_date_desc">Дата на плащане(низ.)</string>
+    <string name="payment_history_sorting_enum_valid_until_asc">Валидно до(въз.)</string>
+    <string name="payment_history_sorting_enum_valid_until_desc">Валидно до(низ.)</string>
+    <string name="payment_history_sorting_enum_status_asc">Статус(въз.)</string>
+    <string name="payment_history_sorting_enum_status_desc">Статус(низ.)</string>
+    <string name="payment_history_sorting_enum_amount_asc">Сума(въз.)</string>
+    <string name="payment_history_sorting_enum_amount_desc">Сума(низ.)</string>
+    <string name="payment_history_sorting_enum_last_sync_asc">Последна актуализация(въз.)</string>
+    <string name="payment_history_sorting_enum_last_sync_desc">Последна алтуализация(низ.)</string>
+
+    <!-- Payment history filter -->
+    <string name="payments_history_filter_payment_number_title">Номер на плащане:</string>
+    <string name="payments_history_filter_created_on_title">Подадено на:</string>
+    <string name="payments_history_filter_subject_title">Предмет на:</string>
+    <string name="payments_history_filter_status_title">Статус:</string>
+    <string name="payments_history_filter_amount_title">Сума:</string>
+    <string name="payments_history_filter_payment_date_title">Дата на плащане:</string>
+    <string name="payments_history_filter_valid_until_title">Валидно до:</string>
+    <string name="payments_history_filter_apply_filter_button_title">Приложи филтри</string>
+    <string name="payments_history_filter_clear_button_title">Изчисти</string>
+
+    <!-- Level of assurance enum -->
+    <string name="level_of_assurance_enum_low">Ниско</string>
+    <string name="level_of_assurance_enum_substantial">Съществено</string>
+    <string name="level_of_assurance_enum_high">Високо</string>
+
+    <!-- Certificate enter pin -->
+    <string name="certificate_enter_pin_pin_mismatch">Въведеният ПИН не съответства на този на удостоверението</string>
+
+    <!-- Login MFA -->
+    <string name="login_mfa_otp_title">Код:</string>
+    <string name="login_mfa_authenticate_button_title">Потвърди</string>
+    <string name="login_mfa_send_otp_button_title">Нова еднократна парола</string>
+
+    <!-- Empowerement withdrawal bottom sheet -->
+    <string name="empowerment_withdrawal_bottom_sheet_title">Оттегляне на овластяване</string>
+    <string name="empowerment_withdrawal_bottom_sheet_message">С това действие ще прекратите валидността на вашето овластяване! Оттеглянето влиза в сила веднага след обработката, като това не отменя извършените преди това действия с даденото овластяване. Желаете ли да продължите?</string>
+
+    <!-- Exit application -->
+    <string name="exit_application_message">Искате ли да излезете от приложението?</string>
+
+    <!-- Create citizen profile PIN bottom sheet -->
+    <string name="bottom_sheet_create_citizen_profile_pin_title">Създайте Пин</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_description">За достъп до вашия профил трябва да създадете ПИН. Моля, въведете ПИН.</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_description_confirm">Моля потвърдете ПИН.</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_description_ready">Моля натиснете `Създайте Пин` бутона</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_button_title">Завърши</string>
+    <string name="bottom_sheet_create_citizen_profile_pin_cancellation_message">На път сте да прекъснете процеса по създаване на ПИН код за вашия профил. Правийки това ще трябва да започнете целия процес отначало. Сигурни ли сте?</string>
+
+    <!-- Enter citizen profile PIN bottom sheet -->
+    <string name="bottom_sheet_enter_citizen_profile_pin_title">Идентифицирайте се</string>
+    <string name="bottom_sheet_enter_citizen_profile_pin_description">Моля въведете ПИН код.</string>
+    <string name="bottom_sheet_enter_citizen_profile_pin_button_title">Идентифицирайте се</string>
+
+    <!-- Citizen profile security -->
+    <string name="citizen_profile_security_screen_title">Сигурност на профила</string>
+    <string name="citizen_profile_security_multi_factor_authentication_title">Двуфакторна автентикация</string>
+    <string name="citizen_profile_security_pin_title">Защита с ПИН</string>
+    <string name="citizen_profile_security_biometrics_title">Защита с биометрия</string>
+
+    <!-- Biometrics prompt -->
+    <string name="biometrics_prompt_title">Отключете достъпа до приложението</string>
+    <string name="biometrics_prompt_negative_button_title">Използвайте ПИН</string>
+
+</resources>

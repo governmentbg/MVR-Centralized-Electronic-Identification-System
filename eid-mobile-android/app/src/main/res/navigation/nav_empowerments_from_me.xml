@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_empowerments_from_me"
+    app:startDestination="@id/empowermentFromMeFragment">
+
+    <fragment
+        android:id="@+id/empowermentFromMeFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.all.EmpowermentFromMeFragment"
+        android:label="empowermentFromMeFragment"
+        tools:layout="@layout/fragment_with_list_and_sort_and_actions_button">
+
+        <action
+            android:id="@+id/toEmpowermentFromMeFilterFragment"
+            app:destination="@id/empowermentFromMeFilterFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeDetailsFragment"
+            app:destination="@id/empowermentFromMeDetailsFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentCreateFragment"
+            app:destination="@id/empowermentCreateFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeCancelFragment"
+            app:destination="@id/empowermentFromMeCancelFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeSigningFragment"
+            app:destination="@id/empowermentFromMeSigningFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentLegalFlowFragment"
+            app:destination="@id/nav_empowerments_legal" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentFromMeFilterFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.filter.EmpowermentFromMeFilterFragment"
+        android:label="empowermentFromMeFilterFragment"
+        tools:layout="@layout/fragment_with_top_close_button">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.filter.EmpowermentFilterModel"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentFromMeDetailsFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.details.EmpowermentFromMeDetailsFragment"
+        android:label="empowermentFromMeDetailsFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/toEmpowermentCreateFragment"
+            app:destination="@id/empowermentCreateFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeCancelFragment"
+            app:destination="@id/empowermentFromMeCancelFragment" />
+
+        <action
+            android:id="@+id/toEmpowermentFromMeSigningFragment"
+            app:destination="@id/empowermentFromMeSigningFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentFromMeCancelFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.cancel.EmpowermentFromMeCancelFragment"
+        android:label="empowermentFromMeCancelFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/empowermentFromMeSigningFragment"
+        android:name="com.digitall.eid.ui.fragments.empowerment.from.me.signing.EmpowermentFromMeSigningFragment"
+        android:label="empowermentFromMeSigningFragment"
+        tools:layout="@layout/fragment_with_list">
+
+        <argument
+            android:name="model"
+            app:argType="com.digitall.eid.domain.models.empowerment.common.all.EmpowermentItem"
+            app:nullable="false" />
+
+    </fragment>
+
+    <include app:graph="@navigation/nav_empowerments_legal" />
+
+</navigation>

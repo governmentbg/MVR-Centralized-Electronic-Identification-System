@@ -1,0 +1,12 @@
+#schemas:
+#  CertificatePukResponse:
+#    type: object
+#    properties:
+#      PIN:
+#        type: string
+#        description:  PIN Number
+#        example: '0000'
+#      PUK:
+#        type: string
+#        description: PUK numbers
+#        example: '000000'

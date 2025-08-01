@@ -1,0 +1,28 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+cd src/iscei-UI
+npx lint-staged -r
+
+cd ..
+
+# echo "dotnet build"
+
+# dotnet clean; dotnet build
+# rc=$?
+
+# if [[ $rc != 0 ]] ; then
+#     echo -e "build failed"
+#     exit $rc
+# fi
+
+# dotnet test
+
+# rc=$?
+
+# if [[ $rc != 0 ]] ; then
+#     echo -e "test failed"
+#     exit $rc
+# fi
+
+exit 0

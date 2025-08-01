@@ -1,0 +1,165 @@
+<section class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <p-messages *ngIf="downloadLink" [severity]="'warn'">
+            <ng-template pTemplate>
+                <div class="w-100">
+                    <div class="align-self-center d-flex flex-row">
+                        <i class="material-icons-outlined pe-2">&#xe001;</i>
+                        <div>
+                            <p>{{ t('modules.cardManagement.txtDownloadInstaller') }}</p>
+                            <span [innerHTML]="t('modules.cardManagement.txtInstallerInstructions')"></span>
+                        </div>
+                    </div>
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                    <div class="d-flex gap-3">
+                        <button
+                            pButton
+                            type="button"
+                            [label]="t('modules.cardManagement.txtDownload')"
+                            icon="pi pi-download"
+                            class="p-button-sm p-button-success"
+                            (click)="downloadSmartCardCommunicationService()"></button>
+                    </div>
+                </div>
+            </ng-template>
+        </p-messages>
+        <div class="horizontally-centered-container w-fit">
+            <form [formGroup]="form" class="p-fluid" (ngSubmit)="submit()">
+                <h3 class="mb-4 mt-4 text-primary text-center">{{ t('global.txtSignIn') }}</h3>
+                <div class="row">
+                    <div class="col">
+                        <label for="reader" class="form-label">
+                            {{ t('modules.cardManagement.txtReader') }} <span class="text-danger">*</span></label
+                        >
+                        <p-dropdown
+                            formControlName="readerName"
+                            [options]="cardReaders"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            styleClass="w-100"
+                            [dropdownIcon]="
+                                requestInProgress
+                                    ? 'pi pi-spin pi-spinner p-dropdown-trigger'
+                                    : 'pi pi-chevron-down p-dropdown-trigger'
+                            "
+                            inputId="reader">
+                        </p-dropdown>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="submitted && form.controls.readerName.invalid && form.controls.readerName.dirty">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtReader')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="PIN" class="form-label">
+                            {{ t('modules.cardManagement.txtCurrentPIN') }} <span class="text-danger">*</span></label
+                        >
+                        <p-password
+                            inputId="PIN"
+                            formControlName="PIN"
+                            styleClass="w-100"
+                            inputStyleClass="w-100"
+                            [maxLength]="6"
+                            [toggleMask]="true"
+                            [feedback]="false" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="submitted && form.controls.PIN.hasError('required') && form.controls.PIN.dirty">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtCurrentPIN')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    form.controls.PIN.invalid &&
+                                    (form.controls.PIN.hasError('minlength') ||
+                                        form.controls.PIN.hasError('maxlength') ||
+                                        form.controls.PIN.hasError('pattern'))
+                                ">
+                                {{ t('modules.cardManagement.txtErrorPinLengthAndNumbers') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="PINIsSuspended">
+                    <div class="col">
+                        <label for="CAN" class="form-label">
+                            {{ t('modules.cardManagement.txtCAN') }} <span class="text-danger">*</span></label
+                        >
+                        <input
+                            type="text"
+                            pInputText
+                            id="CAN"
+                            appTrim
+                            formControlName="CAN"
+                            autocomplete="off"
+                            spellcheck="false"
+                            aria-autocomplete="both"
+                            aria-haspopup="false" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="submitted && form.controls.CAN.hasError('required') && form.controls.CAN.dirty">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtCAN')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    form.controls.CAN.invalid &&
+                                    (form.controls.CAN.hasError('minlength') ||
+                                        form.controls.CAN.hasError('maxlength') ||
+                                        form.controls.CAN.hasError('pattern'))
+                                ">
+                                {{ t('modules.cardManagement.txtErrorPinLengthAndNumbers') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start gap-2">
+                    <p-checkbox formControlName="termsAgreement" inputId="termsAgreement" [binary]="true"></p-checkbox>
+                    <label for="termsAgreement" style="font-size: smaller">
+                        {{ t('loginPage.txtAgreementCheckbox') }} <strong>{{ realm }}</strong>
+                    </label>
+                </div>
+                <div class="d-flex gap-3 mt-4">
+                    <button
+                        pButton
+                        type="button"
+                        [routerLink]="scope && system_id ? '/administration-login' : '/login'"
+                        [attr.aria-label]="t('global.txtCancel')"
+                        [label]="t('global.txtCancel')"
+                        [disabled]="requestInProgress"
+                        [queryParams]="{ origin: originUrl, client_id: client_id, realm: realm }"
+                        class="p-button p-button-danger p-button-sm"></button>
+                    <button
+                        pButton
+                        type="submit"
+                        [label]="t('registrationPage.titles.login')"
+                        [disabled]="requestInProgress"
+                        class="p-button p-button-sm"></button>
+                </div>
+                <div class="d-flex justify-content-center" *ngIf="errorMessage && errorMessage.length > 0">
+                    <p-messages [(value)]="errorMessage" [enableService]="false" [closable]="true" [escape]="false">
+                    </p-messages>
+                </div>
+            </form>
+        </div>
+    </p-card>
+</section>

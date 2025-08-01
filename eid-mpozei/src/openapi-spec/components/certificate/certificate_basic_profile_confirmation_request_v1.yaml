@@ -1,0 +1,13 @@
+schemas:
+  CertificateBasicProfileConfirmationRequest:
+    type: object
+    properties:
+      otpCode:
+        type: string
+        description: OTP Code
+      status:
+        $ref: '../application/application_confirmation_status_v1.yaml#/schemas/ApplicationConfirmationStatus'
+      reason:
+        type: string
+      reasonText:
+        type: string

@@ -1,0 +1,14 @@
+<div class="language-selector">
+    <p-dropdown
+        [options]="languageOptions"
+        optionLabel="name"
+        optionValue="code"
+        styleClass="w-100"
+        inputId="languageOptions"
+        [(ngModel)]="selectedLanguage"
+        (onChange)="onLanguageOptionsChange($event)"
+        [dropdownIcon]="toggled ? 'pi pi-angle-down' : 'pi pi-angle-right'"
+        (onShow)="toggled = true"
+        (onHide)="toggled = false">
+    </p-dropdown>
+</div>
