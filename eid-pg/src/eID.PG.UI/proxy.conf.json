@@ -1,0 +1,52 @@
+{
+    "/signing/api": {
+        "target": "https://dev.pg.mvreid.local/signing",
+        "secure": false,
+        "pathRewrite": {
+            "^/signing": ""
+        },
+        "changeOrigin": true
+    },
+    "/ro/api": {
+        "target": "https://dev.pg.mvreid.local/ro",
+        "secure": false,
+        "pathRewrite": {
+            "^/ro": ""
+        },
+        "changeOrigin": true
+    },
+    "/pan/api": {
+        "target": "https://dev.pg.mvreid.local/pan",
+        "secure": false,
+        "pathRewrite": {
+            "^/pan": ""
+        },
+        "changeOrigin": true
+    },
+    "/mpozei/external": {
+        "target": "http://mpozeiapipublic-dev.mvreid.local/",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/pjs/api": {
+        "target": "https://dev.pg.mvreid.local/pjs",
+        "secure": false,
+        "pathRewrite": {
+            "^/pjs": ""
+        },
+        "changeOrigin": true
+    },
+    "/raeicei/external": {
+        "target": "http://raeicei-ext-gateway.mvreid.local/",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/iscei": {
+        "target": "http://isceiextgw.mvreid.local",
+        "secure": false,
+        "pathRewrite": {
+            "^/iscei": ""
+        },
+        "changeOrigin": true
+    }
+}

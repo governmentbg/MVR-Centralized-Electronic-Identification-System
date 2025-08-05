@@ -1,0 +1,405 @@
+<section class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <ng-container *ngIf="!showSuccess">
+            <div class="d-flex gap-2" id="content-wrapper">
+                <form
+                    [formGroup]="form"
+                    class="p-fluid order-2 order-lg-1"
+                    (ngSubmit)="submit()"
+                    style="margin-left: auto"
+                    id="form">
+                    <h3 class="mb-4 text-primary text-center">{{ t('registrationPage.titles.registrationForm') }}</h3>
+                    <i
+                        *ngIf="requestInProgress"
+                        class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                        style="font-size: 2rem"></i>
+                    <div>
+                        <label for="firstName" class="form-label">
+                            {{ t('registrationPage.titles.firstName') }}{{ t('registrationPage.titles.txtById') }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            pInputText
+                            appTrim
+                            type="text"
+                            id="firstName"
+                            formControlName="firstName"
+                            maxlength="40" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['firstName'].errors?.['required'] && !form.controls['firstName'].errors?.['firstLetterNotCapital'] &&
+                                    form.controls['firstName'].dirty
+                                "
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('registrationPage.titles.firstName')
+                                    })
+                                }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['firstName'].errors?.['pattern'] && !form.controls['firstName'].errors?.['firstLetterNotCapital'] &&
+                                    form.controls['firstName'].dirty
+                                "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['firstName'].errors?.['firstLetterNotCapital'] &&
+        form.controls['firstName'].dirty ">
+                                {{
+                                    t('modules.eidManagement.errors.txtFirstNameCapital', {
+                                        field: t('modules.eidManagement.form.labels.txtFirstNameLatin')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="secondName" class="form-label">
+                            {{ t('registrationPage.titles.secondName') }}{{ t('registrationPage.titles.txtById') }}
+                        </label>
+                        <input
+                            pInputText
+                            appTrim
+                            type="text"
+                            id="secondName"
+                            formControlName="secondName"
+                            maxlength="40" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['secondName'].errors?.['pattern'] && !form.controls['secondName'].errors?.['firstLetterNotCapital'] &&
+                                    form.controls['secondName'].dirty
+                                "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['secondName'].errors?.['firstLetterNotCapital'] &&
+        form.controls['secondName'].dirty ">
+                                {{
+                                    t('modules.eidManagement.errors.txtSecondNameCapital', {
+                                        field: t('registrationPage.titles.secondName')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="lastName" class="form-label">
+                            {{ t('registrationPage.titles.lastName') }}{{ t('registrationPage.titles.txtById') }}
+                            <span *ngIf="!form.value.secondName" class="text-danger">*</span>
+                        </label>
+                        <input pInputText appTrim type="text" id="lastName" formControlName="lastName" maxlength="60" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['lastName'].errors?.['required'] && !form.controls['lastName'].errors?.['firstLetterNotCapital'] &&
+                                    form.controls['lastName'].dirty
+                                "
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('registrationPage.titles.lastName')
+                                    })
+                                }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['lastName'].errors?.['firstLetterNotCapital'] &&
+        form.controls['lastName'].dirty ">
+                                {{
+                                    t('modules.eidManagement.errors.txtLastNameCapital', {
+                                        field: t('registrationPage.titles.lastName')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['lastName'].errors?.['pattern'] && !form.controls['lastName'].errors?.['firstLetterNotCapital'] &&
+                                    form.controls['lastName'].dirty
+                                "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                        </div>
+                    </div>
+                    <div>
+                        <label for="firstNameLatin" class="form-label"
+                            >{{ t('modules.eidManagement.form.labels.txtFirstNameLatin')
+                            }}{{ t('registrationPage.titles.txtById') }} <span class="text-danger">*</span></label
+                        >
+                        <input
+                            pInputText
+                            type="text"
+                            id="firstNameLatin"
+                            formControlName="firstNameLatin"
+                            maxlength="40" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['firstNameLatin'].errors?.['required'] && !form.controls['firstNameLatin'].errors?.['firstLetterNotCapital'] &&
+                                                    form.controls['firstNameLatin'].dirty
+                                                "
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.form.labels.txtFirstNameLatin')
+                                    })
+                                }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['firstNameLatin'].errors?.['firstLetterNotCapital'] &&
+            form.controls['firstNameLatin'].dirty">
+                                {{
+                                    t('modules.eidManagement.errors.txtFirstNameCapital', {
+                                        field: t('modules.eidManagement.form.labels.txtFirstNameLatin')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['firstNameLatin'].errors?.['pattern'] && !form.controls['firstNameLatin'].errors?.['firstLetterNotCapital'] &&
+                                                    form.controls['firstNameLatin'].dirty
+                                                "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                        </div>
+                    </div>
+                    <div>
+                        <label for="secondNameLatin" class="form-label"
+                            >{{ t('modules.eidManagement.form.labels.txtSecondNameLatin')
+                            }}{{ t('registrationPage.titles.txtById') }}</label
+                        >
+                        <input
+                            pInputText
+                            id="secondNameLatin"
+                            type="text"
+                            maxlength="40"
+                            formControlName="secondNameLatin" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['secondNameLatin'].errors?.['required'] && !form.controls['secondNameLatin'].errors?.['firstLetterNotCapital'] &&
+                                                    form.controls['secondNameLatin'].dirty
+                                                "
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.form.labels.txtSecondNameLatin')
+                                    })
+                                }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['secondNameLatin'].errors?.['pattern'] && !form.controls['secondNameLatin'].errors?.['firstLetterNotCapital'] &&
+                                                    form.controls['secondNameLatin'].dirty
+                                                "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['secondNameLatin'].errors?.['firstLetterNotCapital'] &&
+            form.controls['secondNameLatin'].dirty">
+                                {{
+                                    t('modules.eidManagement.errors.txtSecondNameCapital', {
+                                        field: t('modules.eidManagement.form.labels.txtSecondNameLatin')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="lastNameLatin" class="form-label"
+                            >{{ t('modules.eidManagement.form.labels.txtLastNameLatin')
+                            }}{{ t('registrationPage.titles.txtById') }}
+                            <span *ngIf="!form.value.secondNameLatin" class="text-danger">*</span></label
+                        >
+                        <input
+                            pInputText
+                            id="lastNameLatin"
+                            type="text"
+                            maxlength="60"
+                            formControlName="lastNameLatin" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['lastNameLatin'].errors?.['required'] && !form.controls['lastNameLatin'].errors?.['firstLetterNotCapital'] &&
+                                                    form.controls['lastNameLatin'].dirty
+                                                "
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.eidManagement.form.labels.txtLastNameLatin')
+                                    })
+                                }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['lastNameLatin'].errors?.['pattern'] && !form.controls['lastNameLatin'].errors?.['firstLetterNotCapital'] &&
+                                                    form.controls['lastNameLatin'].dirty
+                                                "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['lastNameLatin'].errors?.['firstLetterNotCapital'] &&
+            form.controls['lastNameLatin'].dirty">
+                                {{
+                                    t('modules.eidManagement.errors.txtLastNameCapital', {
+                                        field: t('modules.eidManagement.form.labels.txtLastNameLatin')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="email" class="form-label">
+                            {{ t('registrationPage.titles.email') }} <span class="text-danger">*</span>
+                        </label>
+                        <input pInputText appTrim type="email" id="email" value="" formControlName="email" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['email'].errors?.['required'] &&
+                                            form.controls['email'].dirty
+                                        "
+                                >{{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('registrationPage.titles.email')
+                                    })
+                                }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['email'].errors?.['pattern'] &&
+                                            form.controls['email'].dirty
+                                        "
+                                >{{ t('global.txtInvalidDataError') }}</span
+                            >
+                            <span
+                                class="d-block"
+                                *ngIf="form.controls['email'].errors?.['email'] &&
+                                    form.controls['email'].dirty
+                                "
+                                >{{ t('global.txtInvalidEmailError') }}</span
+                            >
+                        </div>
+                    </div>
+                    <div>
+                        <label for="phoneNumber" class="form-label">
+                            <span>{{ t('registrationPage.titles.phone') }}</span>
+                        </label>
+                        <input
+                            type="tel"
+                            pInputText
+                            appTrim
+                            id="phoneNumber"
+                            formControlName="phoneNumber"
+                            [ariaLabel]="t('registrationPage.titles.phone')" />
+                    </div>
+                    <div class="text-danger validation-text">
+                        <span
+                            *ngIf="form.controls['phoneNumber']?.errors?.['pattern'] && form.controls['phoneNumber'].dirty">
+                            {{ t('global.txtInvalidPhoneError') }}
+                        </span>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label for="baseProfilePassword" class="form-label"
+                            >{{ t('registrationPage.titles.password') }} <span class="text-danger">*</span></label
+                        >
+                        <input
+                            pInputText
+                            type="password"
+                            id="baseProfilePassword"
+                            formControlName="baseProfilePassword"
+                            (focus)="clearPasswordErrors()"
+                            (blur)="setPasswordValidator()"
+                            [pKeyFilter]="blockSpace" />
+                        <div class="text-danger validation-text" style="max-width: 22rem">
+                            <span
+                                *ngIf="form.get('baseProfilePassword')?.errors?.['required'] && form.controls['baseProfilePassword'].dirty ">
+                                {{ t('registrationPage.errors.txtErrorRequiredField') }}
+                            </span>
+                            <span
+                                *ngIf="form.get('baseProfilePassword')?.errors?.['pattern'] && form.controls['baseProfilePassword'].dirty">
+                                {{ t('registrationPage.errors.txtErrorPwLength') }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                form.controls['baseProfilePassword'].errors?.['maxlength'] &&
+                                form.controls['baseProfilePassword'].dirty
+                            ">
+                                {{ t('global.txtPasswordTooLong') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="matchingPassword" class="form-label"
+                            >{{ t('registrationPage.titles.confirmPassword') }}
+                            <span class="text-danger">*</span></label
+                        >
+                        <input
+                            pInputText
+                            type="password"
+                            id="matchingPassword"
+                            formControlName="matchingPassword"
+                            [pKeyFilter]="blockSpace" />
+                        <div class="text-danger validation-text">
+                            <span
+                                *ngIf="form.get('matchingPassword')?.errors?.['required'] && form.controls['matchingPassword'].dirty">
+                                {{ t('registrationPage.errors.txtErrorRequiredField') }}
+                            </span>
+                            <span *ngIf="form.errors?.['passwordMismatch'] && form.controls['matchingPassword'].dirty ">
+                                {{ t('registrationPage.errors.txtErrorPwMatch') }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                form.controls['matchingPassword'].errors?.['maxlength'] &&
+                                form.controls['matchingPassword'].dirty
+                            ">
+                                {{ t('global.txtPasswordTooLong') }}
+                            </span>
+                        </div>
+                    </div>
+                    <button
+                        pButton
+                        type="submit"
+                        class="w-100"
+                        [disabled]="requestInProgress"
+                        [attr.aria-label]="t('registrationPage.titles.register')"
+                        [label]="t('registrationPage.titles.register')"></button>
+                    <div id="signInContainer">
+                        {{ t('registrationPage.titles.loginText')
+                        }}<a
+                            id="loginAnchor"
+                            routerLink="/login"
+                            [attr.aria-label]="t('registrationPage.titles.login')">
+                            {{ t('registrationPage.titles.login') }}</a
+                        >
+                    </div>
+                    <div class="d-flex justify-content-center" *ngIf="errorMessage && errorMessage.length > 0">
+                        <p-messages [(value)]="errorMessage" [enableService]="false" [closable]="true"></p-messages>
+                    </div>
+                </form>
+                <div class="col-md-2 col-lg-3 offset-lg-2 order-1 order-lg-2" id="help-section">
+                    <div
+                        #helpSection
+                        class="h-100 p-3 bg-background-light-grey text-theme-primary-medium rounded-4 help-section"
+                        [innerHTML]="t('help.txtRegistrationInformation')"></div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="showSuccess">
+            <section class="container h-100 text-center">
+                <h1 class="text-primary">{{ t('registrationPage.titles.registrationConfirm') }}</h1>
+                <div class="d-flex text-center gap-1 justify-content-center">
+                    <p [innerHTML]="t('registrationPage.messages.txtRegistrationSuccessFirstParagraph')"></p>
+                </div>
+                <p [innerHTML]="t('registrationPage.messages.txtRegistrationSuccessSecondParagraph')"></p>
+                <p [innerHTML]="t('registrationPage.messages.txtRegistrationSuccessThirdParagraph')"></p>
+            </section>
+        </ng-container>
+    </p-card>
+</section>

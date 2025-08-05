@@ -1,0 +1,82 @@
+<section class="h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h4>
+                    {{ t('content.txtCreateContent') }}
+                </h4>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <form [formGroup]="form" class="p-fluid" (submit)="submit($event)">
+            <div class="d-flex flex-wrap flex-row justify-content-start mb-4">
+                <label for="pageName" class="form-label">
+                    {{ t('content.txtPageName') }} <span class="text-danger">*</span>
+                </label>
+                <input pInputText type="text" id="pageName" formControlName="pageName" />
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="form.controls['pageName'].errors?.['required'] && form.controls['pageName'].dirty"
+                        >{{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('content.txtPageName')
+                            })
+                        }}</span
+                    >
+                </div>
+            </div>
+            <div class="d-flex flex-wrap flex-row justify-content-start mb-4">
+                <label for="bulgarianTitle" class="form-label">
+                    {{ t('content.txtBulgarianTitle') }} <span class="text-danger">*</span>
+                </label>
+                <input pInputText type="text" id="bulgarianTitle" formControlName="bulgarianTitle" />
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="form.controls['bulgarianTitle'].errors?.['required'] && form.controls['bulgarianTitle'].dirty"
+                        >{{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('content.txtBulgarianTitle')
+                            })
+                        }}</span
+                    >
+                </div>
+            </div>
+            <h4 class="text-center text-primary" [attr.aria-label]="t('content.txtBulgarianVersion')">
+                {{ t('content.txtBulgarianVersion') }}
+            </h4>
+            <editor [init]="init" (onInit)="setupBulgarianEditor($event.editor)"></editor>
+            <div class="d-flex flex-wrap flex-row justify-content-start mb-4 mt-4">
+                <label for="englishTitle" class="form-label">
+                    {{ t('content.txtEnglishTitle') }} <span class="text-danger">*</span>
+                </label>
+                <input pInputText type="text" id="englishTitle" formControlName="englishTitle" />
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="form.controls['englishTitle'].errors?.['required'] && form.controls['englishTitle'].dirty"
+                        >{{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('content.txtEnglishTitle')
+                            })
+                        }}</span
+                    >
+                </div>
+            </div>
+            <h4 class="text-center text-primary mt-4" [attr.aria-label]="t('content.txtEnglishVersion')">
+                {{ t('content.txtEnglishVersion') }}
+            </h4>
+            <editor [init]="init" (onInit)="setupEnglishEditor($event.editor)"></editor>
+
+            <p-button
+                [loading]="requestInProgress"
+                [disabled]="requestInProgress"
+                class="mt-4"
+                name="submit"
+                type="submit"
+                [label]="t('global.txtSave')"></p-button>
+        </form>
+        <p-toast position="bottom-right"></p-toast>
+    </p-card>
+</section>

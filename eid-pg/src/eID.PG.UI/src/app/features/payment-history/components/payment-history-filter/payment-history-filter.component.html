@@ -1,0 +1,184 @@
+<aside role="table-filter" *transloco="let t" class="table-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.eidManagement.tableFilter.txtFilters') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.tableFilter.txtEPaymentId') }}</p>
+                        <input formControlName="ePaymentId" pInputText type="text" id="ePaymentId" class="w-100" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.tableFilter.txtStatus') }}</p>
+                        <p-dropdown
+                            formControlName="status"
+                            [options]="statuses"
+                            optionLabel="name"
+                            optionValue="code"
+                            styleClass="w-100"
+                            inputId="status"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.txtCreatedOn') }}</p>
+                        <p-calendar
+                            styleClass="width:100%"
+                            formControlName="createdOn"
+                            inputId="createdOn"
+                            name="createdOn"
+                            [tabindex]="15"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            [iconAriaLabel]="t('aria.txtCreatedOn')"
+                            [ariaLabel]="t('aria.txtCreatedOn')"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appDate>
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.txtSubject') }}</p>
+                        <p-dropdown
+                            formControlName="reason"
+                            [options]="reasonTypes"
+                            optionLabel="name"
+                            optionValue="code"
+                            styleClass="w-100"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.txtAmount') }}</p>
+                        <p-dropdown
+                            formControlName="amount"
+                            [options]="amounts"
+                            optionLabel="name"
+                            optionValue="range"
+                            styleClass="w-100"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            [showClear]="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.txtPaymentDate') }}</p>
+                        <p-calendar
+                            styleClass="width:100%"
+                            formControlName="paymentDate"
+                            inputId="paymentDate"
+                            name="paymentDate"
+                            [tabindex]="15"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            [iconAriaLabel]="t('aria.txtPaymentDate')"
+                            [ariaLabel]="t('aria.txtPaymentDate')"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appDate>
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('paymentHistory.txtPaymentDeadline') }}</p>
+                        <p-calendar
+                            styleClass="width:100%"
+                            formControlName="paymentDeadline"
+                            inputId="paymentDeadline"
+                            name="paymentDeadline"
+                            [tabindex]="15"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            [iconAriaLabel]="t('aria.txtValidTo')"
+                            [ariaLabel]="t('aria.txtValidTo')"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appDate>
+                        </p-calendar>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <button
+                    pButton
+                    type="button"
+                    (click)="clearAllFilteredValues()"
+                    [label]="t('modules.authorizationRegister.tableFilter.txtCancel')"
+                    class="p-button p-button-danger me-3 app-button-small"></button>
+                <button
+                    pButton
+                    [label]="t('modules.authorizationRegister.tableFilter.txtApplyFilters')"
+                    type="submit"
+                    class="p-button me-3 p-button-primary app-button-small"
+                    [disabled]="(filterForm.valid && !filterForm.dirty) || (!filterForm.valid && filterForm.dirty)"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="table-filter-choice">
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-between">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('modules.eidManagement.tableFilter.txtFilters')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                icon="pi pi-refresh"
+                (click)="refreshData()"
+                [label]="t('global.txtRefresh')"></button>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="chosenFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of chosenFilters">
+                <p-chip
+                    [label]="prepareFilteredValueLabel(filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="chosenFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearAllFilteredValues()"
+                [attr.aria-labelledby]="t('modules.authorizationRegister.tableFilter.txtCancelAll')">
+                {{ t('modules.authorizationRegister.tableFilter.txtCancelAll') }}
+            </button>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,127 @@
+<section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100 rounded-0">
+        <div class="row">
+            <div class="col">
+                <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                <h2 class="text-uppercase text-primary">
+                    {{
+                        type === providerTypes.ADMINISTRATORS
+                            ? t('modules.administrators.mainPage.txtTitleAdministrator')
+                            : t('modules.administrators.mainPage.txtTitleCenter')
+                    }}
+                </h2>
+                <p-divider class="header-divider mb-4 h-100" type="solid"></p-divider>
+            </div>
+        </div>
+        <div class="row my-4 text-center">
+            <div class="col-lg-7 col-md-6 text-lg-start">
+                <h3 class="fw-bold">
+                    {{ isLangBG() ? provider.name : provider.nameLatin }}
+                </h3>
+                <h5 class="">{{ t('modules.administrators.providersPages.txtEik') }} {{ provider.eikNumber }}</h5>
+            </div>
+            <div class="col-lg-5 col-md-6 text-lg-end">
+                <img style="max-width: 10rem; max-height: 7rem" [src]="provider.logoUrl" [alt]="t('aria.txtLogo')" />
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-lg-6 col-md-6">
+                <h4 class="text-start fw-bold text-primary">
+                    {{ t('modules.administrators.providersPages.txtOfficesTitle') }}
+                </h4>
+                <div>
+                    <p-dropdown
+                        [options]="cities"
+                        [filter]="true"
+                        filterBy="city"
+                        styleClass="w-100"
+                        [optionLabel]="isLangBG() ? 'city' : 'cityEN'"
+                        [placeholder]="t('global.txtChooseCityDropdownPlaceholder')"
+                        (onChange)="focusCity($event.value)">
+                        <ng-template let-option pTemplate="item">
+                            <span [ngClass]="option.city === 'Всички' ? 'fw-bold' : null">
+                                {{ isLangBG() ? option.city : option.cityEN }}
+                            </span>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 d-flex align-items-end justify-content-end mt-4" id="locationButton">
+                <button
+                    pButton
+                    type="button"
+                    [attr.aria-label]="t('modules.administrators.providersPages.txtShowOfficesNearMe')"
+                    class="p-button justify-content-center"
+                    (click)="getLocation()">
+                    {{ t('modules.administrators.providersPages.txtShowOfficesNearMe') }}
+                    <i class="material-icons-outlined">&#xe55e;</i>
+                </button>
+            </div>
+        </div>
+        <i
+            *ngIf="!providerFrontOfficesList"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem"></i>
+        <div class="row mb-4" *ngIf="providerFrontOfficesList">
+            <div class="col-lg-6 col-md-6 text-start">
+                <aside role="offices-container mb-4" class="offices-container">
+                    <div class="offcanvas-body">
+                        <div class="d-flex gap-2 flex-column">
+                            <ng-container *ngFor="let office of providerFrontOfficesList">
+                                <p-card>
+                                    <div class="d-flex flex-column gap-2">
+                                        <div class="d-flex gap-4 flex-wrap">
+                                            <i class="material-icons-outlined">&#xe892;</i>
+                                            <div class="text-break">{{ office.name }}</div>
+                                        </div>
+                                        <div class="d-flex gap-4 flex-wrap">
+                                            <i class="material-icons-outlined">&#xe0c8;</i>
+                                            <div class="text-break">{{ office.location }}</div>
+                                        </div>
+                                        <div class="d-flex gap-4 flex-wrap">
+                                            <i class="material-icons-outlined">&#xe0b0;</i>
+                                            <a class="text-break" [href]="'tel:' + office.contact">{{ office.contact }}</a>
+                                        </div>
+                                        <div class="d-flex gap-4 flex-wrap">
+                                            <i class="material-icons-outlined">&#xe158;</i>
+                                            <a class="text-break" [href]="'mailto:' + office.email">{{ office.email }}</a>
+                                        </div>
+                                        <div class="d-flex gap-4 flex-wrap">
+                                            <i class="material-icons-outlined">&#xe8b5;</i>
+                                            <div *ngIf="office.workingHours.length; else noSchedule">
+                                                <ng-container *ngFor="let range of office.workingHours">
+                                                    <div>{{ range }}</div>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                        <ng-template #noSchedule>
+                                            <div>
+                                                {{ t('modules.administrators.providersPages.txtNoSchedule') }}
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div
+                                        class="text-end text-primary"
+                                        style="cursor: pointer"
+                                        (click)="showOfficeOnMap(office, office.longitude, office.latitude)">
+                                        {{ t('modules.administrators.providersPages.txtShowOnMap') }}
+                                    </div>
+                                </p-card>
+                            </ng-container>
+                            <ng-container *ngIf="!providerFrontOfficesList.length">
+                                <div>
+                                    {{ t('modules.administrators.providersPages.txtNoRegisteredOffices') }}
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <ng-container>
+                    <app-map [coordinates]="coordinates" [offices]="providerFrontOfficesList"></app-map>
+                </ng-container>
+            </div>
+        </div>
+    </p-card>
+</section>

@@ -1,0 +1,15 @@
+@import '../../../styles/variables.scss';
+
+.webview-layout {
+    padding-bottom: 60px;
+}
+
+.menubar {
+    padding: 0.625rem;
+    background: $background-light-grey;
+    border-top: 1px solid $theme-primary-light;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+}

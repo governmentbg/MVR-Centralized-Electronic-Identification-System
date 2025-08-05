@@ -1,0 +1,21 @@
+.card-container {
+    flex: 1 1 300px;
+    flex-direction: column;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 360px;
+}
+
+.card-content {
+    flex-grow: 1;
+    overflow: hidden;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    max-height: 170px
+}
+
+.truncate-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

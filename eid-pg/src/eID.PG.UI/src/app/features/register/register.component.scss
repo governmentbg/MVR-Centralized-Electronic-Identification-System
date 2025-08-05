@@ -1,0 +1,34 @@
+@import '../../styles/variables.scss';
+@import '../../../../node_modules/bootstrap/scss/functions';
+@import '../../../../node_modules/bootstrap/scss/variables';
+@import '../../../../node_modules/bootstrap/scss/mixins';
+#signInContainer {
+    display: flex;
+    flex-direction: row;
+    margin-top: 0.5rem;
+    :hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    #loginAnchor {
+        color: $theme-secondary-dark;
+        margin-left: 0.5rem;
+    }
+}
+
+@include media-breakpoint-down(lg){
+    #content-wrapper{
+        flex-direction: column;
+    }
+#form{
+    margin-left: 0 !important;
+}
+#help-section{
+    width:100%;
+    padding: 0 !important
+}
+.messages{
+    margin-left: 0;
+}
+}

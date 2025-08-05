@@ -1,0 +1,16 @@
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
+@import '../../../styles/variables';
+
+.footer {
+    height: $footer-height;
+    background-color: $theme-primary-dark;
+    height: fit-content;
+}
+
+@include media-breakpoint-down(md) {
+    .link-groups {
+        flex-direction: column;
+    }
+}

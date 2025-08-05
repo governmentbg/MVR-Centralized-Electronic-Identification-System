@@ -1,0 +1,167 @@
+<aside role="table-filter" *transloco="let t" class="table-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.authorizationRegister.tableFilter.txtFilters') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="eventTypes" class="w-100">
+                            {{ t('modules.logsViewer.txtEventType') }}
+                        </label>
+                        <p-multiSelect
+                            styleClass="w-100"
+                            [options]="eventTypes"
+                            formControlName="eventTypes"
+                            optionLabel="name"
+                            optionValue="value"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            inputId="eventTypes"
+                            [virtualScroll]="true"
+                            [virtualScrollItemSize]="48">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label class="w-100" for="startDate">
+                            {{ t('modules.logsViewer.txtStartDate') }}
+                        </label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="startDate"
+                            inputId="startDate"
+                            name="startDate"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            [maxDate]="maxDate"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [showTime]="true"
+                            [showSeconds]="true"
+                            [iconAriaLabel]="t('aria.txtValidTo')"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appDate>
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label class="w-100" for="endDate">
+                            {{ t('modules.logsViewer.txtEndDate') }}
+                        </label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="endDate"
+                            inputId="endDate"
+                            name="endDate"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            [showClear]="true"
+                            [maxDate]="maxDate"
+                            [minDate]="endDateMinValue()"
+                            appendTo="body"
+                            [baseZIndex]="1045"
+                            [showTime]="true"
+                            [showSeconds]="true"
+                            [iconAriaLabel]="t('aria.txtValidTo')"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appDate>
+                        </p-calendar>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    filterForm.controls['endDate']?.hasError('dateMoreThanOrEqualValid') &&
+                                    filterForm.controls['endDate']?.dirty
+                                ">
+                                {{ t('modules.logsViewer.txtErrorEndDate') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <button
+                    pButton
+                    type="button"
+                    (click)="clearAllFilteredValues()"
+                    [label]="t('modules.authorizationRegister.tableFilter.txtCancel')"
+                    class="p-button p-button-danger me-3 app-button-small"></button>
+                <button
+                    pButton
+                    [label]="t('modules.authorizationRegister.tableFilter.txtApplyFilters')"
+                    type="submit"
+                    class="p-button me-3 p-button-primary app-button-small"
+                    [disabled]="(filterForm.valid && !filterForm.dirty) || (!filterForm.valid && filterForm.dirty)"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="table-filter-choice" #filter>
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-between">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('modules.logsViewer.txtFilters')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+            <div class="d-flex gap-3">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-sm"
+                    (click)="exportData()"
+                    icon="pi pi-download"
+                    [label]="t('modules.logsViewer.txtExportData')"
+                    [disabled]="disableExportBtn"
+                    [loading]="disableExportBtn"
+                    loadingIcon="pi pi-spin pi-spinner"></button>
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-sm"
+                    icon="pi pi-refresh"
+                    (click)="refreshData()"
+                    [label]="t('global.txtRefresh')"></button>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="chosenFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of chosenFilters">
+                <p-chip
+                    [label]="prepareFilteredValueLabel(filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="chosenFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearAllFilteredValues()"
+                [attr.aria-labelledby]="t('modules.authorizationRegister.tableFilter.txtCancelAll')">
+                {{ t('modules.authorizationRegister.tableFilter.txtCancelAll') }}
+            </button>
+        </div>
+    </div>
+</section>

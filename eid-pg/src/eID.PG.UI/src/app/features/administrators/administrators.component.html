@@ -1,0 +1,81 @@
+<ng-container *ngIf="!showPreview">
+    <section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+        <p-card styleClass="h-100 rounded-0">
+            <div class="row">
+                <div class="col col-lg-8">
+                    <h2 class="text-uppercase">
+                        {{
+                            paramType === providerTypes.ADMINISTRATORS
+                                ? t('modules.administrators.mainPage.txtTitleAdministrator')
+                                : t('modules.administrators.mainPage.txtTitleCenter')
+                        }}
+                    </h2>
+                </div>
+                <i
+                    *ngIf="!administrators"
+                    class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                    style="font-size: 2rem"></i>
+                <p-divider class="header-divider" type="solid"></p-divider>
+            </div>
+            <div
+                class="d-flex flex-row justify-content-center align-items-center flex-wrap"
+                *ngIf="administrators && administrators.length">
+                <ng-container *ngFor="let administrator of administrators">
+                    <div class="navigation-button m-4">
+                        <button
+                            pButton
+                            type="button"
+                            class="p-button-raised p-button-text d-flex flex-column align-items-stretch justify-content-center"
+                            [attr.aria-label]="administrator.name"
+                            role="Navigation button"
+                            [routerLink]="administrator.id">
+                            <div class="text-center logo-container">
+                                <img [src]="administrator.logoUrl" [alt]="t('aria.txtLogo')" />
+                            </div>
+                            <div class="w-100">
+                                <div class="text-center mt-2">
+                                    <h5>{{ administrator.name }}</h5>
+                                    <p-divider
+                                        class="button-divider d-flex justify-content-center"
+                                        type="solid"></p-divider>
+                                    <h6>
+                                        {{ t('modules.administrators.mainPage.txtDescription') }}
+                                        {{ administrator.name }}
+                                    </h6>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="col-12">
+                <p>
+                    {{ t('modules.administrators.information.txtTitle') }}
+                </p>
+                <ul>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem1') }}
+                    </li>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem2') }}
+                    </li>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem3') }}
+                    </li>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem4') }}
+                    </li>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem5') }}
+                    </li>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem6') }}
+                    </li>
+                    <li>
+                        {{ t('modules.administrators.information.txtListItem7') }}
+                    </li>
+                </ul>
+            </div>
+        </p-card>
+    </section>
+</ng-container>

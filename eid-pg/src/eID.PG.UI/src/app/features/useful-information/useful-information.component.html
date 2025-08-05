@@ -1,0 +1,33 @@
+<ng-container *ngIf="!showPreview">
+<div class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="col-12">
+        <i
+            *ngIf="requestInProgress"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem"></i>
+        <ul class="d-flex flex-column text-uppercase text-primary p-0" *ngIf="pagesList && !showPreview">
+            <ng-container *ngFor="let page of pagesList">
+                <li style="cursor:pointer; list-style: none;">
+                    <h3 class="text-uppercase font-bold" (click)="previewPage(page)">{{
+                        getPageForLanguage(page)?.title
+                    }}</h3>
+                </li>
+                <p-divider class="header-divider"></p-divider>
+            </ng-container>
+        </ul>
+        <ng-container *ngIf="pagesList && pagesList.length === 0">
+            <span class="d-flex align-items-center flex-column empty-message-container">
+                <img src="/assets/images/noresults.png" [alt]="t('ariaLabels.txtLogo')" />
+                <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsAdded')">
+                    {{ t('global.txtNoRecordsAdded') }}
+                </span>
+            </span>
+        </ng-container>
+    </div>
+</p-card>
+</div>
+</ng-container>
+<ng-container *ngIf="showPreview">
+    <app-page-preview (hide)="onHideDetails($event)" [selectedPage]="selectedPage"></app-page-preview>
+</ng-container>

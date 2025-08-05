@@ -1,0 +1,13 @@
+.card-container {
+    width: 400px;
+    overflow: hidden;
+    word-wrap:break-word;
+    white-space: wrap;
+}
+.card-content {
+    height: 170px;
+    overflow: hidden; 
+    white-space: normal;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}

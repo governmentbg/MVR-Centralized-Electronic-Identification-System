@@ -1,0 +1,165 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase" [attr.aria-label]="t('searchPage.txtSearchTitle')">
+                    {{ t('searchPage.txtSearchTitle') }}
+                </h2>
+                <i
+                    *ngIf="requestInProgress"
+                    class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                    style="font-size: 2rem"></i>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <div class="mb-4">
+                    {{ t('searchPage.txtSearchSubTitle') }}
+                </div>
+                <ul>
+                    <li>{{ t('searchPage.txtLiItem2') }}</li>
+                    <li>{{ t('searchPage.txtLiItem3') }}</li>
+                    <li>{{ t('searchPage.txtLiItem4') }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap flex-row justify-content-start my-4">
+            <form [formGroup]="form" class="p-fluid" (ngSubmit)="submit()">
+                <div class="d-flex flex-row gap-4">
+                    <div>
+                        <label for="keyword" class="form-label">
+                            {{ t('searchPage.txtSearchCriteriaLabel') }}
+                        </label>
+                        <input
+                            pInputText
+                            appTrim
+                            type="text"
+                            id="keyword"
+                            formControlName="keyword"
+                            [ngClass]="{ 'p-inputtext.ng-dirty.ng-invalid': form.controls['keyword'].invalid }" />
+                    </div>
+                    <div class="d-flex align-items-end">
+                        <button
+                            pButton
+                            type="submit"
+                            class="w-100"
+                            [disabled]="requestInProgress"
+                            icon="pi pi-search"
+                            iconPos="left"
+                            [attr.aria-label]="t('searchPage.txtSearchTitle')"
+                            [label]="t('searchPage.txtSearchTitle')"></button>
+                    </div>
+                </div>
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="form.controls['keyword'].errors?.['required'] && form.controls['keyword'].dirty"
+                        >{{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('searchPage.txtSearchTitle')
+                            })
+                        }}</span
+                    >
+                    <span class="d-block" *ngIf="form.controls['keyword'].errors?.['minlength']">
+                        {{ t('global.txtMinLengthError') }}
+                    </span>
+                </div>
+            </form>
+        </div>
+        <ng-container *ngIf="pagesList">
+            <div class="row">
+                <div class="col">
+                    <p-table
+                        #dt
+                        [value]="pagesList"
+                        [tableStyle]="{ 'min-width': '100%' }"
+                        [rowHover]="true"
+                        dataKey="uid"
+                        [lazy]="true"
+                        (onLazyLoad)="loadApplications($event)"
+                        [totalRecords]="totalRecords"
+                        [rows]="pageSize"
+                        [paginator]="true"
+                        [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                        [currentPageReportTemplate]="
+                            t('global.txtTablePagination', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        [loading]="requestInProgress"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        [sortOrder]="sortOrder.asc"
+                        [rowSelectable]="false">
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-nowrap">{{ t('content.txtTitle') }}</th>
+                                <th class="text-nowrap">{{ t('content.txtContent') }}</th>
+                                <th class="text-nowrap">{{ t('global.txtShowDetails') }}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-pagesList>
+                            <tr>
+                                <td style="min-width: 10rem" [attr.aria-label]="pagesList.title">
+                                    <span class="text-wrap">{{ pagesList.title }}</span>
+                                </td>
+                                <td
+                                    style="flex-grow: 2; min-width: 20rem"
+                                    [attr.aria-label]="pagesList.contentWithHtml">
+                                    <span
+                                        class="text-wrap"
+                                        [innerHTML]="
+                                            highlightKeyword(pagesList.contentWithHtml, form.get('keyword')?.value)
+                                        "></span>
+                                </td>
+                                <td style="width: 8rem">
+                                    <button
+                                        pButton
+                                        type="button"
+                                        [title]="t('global.txtPreview')"
+                                        class="p-button-sm p-button-rounded p-button-text"
+                                        (click)="showPreview(pagesList)">
+                                        <i class="material-icons-outlined">&#xf801;</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="7">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-container>
+
+        <p-dialog
+            [(visible)]="displayPreviewModal"
+            [modal]="true"
+            [style]="{ width: '50vw' }"
+            [closable]="true"
+            [dismissableMask]="true">
+            <div *ngIf="selectedContent">
+                <h2 class="text-center text-primary">{{ selectedTitle }}</h2>
+                <div [innerHTML]="selectedContent"></div>
+            </div>
+        </p-dialog>
+
+        <p-toast position="bottom-right"></p-toast>
+    </p-card>
+</section>

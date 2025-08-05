@@ -1,0 +1,26 @@
+<ng-container *transloco="let t">
+    <div class="d-flex flex-column h-100 w-100">
+        <div class="flex-grow-1">
+            <div class="d-flex flex-column flex-sm-row h-100 bg-white-smoke">
+                <main class="h-100 flex-grow-1 min-height-75vh imprint webview-layout">
+                    <router-outlet></router-outlet>
+                </main>
+            </div>
+        </div>
+        <ng-container *ngIf="isBackButtonVisible()">
+            <div class="menubar w-100">
+                <ul class="m-0 list-unstyled">
+                    <li>
+                        <button
+                            pButton
+                            type="button"
+                            [label]="t('global.txtBack')"
+                            icon="pi pi-chevron-left"
+                            class="p-button-secondary p-button-text p-button-sm"
+                            (click)="onBack()"></button>
+                    </li>
+                </ul>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>

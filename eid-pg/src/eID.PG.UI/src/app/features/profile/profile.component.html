@@ -1,0 +1,150 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase">{{ t('profilePage.txtProfile') }}</h2>
+            </div>
+            <i
+                *ngIf="requestInProgress"
+                class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                style="font-size: 2rem"></i>
+            <div class="col d-flex justify-content-end align-items-center">
+                <button
+                    pButton
+                    type="button"
+                    *ngIf="user && !user.eidentityId"
+                    class="add-button p-button-success"
+                    [label]="t('profilePage.txtAddEidentity')"
+                    iconPos="right"
+                    [disabled]="requestInProgress"
+                    (click)="attachEidentity()"
+                    [attr.aria-label]="t('profilePage.txtAddEidentity')"></button>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="d-flex flex-lg-row flex-column gap-2 " *ngIf="user">
+            <div class="col-xl-7 col-lg-7 col-8 order-2 order-lg-1">
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtName') }}</label>
+                    </div>
+                    <div class="col">{{ user.firstName }}</div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtSecondName') }}</label>
+                    </div>
+                    <div class="col">{{ user.secondName }}</div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtLastName') }}</label>
+                    </div>
+                    <div class="col">{{ user.lastName }}</div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtNameLatin') }}</label>
+                    </div>
+                    <div class="col">{{ user.firstNameLatin }}</div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtSecondNameLatin') }}</label>
+                    </div>
+                    <div class="col">{{ user.secondNameLatin }}</div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtLastNameLatin') }}</label>
+                    </div>
+                    <div class="col">{{ user.lastNameLatin }}</div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtPhoneNumber') }}</label>
+                    </div>
+                    <div class="col">
+                        {{ user.phoneNumber }}
+                    </div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txtEmail') }}</label>
+                    </div>
+                    <a class="col" [href]="'mailto:' + user.email">{{ user.email }}</a>
+                </div>
+                <ng-container *ngIf="user.eidentityId">
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label>{{ t('modules.eidManagement.tableFilter.txtEidentityTitle') }}</label>
+                        </div>
+                        <div class="col">{{ user.eidentityId }}</div>
+                    </div>
+                </ng-container>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label>{{ t('profilePage.txt2fa') }}</label>
+                    </div>
+                    <div class="col">
+                        <p-inputSwitch
+                            [ariaLabel]="t('aria.txtManage2fa')"
+                            [formControl]="is2FaEnabled"
+                            (onChange)="change2faOption($event)"></p-inputSwitch>
+                    </div>
+                </div>
+            </div>
+            <div class="col offset-lg-2 order-1 order-lg-2">
+                <div
+                    #helpSection
+                    class="h-100 p-3 bg-background-light-grey text-theme-primary-medium rounded-4"
+                    [innerHTML]="t('help.txtProfileInformation')"></div>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="col-xl-8">
+            <div class="d-flex gap-3">
+                <button
+                    pButton
+                    type="button"
+                    routerLink="update-personal-info"
+                    [attr.aria-label]="t('profilePage.txtEdit')"
+                    [label]="t('profilePage.txtChangePersonalInfo')"
+                    [disabled]="!user"
+                    iconPos="left"
+                    class="p-button p-button-sm"></button>
+                <button
+                    pButton
+                    type="button"
+                    routerLink="update-email"
+                    [attr.aria-label]="t('profilePage.txtEdit')"
+                    [label]="t('profilePage.txtChangeEmail')"
+                    [disabled]="!user"
+                    iconPos="left"
+                    class="p-button p-button-sm"></button>
+                <button
+                    pButton
+                    type="button"
+                    routerLink="update-password"
+                    [attr.aria-label]="t('profilePage.txtEdit')"
+                    [label]="t('profilePage.txtChangePassword')"
+                    [disabled]="!user"
+                    iconPos="left"
+                    class="p-button p-button-sm"></button>
+            </div>
+        </div>
+        <p-toast position="bottom-right"></p-toast>
+        <ng-container *ngIf="openDialog">
+            <p-dialog [(visible)]="openDialog" [modal]="true" [draggable]="false" [resizable]="true">
+                <app-associate-profiles-auth (closeDialog)="handleDialogClose($event)"></app-associate-profiles-auth>
+            </p-dialog>
+        </ng-container>
+    </p-card>
+</section>

@@ -1,0 +1,30 @@
+<section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase">{{ t('modules.cardManagement.txtTitle') }}</h2>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="d-flex flex-row justify-content-center align-items-center flex-wrap">
+            <div class="navigation-button m-4">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-raised p-button-text"
+                    [attr.aria-label]="t('aria.txtNavigationButton')"
+                    [routerLink]="['/card-management/change-pin']">
+                    <div class="w-100">
+                        <div class="text-center">
+                            <i class="material-icons-outlined">&#xf70e;</i>
+                        </div>
+                        <div class="text-center">
+                            <h5>{{ t('modules.cardManagement.txtChangePIN') }}</h5>
+                            <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </p-card>
+</section>

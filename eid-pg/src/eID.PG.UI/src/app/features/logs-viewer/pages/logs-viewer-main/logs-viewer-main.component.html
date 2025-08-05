@@ -1,0 +1,53 @@
+<section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100 rounded-0">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase">{{ t('modules.logsViewer.txtTitle') }}</h2>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="d-flex justify-content-center align-items-center p-3">
+            <p>{{ t('modules.logsViewer.txtControlAuthorizationWhichAre') }}</p>
+        </div>
+        <div class="d-flex flex-row justify-content-center align-items-center flex-wrap">
+            <div class="navigation-button m-4">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-raised p-button-text"
+                    [attr.aria-label]="t('aria.txtNavigationToManageLogsFromMe')"
+                    role="Navigation button"
+                    [routerLink]="['/logs-viewer/from-me']">
+                    <div class="w-100">
+                        <div class="text-center">
+                            <i class="material-icons-outlined">&#xf70e;</i>
+                        </div>
+                        <div class="text-center">
+                            <h5>{{ t('modules.logsViewer.txtFromMe') }}</h5>
+                            <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            <div class="navigation-button m-4">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-raised p-button-text"
+                    [attr.aria-label]="t('aria.txtNavigationToManageLogsToMe')"
+                    role="Navigation button"
+                    [routerLink]="['/logs-viewer/to-me']">
+                    <div class="w-100">
+                        <div class="text-center">
+                            <i class="material-icons-outlined">&#xf71a;</i>
+                        </div>
+                        <div class="text-center">
+                            <h5>{{ t('modules.logsViewer.txtToMe') }}</h5>
+                            <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </p-card>
+</section>

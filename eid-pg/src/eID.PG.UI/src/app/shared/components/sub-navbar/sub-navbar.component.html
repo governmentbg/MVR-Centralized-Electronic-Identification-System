@@ -1,0 +1,249 @@
+<nav class="navbar navbar-expand-lg navbar-dark sub-navbar" *transloco="let t">
+    <ng-container *ngIf="removedStyleElements && removedStyleElements.length">
+        <p-button [label]="t('subNavbar.txtBackToNormalView')" (click)="restoreAllStyles()"></p-button>
+    </ng-container>
+    <div class="container flex-nowrap">
+        <div class="subnav-menu">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon align-self-start"></span>
+            </button>
+            <div class="flip collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item px-1" routerLinkActive="active">
+                        <a
+                            class="nav-link"
+                            aria-current="page"
+                            routerLink="home"
+                            routerLinkActive="active"
+                            data-bs-toggle="collapse"
+                            data-bs-target=".navbar-collapse.show">
+                            {{ t('subNavbar.txtHome') }}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown has-megamenu d-flex" routerLinkActive="active">
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            id="servicesNavbarDropdown"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            routerLinkActive="active"
+                            [ngClass]="{
+                                active: eim.isActive || authorizationRegister.isActive || references.isActive
+                            }">
+                            {{ t('subNavbar.txtServices') }}
+                        </a>
+                        <div class="dropdown-menu megamenu services" aria-labelledby="servicesNavbarDropdown">
+                            <div class="container">
+                                <ul>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            routerLink="eid-management"
+                                            #eim="routerLinkActive"
+                                            routerLinkActive="active"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show">
+                                            {{ t('subNavbar.txtEIM') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            #authorizationRegister="routerLinkActive"
+                                            routerLink="authorization-register"
+                                            routerLinkActive="active"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtAuthorizationRegister') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            routerLink="eid-references"
+                                            #references="routerLinkActive"
+                                            routerLinkActive="active"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtReferences') }}</a
+                                        >
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item px-1" routerLinkActive="active">
+                        <a
+                            class="nav-link"
+                            routerLinkActive="active"
+                            routerLink="useful-information"
+                            data-bs-toggle="collapse"
+                            data-bs-target=".navbar-collapse.show"
+                            (click)="resetView()"
+                            >{{ t('subNavbar.txtUsefulInformation') }}</a
+                        >
+                    </li>
+                    <li class="nav-item" routerLinkActive="active">
+                        <a
+                            class="nav-link"
+                            routerLinkActive="active"
+                            routerLink="contacts"
+                            data-bs-toggle="collapse"
+                            data-bs-target=".navbar-collapse.show"
+                            >{{ t('subNavbar.txtContacts') }}</a
+                        >
+                    </li>
+                    <li class="nav-item" routerLinkActive="active">
+                        <a
+                            class="nav-link"
+                            routerLinkActive="active"
+                            routerLink="search-content"
+                            [attr.aria-label]="t('searchPage.txtSearchTitle')">
+                            <i class="pi pi-search icon-medium" style="cursor: pointer"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex text-white align-items-center gap-1 px-1 icons-container">
+                            <i
+                                class="material-icons icon-small px-0"
+                                style="cursor: pointer"
+                                (click)="decreaseFontSize()"
+                                >&#xeadd;</i
+                            >
+                            <i
+                                class="material-icon-a icon-medium px-0"
+                                style="cursor: pointer"
+                                (click)="defaultFontSize()"
+                                >A</i
+                            >
+                            <i
+                                class="material-icons icon-large px-0"
+                                style="cursor: pointer"
+                                (click)="increaseFontSize()"
+                                >&#xeae2;</i
+                            >
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <i
+                            class="material-icons nav-link icon-medium px-2"
+                            style="cursor: pointer"
+                            (click)="removeAllStyles()"
+                            >&#xe92c;</i
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <app-language-selector class="h-100 align-self-start px-2"></app-language-selector>
+                    </li>
+                    <li
+                        class="nav-item dropdown has-megamenu d-flex"
+                        routerLinkActive="active"
+                        *ngIf="user && user.name">
+                        <a
+                            class="nav-link dropdown-toggle text-middle"
+                            href="#"
+                            id="userNavbarDropdown"
+                            role="button"
+                            aria-expanded="false"
+                            data-bs-toggle="dropdown"
+                            routerLinkActive="active"
+                            [ngClass]="{
+                                active: profile.isActive || notifications.isActive || logs.isActive || card.isActive
+                            }">
+                            <i class="material-icons-outlined" style="cursor: pointer">&#xe853;</i>
+                            <span class="ps-1">{{ user.name }}</span>
+                        </a>
+                        <div class="dropdown-menu megamenu profile" aria-labelledby="userNavbarDropdown">
+                            <div class="container d-flex justify-content-end">
+                                <ul>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            href="#"
+                                            #profile="routerLinkActive"
+                                            routerLinkActive="active"
+                                            routerLink="profile"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtMyProfile') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            #notifications="routerLinkActive"
+                                            routerLinkActive="active"
+                                            routerLink="notification-settings"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtManageNotifications') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            #card="routerLinkActive"
+                                            routerLinkActive="active"
+                                            routerLink="card-management"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtManageCard') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            #logs="routerLinkActive"
+                                            routerLinkActive="active"
+                                            routerLink="payment-history"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtPaymentHistory') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item text-white"
+                                            #logs="routerLinkActive"
+                                            routerLinkActive="active"
+                                            routerLink="logs-viewer"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target=".navbar-collapse.show"
+                                            >{{ t('subNavbar.txtHistoryOfEvents') }}</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item text-white" (click)="logout()">
+                                            {{ t('global.logout') }}
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <ng-container *ngIf="!isUserLogged()">
+                        <li class="nav-item d-flex">
+                            <a
+                                (click)="memorizePage()"
+                                class="nav-link"
+                                routerLink="login"
+                                routerLinkActive="active"
+                                role="button">
+                                {{ t('global.login') }}
+                            </a>
+                        </li>
+                    </ng-container>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

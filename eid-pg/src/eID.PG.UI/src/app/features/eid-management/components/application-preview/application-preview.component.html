@@ -1,0 +1,332 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                <h4>
+                    {{ t('modules.eidManagement.txtApplicationPreview') }}
+                </h4>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="row">
+            <div class="col-xl-8" *ngIf="application">
+                <div class="row">
+                    <div class="col">
+                        <h6>{{ t('modules.eidManagement.txtApplicationDetails') }}:</h6>
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="applicationNumber">{{ t('modules.eidManagement.tableFilter.txtAppId') }}</label>
+                    </div>
+                    <div class="col application" id="applicationNumber" aria-labelledby="applicationNumber">
+                        {{ application.applicationNumber }}
+                    </div>
+                </div>
+
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="status">{{
+                            t('modules.authorizationRegister.tableFilter.filterLabels.status')
+                        }}</label>
+                    </div>
+                    <div class="col application">
+                        <ng-container [ngSwitch]="application.status">
+                            <!-- // red text  -->
+                            <span *ngSwitchCase="'DENIED'">
+                                <span
+                                    class="text-break reject d-flex align-items-center"
+                                    [ariaLabel]="t('modules.eidManagement.applicationStatus.txtDenied')">
+                                    <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                    <span>
+                                        {{ computedStatus('Denied') }}
+                                    </span>
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchCase="'PAYMENT_EXPIRED'"
+                                class="text-break reject d-flex align-items-center"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtPaymentExpired')">
+                                <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                <span>
+                                    {{ computedStatus('PaymentExpired') }}
+                                </span>
+                            </span>
+                            <!-- // yellow text -->
+                            <span
+                                *ngSwitchCase="'PENDING_PAYMENT'"
+                                class="text-break danger d-flex align-items-center gap-2"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtPendingPayment')">
+                                <span>
+                                    <i class="material-icons-outlined">&#xe8b5;</i>
+                                    {{ computedStatus('PendingPayment') }}
+                                </span>
+                                <ng-container *ngIf="showPaymentButton(application)">
+                                    <button
+                                        pButton
+                                        type="button"
+                                        class="p-button-sm align-center"
+                                        (click)="redirectToPayment(application.paymentAccessCode)"
+                                        [label]="t('global.txtPayment')"
+                                        [attr.aria-label]="t('global.txtPayment')"></button>
+                                </ng-container>
+                            </span>
+                            <span
+                                *ngSwitchCase="'SUBMITTED'"
+                                class="text-break danger d-flex align-items-center"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtSubmitted')">
+                                <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                <span>
+                                    {{ computedStatus('Submitted') }}
+                                </span>
+                            </span>
+                            <!-- //green text -->
+                            <span
+                                *ngSwitchCase="'APPROVED'"
+                                class="active-confirm d-flex me-3"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtApproved')">
+                                <i class="material-icons-outlined me-3">&#xe877;</i>
+                                <span>
+                                    {{ computedStatus('Approved') }}
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchCase="'PAID'"
+                                class="text-break active-confirm d-flex align-items-center gap-2"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtPaid')">
+                                <span>
+                                    <i class="material-icons-outlined">&#xe877;</i>
+                                    {{ computedStatus('Paid') }}
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchCase="'COMPLETED'"
+                                class="active-confirm d-flex me-3"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtCompleted')">
+                                <i class="material-icons-outlined me-3">&#xe877;</i>
+                                <span>
+                                    {{ computedStatus('Completed') }}
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchCase="'GENERATED_CERTIFICATE'"
+                                class="active-confirm d-flex me-3"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtCompleted')">
+                                <i class="material-icons-outlined me-3">&#xf603;</i>
+                                <span>
+                                    {{ computedStatus('Signed') }}
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchCase="'SIGNED'"
+                                class="active-confirm d-flex me-3"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtSigned')">
+                                <i class="material-icons-outlined me-3">&#xf603;</i>
+                                <span>
+                                    {{ computedStatus('Signed') }}
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchCase="'CERTIFICATE_STORED'"
+                                class="active-confirm d-flex me-3"
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtCompleted')">
+                                <i class="material-icons-outlined me-3">&#xf603;</i>
+                                <span>
+                                    {{ computedStatus('Signed') }}
+                                </span>
+                            </span>
+                            <span
+                                *ngSwitchDefault
+                                [ariaLabel]="t('modules.eidManagement.applicationStatus.txtProcessing')">
+                                <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                <span>
+                                    {{ computedStatus('Processing') }}
+                                </span>
+                            </span>
+                        </ng-container>
+                    </div>
+                </div>
+                <div
+                    class="row p-3 ps-0"
+                    *ngIf="application && application.reasonId && application.status === ApplicationStatus.DENIED">
+                    <div class="col-3">
+                        <label for="reasonForDenial">
+                            {{ t('modules.authorizationStatement.statementForm.txtReason') }}:
+                        </label>
+                    </div>
+                    <div class="col application">
+                        {{ getReasonTranslation(application.reasonId) }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0" *ngIf="application.status === ApplicationStatus.PENDING_PAYMENT">
+                    <div class="col-3">
+                        <label for="paymentAccessCode">
+                            {{ t('modules.eidManagement.finalStepMessage.txtPaymentId') }}:
+                        </label>
+                    </div>
+                    <div class="col application">
+                        {{ application.paymentAccessCode }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0" *ngIf="application && application.certificateId && application.serialNumber">
+                    <div class="col-3">
+                        <label for="certificateId">
+                            {{ t('modules.eidManagement.tableFilter.txtCertificateId') }}:
+                        </label>
+                    </div>
+                    <div class="col application">
+                        <a
+                            id="certificateId"
+                            class="text-text-active fw-bold"
+                            (click)="openCertificate(application.certificateId)"
+                            aria-labelledby="certificateId">
+                            {{ application.serialNumber }}
+                            <i class="material-icons-outlined">&#xe89e;</i>
+                        </a>
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="applicationType">
+                            {{ t('modules.eidManagement.tableFilter.txtSubject') }}
+                        </label>
+                    </div>
+                    <div class="col application" aria-labelledby="applicationType">
+                        {{ translateApplicationType(application.applicationType) }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="createDate">{{ t('modules.eidManagement.tableFilter.txtCreateDate') }}</label>
+                    </div>
+                    <div class="col application" aria-labelledby="createDate">
+                        {{ formatDate(application.createDate) }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="deviceId">{{ t('modules.eidManagement.tableFilter.txtDeviceType') }}</label>
+                    </div>
+                    <div class="col application" aria-labelledby="deviceId">
+                        {{ translateDeviceType(application.deviceId) }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="eidAdministratorName" id="eidAdministratorName">{{
+                            t('modules.eidManagement.tableFilter.txtEidAdministratorId')
+                        }}</label>
+                    </div>
+                    <div class="col application" aria-labelledby="eidAdministratorName">
+                        {{ application.eidAdministratorName }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="eidAdministratorOfficeName">{{
+                            t('modules.eidManagement.tableFilter.txtEidAdministratorOfficeName')
+                        }}</label>
+                    </div>
+                    <div
+                        class="col application"
+                        id="eidAdministratorOfficeName"
+                        aria-labelledby="eidAdministratorOfficeName">
+                        {{ application.eidAdministratorOfficeName }}
+                    </div>
+                </div>
+                <div class="row p-3 ps-0">
+                    <div class="col-3">
+                        <label for="submissionType">{{
+                            t('modules.eidManagement.tableFilter.txtSubmissionType')
+                        }}</label>
+                    </div>
+                    <div class="col application" id="submissionType" aria-labelledby="submissionType">
+                        {{ translateSubmissionType(application.submissionType) }}
+                    </div>
+                </div>
+            </div>
+            <p-divider class="header-divider" type="solid"></p-divider>
+            <div class="row">
+                <div class="col-xl-8" *ngIf="application">
+                    <div class="row">
+                        <div class="col">
+                            <h6>{{ t('modules.eidManagement.txtApplicantData') }}</h6>
+                        </div>
+                    </div>
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label for="firstName">
+                                {{ t('modules.eidManagement.tableFilter.txtNames') }}
+                            </label>
+                        </div>
+                        <div class="col application">
+                            {{ application.firstName }} {{ application.secondName }} {{ application.lastName }}
+                        </div>
+                    </div>
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label for="email">{{ t('modules.eidManagement.tableFilter.txtEmail') }}</label>
+                        </div>
+                        <a class="col application" [href]="'mailto:' + application.email">{{ application.email }}</a>
+                    </div>
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label for="phoneNumber">
+                                {{ t('modules.eidManagement.tableFilter.txtPhone') }}
+                            </label>
+                        </div>
+                        <a class="col application" [href]="'tel:' + application.phoneNumber">{{
+                            application.phoneNumber
+                        }}</a>
+                    </div>
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label for="identityNumber">{{
+                                application.identityType === 'Лична карта'
+                                    ? t('modules.eidManagement.tableFilter.txtIdNumber')
+                                    : t('modules.eidManagement.tableFilter.txtDocumentNumber')
+                            }}</label>
+                        </div>
+                        <div class="col application">{{ application.identityNumber }}</div>
+                    </div>
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label for="identityIssueDate">
+                                {{
+                                    application.identityType === 'Лична карта'
+                                        ? t('modules.eidManagement.tableFilter.txtIDDateFrom')
+                                        : t('modules.eidManagement.tableFilter.txtDateFrom')
+                                }}
+                            </label>
+                        </div>
+                        <div class="col application">{{ application.identityIssueDate | date : 'yyyy-MM-dd' }}</div>
+                    </div>
+                    <div class="row p-3 ps-0">
+                        <div class="col-3">
+                            <label>
+                                {{
+                                    application.identityType === 'Лична карта'
+                                        ? t('modules.eidManagement.tableFilter.txtIDDateUntil')
+                                        : t('modules.eidManagement.tableFilter.txtDateUntil')
+                                }}
+                            </label>
+                        </div>
+                        <div class="col application">
+                            {{ application.identityValidityToDate | date : 'yyyy-MM-dd' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="col">
+            <button
+                pButton
+                type="button"
+                [label]="t('global.txtClose')"
+                [attr.aria-label]="t('global.txtClose')"
+                (click)="hidePreview()"></button>
+        </div>
+    </p-card>
+</section>

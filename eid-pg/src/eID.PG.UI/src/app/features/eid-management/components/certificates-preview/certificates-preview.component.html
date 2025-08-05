@@ -1,0 +1,1264 @@
+<ng-container *ngIf="certificate">
+    <app-certificates-history
+        [certificate]="certificate"
+        [originalReasons]="originalReasons"
+        [certificateId]="certificateId"
+        [hidden]="!showHistory"
+        [fullBreadcrumb]="!certificateId"
+        (hide)="closeCertificateHistory()"></app-certificates-history
+></ng-container>
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t" [hidden]="showHistory">
+    <p-card styleClass="h-100">
+        <div>
+            <ng-container *ngIf="!statusChangeRequest">
+                <div class="row">
+                    <div class="col">
+                        <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                        <h4>
+                            {{ t('modules.eidManagement.txtCertificatePreview') }}
+                        </h4>
+                    </div>
+                </div>
+                <i
+                    *ngIf="requestInProgress"
+                    class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                    style="font-size: 2rem"></i>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <i *ngIf="!certificate" class="pi pi-spin pi-spinner p-dropdown-trigger" style="font-size: 1rem"></i>
+                <div class="row">
+                    <div class="col-xl-8" *ngIf="certificate && administratorOffices">
+                        <div class="row">
+                            <div class="col">
+                                <h6>{{ t('modules.eidManagement.txtCertificateDetails') }}:</h6>
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="serialNumber">{{
+                                    t('modules.eidManagement.tableFilter.txtSerialNumber')
+                                }}</label>
+                            </div>
+                            <div class="col" id="serialNumber" aria-labelledby="serialNumber">
+                                {{ certificate.serialNumber }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="alias">{{
+                                    t('modules.eidManagement.tableFilter.txtCertificateName')
+                                }}</label>
+                            </div>
+                            <div class="col" id="alias" aria-labelledby="alias">
+                                <p-inplace #inplace>
+                                    <ng-template pTemplate="display">
+                                        <span (click)="handleAliasEdit()"
+                                            ><i class="pi pi-pencil me-2"></i>{{ certificate.alias }}</span
+                                        >
+                                    </ng-template>
+                                    <ng-template pTemplate="content">
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-flex flex-col">
+                                                <input
+                                                    type="tel"
+                                                    pInputText
+                                                    [formControl]="aliasControl"
+                                                    [ariaLabel]="
+                                                        t('modules.eidManagement.tableFilter.txtCertificateName')
+                                                    " />
+                                            </div>
+                                            <button
+                                                pButton
+                                                type="submit"
+                                                icon="pi pi-check"
+                                                (click)="changeAlias(inplace, certificate.id)"
+                                                [disabled]="requestInProgress"
+                                                class="flex-shrink-0"></button>
+                                            <button
+                                                pButton
+                                                type="button"
+                                                [disabled]="requestInProgress"
+                                                icon="pi pi-times"
+                                                class="p-button-danger flex-shrink-0"
+                                                (click)="onCancelEdit(inplace)"></button>
+                                        </div>
+                                        <span
+                                            class="d-block text-danger"
+                                            *ngIf="!aliasControl.value || aliasControl.hasError('maxlength')">
+                                            {{ t('validations.txtAliasError') }}
+                                        </span>
+                                    </ng-template>
+                                </p-inplace>
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="eidentityId">{{
+                                    t('modules.eidManagement.tableFilter.txtEidentityTitle')
+                                }}</label>
+                            </div>
+                            <div class="col" id="eidentityId" aria-labelledby="eidentityId">
+                                {{ certificate.eidentityId }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="commonName">{{
+                                    t('modules.eidManagement.tableFilter.txtCommonName')
+                                }}</label>
+                            </div>
+                            <div class="col" id="commonName" aria-labelledby="commonName">
+                                {{ certificate.commonName }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="status">{{
+                                    t('modules.authorizationRegister.tableFilter.filterLabels.status')
+                                }}</label>
+                            </div>
+                            <div class="col">
+                                <ng-container [ngSwitch]="certificate.status">
+                                    <span *ngSwitchCase="'REVOKED'" role="status" aria-live="polite">
+                                        <span class="text-break reject d-flex align-items-center">
+                                            <span [ariaLabel]="t('modules.eidManagement.certificateStatus.txtRevoked')">
+                                                {{ computedStatus('Revoked') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="'STOPPED'"
+                                        class="text-break danger d-flex align-items-center"
+                                        role="status"
+                                        aria-live="polite">
+                                        <span [ariaLabel]="t('modules.eidManagement.certificateStatus.txtStopped')">
+                                            {{ computedStatus('Stopped') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="'ACTIVE'"
+                                        class="active-confirm d-flex me-3"
+                                        role="status"
+                                        aria-live="polite">
+                                        <span [ariaLabel]="t('modules.eidManagement.certificateStatus.txtActive')">
+                                            {{ computedStatus('Active') }}
+                                            <ng-container *ngIf="certificate.isExpiring"
+                                                ><i
+                                                    class="material-icons-outlined text-danger"
+                                                    pTooltip="{{
+                                                        t('modules.eidManagement.tableFilter.txtExpiredCertMessage')
+                                                    }}"
+                                                    >&#xe160;</i
+                                                ></ng-container
+                                            >
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchDefault role="status" aria-live="polite">
+                                        <span [ariaLabel]="t('modules.eidManagement.certificateStatus.txtExpired')">
+                                            {{ computedStatus('Expired') }}
+                                        </span>
+                                    </span>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <ng-container
+                            *ngIf="
+                                originalReasons &&
+                                certificate &&
+                                (certificate.status === CertificateStatus.REVOKED ||
+                                    certificate.status === CertificateStatus.STOPPED)
+                            ">
+                            <div class="row p-3 ps-0">
+                                <div class="col-4">
+                                    <label for="reasonId">
+                                        {{
+                                            certificate.status === CertificateStatus.REVOKED
+                                                ? t('modules.eidManagement.tableFilter.txtRevokeReason')
+                                                : t('modules.eidManagement.tableFilter.txtStopReason')
+                                        }}
+                                    </label>
+                                </div>
+                                <div class="col" id="reasonId" aria-labelledby="reasonId">
+                                    {{ getReasonTranslation(certificate.reasonId, certificate.reasonText) }}
+                                </div>
+                            </div>
+                        </ng-container>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="eidAdministratorName">{{
+                                    t('modules.eidManagement.tableFilter.txtIssuer')
+                                }}</label>
+                            </div>
+                            <div class="col" id="eidAdministratorName" aria-labelledby="eidAdministratorName">
+                                {{ certificate.eidAdministratorName }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="eidAdministratorOfficeId">{{
+                                    t('modules.eidManagement.tableFilter.txtEidAdministratorOfficeName')
+                                }}</label>
+                            </div>
+                            <div class="col" id="eidAdministratorOfficeId" aria-labelledby="eidAdministratorOfficeId">
+                                {{ findAdministratorOffice(certificate.eidAdministratorOfficeId) }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="deviceId">{{ t('modules.eidManagement.tableFilter.txtDeviceType') }}</label>
+                            </div>
+                            <div class="col" id="deviceId" aria-labelledby="deviceId">
+                                {{ translateDeviceType(certificate.deviceId) }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="carrierSerialNumber">{{
+                                    t('modules.eidManagement.tableFilter.txtDeviceNumber')
+                                }}</label>
+                            </div>
+                            <div class="col" id="carrierSerialNumber" aria-labelledby="carrierSerialNumber">
+                                {{ certificate.carrierSerialNumber }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="levelOfAssurance">{{
+                                    t('modules.eidManagement.tableFilter.txtLevelOfAssurance')
+                                }}</label>
+                            </div>
+                            <div class="col" id="levelOfAssurance" aria-labelledby="levelOfAssurance">
+                                {{ translateLevelOfAssurance(certificate.levelOfAssurance) }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="validityFrom">{{
+                                    t('modules.eidManagement.tableFilter.txtStartDate')
+                                }}</label>
+                            </div>
+                            <div class="col" id="validityFrom" aria-labelledby="validityFrom">
+                                {{ formatDateForUI(certificate.validityFrom) }}
+                            </div>
+                        </div>
+                        <div class="row p-3 ps-0">
+                            <div class="col-4">
+                                <label for="validityUntil">{{
+                                    t('modules.eidManagement.tableFilter.txtDateUntil')
+                                }}</label>
+                            </div>
+                            <div class="col" id="validityUntil" aria-labelledby="validityUntil">
+                                {{ formatDateForUI(certificate.validityUntil) }}
+                                <span
+                                    class="d-block badge text-uppercase text-black bg-button-danger-hover"
+                                    *ngIf="
+                                        certificate &&
+                                        certificate.isExpiring &&
+                                        certificate.status === CertificateStatus.ACTIVE
+                                    ">
+                                    {{ t('modules.eidManagement.txtExpiresSoon') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4" *ngIf="certificate">
+                        <div class="dates-container">
+                            <div>
+                                <h6>{{ t('modules.eidManagement.txtCertificateHistory') }}:</h6>
+                            </div>
+                            <div class="d-flex mb-4">
+                                <div class="flex-grow-1 pe-4 text-text-light">
+                                    <label>{{ t('modules.eidManagement.tableFilter.txtCertificateIssuedOn') }}:</label>
+                                </div>
+                                <div class="text-text-default">
+                                    {{ formatDateForUI(certificate.validityFrom) }}
+                                </div>
+                            </div>
+                            <p-divider class="header-divider" type="solid"></p-divider>
+                            <button
+                                pButton
+                                type="button"
+                                [label]="t('modules.eidManagement.txtSeeCertificateHistory')"
+                                icon="pi pi-chevron-right"
+                                iconPos="right"
+                                class="flex-row p-button p-button-primary p-button-sm"
+                                (click)="showCertificateHistory()"></button>
+                        </div>
+                    </div>
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                    <div class="d-flex gap-3">
+                        <button
+                            pButton
+                            type="button"
+                            [label]="t('global.txtClose')"
+                            [attr.aria-label]="t('global.txtClose')"
+                            (click)="hideChangeRequest()"></button>
+                        <ng-container
+                            *ngIf="
+                                certificate &&
+                                (certificate.status === CertificateStatus.ACTIVE ||
+                                    certificate.status === CertificateStatus.STOPPED)
+                            ">
+                            <button
+                                pButton
+                                type="button"
+                                [ngClass]="
+                                    certificate.status === CertificateStatus.ACTIVE
+                                        ? 'p-button-warning'
+                                        : 'p-button-success'
+                                "
+                                [label]="
+                                    certificate.status === CertificateStatus.ACTIVE
+                                        ? t('global.txtStopCertificate')
+                                        : t('global.txtResumeCertificate')
+                                "
+                                [attr.aria-label]="t('global.txtStopCertificate')"
+                                (click)="statusRequestForm(false)">
+                                <i class="material-icons-outlined">{{
+                                    certificate.status === CertificateStatus.ACTIVE ? '&#xe1a2;' : '&#xe1c4;'
+                                }}</i>
+                            </button>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="
+                                certificate &&
+                                (certificate.status === CertificateStatus.ACTIVE ||
+                                    certificate.status === CertificateStatus.STOPPED)
+                            ">
+                            <button
+                                pButton
+                                type="button"
+                                [disabled]="requestInProgress"
+                                (click)="statusRequestForm(true)"
+                                class="p-button p-button-danger"
+                                [label]="t('global.txtRevokeCertificate')"
+                                [attr.aria-label]="t('global.txtRevokeCertificate')">
+                                <i class="material-icons-outlined">&#xe5c9;</i>
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="statusChangeRequest && !previewMode && certificate">
+                <div class="row">
+                    <div class="col">
+                        <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                        <h4>
+                            {{
+                                form.controls['applicationType'].value === ApplicationTypes.STOP_EID
+                                    ? t('modules.eidManagement.txtStopCertificate')
+                                    : form.controls['applicationType'].value === ApplicationTypes.RESUME_EID
+                                    ? t('modules.eidManagement.txtResumeCertificate')
+                                    : t('modules.eidManagement.txtRevokeCertificate')
+                            }}
+                        </h4>
+                    </div>
+                </div>
+                <i
+                    *ngIf="requestInProgress"
+                    class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                    style="font-size: 2rem"></i>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <!-- ---------------------STATUS CHANGE FORM STARTS HERE----------------------- -->
+                <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="certificate">
+                    <div class="d-flex mb-4">
+                        <div class="header-info">
+                            <div class="text-uppercase align-self-center d-flex flex-column text-dark">
+                                <span class="font-bold"
+                                    >{{ form.controls.firstName.value }} {{ form.controls.secondName.value }}
+                                    {{ form.controls.lastName.value }}</span
+                                >
+                                <span class="font-bold"
+                                    >{{ form.controls.firstNameLatin.value }} {{ form.controls.secondNameLatin.value }}
+                                    {{ form.controls.lastNameLatin.value }}</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <label for="citizenIdentifierType" class="form-label"
+                                >{{ t('modules.eidManagement.form.labels.txtCitizenIdentifierType') }}
+                                <span class="text-danger">*</span></label
+                            >
+                            <p-dropdown
+                                formControlName="citizenIdentifierType"
+                                [options]="identifierTypes"
+                                optionLabel="name"
+                                optionValue="id"
+                                [placeholder]="t('global.txtDropdownPlaceholder')"
+                                styleClass="w-100"
+                                (onChange)="onIdentifierChange($event, form)"
+                                inputId="citizenIdentifierType">
+                            </p-dropdown>
+                            <div class="text-danger validation-text">
+                                <span
+                                    *ngIf="
+                                        form.controls['citizenIdentifierType'].invalid &&
+                                        form.controls['citizenIdentifierType'].dirty
+                                    ">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.eidManagement.form.labels.txtCitizenIdentifierType')
+                                        })
+                                    }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="citizenIdentifierNumber" class="form-label"
+                                >{{ t('modules.eidManagement.form.labels.txtCitizenIdentifierNumber') }}
+                                <span class="text-danger">*</span></label
+                            >
+                            <input
+                                pInputText
+                                digitOnly
+                                id="citizenIdentifierNumber"
+                                type="text"
+                                class="w-100"
+                                formControlName="citizenIdentifierNumber" />
+                            <div class="text-danger validation-text">
+                                <span
+                                    *ngIf="
+                                        form.controls['citizenIdentifierNumber'].invalid &&
+                                        form.controls['citizenIdentifierNumber'].dirty
+                                    ">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.eidManagement.form.labels.txtCitizenIdentifierNumber')
+                                        })
+                                    }}
+                                </span>
+                                <span
+                                    class="d-inline-block"
+                                    *ngIf="!form.get('citizenIdentifierNumber')?.errors?.['required']
+                                            && !form.get('citizenIdentifierNumber')?.errors?.['pattern']
+                                            && !form.get('citizenIdentifierNumber')?.errors?.['PinError']
+                                            && !form.get('citizenIdentifierNumber')?.errors?.['EgnError']
+                                            && form.get('citizenIdentifierNumber')?.errors?.['EgnAdultError']">
+                                    {{ t('modules.authorizationStatement.statementForm.txtEGNAdultError') }}</span
+                                >
+                                <span
+                                    class="d-inline-block"
+                                    *ngIf="!form.get('citizenIdentifierNumber')?.errors?.['required']
+                                            && !form.get('citizenIdentifierNumber')?.errors?.['pattern']
+                                            && !form.get('citizenIdentifierNumber')?.errors?.['PinError']
+                                            && form.get('citizenIdentifierNumber')?.errors?.['EgnError']
+                                            ">
+                                    {{ t('modules.authorizationStatement.statementForm.txtEGNInvalid') }}</span
+                                >
+                                <span
+                                    class="d-inline-block"
+                                    *ngIf="!form.get('citizenIdentifierNumber')?.errors?.['required']
+                                            && !form.get('citizenIdentifierNumber')?.errors?.['pattern']
+                                            && form.get('citizenIdentifierNumber')?.errors?.['PinError']">
+                                    {{ t('modules.authorizationStatement.statementForm.txtLNCHInvalid') }}</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ---------------------------------------------------- -->
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <label for="dateOfBirth" class="form-label">
+                                {{ t('modules.eidManagement.form.labels.txtDateOfBirth') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <p-calendar
+                                formControlName="dateOfBirth"
+                                [showIcon]="true"
+                                inputId="dateOfBirth"
+                                [iconAriaLabel]="t('modules.eidManagement.form.labels.txtDateOfBirth')"
+                                styleClass="w-100"
+                                [baseZIndex]="1045"
+                                [placeholder]="t('global.txtDatePlaceholder')"
+                                dateFormat="yy-mm-dd"
+                                appDate>
+                            </p-calendar>
+                            <div class="text-danger validation-text">
+                                <span
+                                    class="d-block"
+                                    *ngIf="form.controls['dateOfBirth']?.errors?.['required'] && form.controls['dateOfBirth']?.dirty">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.eidManagement.form.labels.txtDateOfBirth')
+                                        })
+                                    }}
+                                </span>
+                                <span
+                                    class="d-block"
+                                    *ngIf="!form.controls['dateOfBirth']?.errors?.['required'] && form.controls['dateOfBirth']?.errors?.['belowLawfulAge']">
+                                    {{ t('modules.eidManagement.errors.txtUnderAge') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="citizenship" class="form-label"
+                                >{{ t('modules.eidManagement.form.labels.txtCitizenship') }}
+                                <span class="text-danger">*</span></label
+                            >
+                            <input
+                                pInputText
+                                appTrim
+                                id="citizenship"
+                                type="text"
+                                class="w-100"
+                                autocomplete="off"
+                                formControlName="citizenship" />
+                            <div class="text-danger validation-text">
+                                <span
+                                    class="d-block"
+                                    *ngIf="form.controls['citizenship'].errors?.['required'] &&
+                                       form.controls['citizenship'].dirty
+                                   "
+                                    >{{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.eidManagement.form.labels.txtCitizenship')
+                                        })
+                                    }}</span
+                                >
+                                <span
+                                    class="d-block"
+                                    *ngIf="form.controls['citizenship'].errors?.['pattern'] &&
+                                       form.controls['citizenship'].dirty
+                                   "
+                                    >{{ t('global.txtInvalidDataError') }}</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                    <div class="d-flex mb-4">
+                        <div class="header-info">
+                            <div class="text-uppercase align-self-center d-block text-dark">
+                                <span class="font-bold">{{
+                                    t('modules.eidManagement.steps.txtPersonalDocument')
+                                }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ---------------------------------------------------- -->
+                    <ng-container formGroupName="personalIdentityDocument">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="identityType" class="form-label"
+                                    >{{ t('modules.eidManagement.form.labels.txtIdentityType') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <p-dropdown
+                                    formControlName="identityType"
+                                    [options]="documentTypes"
+                                    optionLabel="name"
+                                    optionValue="name"
+                                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                                    styleClass="w-100"
+                                    inputId="identityType">
+                                </p-dropdown>
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="form.controls['personalIdentityDocument'].get('identityType')?.errors?.['required'] &&
+                    form.controls['personalIdentityDocument'].get('identityType')?.dirty">
+                                        {{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.eidManagement.form.labels.txtIdentityType')
+                                            })
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="identityNumber" class="form-label"
+                                    >{{ t('modules.eidManagement.form.labels.txtIdentityNumber') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <input
+                                    pInputText
+                                    appTrim
+                                    id="identityNumber"
+                                    type="text"
+                                    class="w-100"
+                                    autocomplete="off"
+                                    formControlName="identityNumber"
+                                    (input)="toUpperCase($event)" />
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="form.controls['personalIdentityDocument'].get('identityNumber')?.errors?.['required'] &&
+                    form.controls['personalIdentityDocument'].get('identityNumber')?.dirty">
+                                        {{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.eidManagement.form.labels.txtIdentityNumber')
+                                            })
+                                        }}
+                                    </span>
+                                    <span
+                                        class="d-block"
+                                        *ngIf="form.controls['personalIdentityDocument'].get('identityNumber')?.errors?.['pattern'] &&
+                    form.controls['personalIdentityDocument'].get('identityNumber')?.dirty">
+                                        {{ t('global.txtUseUpperLettersAndDigits') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- -------------------------------------------- -->
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="identityIssueDate" class="form-label"
+                                    >{{ t('modules.eidManagement.form.labels.txtIdentityIssueDate') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <p-calendar
+                                    formControlName="identityIssueDate"
+                                    [showIcon]="true"
+                                    inputId="identityIssueDate"
+                                    [iconAriaLabel]="t('modules.eidManagement.form.labels.txtIdentityIssueDate')"
+                                    styleClass="w-100"
+                                    appendTo="body"
+                                    [baseZIndex]="1045"
+                                    [placeholder]="t('global.txtDatePlaceholder')"
+                                    dateFormat="yy-mm-dd"
+                                    appDate>
+                                </p-calendar>
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="form.controls['personalIdentityDocument'].get('identityIssueDate')?.errors?.['required'] &&
+                                        form.controls['personalIdentityDocument'].get('identityIssueDate')?.dirty
+                                    "
+                                        >{{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.eidManagement.form.labels.txtIdentityIssueDate')
+                                            })
+                                        }}</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="identityValidityToDate" class="form-label"
+                                    >{{ t('modules.eidManagement.form.labels.txtIdentityValidityToDate') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <p-calendar
+                                    formControlName="identityValidityToDate"
+                                    [showIcon]="true"
+                                    inputId="identityValidityToDate"
+                                    [iconAriaLabel]="t('modules.eidManagement.form.labels.txtIdentityValidityToDate')"
+                                    styleClass="w-100"
+                                    appendTo="body"
+                                    [baseZIndex]="1045"
+                                    [placeholder]="t('global.txtDatePlaceholder')"
+                                    dateFormat="yy-mm-dd"
+                                    appDate>
+                                </p-calendar>
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="form.controls['personalIdentityDocument'].get('identityValidityToDate')?.errors?.['required'] &&
+                                            form.controls['personalIdentityDocument'].get('identityValidityToDate')?.dirty
+                                        "
+                                        >{{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.eidManagement.form.labels.txtIdentityValidityToDate')
+                                            })
+                                        }}</span
+                                    >
+                                    <span
+                                        class="d-block"
+                                        *ngIf="
+                                            form.controls['personalIdentityDocument']
+                                                .get('identityValidityToDate')
+                                                ?.hasError('dateMoreThanOrEqualValid') &&
+                                            form.controls['personalIdentityDocument'].get('identityValidityToDate')
+                                                ?.dirty
+                                        ">
+                                        {{ t('modules.eidManagement.errors.txtErrorValidityToDate') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ------------------------------------------------------------ -->
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="identityIssuer" class="form-label"
+                                    >{{ t('modules.eidManagement.form.labels.txtIdentityIssuer') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <input
+                                    pInputText
+                                    id="identityIssuer"
+                                    type="text"
+                                    class="w-100"
+                                    autocomplete="off"
+                                    formControlName="identityIssuer" />
+                                <div class="text-danger validation-text">
+                                    <span
+                                        class="d-block"
+                                        *ngIf="form.controls['personalIdentityDocument'].get('identityIssuer')?.errors?.['required'] &&
+                    form.controls['personalIdentityDocument'].get('identityIssuer')?.dirty">
+                                        {{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.eidManagement.form.labels.txtIdentityIssuer')
+                                            })
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <p-divider class="header-divider" type="solid"></p-divider>
+                    <ng-container *ngIf="form && form.value.applicationType === ApplicationTypes.REVOKE_EID">
+                        <div class="d-flex mb-4">
+                            <div class="header-info">
+                                <div class="text-uppercase align-self-center d-block text-dark">
+                                    <span class="font-bold">{{
+                                        t('modules.eidManagement.steps.txtAdditionalInfo')
+                                    }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- -------------------------------------------- -->
+                            <div class="row mb-4" *ngIf="form.value.applicationType === ApplicationTypes.REVOKE_EID">
+                                <div class="col-lg-6 col-md-6">
+                                    <label for="reasonId" class="form-label"
+                                        >{{ t('modules.eidManagement.form.labels.txtReasonToRevoke') }}
+                                        <span class="text-danger">*</span></label
+                                    >
+                                    <p-dropdown
+                                        formControlName="reasonId"
+                                        [options]="reasons"
+                                        optionLabel="description"
+                                        optionValue="id"
+                                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                                        styleClass="w-100"
+                                        inputId="reasonId"
+                                        (onChange)="handleReasonSelect($event)">
+                                    </p-dropdown>
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            class="d-block"
+                                            *ngIf="form.get('reasonId')?.errors?.['required'] &&
+                                            form.get('reasonId')?.dirty">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t('modules.eidManagement.form.labels.txtReason')
+                                                })
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6" *ngIf="isDescriptionMandatory">
+                                    <label for="reasonText" class="form-label"
+                                        >{{ t('modules.eidManagement.form.labels.txtReasonDescription') }}
+                                        <span class="text-danger">*</span></label
+                                    >
+                                    <input
+                                        pInputText
+                                        appTrim
+                                        id="reasonText"
+                                        type="text"
+                                        class="w-100"
+                                        autocomplete="off"
+                                        formControlName="reasonText" />
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            class="d-block"
+                                            *ngIf="form.controls['reasonText'].errors?.['required'] &&
+                                            form.controls['reasonText'].dirty
+                                            "
+                                            >{{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t('modules.eidManagement.form.labels.txtReasonDescription')
+                                                })
+                                            }}</span
+                                        >
+                                        <span
+                                            class="d-block"
+                                            *ngIf="form.controls['reasonText'].errors?.['pattern'] &&
+                                                form.controls['reasonText'].dirty
+                                            "
+                                            >{{ t('global.txtInvalidDataError') }}</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="d-flex gap-2">
+                        <button
+                            pButton
+                            type="button"
+                            (click)="cancel()"
+                            [label]="t('global.txtCancel')"
+                            [disabled]="requestInProgress"
+                            class="p-button p-button-danger"></button>
+                        <ng-container
+                            *ngIf="
+                                certificate &&
+                                (form.value.applicationType === ApplicationTypes.STOP_EID ||
+                                    form.value.applicationType === ApplicationTypes.RESUME_EID)
+                            ">
+                            <button
+                                pButton
+                                type="button"
+                                [disabled]="requestInProgress"
+                                (click)="showPreview()"
+                                class="p-button"
+                                [ngClass]="
+                                    certificate.status === CertificateStatus.STOPPED
+                                        ? 'p-button-success'
+                                        : 'p-button-warning'
+                                "
+                                [label]="
+                                    certificate.status === CertificateStatus.ACTIVE
+                                        ? t('global.txtPreviewAndStop')
+                                        : t('global.txtPreviewAndResume')
+                                "
+                                [attr.aria-label]="
+                                    certificate.status === CertificateStatus.ACTIVE
+                                        ? t('global.txtPreviewAndStop')
+                                        : t('global.txtPreviewAndResume')
+                                ">
+                                <i class="material-icons-outlined">{{
+                                    certificate.status === CertificateStatus.ACTIVE ? '&#xe1a2;' : '&#xe1c4;'
+                                }}</i>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="certificate && form.value.applicationType === ApplicationTypes.REVOKE_EID">
+                            <button
+                                pButton
+                                type="button"
+                                [disabled]="requestInProgress"
+                                (click)="showPreview()"
+                                class="p-button p-button-danger"
+                                [label]="t('global.txtPreviewAndRevoke')"
+                                [attr.aria-label]="t('global.txtPreviewAndRevoke')">
+                                <i class="material-icons-outlined">&#xe5c9;</i>
+                            </button>
+                        </ng-container>
+                    </div>
+                </form>
+                <!-- ---------------------STATUS CHANGE FORM ENDS HERE----------------------- -->
+            </ng-container>
+            <ng-container *ngIf="previewMode && !userHasToPay">
+                <div class="d-flex mb-4">
+                    <div class="header-info">
+                        <div class="text-uppercase align-self-center d-block text-dark">
+                            <span class="font-bold"
+                                >{{ t('modules.eidManagement.txtApplicantData') }} {{ form.value.firstName }}
+                                {{ form.value.secondName }} {{ form.value.lastName }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtFirstNameLatin') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.value.firstNameLatin }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtSecondNameLatin') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.value.secondNameLatin }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtLastNameLatin') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.value.lastNameLatin }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtCitizenship') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.value.citizenship }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtCitizenIdentifierType') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.value.citizenIdentifierType }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtCitizenIdentifierNumber') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.value.citizenIdentifierNumber }}
+                        </div>
+                    </div>
+                </div>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <div class="d-flex mb-4">
+                    <div class="header-info">
+                        <div class="text-uppercase align-self-center d-block text-dark">
+                            <span class="font-bold">{{ t('modules.eidManagement.steps.txtPersonalDocument') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtIdentityType') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.controls.personalIdentityDocument.controls.identityType.value }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtIdentityNumber') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.controls.personalIdentityDocument.controls.identityNumber.value }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtIdentityIssueDate') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{
+                                form.controls.personalIdentityDocument.controls.identityIssueDate.value
+                                    | date : 'yyyy-MM-dd'
+                            }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtIdentityValidityToDate') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{
+                                form.controls.personalIdentityDocument.controls.identityValidityToDate.value
+                                    | date : 'yyyy-MM-dd'
+                            }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <p class="form-label">
+                            {{ t('modules.eidManagement.form.labels.txtIdentityIssuer') }}
+                        </p>
+                        <div class="preview-input w-100 mb-4">
+                            {{ form.controls.personalIdentityDocument.controls.identityIssuer.value }}
+                        </div>
+                    </div>
+                </div>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <ng-container *ngIf="form && form.value.applicationType !== ApplicationTypes.RESUME_EID">
+                    <div class="d-flex mb-4">
+                        <div class="header-info">
+                            <div class="text-uppercase align-self-center d-block text-dark">
+                                <span class="font-bold">{{ t('modules.eidManagement.steps.txtAdditionalInfo') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <p class="form-label">
+                                {{
+                                    certificate.status === CertificateStatus.ACTIVE
+                                        ? t('modules.eidManagement.form.labels.txtReasonToStop')
+                                        : t('modules.eidManagement.form.labels.txtReasonToRevoke')
+                                }}
+                            </p>
+                            <div class="preview-input w-100 mb-4">
+                                {{ getReasonTranslation(form.controls.reasonId.value) }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6" *ngIf="isDescriptionMandatory">
+                            <p class="form-label">
+                                {{ t('modules.eidManagement.txtReasonDescriptionPreview') }}
+                            </p>
+                            <div class="preview-input w-100 mb-4">
+                                {{ form.value.reasonText }}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="isSignatureRequired && form.value.applicationType !== ApplicationTypes.STOP_EID">
+                    <form [formGroup]="signatureForm" (ngSubmit)="generateXml()" class="row mb-2">
+                        <div class="col">
+                            <label for="signatureOptions" class="form-label"
+                                >{{ t('modules.authorizationRegister.tableFilter.txtSignature') }}
+                            </label>
+                            <p-dropdown
+                                formControlName="signatureMethod"
+                                [options]="signatureOptions"
+                                optionLabel="name"
+                                optionValue="code"
+                                styleClass="w-100"
+                                inputId="signatureOptions"
+                                [placeholder]="t('global.txtDropdownPlaceholder')"
+                                (onChange)="onSignatureOptionsChange($event)">
+                            </p-dropdown>
+                            <div class="text-danger validation-text">
+                                <span
+                                    *ngIf="
+                                        signatureForm.controls['signatureMethod'].invalid &&
+                                        signatureForm.controls['signatureMethod'].dirty
+                                    ">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t('modules.authorizationRegister.tableFilter.txtSignature')
+                                        })
+                                    }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col d-flex align-items-end">
+                            <button
+                                pButton
+                                class="mb-4"
+                                type="submit"
+                                [loading]="loading"
+                                [label]="t('modules.eidManagement.tableFilter.txtSignApplication')"
+                                [attr.aria-label]="t('modules.eidManagement.tableFilter.txtSignApplication')"></button>
+                        </div>
+                    </form>
+                </ng-container>
+                <div class="d-flex gap-2">
+                    <button
+                        pButton
+                        type="button"
+                        [label]="t('global.txtEdit')"
+                        (click)="hidePreview()"
+                        [disabled]="requestInProgress"
+                        class="p-button p-button-outlined"></button>
+                    <ng-container *ngIf="form && form.value.applicationType === ApplicationTypes.STOP_EID">
+                        <button
+                            pButton
+                            type="button"
+                            [disabled]="requestInProgress"
+                            (click)="onSubmit()"
+                            class="p-button-warning"
+                            [label]="t('global.txtConfirmAndStop')"
+                            [attr.aria-label]="t('global.txtConfirmAndStop')">
+                            <i class="material-icons-outlined">&#xe1a2;</i>
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="!isSignatureRequired">
+                        <ng-container *ngIf="form && form.value.applicationType === ApplicationTypes.RESUME_EID">
+                            <button
+                                pButton
+                                type="button"
+                                [disabled]="requestInProgress"
+                                (click)="onSubmit()"
+                                class="p-button-success"
+                                [label]="t('global.txtConfirmAndResume')"
+                                [attr.aria-label]="t('global.txtConfirmAndResume')">
+                                <i class="material-icons-outlined">&#xe1c4;</i>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="form && form.value.applicationType === ApplicationTypes.REVOKE_EID">
+                            <button
+                                pButton
+                                type="button"
+                                [disabled]="requestInProgress"
+                                (click)="openRevokeModal()"
+                                class="p-button-danger"
+                                [label]="t('global.txtConfirmAndRevoke')"
+                                [attr.aria-label]="t('global.txtConfirmAndRevoke')">
+                                <i class="material-icons-outlined">&#xe5c9;</i>
+                            </button>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="userHasToPay">
+                <div class="row">
+                    <div class="col">
+                        <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                    </div>
+                </div>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <div>
+                    <h3>{{ t('modules.eidManagement.finalStepMessage.txtStatusChangeTitle') }}</h3>
+
+                    <p>{{ t('modules.eidManagement.finalStepMessage.txtStatusChangeSubTitle') }}</p>
+                    <p-dialog [(visible)]="isOpen" [modal]="true" [draggable]="false" [resizable]="true">
+                        <div class="text-center">
+                            <strong
+                                ><h2>{{ t('global.txtAttention') }}</h2></strong
+                            >
+                            <p>
+                                <a [href]="paymentUrl + tariff.paymentAccessCode" target="_blank">{{
+                                    t('modules.eidManagement.finalStepMessage.modal.link')
+                                }}</a
+                                >{{ t('modules.eidManagement.finalStepMessage.modal.txtLinkDescription') }}
+                                <strong>{{
+                                    t('modules.eidManagement.finalStepMessage.modal.txtLinkActiveDays')
+                                }}</strong
+                                >.
+                            </p>
+                            <p>
+                                {{ t('modules.eidManagement.finalStepMessage.modal.txtStatusChangeDescription') }}
+                            </p>
+                            <p>
+                                {{ t('modules.eidManagement.finalStepMessage.modal.txtDescriptionFooter') }}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-end gap-3">
+                            <button
+                                pButton
+                                type="button"
+                                class="p-button-outlined"
+                                (click)="closeModal()"
+                                [label]="t('global.txtClose')"
+                                [attr.aria-label]="t('global.txtClose')"></button>
+                            <button
+                                pButton
+                                type="button"
+                                class="p-button-danger"
+                                (click)="sendBackToDetails()"
+                                [label]="t('global.txtAgreeAndContinue')"
+                                [attr.aria-label]="t('global.txtAgreeAndContinue')"></button>
+                        </div>
+                    </p-dialog>
+                    <p>
+                        <strong>{{ t('modules.eidManagement.finalStepMessage.txtChosenAdminOfficeData') }}</strong>
+                    </p>
+                    <table>
+                        <tr>
+                            <td class="pb-4 pe-4 text-secondary">
+                                {{ t('modules.eidManagement.finalStepMessage.txtAddress') }}
+                            </td>
+                            <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                {{ administratorOfficeInfoRequest('location') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pb-4 pe-4 text-secondary">
+                                {{ t('modules.eidManagement.finalStepMessage.txtSchedule') }}
+                            </td>
+                            <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                {{ administratorOfficeInfoRequest('workingHours') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pb-4 pe-4 text-secondary">
+                                {{ t('modules.eidManagement.finalStepMessage.txtFooter') }}
+                            </td>
+                            <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                <a [href]="'tel:' + administratorOfficeInfoRequest('contact')">{{
+                                    administratorOfficeInfoRequest('contact')
+                                }}</a
+                                ><br />
+                                <a [href]="'mailto:' + administratorOfficeInfoRequest('email')">{{
+                                    administratorOfficeInfoRequest('email')
+                                }}</a>
+                            </td>
+                        </tr>
+                    </table>
+                    <ng-container>
+                        <p>
+                            <strong>{{ t('modules.eidManagement.finalStepMessage.txtInvoice') }}</strong>
+                        </p>
+                        <table>
+                            <p class="mb-4">{{ t('modules.eidManagement.finalStepMessage.txtDeadlineDescription') }}</p>
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">
+                                    {{ t('modules.eidManagement.finalStepMessage.txtPaymentId') }}:
+                                </td>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                    {{ tariff.paymentAccessCode }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">
+                                    {{ t('modules.eidManagement.finalStepMessage.txtPrice') }}:
+                                </td>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                    {{ (tariff.fee || 0) + ' | ' + (tariff.secondaryFee || 0) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pb-4 pe-4 text-secondary">
+                                    {{ t('modules.eidManagement.finalStepMessage.txtCurrency') }}:
+                                </td>
+                                <td class="pb-4 fw-bold text-theme-primary-dark align-top">
+                                    {{ tariff.feeCurrency + ' | ' + tariff.secondaryFeeCurrency }}
+                                </td>
+                            </tr>
+                        </table>
+                    </ng-container>
+                    <div class="d-flex flex-row gap-3">
+                        <ng-container *ngIf="userHasToPay && tariff.isPaymentRequired">
+                            <button
+                                pButton
+                                type="button"
+                                class="p-button-danger"
+                                (click)="openModal()"
+                                [label]="t('global.txtClose')"
+                                [attr.aria-label]="t('global.txtClose')"></button>
+                            <button
+                                pButton
+                                type="button"
+                                (click)="redirectToPayment(tariff.paymentAccessCode)"
+                                [label]="t('global.txtPayment')"
+                                [attr.aria-label]="t('global.txtPayment')"></button>
+                        </ng-container>
+                        <ng-container *ngIf="!userHasToPay || !tariff.isPaymentRequired">
+                            <button
+                                pButton
+                                type="button"
+                                (click)="sendBackToDetails()"
+                                [label]="t('modules.eidManagement.txtConfirmationButton')"></button>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+            <p-dialog [(visible)]="isRevokeOpen" [modal]="true" [draggable]="false" [resizable]="true">
+                <div class="text-center">
+                    <strong
+                        ><h2 class="text-danger">{{ t('global.txtAttention') }}</h2></strong
+                    >
+                    <p>
+                        {{ t('modules.eidManagement.txtRevokationDetails') }}
+                    </p>
+                    <p>
+                        {{ t('modules.eidManagement.txtRevokationMessage') }}
+                    </p>
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button
+                        pButton
+                        type="button"
+                        class="p-button-outlined"
+                        (click)="closeRevokeModal()"
+                        [label]="t('global.txtClose')"
+                        [attr.aria-label]="t('global.txtClose')"></button>
+                    <button
+                        pButton
+                        type="button"
+                        class="p-button-danger"
+                        (click)="onSubmit()"
+                        [label]="t('global.txtAgreeAndContinue')"
+                        [attr.aria-label]="t('global.txtAgreeAndContinue')"></button>
+                </div>
+            </p-dialog>
+        </div>
+    </p-card>
+</section>
