@@ -1,0 +1,12 @@
+#map {
+    height: 100vh;
+    max-height: 600px;
+}
+
+::ng-deep .custom-popup {
+    margin-bottom: 3.5rem;
+        p {
+            margin-top: 0.3rem;
+            margin-bottom: 0;
+    }
+}

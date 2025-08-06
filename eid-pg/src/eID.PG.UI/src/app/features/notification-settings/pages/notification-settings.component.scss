@@ -1,0 +1,161 @@
+@import '../../../styles/variables.scss';
+
+.notification-settings {
+    .notification-header {
+        color: $text-default;
+    }
+    .notification-sub-header {
+        white-space: pre-wrap;
+    }
+
+    ::ng-deep p-tabview {
+        padding-top: 1.3rem;
+        .p-tabview-nav {
+            border-color: $theme-primary-light;
+            li .p-tabview-nav-link {
+                padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+                i {
+                    font-size: 32px;
+                }
+            }
+            li:not(.p-highlight):not(.p-disabled) .p-tabview-nav-link {
+                color: $text-light;
+                border-color: $theme-primary-light;
+                &:hover {
+                    color: $button-default;
+                    border-color: $button-default-hover;
+                }
+            }
+            li.p-highlight {
+                .p-tabview-nav-link {
+                    color: $text-active;
+                    border-color: $text-active;
+                }
+            }
+        }
+        .p-tabview-panels {
+            padding: 0;
+            p-tabpanel {
+                p-table {
+                    &.notification-channels-table tbody > tr {
+                        & > td {
+                            padding: 1.5rem;
+                            label {
+                                font-size: 1rem;
+                                color: $text-default;
+                            }
+                            p {
+                                font-size: 0.9rem;
+                                color: $text-light;
+                            }
+
+                            p-inputswitch {
+                                .p-inputswitch {
+                                    &.p-inputswitch-checked .p-inputswitch-slider {
+                                        background: $text-active;
+
+                                        &:hover {
+                                            background: $button-default-hover;
+                                        }
+                                    }
+                                    &.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
+                                        background: $button-default-hover;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &.systems-table {
+                        tbody > tr {
+                            font-size: 0.9rem;
+                            color: $text-default;
+                            &.nested-row {
+                                > td:first-child {
+                                    padding: 0;
+                                }
+                                p-table table tbody tr td {
+                                    padding-left: 74px;
+                                    p-checkbox {
+                                        vertical-align: middle;
+                                        .p-checkbox {
+                                            .p-checkbox-box {
+                                                border-color: $button-disabled;
+                                                &.p-highlight,
+                                                &.p-indeterminate {
+                                                    background-color: $button-default;
+                                                    .p-checkbox-icon {
+                                                        color: $background-white;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        label.p-checkbox-label {
+                                            margin-left: 0.7rem;
+                                        }
+                                    }
+                                }
+                            }
+                            td {
+                                padding: 1.25rem 1rem;
+                                .p-button-rounded {
+                                    width: 2rem;
+                                    height: 2rem;
+                                    margin-right: 8px;
+                                    vertical-align: middle;
+                                    .p-button-icon {
+                                        font-size: 14px;
+                                        color: $text-default;
+                                    }
+                                }
+
+                                p-tristatecheckbox {
+                                    margin-right: 10px;
+                                    vertical-align: middle;
+                                    .p-checkbox {
+                                        vertical-align: middle;
+
+                                        .p-checkbox-box {
+                                            border-color: $button-disabled;
+                                            &.p-highlight,
+                                            &.p-indeterminate {
+                                                background-color: $button-default;
+                                                .p-checkbox-icon {
+                                                    color: $background-white;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                label {
+                                    color: $button-dark;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                p-table {
+                    table tbody > tr {
+                        & > td {
+                            border-color: $theme-primary-light;
+                        }
+                        &.table-row-disabled {
+                            background-color: $background-light-grey;
+                            label {
+                                color: $text-light;
+                            }
+                            p {
+                                color: $text-light;
+                            }
+                            &:hover {
+                                background-color: $background-light-grey;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

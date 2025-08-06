@@ -1,0 +1,234 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase" [attr.aria-label]="t('searchPage.txtSearchReferencesTittle')">
+                    {{ t('searchPage.txtSearchReferencesTittle') }}
+                </h2>
+                <i
+                    *ngIf="requestInProgress"
+                    class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+                    style="font-size: 2rem"></i>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <p class="notification-sub-header" [attr.aria-label]="t('searchPage.txtSearchReferencesSubTittle')">
+                    {{ t('searchPage.txtSearchReferencesSubTittle') }}
+                </p>
+                <ul>
+                    <li>{{ t('searchPage.txtLiItem1') }}</li>
+                    <li>{{ t('searchPage.txtLiItem4') }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap flex-row justify-content-start my-4">
+            <form [formGroup]="form" class="p-fluid" (ngSubmit)="submit()">
+                <div class="d-flex flex-row gap-4">
+                    <div>
+                        <label for="keyword" class="form-label">
+                            {{ t('searchPage.txtSearchCriteriaLabel') }}
+                        </label>
+                        <input
+                            pInputText
+                            appTrim
+                            type="text"
+                            id="keyword"
+                            formControlName="keyword"
+                            [ngClass]="{ 'p-inputtext.ng-dirty.ng-invalid': form.controls['keyword'].invalid }" />
+                    </div>
+                    <div class="d-flex align-items-end">
+                        <button
+                            pButton
+                            type="submit"
+                            class="w-100"
+                            [disabled]="requestInProgress"
+                            icon="pi pi-search"
+                            iconPos="left"
+                            [attr.aria-label]="t('searchPage.txtSearchTitle')"
+                            [label]="t('searchPage.txtSearchTitle')"></button>
+                    </div>
+                </div>
+                <div class="text-danger validation-text">
+                    <span
+                        class="d-block"
+                        *ngIf="form.controls['keyword'].errors?.['required'] && form.controls['keyword'].dirty"
+                        >{{
+                            t('validations.txtPleaseEnterField', {
+                                field: t('searchPage.txtSearchTitle')
+                            })
+                        }}</span
+                    >
+                    <span class="d-block" *ngIf="form.controls['keyword'].errors?.['minlength']">
+                        {{ t('global.txtMinLengthError') }}
+                    </span>
+                </div>
+            </form>
+        </div>
+        <ng-container *ngIf="referencesList">
+            <div class="row">
+                <div class="col">
+                    <p-table
+                        #dt
+                        [value]="referencesList"
+                        [tableStyle]="{ 'min-width': '100%' }"
+                        [rowHover]="true"
+                        dataKey="uid"
+                        [lazy]="true"
+                        (onLazyLoad)="loadApplications($event)"
+                        [totalRecords]="totalRecords"
+                        [rows]="pageSize"
+                        [paginator]="true"
+                        [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                        [currentPageReportTemplate]="
+                            t('global.txtTablePagination', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        [loading]="requestInProgress"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        [globalFilterFields]="[
+                            'commonName',
+                            'serialNumber',
+                            'carrierType',
+                            'validityFrom',
+                            'validityUntil',
+                            'status'
+                        ]"
+                        sortField="status"
+                        [sortOrder]="1"
+                        [rowSelectable]="false">
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-nowrap">{{ t('modules.eidManagement.tableFilter.txtNames') }}</th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtSerialNumber') }}
+                                </th>
+                                <th class="text-nowrap">{{ t('modules.eidManagement.tableFilter.txtDeviceType') }}</th>
+                                <th class="text-nowrap">{{ t('modules.eidManagement.tableFilter.txtStartDate') }}</th>
+                                <th class="text-nowrap">{{ t('modules.eidManagement.tableFilter.txtDateUntil') }}</th>
+                                <th class="text-nowrap">{{ t('modules.eidManagement.tableFilter.txtStatus') }}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-pagesList>
+                            <tr>
+                                <td
+                                    style="min-width: 10rem"
+                                    [attr.aria-label]="pagesList.commonName"
+                                    [title]="pagesList.commonName">
+                                    <span class="text-wrap">{{ formatName(pagesList.commonName) }}</span>
+                                </td>
+                                <td
+                                    style="min-width: 10rem"
+                                    [attr.aria-label]="pagesList.serialNumber"
+                                    [title]="pagesList.serialNumber">
+                                    <span class="text-wrap">{{ pagesList.serialNumber }}</span>
+                                </td>
+                                <td
+                                    style="min-width: 10rem"
+                                    [attr.aria-label]="pagesList.carrierType"
+                                    [title]="pagesList.carrierType">
+                                    <span class="text-wrap">{{ pagesList.carrierType }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="pagesList.validityFrom | translocoDate"
+                                    [title]="pagesList.validityFrom | translocoDate">
+                                    <span class="multiline-ellipsis">{{ pagesList.validityFrom | translocoDate }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="pagesList.validityUntil | translocoDate"
+                                    [title]="pagesList.validityUntil | translocoDate">
+                                    <span class="multiline-ellipsis">{{
+                                        pagesList.validityUntil | translocoDate
+                                    }}</span>
+                                </td>
+                                <td
+                                    style="min-width: 10rem"
+                                    [attr.aria-label]="pagesList.status"
+                                    [title]="pagesList.status">
+                                    <ng-container [ngSwitch]="pagesList.status">
+                                        <!-- // red text  -->
+                                        <span *ngSwitchCase="'REVOKED'">
+                                            <span class="text-break reject d-flex align-items-center">
+                                                <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                                <span style="word-break: keep-all">
+                                                    {{ computedStatus('Revoked') }}
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <!-- // yellow text -->
+                                        <span
+                                            *ngSwitchCase="'STOPPED'"
+                                            class="text-break danger d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Stopped') }}
+                                            </span>
+                                        </span>
+                                        <!-- //green text -->
+                                        <span
+                                            *ngSwitchCase="'ACTIVE'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xe877;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Active') }}
+                                            </span>
+                                        </span>
+                                        <span *ngSwitchCase="'EXPIRED'" class="text-break d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Expired') }}
+                                            </span>
+                                        </span>
+                                        <span *ngSwitchDefault style="word-break: keep-all">
+                                            {{ computedStatus('Processing') }}
+                                        </span>
+                                    </ng-container>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="7">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-container>
+
+        <p-toast position="bottom-right"></p-toast>
+    </p-card>
+</section>

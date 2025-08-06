@@ -1,0 +1,81 @@
+<ng-container *transloco="let t">
+    <h4 class="mb-4 text-uppercase" [attr.aria-label]="t('sidebar.txtSystemProcesses')">
+        {{ t('sidebar.txtSystemProcesses') }}
+    </h4>
+    <div class="p-card p-4 mb-4">
+        <h4 class="mb-4" [attr.aria-label]="t('modules.systemProcesses.txtStatusOfInternalSystems')">
+            {{ t('modules.systemProcesses.txtStatusOfInternalSystems') }}
+        </h4>
+        <p-table [value]="statusOfPrivateSystems" [tableStyle]="{ 'min-width': '100%' }" [paginator]="false">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-nowrap">
+                        {{ t('modules.systemProcesses.txtAddress') }}
+                    </th>
+                    <th class="text-nowrap">
+                        {{ t('modules.systemProcesses.txtDescription') }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-system>
+                <tr>
+                    <td>
+                        <a
+                            *ngIf="system.address; else elseBlock"
+                            class="d-inline-block text-break"
+                            href="{{ system.address }}"
+                            target="_blank">
+                            {{ system.address }}
+                        </a>
+                        <ng-template #elseBlock>
+                            <span class="text-text-error">{{ t('modules.systemProcesses.txtMissingConfig') }}</span>
+                        </ng-template>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">
+                            {{ system.description }}
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="p-card p-4">
+        <h4 class="mb-4" [attr.aria-label]="t('modules.systemProcesses.txtConfigurationsAndLimits')">
+            {{ t('modules.systemProcesses.txtConfigurationsAndLimits') }}
+        </h4>
+        <p-table [value]="configurationSystems" [tableStyle]="{ 'min-width': '100%' }" [paginator]="false">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-nowrap">
+                        {{ t('modules.systemProcesses.txtAddress') }}
+                    </th>
+                    <th class="text-nowrap">
+                        {{ t('modules.systemProcesses.txtDescription') }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-system>
+                <tr>
+                    <td>
+                        <a
+                            *ngIf="system.address; else elseBlock"
+                            class="d-inline-block text-break"
+                            href="{{ system.address }}"
+                            target="_blank">
+                            {{ system.address }}
+                        </a>
+                        <ng-template #elseBlock>
+                            <span class="text-text-error">{{ t('modules.systemProcesses.txtMissingConfig') }}</span>
+                        </ng-template>
+                    </td>
+                    <td>
+                        <span class="d-inline-block text-break">
+                            {{ system.description }}
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</ng-container>

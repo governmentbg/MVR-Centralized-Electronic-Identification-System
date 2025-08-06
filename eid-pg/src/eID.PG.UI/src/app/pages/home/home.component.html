@@ -1,0 +1,108 @@
+<section class="h-100 container app-main-screen-with-buttons" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-10 col-sm-12">
+                <h2 class="m-4 text-primary text-center text-uppercase">
+                    {{ t('homePage.txtTitle') }}
+                </h2>
+            </div>
+            <div class="col-lg-10 col-md-10 col-sm-12">
+                <p>
+                    {{ t('homePage.txtDescription') }}
+                </p>
+                <ul class="mb-4">
+                    <li>{{ t('homePage.txtLi1') }}</li>
+                    <li>{{ t('homePage.txtLi2') }}</li>
+                    <li>{{ t('homePage.txtLi3') }}</li>
+                    <li>{{ t('homePage.txtLi4') }}</li>
+                    <li>{{ t('homePage.txtLi5') }}</li>
+                    <li>{{ t('homePage.txtLi6') }}</li>
+                </ul>
+
+                <p>
+                    {{ t('homePage.txtDescription2') }}
+                    <a class="text-uppercase text-primary font-bold" routerLink="/eid-attachment-details">{{
+                        t('homePage.txtAttachProfile')
+                    }}</a>
+                    {{ t('homePage.txtDescription3') }}
+                </p>
+                <ul class="mb-4">
+                    <li>{{ t('homePage.txtLi7') }}</li>
+                    <li>{{ t('homePage.txtLi8') }}</li>
+                    <li>{{ t('homePage.txtLi9') }}</li>
+                </ul>
+                <div>
+                    {{ t('homePage.txtMoreInformation') }}
+                    <a class="text-uppercase text-primary font-bold" routerLink="/useful-information">{{
+                        t('subNavbar.txtUsefulInformation')
+                    }}</a>
+                </div>
+
+                <p-divider class="header-divider"></p-divider>
+                <div
+                    class="d-flex flex-row justify-content-center justify-content-lg-between align-content-center flex-wrap">
+                    <div class="navigation-button m-4">
+                        <button
+                            pButton
+                            type="button"
+                            class="p-button-raised p-button-text h-100"
+                            [attr.aria-label]="t('modules.administrators.administrators')"
+                            role="Navigation button"
+                            routerLink="administrators">
+                            <div class="w-100 h-100">
+                                <div class="text-center">
+                                    <i class="material-icons-outlined">&#xf650;</i>
+                                </div>
+                                <div class="text-center">
+                                    <h5>{{ t('modules.administrators.administrators') }}</h5>
+                                    <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                                    <h6>{{ t('modules.administrators.txtAdminDescription') }}</h6>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="navigation-button m-4">
+                        <button
+                            pButton
+                            type="button"
+                            class="p-button-raised p-button-text h-100"
+                            [attr.aria-label]="t('modules.administrators.providers')"
+                            (click)="redirectToProviders()"
+                            role="Navigation button">
+                            <div class="w-100 h-100">
+                                <div class="text-center">
+                                    <i class="material-icons-outlined">&#xf0c5;</i>
+                                </div>
+                                <div class="text-center">
+                                    <h5>{{ t('modules.administrators.providers') }}</h5>
+                                    <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                                    <h6>{{ t('modules.administrators.txtProviderDescription') }}</h6>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                     <div class="navigation-button m-4">
+                        <button
+                            pButton
+                            type="button"
+                            class="p-button-raised p-button-text h-100"
+                            [attr.aria-label]="t('modules.administrators.centers')"
+                            role="Navigation button"
+                            routerLink="centers">
+                            <div class="w-100 h-100">
+                                <div class="text-center">
+                                    <i class="material-icons-outlined">&#xeb6f;</i>
+                                </div>
+                                <div class="text-center">
+                                    <h5>{{ t('modules.administrators.centers') }}</h5>
+                                    <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                                    <h6>{{ t('modules.administrators.txtCenterDescription') }}</h6>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</section>

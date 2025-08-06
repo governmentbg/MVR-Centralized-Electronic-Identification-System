@@ -1,0 +1,225 @@
+<section class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                <h2 class="text-text-active text-uppercase mb-0">{{ t('modules.cardManagement.txtChangePIN') }}</h2>
+            </div>
+        </div>
+        <p-divider class="header-divider" styleClass="mt-4 mb-4" type="solid"></p-divider>
+        <p-messages [severity]="!isSmartCardServiceAvailable ? 'warn' : 'success'">
+            <ng-template pTemplate>
+                <div class="w-100">
+                    <ng-container *ngIf="!isSmartCardServiceAvailable">
+                        <div class="align-self-center">
+                            <i class="material-icons-outlined pe-2">&#xe001;</i>
+                            {{ t('modules.cardManagement.txtSmartCardServiceNotStarted') }}
+                        </div>
+                        <p-divider class="header-divider" type="solid"></p-divider>
+                        <div class="d-flex gap-3">
+                            <button
+                                pButton
+                                type="button"
+                                [label]="t('modules.cardManagement.txtDownload')"
+                                icon="pi pi-download"
+                                class="p-button-sm p-button-success"
+                                [disabled]="loadingSmartCardService"
+                                (click)="downloadSmartCardCommunicationService()"></button>
+                            <button
+                                pButton
+                                type="button"
+                                [label]="t('modules.cardManagement.txtRetry')"
+                                icon="pi pi-refresh"
+                                class="p-button-sm"
+                                [disabled]="loadingSmartCardService"
+                                (click)="initSmartCardService()"></button>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="isSmartCardServiceAvailable">
+                        <div class="align-self-center">
+                            <i class="material-icons-outlined pe-2">&#xe86c;</i>
+                            {{ t('modules.cardManagement.txtSmartCardServiceStarted') }}
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-template>
+        </p-messages>
+        <div class="row">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-md-9 col-lg-8">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="reader" class="form-label"> {{ t('modules.cardManagement.txtReader') }}: </label>
+                        <p-dropdown
+                            formControlName="readerName"
+                            [options]="cardReaders"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            styleClass="w-100"
+                            [dropdownIcon]="
+                                requestInProgress
+                                    ? 'pi pi-spin pi-spinner p-dropdown-trigger'
+                                    : 'pi pi-chevron-down p-dropdown-trigger'
+                            "
+                            inputId="reader">
+                        </p-dropdown>
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="submitted && form.controls.readerName.invalid && form.controls.readerName.dirty">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtReader')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="currentPIN" class="form-label">
+                            {{ t('modules.cardManagement.txtCurrentPIN') }}
+                        </label>
+                        <p-password
+                            inputId="currentPIN"
+                            formControlName="currentPIN"
+                            styleClass="w-100"
+                            inputStyleClass="w-100"
+                            [maxLength]="6"
+                            [toggleMask]="true"
+                            [feedback]="false"
+                            [pKeyFilter]="numberRegex" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    submitted &&
+                                    form.controls.currentPIN.hasError('required') &&
+                                    form.controls.currentPIN.dirty
+                                ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtCurrentPIN')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    form.controls.currentPIN.invalid &&
+                                    (form.controls.currentPIN.hasError('minlength') ||
+                                        form.controls.currentPIN.hasError('maxlength') ||
+                                        form.controls.currentPIN.hasError('pattern'))
+                                ">
+                                {{ t('modules.cardManagement.txtErrorPinLengthAndNumbers') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="newPIN" class="form-label">
+                            {{ t('modules.cardManagement.txtNewPIN') }}
+                        </label>
+                        <p-password
+                            inputId="newPIN"
+                            formControlName="newPIN"
+                            styleClass="w-100"
+                            inputStyleClass="w-100"
+                            [maxLength]="6"
+                            [toggleMask]="true"
+                            [feedback]="false"
+                            [pKeyFilter]="numberRegex" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    submitted && form.controls.newPIN.hasError('required') && form.controls.newPIN.dirty
+                                ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtNewPIN')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    form.controls.newPIN.invalid &&
+                                    (form.controls.newPIN.hasError('minlength') ||
+                                        form.controls.newPIN.hasError('maxlength') ||
+                                        form.controls.newPIN.hasError('pattern'))
+                                ">
+                                {{ t('modules.cardManagement.txtErrorPinLengthAndNumbers') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-6">
+                        <label for="repeatNewPIN" class="form-label">
+                            {{ t('modules.cardManagement.txtRepeatNewPIN') }}
+                        </label>
+                        <p-password
+                            inputId="repeatNewPIN"
+                            formControlName="repeatNewPIN"
+                            styleClass="w-100"
+                            inputStyleClass="w-100"
+                            [maxLength]="6"
+                            [toggleMask]="true"
+                            [feedback]="false"
+                            [pKeyFilter]="numberRegex" />
+                        <div class="text-danger validation-text">
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    submitted &&
+                                    form.controls.repeatNewPIN.hasError('required') &&
+                                    form.controls.repeatNewPIN.dirty
+                                ">
+                                {{
+                                    t('validations.txtPleaseEnterField', {
+                                        field: t('modules.cardManagement.txtRepeatNewPIN')
+                                    })
+                                }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    form.controls.repeatNewPIN.invalid &&
+                                    (form.controls.repeatNewPIN.hasError('minlength') ||
+                                        form.controls.repeatNewPIN.hasError('maxlength') ||
+                                        form.controls.newPIN.hasError('pattern'))
+                                ">
+                                {{ t('modules.cardManagement.txtErrorPinLengthAndNumbers') }}
+                            </span>
+                            <span
+                                class="d-block"
+                                *ngIf="
+                                    form.controls.repeatNewPIN.invalid &&
+                                    form.controls.repeatNewPIN.hasError('mustMatch')
+                                ">
+                                {{ t('modules.cardManagement.txtErrorPinMatch') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <button
+                        pButton
+                        type="button"
+                        (click)="cancel()"
+                        [label]="t('global.txtCancel')"
+                        [disabled]="requestInProgress"
+                        class="p-button p-button-danger"></button>
+                    <button
+                        pButton
+                        type="button"
+                        [label]="t('modules.cardManagement.txtChangePIN')"
+                        [type]="'submit'"
+                        [disabled]="requestInProgress || !isSmartCardServiceAvailable"
+                        class="p-button p-button-primary"></button>
+                </div>
+            </form>
+        </div>
+    </p-card>
+</section>

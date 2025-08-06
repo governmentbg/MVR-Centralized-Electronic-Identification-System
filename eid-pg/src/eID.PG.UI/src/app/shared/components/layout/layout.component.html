@@ -1,0 +1,92 @@
+<div class="d-flex flex-column h-100 w-100" *transloco="let t">
+    <header>
+        <app-navbar></app-navbar>
+        <app-sub-navbar></app-sub-navbar>
+    </header>
+    <div class="flex-grow-1">
+        <div class="d-flex flex-column flex-sm-row h-100 bg-white-smoke">
+            <main class="h-100 flex-grow-1 min-height-75vh imprint">
+                <router-outlet></router-outlet>
+            </main>
+        </div>
+    </div>
+    <app-footer></app-footer>
+    <ng-container *ngIf="!cookie">
+        <aside class="cookie-info" role="complementary" [ariaLabel]="t('cookies.txtTitle')">
+            <div class="container">
+                <h4>{{ t('cookies.txtTitle') }}</h4>
+                <p>
+                    {{ t('cookies.txtDescription') }}
+                    <a
+                        class="text-white"
+                        routerLink="/useful-information"
+                        [queryParams]="{ viewPage: 'cookies' }"
+                        role="link"
+                        [ariaLabel]="t('cookies.txtCookies')">
+                        <b class="text-decoration-underline fw-bold">{{ t('cookies.txtCookies') }}</b>
+                    </a>
+                </p>
+                <div class="w-100 d-flex justify-content-end">
+                    <button
+                        pButton
+                        type="button"
+                        class="p-button"
+                        [label]="t('global.txtAccept')"
+                        [attr.aria-label]="t('global.txtAccept')"
+                        (click)="setCookie('cookiePrivacyAccept', true, 365)"
+                        role="button"></button>
+                </div>
+            </div>
+        </aside>
+    </ng-container>
+    <p-toast key="global-toast" position="bottom-right"></p-toast>
+    <p-toast key="global-detail-toast" position="bottom-right">
+        <ng-template let-message pTemplate="message">
+            <span *ngIf="message.icon" [class]="'p-toast-message-icon pi ' + message.icon"></span>
+            <span
+                class="p-toast-message-icon"
+                *ngIf="!message.icon"
+                [attr.aria-hidden]="true"
+                [attr.data-pc-section]="'icon'">
+                <ng-container>
+                    <i
+                        class="pi pi-check"
+                        *ngIf="message.severity === 'success'"
+                        [attr.aria-hidden]="true"
+                        [attr.data-pc-section]="'icon'"></i>
+                    <i
+                        class="pi pi-info-circle"
+                        *ngIf="message.severity === 'info'"
+                        [attr.aria-hidden]="true"
+                        [attr.data-pc-section]="'icon'"></i>
+                    <i
+                        class="pi pi-times-circle"
+                        *ngIf="message.severity === 'error'"
+                        [attr.aria-hidden]="true"
+                        [attr.data-pc-section]="'icon'"></i>
+                    <i
+                        class="pi pi-exclamation-triangle"
+                        *ngIf="message.severity === 'warn'"
+                        [attr.aria-hidden]="true"
+                        [attr.data-pc-section]="'icon'"></i>
+                </ng-container>
+            </span>
+            <div class="p-toast-message-text" [attr.data-pc-section]="'text'">
+                <div class="p-toast-summary" [attr.data-pc-section]="'summary'">{{ message.summary }}</div>
+                <div class="p-toast-detail" [attr.data-pc-section]="'detail'">{{ message.detail }}</div>
+
+                <div class="mt-3">
+                    <p-inplace>
+                        <ng-template pTemplate="display">
+                            <span>{{ t('global.txtShowDetails') }}</span>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            {{ message.data | json }}
+                        </ng-template>
+                    </p-inplace>
+                </div>
+            </div>
+        </ng-template>
+    </p-toast>
+    <p-confirmDialog key="global-confirm" [style]="{ width: '50vw' }"></p-confirmDialog>
+</div>

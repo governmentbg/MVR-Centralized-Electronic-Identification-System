@@ -1,0 +1,311 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t" [hidden]="showPreview">
+    <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+    <p-card styleClass="h-100">
+        <div>
+            <div class="row">
+                <div class="col col-lg-9">
+                    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                    <h2 class="text-text-active text-uppercase mb-0">
+                        {{ t('modules.eidManagement.txtApplicationsList') }}
+                    </h2>
+                </div>
+                <div class="col d-flex justify-content-end align-items-center">
+                    <button
+                        pButton
+                        type="button"
+                        class="p-button-success add-button"
+                        [label]="t('modules.eidManagement.txtRequestCertificate')"
+                        icon="pi pi-plus"
+                        iconPos="right"
+                        [attr.aria-label]="t('modules.eidManagement.txtRequestCertificate')"
+                        [routerLink]="['/eid-management/new-application']"></button>
+                </div>
+            </div>
+            <p-divider class="header-divider" type="solid" styleClass="mt-4 mb-4"></p-divider>
+            <div class="row">
+                <div class="col">
+                    <app-applications-filter
+                        (filteredData)="onFilteredDataChange($event)"
+                        [administratorsList]="administratorsList"
+                        [devicesList]="devicesList"></app-applications-filter>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p-table
+                        #dt
+                        [value]="applications"
+                        [tableStyle]="{ 'min-width': '100%' }"
+                        [rowHover]="true"
+                        dataKey="uid"
+                        [lazy]="true"
+                        (onLazyLoad)="loadApplications($event)"
+                        [totalRecords]="totalRecords"
+                        [rows]="pageSize"
+                        [paginator]="true"
+                        [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="[10, 25, 50]"
+                        [currentPageReportTemplate]="
+                            t('global.txtTablePagination', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        [loading]="loading"
+                        loadingIcon="pi pi-spin pi-spinner"
+                        [globalFilterFields]="[
+                            'deviceId',
+                            'createDate',
+                            'applicationType',
+                            'eidAdministratorName',
+                            'status'
+                        ]"
+                        sortField="createDate"
+                        [sortOrder]="1"
+                        [rowSelectable]="false">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtApplicationNumber') }}
+                                </th>
+                                <th pSortableColumn="createDate" class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtCreateDate') }}
+                                    <p-sortIcon field="createDate"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="applicationType" class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtSubject') }}
+                                    <p-sortIcon field="applicationType"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="eidAdministratorName" class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtEidAdministratorId') }}
+                                    <p-sortIcon field="eidAdministratorName"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="deviceId" class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtDeviceType') }}
+                                    <p-sortIcon field="deviceId"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="status" class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtStatus') }}
+                                    <p-sortIcon field="status"></p-sortIcon>
+                                </th>
+                                <th class="text-nowrap">
+                                    {{ t('modules.eidManagement.tableFilter.txtAction') }}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-application>
+                            <tr
+                                [ngClass]="{
+                                    'light-grey-bg': rowIsNotActive(application)
+                                }">
+                                <td style="max-width: 18rem" [attr.aria-label]="application.applicationNumber">
+                                    <span class="multiline-ellipsis">{{ application.applicationNumber }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="application.createDate | translocoDate : { timeStyle: 'medium' }"
+                                    [title]="application.createDate | translocoDate : { timeStyle: 'medium' }">
+                                    <span class="multiline-ellipsis">{{
+                                        application.createDate | translocoDate : { timeStyle: 'medium' }
+                                    }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 11rem"
+                                    [attr.aria-label]="application.applicationType"
+                                    [title]="translateApplicationType(application.applicationType)">
+                                    <span>{{ translateApplicationType(application.applicationType) }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="application.eidAdministratorName"
+                                    [title]="application.eidAdministratorName">
+                                    <span class="multiline-ellipsis">{{ application.eidAdministratorName }}</span>
+                                </td>
+                                <td
+                                    style="max-width: 18rem"
+                                    [attr.aria-label]="application.deviceId"
+                                    [title]="translateDeviceType(application.deviceId)">
+                                    <span>{{ translateDeviceType(application.deviceId) }}</span>
+                                </td>
+                                <td style="max-width: 18rem" [attr.aria-label]="application.status">
+                                    <ng-container [ngSwitch]="application.status">
+                                        <!-- // red text  -->
+                                        <span *ngSwitchCase="'DENIED'" [title]="computedStatus('Denied')">
+                                            <span class="text-break reject d-flex align-items-center">
+                                                <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                                <span style="word-break: keep-all">
+                                                    {{ computedStatus('Denied') }}
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span
+                                            *ngSwitchCase="'PAYMENT_EXPIRED'"
+                                            [title]="computedStatus('PaymentExpired')">
+                                            <span class="text-break reject d-flex align-items-center">
+                                                <i class="material-icons-outlined me-3">&#xe5c9;</i>
+                                                <span style="word-break: keep-all">
+                                                    {{ computedStatus('PaymentExpired') }}
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <!-- // yellow text -->
+                                        <span
+                                            [title]="computedStatus('PendingPayment')"
+                                            *ngSwitchCase="'PENDING_PAYMENT'"
+                                            class="text-break danger d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('PendingPayment') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Submitted')"
+                                            *ngSwitchCase="'SUBMITTED'"
+                                            class="text-break danger d-flex align-items-center">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Submitted') }}
+                                            </span>
+                                        </span>
+                                        <!-- //green text -->
+                                        <span
+                                            [title]="computedStatus('Approved')"
+                                            *ngSwitchCase="'APPROVED'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xe877;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Approved') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Paid')"
+                                            *ngSwitchCase="'PAID'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xe877;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Paid') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Completed')"
+                                            *ngSwitchCase="'COMPLETED'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xe877;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Completed') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Signed')"
+                                            *ngSwitchCase="'GENERATED_CERTIFICATE'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xf603;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Signed') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Signed')"
+                                            *ngSwitchCase="'SIGNED'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xf603;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Signed') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Signed')"
+                                            *ngSwitchCase="'CERTIFICATE_STORED'"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xf603;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Signed') }}
+                                            </span>
+                                        </span>
+                                        <span
+                                            [title]="computedStatus('Processing')"
+                                            *ngSwitchDefault
+                                            style="word-break: keep-all"
+                                            class="active-confirm d-flex align-items-center me-3">
+                                            <i class="material-icons-outlined me-3">&#xe8b5;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Processing') }}
+                                            </span>
+                                        </span>
+                                    </ng-container>
+                                </td>
+                                <td style="width: 10rem">
+                                    <div class="d-flex">
+                                        <button
+                                            pButton
+                                            type="button"
+                                            [title]="t('modules.eidManagement.tableFilter.details.txtApplicationLabel')"
+                                            class="p-button-sm p-button-rounded p-button-text"
+                                            (click)="showDetails(application)">
+                                            <i class="material-icons-outlined">&#xf801;</i>
+                                        </button>
+                                        <ng-container *ngIf="showPaymentButton(application)">
+                                            <button
+                                                pButton
+                                                type="button"
+                                                [title]="t('modules.eidManagement.tableFilter.details.txtPaymentLabel')"
+                                                class="p-button-sm p-button-rounded p-button-text"
+                                                (click)="redirectToPayment(application.paymentAccessCode)">
+                                                <i class="material-icons-outlined">&#xe870;</i>
+                                            </button>
+                                        </ng-container>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="7">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</section>
+<ng-container *ngIf="showPreview">
+    <app-application-preview
+        (hide)="onHideDetails($event)"
+        [data]="selectedApplication"
+        [devicesList]="devicesList"></app-application-preview>
+</ng-container>

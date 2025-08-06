@@ -1,0 +1,23 @@
+{
+    "oauth": {
+        "accessTokenKey": "access_token",
+        "authUrl": "https://dev.iscei.mvreid.local",
+        "responseType": "code",
+        "requireHttps": true,
+        "scope": "openid profile email",
+        "realm": "eid_public",
+        "clientId": "eid_pg_app",
+        "issuer": "https://isceiextgw.mvreid.local",
+        "provider": "MVR",
+        "refreshTokenKey": "refresh_token",
+        "tokenEndpoint": "https://isceiextgw.mvreid.local/code-flow/token",
+        "updateMinValidity": 120
+    },
+    "externalLinks": {
+        "paymentUrl": "https://pay-test.egov.bg/",
+        "paymentByAccessCodeUrl": "https://pay-test.egov.bg/Home/AccessByCode?code=",
+        "eDeliveryUrl": "https://edelivery-test-v2.egov.bg",
+        "popopUrl": "http://10.34.32.11/otrs/customer.pl",
+        "providersUrl": "https://crc.bg/bg/rubriki/560/elektronni-udostoveritelni-uslugi"
+    }
+}

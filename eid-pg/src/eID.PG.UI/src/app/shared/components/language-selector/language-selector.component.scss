@@ -1,0 +1,61 @@
+@import '../../../styles/variables';
+
+::ng-deep .language-selector {
+    height: 49px;
+    display: flex;
+    align-items: center;
+    .p-dropdown {
+        border: none;
+        border-radius: 0;
+        background-color: $theme-primary-dark;
+        color: $text-white;
+        .p-dropdown-label {
+            color: $text-white;
+            padding: 7px 15px;
+        }
+        .p-dropdown-trigger {
+            color: $text-white;
+            width: 0.5rem;
+        }
+        .p-dropdown-panel .p-dropdown-items {
+            padding: 0;
+            .p-dropdown-item {
+                padding: 0.75rem 1rem;
+            }
+        }
+    }
+
+    .p-overlay {
+        min-width: 53px;
+        .p-dropdown-items-wrapper {
+            background-color: $theme-primary-dark;
+            color: $text-white;
+            .p-dropdown-items .p-dropdown-item {
+                background-color: $theme-primary-dark;
+                color: $text-white;
+                &.p-highlight {
+                    color: $theme-primary-dark;
+                    background: $text-white;
+                }
+                &:not(.p-highlight):not(.p-disabled):hover {
+                    color: $theme-primary-dark;
+                    background: $text-white;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 400px) {
+        .p-dropdown {
+            .p-dropdown-label {
+                padding: 7px;
+            }
+            .p-dropdown-panel .p-dropdown-items {
+                padding: 0;
+                .p-dropdown-item {
+                    padding: 7px;
+                }
+            }
+        }
+    }
+}

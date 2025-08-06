@@ -1,0 +1,94 @@
+<section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100 rounded-0">
+        <h3 class="m-4 text-primary text-center text-uppercase">{{ t('global.login') }}</h3>
+        <i
+            *ngIf="requestInProgress"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem; margin-right: 1rem; margin-bottom: 1rem"></i>
+        <div class="d-flex flex-wrap flex-row justify-content-center gap-5">
+            <form [formGroup]="form" class="p-fluid" (ngSubmit)="submit()">
+                <div>
+                    <label for="email" class="form-label">
+                        {{ t('registrationPage.titles.email') }} <span class="text-danger">*</span>
+                    </label>
+                    <input pInputText type="text" id="email" formControlName="email" />
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="
+                                form.controls['email'].errors?.['required'] &&
+                                form.controls['email'].dirty
+                            ">
+                            {{
+                                t('validations.txtPleaseEnterField', {
+                                    field: t('registrationPage.titles.email')
+                                })
+                            }}
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <label for="password" class="form-label">
+                        {{ t('registrationPage.titles.password') }} <span class="text-danger">*</span>
+                    </label>
+                    <div>
+                        <p-password
+                            formControlName="password"
+                            [feedback]="false"
+                            [toggleMask]="true"
+                            class="cursor-pointer"></p-password>
+                    </div>
+                    <div class="text-danger validation-text">
+                        <span
+                            class="d-block"
+                            *ngIf="
+                                form.controls['password'].errors?.['required'] &&
+                                form.controls['password'].dirty
+                            ">
+                            {{
+                                t('validations.txtPleaseEnterField', {
+                                    field: t('registrationPage.titles.password')
+                                })
+                            }}
+                        </span>
+                        <span
+                            class="d-block"
+                            *ngIf="
+                                form.controls['password'].errors?.['maxlength'] &&
+                                form.controls['password'].dirty
+                            ">
+                            {{ t('global.txtInvalidDataError') }}
+                        </span>
+                    </div>
+                </div>
+                <button
+                    pButton
+                    type="submit"
+                    class="w-100 mt-2"
+                    [disabled]="requestInProgress"
+                    [attr.aria-label]="t('registrationPage.titles.login')"
+                    [label]="t('registrationPage.titles.login')"></button>
+                <div class="d-flex flex-wrap justify-content-between gap-5 mt-4">
+                    <a routerLink="/register">{{ t('registrationPage.titles.txtNewRegistration') }}</a>
+                    <a routerLink="/forgotten-password">{{ t('loginPage.txtForgottenPassword') }}</a>
+                </div>
+            </form>
+            <p-divider class="header-divider d-none d-lg-block" layout="vertical"></p-divider>
+            <p-divider class="header-divider w-100 d-lg-none" layout="horizontal"></p-divider>
+            <div class="p-fluid col-lg-3 col-12">
+                <button
+                    pButton
+                    type="button"
+                    class="mb-4 w-fit"
+                    [disabled]="requestInProgress"
+                    [attr.aria-label]="t('loginPage.txtLoginWithEid')"
+                    [label]="t('loginPage.txtLoginWithEid')"
+                    (click)="redirectToLogin()"></button>
+                <div
+                    #helpSection
+                    class="h-fit p-3 bg-background-light-grey text-theme-primary-medium rounded-4 help-section"
+                    [innerHTML]="t('loginPage.txtAttachEidHelpMessage')"></div>
+            </div>
+        </div>
+    </p-card>
+</section>

@@ -1,0 +1,326 @@
+<ng-container>
+    <section class="app-main-screen-with-buttons container h-100" *transloco="let t" [hidden]="showPreview">
+        <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+        <p-card styleClass="h-100">
+            <div>
+                <div class="row">
+                    <div class="col col-lg-8">
+                        <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                        <h2 class="text-text-active text-uppercase mb-0">
+                            {{ t('modules.eidManagement.txtCertificatesList') }}
+                        </h2>
+                    </div>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <button
+                            pButton
+                            type="button"
+                            class="p-button-success add-button"
+                            [label]="t('modules.eidManagement.txtRequestCertificate')"
+                            icon="pi pi-plus"
+                            iconPos="right"
+                            [attr.aria-label]="t('modules.eidManagement.txtRequestCertificate')"
+                            [routerLink]="['/eid-management/new-application']"></button>
+                    </div>
+                </div>
+                <p-divider class="header-divider" type="solid" styleClass="mt-4 mb-4"></p-divider>
+                <div class="row" *ngIf="administratorsList && devicesList">
+                    <div class="col">
+                        <app-certificates-filter
+                            (filteredData)="onFilteredDataChange($event)"
+                            [administratorsList]="administratorsList"
+                            [devicesList]="devicesList"></app-certificates-filter>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p-table
+                            #dt
+                            [value]="certificates"
+                            [tableStyle]="{ 'min-width': '100%' }"
+                            [rowHover]="true"
+                            dataKey="uid"
+                            [lazy]="true"
+                            (onLazyLoad)="loadCertificates($event)"
+                            [totalRecords]="totalRecords"
+                            [rows]="pageSize"
+                            [paginator]="true"
+                            [showCurrentPageReport]="true"
+                            [rowsPerPageOptions]="[10, 25, 50]"
+                            [currentPageReportTemplate]="
+                                t('global.txtTablePagination', {
+                                    first: '{first}',
+                                    last: '{last}',
+                                    totalRecords: '{totalRecords}'
+                                })
+                            "
+                            [loading]="loading"
+                            loadingIcon="pi pi-spin pi-spinner"
+                            [globalFilterFields]="[
+                                'deviceId',
+                                'validityUntil',
+                                'validityFrom',
+                                'serialNumber',
+                                'alias',
+                                'status'
+                            ]"
+                            sortField="status"
+                            [sortOrder]="-1"
+                            [rowSelectable]="false">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="serialNumber" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtSerialNumber') }}
+                                        <p-sortIcon field="serialNumber"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="alias" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtCertificateName') }}
+                                        <p-sortIcon field="alias"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="validityFrom" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtDateFrom') }}
+                                        <p-sortIcon field="validityFrom"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="validityUntil" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtDateUntil') }}
+                                        <p-sortIcon field="validityUntil"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="eidAdministratorName" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtEidAdministratorId') }}
+                                        <p-sortIcon field="eidAdministratorName"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="deviceId" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtDeviceType') }}
+                                        <p-sortIcon field="deviceId"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="status" class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtStatus') }}
+                                        <p-sortIcon field="status"></p-sortIcon>
+                                    </th>
+                                    <th class="text-nowrap">
+                                        {{ t('modules.eidManagement.tableFilter.txtAction') }}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="loadingbody">
+                                <tr>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                    <td>
+                                        <p-skeleton></p-skeleton>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-certificates>
+                                <tr
+                                    [ngClass]="{
+                                        'light-grey-bg': rowIsNotActive(certificates)
+                                    }">
+                                    <td
+                                        style="max-width: 18rem"
+                                        [attr.aria-label]="certificates.serialNumber"
+                                        [title]="certificates.serialNumber">
+                                        <span class="multiline-ellipsis text-nowrap">{{
+                                            certificates.serialNumber
+                                        }}</span>
+                                    </td>
+                                    <td
+                                        style="max-width: 18rem"
+                                        [attr.aria-label]="certificates.alias"
+                                        [title]="certificates.alias">
+                                        <span class="multiline-ellipsis">{{ certificates.alias }}</span>
+                                    </td>
+                                    <td
+                                        style="max-width: 18rem"
+                                        [attr.aria-label]="certificates.validityFrom | translocoDate : { timeStyle: 'medium' }"
+                                        [title]="certificates.validityFrom | translocoDate : { timeStyle: 'medium' }">
+                                        <span class="multiline-ellipsis">{{
+                                            certificates.validityFrom | translocoDate : { timeStyle: 'medium' }
+                                        }}</span>
+                                    </td>
+                                    <td
+                                        style="max-width: 18rem"
+                                        [attr.aria-label]="certificates.validityUntil | translocoDate : { timeStyle: 'medium' }"
+                                        [title]="certificates.validityUntil | translocoDate : { timeStyle: 'medium' }">
+                                        <span class="multiline-ellipsis">{{
+                                            certificates.validityUntil | translocoDate : { timeStyle: 'medium' }
+                                        }}</span>
+                                        <span
+                                            class="d-inline-block badge text-uppercase text-black bg-button-danger-hover"
+                                            *ngIf="
+                                                certificates.isExpiring &&
+                                                certificates.status === CertificateStatus.ACTIVE
+                                            ">
+                                            {{ t('modules.eidManagement.txtExpiresSoon') }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        style="max-width: 18rem"
+                                        [attr.aria-label]="certificates.eidAdministratorName"
+                                        [title]="getAdministratorName(certificates.eidAdministratorId)">
+                                        <span class="multiline-ellipsis">{{
+                                            getAdministratorName(certificates.eidAdministratorId)
+                                        }}</span>
+                                    </td>
+                                    <td
+                                        style="max-width: 18rem"
+                                        [attr.aria-label]="certificates.deviceId"
+                                        [title]="translateDeviceType(certificates.deviceId)">
+                                        <span>{{ translateDeviceType(certificates.deviceId) }}</span>
+                                    </td>
+                                    <td style="max-width: 18rem" [attr.aria-label]="certificates.status">
+                                        <ng-container [ngSwitch]="certificates.status">
+                                            <!-- // red text  -->
+                                            <span *ngSwitchCase="'REVOKED'" [title]="computedStatus('Revoked')">
+                                                <span class="text-break reject d-flex align-items-center">
+                                                    <i class="material-icons-outlined me-2">&#xe5c9;</i>
+                                                    <span style="word-break: keep-all">
+                                                        {{ computedStatus('Revoked') }}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                            <!-- // yellow text -->
+                                            <span
+                                                [title]="computedStatus('Stopped')"
+                                                *ngSwitchCase="'STOPPED'"
+                                                class="text-break danger d-flex align-items-center">
+                                                <i class="material-icons-outlined me-2">&#xe8b5;</i>
+                                                <span style="word-break: keep-all">
+                                                    {{ computedStatus('Stopped') }}
+                                                </span>
+                                            </span>
+                                            <!-- //green text -->
+                                            <span
+                                                [title]="computedStatus('Active')"
+                                                *ngSwitchCase="'ACTIVE'"
+                                                class="active-confirm d-flex align-items-center me-2">
+                                                <i class="material-icons-outlined me-2">&#xe877;</i>
+                                                <span style="word-break: keep-all" class="d-flex">
+                                                    {{ computedStatus('Active') }}
+                                                    <ng-container *ngIf="certificates.isExpiring"
+                                                        ><i
+                                                            class="material-icons-outlined text-danger"
+                                                            pTooltip="{{
+                                                                t(
+                                                                    'modules.eidManagement.tableFilter.txtExpiredCertMessage'
+                                                                )
+                                                            }}"
+                                                            >&#xe160;</i
+                                                        ></ng-container
+                                                    >
+                                                </span>
+                                            </span>
+                                            <span
+                                                [title]="computedStatus('Expired')"
+                                                *ngSwitchCase="'EXPIRED'"
+                                                class="text-break d-flex align-items-center">
+                                                <i class="material-icons-outlined me-2">&#xe8b5;</i>
+                                                <span style="word-break: keep-all">
+                                                    {{ computedStatus('Expired') }}
+                                                </span>
+                                            </span>
+                                            <span
+                                                *ngSwitchDefault
+                                                style="word-break: keep-all"
+                                                [title]="computedStatus('Processing')">
+                                                {{ computedStatus('Processing') }}
+                                            </span>
+                                        </ng-container>
+                                    </td>
+                                    <td style="width: 10rem">
+                                        <div class="d-flex">
+                                            <button
+                                                pButton
+                                                type="button"
+                                                [title]="t('modules.eidManagement.tableFilter.details.txtActiveLabel')"
+                                                class="p-button-sm p-button-rounded p-button-text"
+                                                (click)="showDetails(certificates, false)">
+                                                <i class="material-icons-outlined">&#xf801;</i>
+                                            </button>
+                                            <button
+                                                pButton
+                                                type="button"
+                                                *ngIf="
+                                                    certificates.status !== 'EXPIRED' &&
+                                                    certificates.status !== 'REVOKED' &&
+                                                    certificates.status === 'STOPPED'
+                                                "
+                                                [title]="t('modules.eidManagement.tableFilter.details.txtStoppedLabel')"
+                                                class="p-button-sm p-button-rounded p-button-text text-danger"
+                                                (click)="showDetails(certificates, true, action.RESUME_EID)">
+                                                <i class="material-icons-outlined active-confirm">&#xe1c4;</i>
+                                            </button>
+                                            <button
+                                                pButton
+                                                type="button"
+                                                *ngIf="
+                                                    certificates.status !== 'EXPIRED' &&
+                                                    certificates.status !== 'REVOKED' &&
+                                                    certificates.status !== 'STOPPED'
+                                                "
+                                                [title]="t('modules.eidManagement.tableFilter.details.txtPauseLabel')"
+                                                class="p-button-sm p-button-rounded p-button-text"
+                                                (click)="showDetails(certificates, true, action.STOP_EID)">
+                                                <i class="material-icons-outlined danger">&#xe1a2;</i>
+                                            </button>
+                                            <button
+                                                pButton
+                                                type="button"
+                                                *ngIf="
+                                                    certificates.status !== 'EXPIRED' &&
+                                                    certificates.status !== 'REVOKED'
+                                                "
+                                                [title]="t('modules.eidManagement.tableFilter.details.txtRevokeLabel')"
+                                                class="p-button-sm p-button-rounded p-button-text"
+                                                (click)="showDetails(certificates, true, action.REVOKE_EID)">
+                                                <i class="material-icons-outlined text-danger">&#xe5c9;</i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7">
+                                        <span
+                                            class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                            <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                            <span
+                                                class="text-text-light"
+                                                [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                                {{ t('global.txtNoRecordsFound') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </p-card>
+    </section>
+    <ng-container *ngIf="showPreview">
+        <app-certificates-preview
+            (hide)="onHideDetails($event)"
+            [data]="selectedCertificate"
+            [statusChangeRequest]="statusChangeRequest"
+            [administratorsList]="administratorsList"
+            [devicesList]="devicesList"></app-certificates-preview>
+    </ng-container>
+</ng-container>

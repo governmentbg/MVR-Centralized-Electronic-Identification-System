@@ -1,0 +1,89 @@
+<section class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div>
+            <div class="row">
+                <div class="col">
+                    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                    <h2 class="text-text-active text-uppercase mb-0">
+                        {{ t('modules.authorizationRegister.txtFromMe') }}
+                    </h2>
+                </div>
+            </div>
+            <p-divider class="header-divider" type="solid" styleClass="mt-4 mb-4"></p-divider>
+            <div class="row">
+                <div class="col">
+                    <app-logs-filter
+                        (filteredData)="onFilteredDataChange($event)"
+                        (exportDataEvent)="onExportData($event)"
+                        [disableExportBtn]="exportCsvRunning"></app-logs-filter>
+                </div>
+            </div>
+            <div class="p-datatable p-component">
+                <div class="p-datatable-wrapper">
+                    <table role="table" class="p-datatable-table" style="min-width: 100%">
+                        <thead class="p-datatable-thead">
+                            <tr>
+                                <th class="p-element text-nowrap" tabindex="0" role="columnheader" aria-sort="none">
+                                    {{ t('modules.logsViewer.txtEventId') }}
+                                </th>
+                                <th class="p-element text-nowrap" tabindex="0" role="columnheader" aria-sort="none">
+                                    {{ t('modules.logsViewer.txtEventType') }}
+                                </th>
+                                <th class="p-element text-nowrap" tabindex="0" role="columnheader" aria-sort="none">
+                                    {{ t('modules.logsViewer.txtEventDate') }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="p-element p-datatable-tbody search-results"
+                            infiniteScroll
+                            [infiniteScrollDistance]="2"
+                            (scrolled)="loadLogs()"
+                            [infiniteScrollThrottle]="1000"
+                            [infiniteScrollDisabled]="infiniteScrollDisabled || loading">
+                            <tr *ngFor="let log of logs">
+                                <td [attr.aria-label]="log.eventId">
+                                    <span class="multiline-ellipsis">{{ log.eventId }}</span>
+                                </td>
+                                <td
+                                    [attr.aria-label]="getEventTypeTranslation(log.eventType)"
+                                    [title]="getEventTypeTranslation(log.eventType)">
+                                    <span class="multiline-ellipsis">{{ getEventTypeTranslation(log.eventType) }}</span>
+                                </td>
+                                <td
+                                    [attr.aria-label]="log.eventDate | translocoDate : { timeStyle: 'medium' }"
+                                    [title]="log.eventDate | translocoDate : { timeStyle: 'medium' }">
+                                    <span class="multiline-ellipsis">{{
+                                        log.eventDate | translocoDate : { timeStyle: 'medium' }
+                                    }}</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="loading">
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                                <td>
+                                    <p-skeleton></p-skeleton>
+                                </td>
+                            </tr>
+                            <tr *ngIf="logs.length === 0 && !loading">
+                                <td colspan="7">
+                                    <span
+                                        class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                        <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                        <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                            {{ t('global.txtNoRecordsFound') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</section>

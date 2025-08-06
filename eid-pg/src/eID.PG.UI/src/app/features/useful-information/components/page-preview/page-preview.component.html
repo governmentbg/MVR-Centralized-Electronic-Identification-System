@@ -1,0 +1,14 @@
+<div class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <ng-container *ngIf="displayedPage">
+            <div>
+                <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                <h2 class="text-uppercase text-primary">{{ displayedPage.title }}</h2>
+                <p-divider class="header-divider" type="solid"></p-divider>
+            </div>
+            <div class="row col-12">
+                <div [innerHTML]="safeContentWithHtml || ''"></div>
+            </div>
+        </ng-container>
+    </p-card>
+</div>

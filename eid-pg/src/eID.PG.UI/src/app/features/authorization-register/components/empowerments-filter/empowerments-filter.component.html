@@ -1,0 +1,379 @@
+<aside role="table-filter" *transloco="let t" class="table-filter">
+    <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div [class]="visible ? 'show' : ''" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas">
+            <div class="offcanvas-header">
+                <h4>{{ t('modules.authorizationRegister.tableFilter.txtFilters') }}</h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    role="button"
+                    [attr.aria-label]="t('global.txtClose')"
+                    (click)="closeFilter()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('modules.authorizationRegister.tableFilter.txtNumber') }}</p>
+                        <label for="number" class="form-label">
+                            {{ t('modules.authorizationRegister.tableFilter.txtEmpowermentNumber') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="number"
+                            type="text"
+                            class="w-100"
+                            formControlName="number"
+                            autocomplete="off"
+                            [placeholder]="t('modules.authorizationRegister.tableFilter.txtNumber')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('modules.authorizationRegister.tableFilter.txtStatus') }}</p>
+                        <label for="status" class="form-label"
+                            >{{ t('modules.authorizationRegister.tableFilter.txtChooseStatus') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="status"
+                            [options]="statuses"
+                            optionLabel="name"
+                            optionValue="code"
+                            styleClass="w-100"
+                            inputId="status"
+                            [placeholder]="t('modules.authorizationRegister.tableFilter.txtAllPlaceholder')"
+                            [showClear]="true"
+                            (onChange)="onStatusChange($event)"
+                            (onClear)="onStatusClear()">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-4" *ngIf="isFromMePage">
+                    <div class="col">
+                        <p>{{ t('modules.authorizationRegister.tableFilter.txtEmpowerer') }}</p>
+                        <label for="onBehalfOf" class="form-label"
+                            >{{ t('modules.authorizationRegister.tableFilter.txtFromTheNameOf') }}
+                        </label>
+                        <p-dropdown
+                            formControlName="onBehalfOf"
+                            [options]="applicants"
+                            optionLabel="name"
+                            optionValue="code"
+                            styleClass="w-100"
+                            inputId="onBehalfOf"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            [showClear]="true"
+                            (onChange)="onOnBehalfOfChange($event)"
+                            (onClear)="onApplicantClear()">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="row" *ngIf="isFromMePage">
+                    <div class="col">
+                        <label
+                            for="legalEntityName"
+                            class="form-label"
+                            [ngClass]="{
+                                disabled: filterForm.controls['onBehalfOf'].value !== onBehalfOf.LegalEntity
+                            }">
+                            {{ t('modules.authorizationRegister.tableFilter.filterLabels.legalEntityName') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="legalEntityName"
+                            type="text"
+                            class="w-100"
+                            formControlName="legalEntityName"
+                            [placeholder]="
+                                filterForm.controls['onBehalfOf'].value === onBehalfOf.LegalEntity
+                                    ? t('global.txtInputPlaceholder')
+                                    : ''
+                            " />
+                        <div class="text-danger validation-text">
+                            <span
+                                *ngIf="filterForm.get('legalEntityName')?.errors?.['pattern'] && filterForm.get('legalEntityName')?.dirty">
+                                {{ t('global.txtInvalidDataError') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="isFromMePage">
+                    <div class="col">
+                        <label
+                            for="eik"
+                            class="form-label"
+                            [ngClass]="{
+                                disabled: filterForm.controls['onBehalfOf'].value !== onBehalfOf.LegalEntity
+                            }">
+                            {{ t('modules.authorizationRegister.tableFilter.filterLabels.eik') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="eik"
+                            type="text"
+                            class="w-100"
+                            formControlName="eik"
+                            [placeholder]="
+                                filterForm.controls['onBehalfOf'].value === onBehalfOf.LegalEntity
+                                    ? t('global.txtInputPlaceholder')
+                                    : ''
+                            " />
+                        <div class="text-danger validation-text">
+                            <span
+                                *ngIf="filterForm.get('eik')?.errors?.['bulstatError'] && filterForm.get('eik')?.dirty">
+                                {{
+                                    t('validations.txtInvalidField', {
+                                        field: t('modules.authorizationRegister.txtBulstat')
+                                    })
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4" *ngIf="!isFromMePage && !isLegalEntityReferencePage">
+                    <div class="col">
+                        <label for="authorizer" class="form-label">
+                            {{ t('modules.authorizationRegister.tableFilter.filterLabels.authorizer') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="authorizer"
+                            type="text"
+                            class="w-100"
+                            formControlName="authorizer"
+                            [placeholder]="t('modules.authorizationRegister.tableFilter.txtEmpowererPlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <p>{{ t('modules.authorizationRegister.tableFilter.txtService') }}</p>
+                        <label for="providerName" class="form-label">
+                            {{ t('modules.authorizationRegister.tableFilter.txtProvider') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="providerName"
+                            type="text"
+                            class="w-100"
+                            formControlName="providerName"
+                            [placeholder]="t('modules.authorizationRegister.tableFilter.txtProviderPlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label for="serviceName" class="form-label"
+                            >{{ t('modules.authorizationRegister.tableFilter.txtService') }}
+                        </label>
+                        <input
+                            pInputText
+                            id="serviceName"
+                            type="text"
+                            class="w-100"
+                            formControlName="serviceName"
+                            [placeholder]="t('modules.authorizationRegister.tableFilter.txtServicePlaceholder')" />
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <p>{{ t('modules.authorizationRegister.tableFilter.txtValidityPeriod') }}</p>
+                        <label class="w-100" for="validToDate">{{
+                            t('modules.authorizationRegister.tableFilter.txtNoLaterThan')
+                        }}</label>
+                        <p-calendar
+                            class="w-100"
+                            formControlName="validToDate"
+                            inputId="validToDate"
+                            label="validToDate"
+                            name="validToDate"
+                            [showIcon]="true"
+                            dateFormat="yy-mm-dd"
+                            (onFocus)="onFocusCalendar()"
+                            [showClear]="true"
+                            [iconAriaLabel]="t('aria.txtValidTo')"
+                            [ariaLabel]="t('aria.txtValidTo')"
+                            [placeholder]="t('global.txtDropdownPlaceholder')"
+                            appDate>
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="row" [ngClass]="isFromMePage ? 'mb-4' : ''">
+                    <div class="col">
+                        <p-checkbox
+                            formControlName="showOnlyNoExpiryDate"
+                            inputId="showOnlyNoExpiryDate"
+                            (onChange)="onCheckboxChange()"
+                            [ariaLabel]="t('modules.authorizationRegister.tableFilter.txtIndefinitely')"
+                            [binary]="true"
+                            [label]="t('modules.authorizationRegister.tableFilter.txtIndefinitely')"></p-checkbox>
+                    </div>
+                </div>
+                <div class="row" *ngIf="isFromMePage">
+                    <div class="col">
+                        <p>{{ t('modules.authorizationRegister.tableFilter.txtEmpoweredPersons') }}</p>
+                        <div
+                            formArrayName="empoweredUids"
+                            *ngFor="let proxyPersonalNumber of empoweredUids.controls; let i = index">
+                            <div class="row" [formGroupName]="i">
+                                <div class="col-lg-5">
+                                    <label for="uidType{{ i }}" class="form-label">
+                                        {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                    </label>
+                                    <p-dropdown
+                                        formControlName="uidType"
+                                        [options]="identifierTypes"
+                                        optionLabel="name"
+                                        optionValue="id"
+                                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                                        styleClass="w-100"
+                                        inputId="uidType{{ i }}"
+                                        appendTo="body"
+                                        [overlayOptions]="{ baseZIndex: 1045 }"
+                                        (onChange)="onIdentifierChange($event, i)">
+                                    </p-dropdown>
+                                </div>
+
+                                <div class="col-lg-7">
+                                    <label for="proxyPersonalNumber{{ i }}">{{
+                                        t('modules.authorizationRegister.tableFilter.txtEGN')
+                                    }}</label>
+                                    <div class="p-inputgroup">
+                                        <input
+                                            pInputText
+                                            digitOnly
+                                            id="proxyPersonalNumber{{ i }}"
+                                            formControlName="uid"
+                                            type="text"
+                                            autocomplete="off"
+                                            class="w-100" />
+                                        <button
+                                            type="button"
+                                            role="button"
+                                            pButton
+                                            icon="pi pi-times"
+                                            [title]="t('aria.txtRemove')"
+                                            [attr.aria-label]="t('aria.txtRemove')"
+                                            *ngIf="empoweredUids.controls.length > 1"
+                                            class="p-button-danger p-button-text border-light border-start-0"
+                                            (click)="removeEmpoweredUid(i)"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-danger validation-text">
+                                <span
+                                    class="d-inline-block"
+                                    *ngIf="empoweredUids.errors && empoweredUids.errors['duplicateValidator']">
+                                    {{ t('modules.authorizationStatement.statementForm.txtDuplicateEGN') }}
+                                </span>
+                                <span
+                                    class="d-block"
+                                    *ngIf="proxyPersonalNumber.controls['uid']?.errors?.['required'] &&
+                                          proxyPersonalNumber.controls['uid']?.dirty
+                                    ">
+                                    {{
+                                        t('validations.txtPleaseEnterField', {
+                                            field: t(
+                                                'modules.authorizationStatement.statementForm.txtProxyPersonalNumber'
+                                            )
+                                        })
+                                    }}
+                                </span>
+                                <span
+                                    class="d-inline-block"
+                                    *ngIf="proxyPersonalNumber.controls['uid'].errors?.['pattern'] ||
+                                     proxyPersonalNumber.controls['uid'].errors?.['EgnError'] ||
+                                     proxyPersonalNumber.controls['uid'].errors?.['PinError']">
+                                    {{
+                                        t('validations.txtInvalidField', {
+                                            field: t(
+                                                'modules.authorizationStatement.statementForm.txtProxyPersonalNumber'
+                                            )
+                                        })
+                                    }}
+                                </span>
+                            </div>
+                            <div
+                                *ngIf="
+                                    i === empoweredUids.controls.length - 1 &&
+                                        empoweredUids.controls.length < maxEmpoweredUids;
+                                    else elseBlock
+                                ">
+                                <button
+                                    pButton
+                                    type="button"
+                                    [attr.aria-label]="t('aria.txtAdd')"
+                                    icon="pi pi-plus"
+                                    [label]="t('aria.txtAdd')"
+                                    class="p-button-success"
+                                    (click)="addEmpoweredUid()"></button>
+                            </div>
+                            <ng-template #elseBlock>
+                                <span class="field-spacer"></span>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-footer">
+                <button
+                    pButton
+                    type="button"
+                    (click)="clearAllFilteredValues()"
+                    [label]="t('modules.authorizationRegister.tableFilter.txtCancel')"
+                    class="p-button p-button-danger me-3 app-button-small"></button>
+                <button
+                    pButton
+                    [label]="t('modules.authorizationRegister.tableFilter.txtApplyFilters')"
+                    type="submit"
+                    class="p-button me-3 p-button-primary app-button-small"
+                    [disabled]="(filterForm.valid && !filterForm.dirty) || (!filterForm.valid && filterForm.dirty)"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvas"></button>
+            </div>
+        </div>
+    </form>
+</aside>
+
+<section role="filter-choice" *transloco="let t" class="table-filter-choice">
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-between">
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas"
+                (click)="openFilter()"
+                [label]="t('modules.authorizationRegister.tableFilter.txtRegisterFilter')">
+                <i class="material-icons-outlined">&#xe429;</i>
+            </button>
+            <button
+                pButton
+                type="button"
+                class="p-button-sm"
+                icon="pi pi-refresh"
+                (click)="refreshData()"
+                [label]="t('global.txtRefresh')"></button>
+        </div>
+    </div>
+    <div class="row mb-4" *ngIf="chosenFilters.length > 0">
+        <div class="col">
+            <span *ngFor="let filteredValue of chosenFilters">
+                <p-chip
+                    [label]="prepareFilteredValueLabel(filteredValue)"
+                    [removable]="true"
+                    removeIcon="pi pi-times"
+                    (onRemove)="clearFilteredValue(filteredValue)"></p-chip>
+            </span>
+            <button
+                *ngIf="chosenFilters.length > 0"
+                type="button"
+                role="button"
+                class="btn btn-link"
+                (click)="clearAllFilteredValues()"
+                [attr.aria-labelledby]="t('modules.authorizationRegister.tableFilter.txtCancelAll')">
+                {{ t('modules.authorizationRegister.tableFilter.txtCancelAll') }}
+            </button>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,40 @@
+<div *transloco="let t">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row">
+        <div class="col">
+            <label for="signatureOptions" class="form-label"
+                >{{ t('modules.authorizationStatement.electronicSignature.txtSignature') }}
+            </label>
+            <p-dropdown
+                formControlName="signatureMethod"
+                [options]="signatureOptions"
+                optionLabel="name"
+                optionValue="code"
+                styleClass="w-100"
+                inputId="signatureOptions"
+                [placeholder]="t('global.txtDropdownPlaceholder')"
+                (onChange)="onSignatureOptionsChange($event)">
+            </p-dropdown>
+            <div class="text-danger validation-text">
+                <span *ngIf="submitted && form.controls.signatureMethod.invalid && form.controls.signatureMethod.dirty">
+                    {{
+                        t('validations.txtPleaseEnterField', {
+                            field: t('modules.authorizationRegister.tableFilter.txtAuthenticationMethod')
+                        })
+                    }}
+                </span>
+            </div>
+        </div>
+        <div class="col d-flex align-items-end">
+            <button
+                pButton
+                class="mb-4"
+                type="submit"
+                [loading]="loading"
+                [label]="t('modules.authorizationRegister.tableFilter.txtSignEmpowerment')"
+                [attr.aria-label]="t('modules.authorizationRegister.tableFilter.txtSignEmpowerment')"></button>
+        </div>
+    </form>
+    <div *ngIf="showNexuNotDetectedMessage" class="alert alert-warning">
+        {{ t('modules.authorizationStatement.electronicSignature.txtNexuErrorMessage') }}
+    </div>
+</div>

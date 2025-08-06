@@ -1,0 +1,168 @@
+<div class="notification-settings container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase">{{ t('modules.notificationSettings.txtTitle') }}</h2>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <p class="notification-sub-header mb-3">{{ t('modules.notificationSettings.txtSubTitle') }}</p>
+        <p-tabView styleClass="notifications-settings-tabview">
+            <p-tabPanel [disabled]="loading">
+                <ng-template pTemplate="header">
+                    <i class="material-icons-outlined pe-2">&#xe1b1;</i>
+                    <span class="label-icon">{{ t('modules.notificationSettings.txtChannels') }}</span>
+                </ng-template>
+                <p-table
+                    [value]="notificationChannels"
+                    [tableStyle]="{ 'min-width': '100%' }"
+                    (onLazyLoad)="getCombinedNotificationChannels($event)"
+                    [totalRecords]="totalRecordsChannelsTable"
+                    [rows]="pageSizeChannelsTable"
+                    [paginator]="true"
+                    [rowsPerPageOptions]="[10]"
+                    dataKey="id"
+                    [lazy]="true"
+                    [showCurrentPageReport]="true"
+                    [currentPageReportTemplate]="
+                        t('modules.notificationSettings.txtTablePagination', {
+                            first: '{first}',
+                            last: '{last}',
+                            totalRecords: '{totalRecords}'
+                        })
+                    "
+                    [loading]="loading"
+                    loadingIcon="pi pi-spin pi-spinner"
+                    class="notification-channels-table">
+                    <ng-template pTemplate="body" let-notificationChannel>
+                        <tr [class]="setDisabledRowClass(notificationChannel)">
+                            <td>
+                                <label [for]="notificationChannel.name" class="fw-bold">{{
+                                    getChannelNameTranslation(notificationChannel)
+                                }}</label>
+                                <p class="m-0">{{ getChannelDescriptionTranslation(notificationChannel) }}</p>
+                            </td>
+                            <td style="width: 5rem">
+                                <p-inputSwitch
+                                    *ngIf="notificationChannel.name !== notificationType.SMTP"
+                                    [inputId]="notificationChannel.name"
+                                    [ngModel]="notificationChannel.activated"
+                                    [ariaLabel]="t('aria.txtManageNotifications')"
+                                    (ngModelChange)="toggleChannel($event, notificationChannel)"></p-inputSwitch>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">
+                                <span
+                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                    <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                    <span class="text-text-light">
+                                        {{ t('global.txtNoRecordsFound') }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
+            <p-tabPanel [disabled]="loading">
+                <ng-template pTemplate="header">
+                    <i class="material-icons-outlined pe-2">&#xe994;</i>
+                    <span class="label-icon">{{ t('modules.notificationSettings.txtNotifications') }}</span>
+                </ng-template>
+
+                <p-table
+                    [value]="systems"
+                    [tableStyle]="{ 'min-width': '100%' }"
+                    [rowHover]="true"
+                    dataKey="id"
+                    (onLazyLoad)="getCombinedUserNotifications($event)"
+                    [lazy]="true"
+                    [totalRecords]="totalRecordsNotificationsTable"
+                    [rows]="pageSizeNotificationsTable"
+                    [paginator]="true"
+                    [rowsPerPageOptions]="[10, 25, 50]"
+                    [showCurrentPageReport]="true"
+                    [currentPageReportTemplate]="
+                        t('modules.notificationSettings.txtTablePagination', {
+                            first: '{first}',
+                            last: '{last}',
+                            totalRecords: '{totalRecords}'
+                        })
+                    "
+                    [loading]="loading"
+                    loadingIcon="pi pi-spin pi-spinner"
+                    class="systems-table">
+                    <ng-template pTemplate="body" let-system let-expanded="expanded">
+                        <tr [class]="system.disabled ? 'table-row-disabled' : ''">
+                            <td>
+                                <button
+                                    type="button"
+                                    pButton
+                                    [pRowToggler]="system"
+                                    class="p-button-text p-button-rounded p-button-plain"
+                                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                <p-triStateCheckbox
+                                    [(ngModel)]="system.indeterminate"
+                                    (onChange)="toggleParentNode($event, system)"
+                                    [label]="getEventTranslation(system)"
+                                    [ariaLabelledBy]="system.name"
+                                    [name]="system.name"
+                                    [tabIndex]="system.id"
+                                    [disabled]="system.disabled"
+                                    checkboxFalseIcon="pi pi-minus"></p-triStateCheckbox>
+                                <label [for]="system.name">{{ getSystemTranslation(system) }}</label>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="rowexpansion" let-system>
+                        <tr class="nested-row">
+                            <td colspan="7">
+                                <p-table [value]="system.events" dataKey="id">
+                                    <ng-template pTemplate="body" let-event>
+                                        <tr>
+                                            <td>
+                                                <p-checkbox
+                                                    [(ngModel)]="event.activated"
+                                                    (onChange)="toggleChildNode($event, event, system)"
+                                                    [disabled]="event.isMandatory"
+                                                    [binary]="true"
+                                                    [ariaLabel]="getEventTranslation(event)"
+                                                    [label]="getEventTranslation(event)"></p-checkbox>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">
+                                <span
+                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                    <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                    <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                        {{ t('global.txtNoRecordsFound') }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
+        </p-tabView>
+    </p-card>
+</div>

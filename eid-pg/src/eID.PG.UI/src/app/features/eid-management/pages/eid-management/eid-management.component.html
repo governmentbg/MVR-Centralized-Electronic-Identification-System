@@ -1,0 +1,85 @@
+<section class="container app-main-screen-with-buttons h-100" *transloco="let t">
+    <p-card styleClass="h-100 rounded-0">
+        <div class="row">
+            <div class="col col-lg-9">
+                <h2 class="text-uppercase">{{ t('modules.eidManagement.txtTitle') }}</h2>
+            </div>
+            <div class="col d-flex justify-content-end align-items-center">
+                <button
+                    pButton
+                    type="button"
+                    class="add-button p-button-success"
+                    [label]="t('modules.eidManagement.txtRequestCertificate')"
+                    icon="pi pi-plus"
+                    iconPos="right"
+                    [attr.aria-label]="t('modules.eidManagement.txtRequestCertificate')"
+                    [routerLink]="['/eid-management/new-application']"></button>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <div class="d-flex flex-row justify-content-center align-items-center flex-wrap">
+            <div class="navigation-button m-4">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-raised p-button-text"
+                    [attr.aria-label]="t('aria.txtNavigationToEidManagementsApplications')"
+                    role="Navigation button"
+                    [routerLink]="['/eid-management/applications']">
+                    <div class="w-100">
+                        <div class="text-center">
+                            <i class="material-icons-outlined">&#xe0ac;</i>
+                        </div>
+                        <div class="text-center">
+                            <h5>{{ t('modules.eidManagement.txtApplications') }}</h5>
+                            <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                            <h6>{{ t('modules.eidManagement.txtApplicationsSub') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            <div class="navigation-button m-4">
+                <button
+                    pButton
+                    type="button"
+                    class="p-button-raised p-button-text"
+                    [attr.aria-label]="t('aria.txtNavigationToEidManagementsCertificates')"
+                    role="Navigation button"
+                    [routerLink]="['/eid-management/certificates']">
+                    <div class="w-100">
+                        <div class="text-center">
+                            <i class="material-icons-outlined">&#xe09e;</i>
+                        </div>
+                        <div class="text-center">
+                            <h5>{{ t('modules.eidManagement.txtCertificates') }}</h5>
+                            <p-divider class="button-divider d-flex justify-content-center"></p-divider>
+                            <h6>{{ t('modules.eidManagement.txtCertificatesSub') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="col-12">
+    <p>{{ t('modules.eidManagement.helperText.txtProcessIntro') }}</p>
+    <ul>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li1') }}</li>
+        <li>
+            {{ t('modules.eidManagement.helperText.txtList.li2.text') }}
+            <ol>
+                <li>{{ t('modules.eidManagement.helperText.txtList.li2.ol.li1') }}</li>
+                <li>{{ t('modules.eidManagement.helperText.txtList.li2.ol.li2') }}</li>
+                <li>{{ t('modules.eidManagement.helperText.txtList.li2.ol.li3') }}</li>
+            </ol>
+        </li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li3') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li4') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li5') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li6') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li7') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li8') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li9') }}</li>
+        <li>{{ t('modules.eidManagement.helperText.txtList.li10') }}</li>
+    </ul>
+</div>
+    </p-card>
+</section>

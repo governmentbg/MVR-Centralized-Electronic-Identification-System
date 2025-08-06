@@ -1,0 +1,18 @@
+@import '../../../../../../node_modules/bootstrap/scss/functions';
+@import '../../../../../../node_modules/bootstrap/scss/variables';
+@import '../../../../../../node_modules/bootstrap/scss/mixins';
+@include media-breakpoint-down(lg){
+    #content-wrapper{
+        flex-direction: column;
+    }
+#form{
+    margin-left: 0 !important;
+}
+#help-section{
+    width:100%;
+    padding: 0 !important
+}
+.messages{
+    margin-left: 0;
+}
+}

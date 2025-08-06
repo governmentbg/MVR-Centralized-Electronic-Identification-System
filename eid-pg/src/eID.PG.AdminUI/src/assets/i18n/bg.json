@@ -1,0 +1,224 @@
+{
+    "global": {
+        "login": "Вход",
+        "logout": "Изход",
+        "txtSave": "Запази",
+        "txtCancel": "Отказ",
+        "txtAdd": "Добавяне",
+        "txtEdit": "Редактиране",
+        "txtDelete": "Изтриване",
+        "txtConfirmation": "Потвърждаване",
+        "txtErrorTitle": "Грешка",
+        "txtSuccessTitle": "Успех",
+        "txtDropdownPlaceholder": "Моля изберете",
+        "txtUnsavedChangesConfirmation": "Има незапазени промени, искате ли да ги отхвърлите?",
+        "txtContentUploadedSuccessfully": "Съдържанието е качено успешно",
+        "txtErrorUploadingContent": "Възникна грешка при създаване на съдържанието",
+        "txtUnexpectedError": "Неочаквана грешка",
+        "txtInvalidDataError": "Невалидни данни",
+        "txtMissingLanguageContent": "Липсва съдържание за поне един от езиците",
+        "txtMinLengthError": "Въведете поне 3 символа",
+        "txtAction": "Действие",
+        "txtPreview": "Преглед",
+        "txtNoRecordsFound": "Няма намерени записи",
+        "txtNoRecordsAdded": "Няма добавени записи",
+        "txtBack": "Назад",
+        "txtHomePage": "Haчален екран",
+        "txtShowDetails": "Покажи детайли",
+        "txtTablePagination": "Показани са от {{first}} до {{last}} от {{totalRecords}} записа"
+    },
+    "navbar": {
+        "title": "Административен портал на ПГ",
+        "subtitle": "Централна система за електронна идентификация"
+    },
+    "sidebar": {
+        "txtHome": "Начална страница",
+        "txtSearch": "Търсене",
+        "txtSidebarTitle": "Заглавие на сайдбара",
+        "txtCreateContent": "Създай съдържание",
+        "txtEditContent": "Редакция на съдържание",
+        "txtSystemProcesses": "Системни процеси"
+    },
+    "footer": {
+        "txtMainText": "Министерство на вътрешните работи"
+    },
+    "pageNotFound": {
+        "txtPageNotFoundTitle": "Страницата не е намерена.",
+        "txtPageNotFoundInformationText": "Страницата, която търсите, не съществува",
+        "txtPageNotFoundGoHome": "Върнете се към началната страница"
+    },
+    "pageUnauthorized": {
+        "txtPageUnauthorizedTitle": "Unauthorized",
+        "txtPageUnauthorizedInformationText": "Нямате права да достъпите тази страница"
+    },
+    "modules": {
+        "authentication": {
+            "login": {
+                "txtLoginTitle": "Aдминистративен панел",
+                "txtLogin": "Вход",
+                "txtRegistration": "Регистрация",
+                "txtForgottenPassword": "Забравена парола?",
+                "txtRememberMe": "Запомни ме",
+                "txtSignIn": "Влез",
+                "txtPrivacyPolicy": "Политика за поверителност",
+                "txtTermsAndConditions": "Правила и условия",
+                "txtEmail": "Имейл",
+                "txtPassword": "Парола",
+                "txtEnterEmail": "Въведи имейл",
+                "txtEnterPassword": "Въведи парола",
+                "txtEmailValidationMessage": "Моля въведете имейл",
+                "txtPasswordValidationMessage": "Моля въведете парола"
+            }
+        },
+        "systemProcesses": {
+            "txtStatusOfInternalSystems": "Статус на вътрешни услуги",
+            "txtConfigurationsAndLimits": "Конфигурации и лимити",
+            "txtAddress": "Адрес",
+            "txtDescription": "Описание",
+            "descriptions": {
+                "Prometheus": "Инструмент за мониторинг и известяване, предназначен за събиране на данни в реално време от приложенията.",
+                "Grafana": "Инструмент за визуално представяне на метрики в реално време.",
+                "DDOSProtectionServer1": "Лозенец (Primary) - инструмент за защита от злонамерен трафик и конфигурация на лимит на заявки.",
+                "DDOSProtectionServer2": "Банкя - инструмент за защита от злонамерен трафик и конфигурация на лимит на заявки.",
+                "keycloak_internal": "Система за управление на идентичност за потребители и системи във вътрешна среда на ЦСЕИ",
+                "keycloak_external": "Система за управление на идентичност за граждани и външни системи"
+            },
+            "txtMissingConfig": "Липсваща конфигурация"
+        }
+    },
+    "searchPage": {
+        "txtSearchTitle": "Търсене",
+        "txtSearchCriteriaLabel": "Критерии за търсене",
+        "txtContents": "Съдържания",
+        "txtEditContent": "Редактиране на съдържание"
+    },
+    "validations": {
+        "txtPleaseEnterField": "Моля въведете {{field}}",
+        "txtInvalidField": "Невалидни данни за {{field}}",
+        "txtExceedingMaximumLength": "Полето не може да надвишава {{length}} символа",
+        "txtURLError": "Въвели сте невалиден URL"
+    },
+    "primeng": {
+        "accept": "Да",
+        "reject": "Не",
+        "choose": "Избор",
+        "upload": "Качване",
+        "cancel": "Отказ",
+        "dayNames": [
+            "Неделя",
+            "Понеделник",
+            "Вторник",
+            "Сряда",
+            "Четвъртък",
+            "Петък",
+            "Събота"
+        ],
+        "dayNamesShort": [
+            "Нед",
+            "Пон",
+            "Вто",
+            "Сря",
+            "Чет",
+            "Пет",
+            "Съб"
+        ],
+        "dayNamesMin": [
+            "Нд",
+            "Пн",
+            "Вт",
+            "Ср",
+            "Чт",
+            "Пт",
+            "Сб"
+        ],
+        "monthNames": [
+            "Януари",
+            "Февруари",
+            "Март",
+            "Април",
+            "Май",
+            "Юни",
+            "Юли",
+            "Август",
+            "Септември",
+            "Октомври",
+            "Ноември",
+            "Декември"
+        ],
+        "monthNamesShort": [
+            "Яну",
+            "Фев",
+            "Мар",
+            "Апр",
+            "Май",
+            "Юни",
+            "Юли",
+            "Авг",
+            "Сеп",
+            "Окт",
+            "Ное",
+            "Дек"
+        ],
+        "today": "Днес",
+        "clear": "Изчистване",
+        "weekHeader": "Сд",
+        "firstDayOfWeek": 1,
+        "dateFormat": "dd/mm/yyyy",
+        "weak": "Слаба",
+        "medium": "Средна",
+        "strong": "Добра",
+        "passwordPrompt": "Въведете парола",
+        "startsWith": "Започва с",
+        "contains": "Съдържа",
+        "notContains": "Не съдържа",
+        "endsWith": "Завършва на",
+        "equals": "Равно е на",
+        "notEquals": "Не е равно на",
+        "noFilter": "Без филтър",
+        "lt": "По-малко от",
+        "lte": "По-малко или равно на",
+        "gt": "По-голямо от",
+        "gte": "По-голямо или равно на",
+        "dateIs": "Датата е",
+        "dateIsNot": "Дататата не е",
+        "dateBefore": "Датата е преди",
+        "dateAfter": "Датата е след",
+        "custom": "Персонализиран",
+        "apply": "Приложи",
+        "matchAll": "Съвпадение на всички",
+        "matchAny": "Съвпадение на някое ",
+        "addRule": "Добавяне на условие",
+        "removeRule": "Премахване на условие",
+        "emptyFilterMessage": "Няма налична информация",
+        "emptyMessage": "Не са открити резултати"
+    },
+    "content": {
+        "txtCreateContent": "Създаване на ново съдържание",
+        "txtEnglishVersion": "Английско съдържание",
+        "txtBulgarianVersion": "Българско съдържание",
+        "txtUrlLabel": "Връзка за достъп",
+        "txtTitle": "Заглавие",
+        "txtContent": "Съдържание",
+        "txtDeleteHelpPageWarning": "С това действие ще изтриете това съдържание! Веднъж изтрито, то не може да бъде възстановено. Желаете ли да продължите?",
+        "txtHelpPageDeletion": "Изтриване на съдържание",
+        "txtContentDeletedSuccessfully": "Успешно изтриване на съдържание",
+        "txtContentDeleteError": "Възникна грешка при изтриване на съдържанието",
+        "txtContentUpdatedSuccessfully": "Успешно редактиране на съдържание",
+        "txtErrorUpdatingContent": "Възникна грешка при редкатиране на съдържанието",
+        "txtBulgarianTitle": "Заглавие на Български",
+        "txtEnglishTitle": "Заглавие на Английски",
+        "txtPageName": "Име на съдържанието"
+    },
+    "ariaLabels": {
+        "txtRemove": "Премахни",
+        "txtAdd": "Добави",
+        "txtHeadingGroup": "Заглавна група",
+        "txtTitle": "Заглавие",
+        "txtSubTitle": "Подзаглавие",
+        "txtLogo": "Лого",
+        "txtLanguageSwitcher": "Промяна на език",
+        "txtBulgarianLanguage": "Български език",
+        "txtEnglishLanguage": "Английски език",
+        "txtFlag": "Знаме"
+    }
+}

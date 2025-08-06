@@ -1,0 +1,41 @@
+<footer class="footer mt-auto" *transloco="let t">
+    <div class="d-flex justify-content-center pt-4 px-4">
+        <div class="d-flex flex-wrap gap-5 justify-content-between text-sm link-groups">
+            <div class="d-flex flex-column gap-1 text-white">
+                <a routerLink="/useful-information" (click)="resetView()"
+                    ><span class="fw-normal text-white text-sm">{{ t('subNavbar.txtUsefulInformation') }}</span></a
+                >
+                <a
+                    (click)="resetView()"
+                    class="fw-normal text-white text-sm"
+                    routerLink="/useful-information"
+                    [queryParams]="{ viewPage: 'Файлове за сваляне' }"
+                    >{{ t('global.txtFileStorage') }}</a
+                >
+                <a
+                    (click)="resetView()"
+                    class="fw-normal text-white text-sm"
+                    routerLink="/useful-information"
+                    [queryParams]="{ viewPage: 'Начини за автентикация' }"
+                    >{{ t('global.txtAuthenticationMethods') }}</a
+                >
+            </div>
+            <div class="d-flex flex-column gap-1 text-white">
+                <a [href]="paymentUrl" target="_blank"
+                    ><span class="fw-normal text-white text-sm">{{ t('global.txtEPayments') }}</span></a
+                >
+                <a [href]="eDeliveryUrl" target="_blank"
+                    ><span class="fw-normal text-white text-sm">{{ t('global.txtEDelivery') }}</span></a
+                >
+                <a [href]="popopUrl" target="_blank"
+                    ><span class="fw-normal text-white text-sm">{{ t('global.txtPOPOP') }}</span></a
+                >
+            </div>
+        </div>
+    </div>
+    <p-divider></p-divider>
+    <div class="align-self-top d-flex flex-wrap justify-content-between px-4 pb-2">
+        <span class="text-white">{{ t('global.txtMinistryOfInterior') }} &copy; {{ currentYear }}</span>
+        <div class="text-white">{{ t('global.txtVersion') }}: {{ version }}</div>
+    </div>
+</footer>

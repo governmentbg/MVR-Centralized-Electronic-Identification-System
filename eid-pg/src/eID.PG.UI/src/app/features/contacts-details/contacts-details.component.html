@@ -1,0 +1,18 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase" [attr.aria-label]="getPageForLanguage(pagesList)?.title">{{ getPageForLanguage(pagesList)?.title }}</h2>
+            </div>
+        </div>
+        <i *ngIf="requestInProgress"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem"></i>
+            <p-divider class="header-divider"></p-divider>
+        <div class="col-12 row">
+            <ng-container *ngIf="pagesList">
+                <div [innerHTML]="getPageForLanguage(pagesList)?.contentWithHtml || ''"></div>
+            </ng-container>
+        </div>
+    </p-card>
+</section>

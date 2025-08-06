@@ -1,0 +1,250 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-uppercase">{{ t('subNavbar.txtPaymentHistory') }}</h2>
+            </div>
+        </div>
+        <p-divider class="header-divider" type="solid"></p-divider>
+        <i
+            *ngIf="requestInProgress"
+            class="pi pi-spin pi-spinner p-dropdown-trigger text-primary"
+            style="font-size: 2rem"></i>
+        <div class="row">
+            <div class="col">
+                <app-payment-history-filter
+                    (filteredData)="onFilteredDataChange($event)"
+                    [paymentHistoryList]="paymentHistory"></app-payment-history-filter>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p-table
+                    #dt
+                    [value]="filteredPaymentHistory"
+                    [tableStyle]="{ 'min-width': '100%' }"
+                    [rowHover]="true"
+                    [loading]="requestInProgress"
+                    loadingIcon="pi pi-spin pi-spinner"
+                    [paginator]="true"
+                    [rows]="pageSize"
+                    [rowsPerPageOptions]="[10, 25, 50]"
+                    [currentPageReportTemplate]="
+                        t('global.txtTablePagination', {
+                            first: '{first}',
+                            last: '{last}',
+                            totalRecords: '{totalRecords}'
+                        })
+                    "
+                    (sortFunction)="onSort($event)"
+                    [customSort]="true"
+                    [globalFilterFields]="[
+                        'createdOn',
+                        'reason',
+                        'paymentDate',
+                        'paymentDeadline',
+                        'status',
+                        'amount',
+                        'lastSync'
+                    ]"
+                    [rowSelectable]="false">
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                            <td>
+                                <p-skeleton></p-skeleton>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-nowrap">{{ t('paymentHistory.txtPaymentNumber') }}</th>
+                            <th class="text-nowrap" [pSortableColumn]="'createdOn'">
+                                {{ t('paymentHistory.txtCreatedOn') }} <p-sortIcon field="createdOn"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap" [pSortableColumn]="'reason'">
+                                {{ t('paymentHistory.txtSubject') }} <p-sortIcon field="reason"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap" [pSortableColumn]="'paymentDate'">
+                                {{ t('paymentHistory.txtPaymentDate') }}
+                                <p-sortIcon field="paymentDate"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap" [pSortableColumn]="'paymentDeadline'">
+                                {{ t('paymentHistory.txtPaymentDeadline') }}
+                                <p-sortIcon field="paymentDeadline"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap" [pSortableColumn]="'status'">
+                                {{ t('paymentHistory.txtStatus') }} <p-sortIcon field="status"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap" [pSortableColumn]="'amount'">
+                                {{ t('paymentHistory.txtAmount') }} <p-sortIcon field="amount"></p-sortIcon>
+                            </th>
+                            <th class="text-nowrap">{{ t('paymentHistory.txtCurrency') }}</th>
+                            <th class="text-nowrap" [pSortableColumn]="'lastSync'">
+                                {{ t('paymentHistory.txtLastSync') }} <p-sortIcon field="lastSync"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-payment>
+                        <tr>
+                            <td
+                                style="min-width: 4rem"
+                                [attr.aria-label]="payment.ePaymentId"
+                                [title]="payment.ePaymentId">
+                                <span class="text-wrap">{{ payment.ePaymentId }}</span>
+                            </td>
+                            <td
+                                style="min-width: 4rem"
+                                [attr.aria-label]="payment.createdOn"
+                                [title]="payment.createdOn">
+                                <span class="text-wrap">{{ payment.createdOn | date : 'yyyy-MM-dd' }}</span>
+                            </td>
+                            <td style="min-width: 4rem" [attr.aria-label]="payment.reason" [title]="payment.reason">
+                                <span class="text-wrap">{{ translatePaymentType(payment.reason) }}</span>
+                            </td>
+                            <td
+                                style="min-width: 4rem"
+                                [attr.aria-label]="payment.paymentDate"
+                                [title]="payment.paymentDate">
+                                <span class="text-wrap"
+                                    >{{ payment.paymentDate | date : 'yyyy-MM-dd HH:mm'
+                                    }}{{ payment.paymentDate ? t('paymentHistory.txtHours') : '' }}</span
+                                >
+                            </td>
+                            <td
+                                style="min-width: 4rem"
+                                [attr.aria-label]="payment.paymentDeadline"
+                                [title]="payment.paymentDeadline">
+                                <span class="text-nowrap"
+                                    >{{ payment.paymentDeadline | date : 'yyyy-MM-dd HH:mm'
+                                    }}{{ payment.paymentDeadline ? t('paymentHistory.txtHours') : '' }}</span
+                                >
+                            </td>
+                            <td style="min-width: 4rem" [attr.aria-label]="payment.status" [title]="payment.status">
+                                <ng-container [ngSwitch]="payment.status">
+                                    <!-- // red text  -->
+                                    <span *ngSwitchCase="'Expired'">
+                                        <span class="text-break reject d-flex align-items-center">
+                                            <i class="material-icons-outlined">&#xe5c9;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Expired') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchCase="'Canceled'">
+                                        <span class="text-break reject d-flex align-items-center">
+                                            <i class="material-icons-outlined">&#xe5c9;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Canceled') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchCase="'Suspended'">
+                                        <span class="text-break reject d-flex align-items-center">
+                                            <i class="material-icons-outlined">&#xe5c9;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Suspended') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchCase="'TimedOut'">
+                                        <span class="text-break reject d-flex align-items-center">
+                                            <i class="material-icons-outlined">&#xe5c9;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('TimedOut') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <!-- // yellow text -->
+                                    <span *ngSwitchCase="'Pending'" class="text-break danger d-flex align-items-center">
+                                        <i class="material-icons-outlined">&#xe8b5;</i>
+                                        <span style="word-break: keep-all">
+                                            {{ computedStatus('Pending') }}
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchCase="'Ordered'" class="text-break danger d-flex align-items-center">
+                                        <i class="material-icons-outlined">&#xe8b5;</i>
+                                        <span style="word-break: keep-all">
+                                            {{ computedStatus('Ordered') }}
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngSwitchCase="'InProcess'"
+                                        class="text-break danger d-flex align-items-center">
+                                        <i class="material-icons-outlined">&#xe8b5;</i>
+                                        <span style="word-break: keep-all">
+                                            {{ computedStatus('InProcess') }}
+                                        </span>
+                                    </span>
+                                    <!-- //green text -->
+                                    <span *ngSwitchCase="'Authorized'">
+                                        <span class="text-break active-confirm d-flex align-items-center">
+                                            <i class="material-icons-outlined">&#xe877;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Authorized') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span *ngSwitchCase="'Paid'">
+                                        <span class="text-break active-confirm d-flex align-items-center">
+                                            <i class="material-icons-outlined">&#xe877;</i>
+                                            <span style="word-break: keep-all">
+                                                {{ computedStatus('Paid') }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                </ng-container>
+                            </td>
+                            <td
+                                style="min-width: 4rem"
+                                [attr.aria-label]="payment.amountBGN + ' ' + payment.amountEUR"
+                                [title]="payment.amountBGN + ' ' + payment.amountEUR">
+                                <span class="text-wrap">{{ payment.amountBGN }} {{ payment.amountEUR }}</span>
+                            </td>
+                            <td style="min-width: 4rem" [attr.aria-label]="payment.currency" [title]="payment.currency">
+                                <span class="text-wrap">{{ t('paymentHistory.txtCurrencyDescription') }}</span>
+                            </td>
+                            <td style="min-width: 4rem" [attr.aria-label]="payment.lastSync" [title]="payment.lastSync">
+                                <span class="text-wrap"
+                                    >{{ payment.lastSync | date : 'yyyy-MM-dd HH:mm'
+                                    }}{{ payment.lastSync ? t('paymentHistory.txtHours') : '' }}</span
+                                >
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="9">
+                                <span
+                                    class="d-flex align-items-center flex-column empty-message-container bg-background-light-grey">
+                                    <img src="/assets/images/noresults.png" [alt]="t('aria.txtLogo')" />
+                                    <span class="text-text-light" [attr.aria-label]="t('global.txtNoRecordsFound')">
+                                        {{ t('global.txtNoRecordsFound') }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <p-toast position="bottom-right"></p-toast>
+    </p-card>
+</section>

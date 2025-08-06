@@ -1,0 +1,29 @@
+<section class="app-main-screen-with-buttons container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <h2
+                    class="text-uppercase"
+                    [attr.aria-label]="t('eidAttachmentInfoPage.txtTitle')">
+                    {{ t('eidAttachmentInfoPage.txtTitle') }}
+                </h2>
+                <p-divider class="header-divider" type="solid"></p-divider>
+                <p class="notification-sub-header" [attr.aria-label]="t('eidAttachmentInfoPage.txtTitle')">
+                    {{ t('eidAttachmentInfoPage.txtDescription') }}
+                </p>
+                <ul>
+                <li>{{ t('eidAttachmentInfoPage.txtEidAttachmentInfo') }}</li>
+                <li>
+                    {{ t('eidAttachmentInfoPage.txtEidAttachmentInfo2') }}
+                    <ul>
+                        <li>{{ t('eidAttachmentInfoPage.txtEidAttachmentInfoSub') }}</li>
+                        <li>
+                            {{ t('eidAttachmentInfoPage.txtEidAttachmentInfoSub2') }}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            </div>
+        </div>
+    </p-card>
+</section>

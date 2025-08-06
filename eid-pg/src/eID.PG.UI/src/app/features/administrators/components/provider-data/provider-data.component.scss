@@ -1,0 +1,27 @@
+@import '../../../../styles/variables.scss';
+@import '../../../../../../node_modules/bootstrap/scss/functions';
+@import '../../../../../../node_modules/bootstrap/scss/variables';
+@import '../../../../../../node_modules/bootstrap/scss/mixins';
+
+.offices-container {
+    width: 100%;
+    max-height: 600px;
+
+    .offcanvas-body {
+        max-height: 600px;
+        overflow: auto;
+        padding: 1.5rem;
+        border: 1px solid $theme-primary-light;
+    }
+}
+/* ============ mobile view ============ */
+@include media-breakpoint-down(md) {
+    #locationButton {
+        justify-content: center;
+        align-items: center;
+
+        button {
+            width: 100%;
+        }
+    }
+}

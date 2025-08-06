@@ -1,0 +1,1263 @@
+<section class="container h-100" *transloco="let t">
+    <p-card styleClass="h-100">
+        <div class="row">
+            <div class="col">
+                <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-text-default">
+                        {{ t('modules.authorizationStatement.statementForm.txtCreateStatement') }}
+                    </h4>
+                    <button
+                        pButton
+                        type="button"
+                        *ngIf="form.controls.onBehalfOf.valid"
+                        icon="pi pi-question-circle"
+                        class="d-lg-none p-button-text p-0"
+                        [attr.aria-label]="t('help.txtScrollToHelpSection')"
+                        (click)="scrollToHelpSection()"></button>
+                </div>
+                <p-divider class="header-divider mb-4" type="solid"></p-divider>
+                <h5 class="mb-4 text-text-active" *ngIf="isPreviewMode">
+                    {{ t('modules.authorizationStatement.statementForm.txtPreviewAndSend') }}
+                </h5>
+
+                <div class="row flex-wrap flex-lg-nowrap">
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-lg-8">
+                        <ng-container *ngIf="!isPreviewMode">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtApplicantData') }}
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="onBehalfOf" class="form-label"
+                                        >{{ t('modules.authorizationStatement.statementForm.txtStatementFrom') }}
+                                        <span class="text-danger">*</span></label
+                                    >
+                                    <p-dropdown
+                                        formControlName="onBehalfOf"
+                                        [options]="authorizerTypes"
+                                        optionLabel="name"
+                                        optionValue="id"
+                                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                                        styleClass="w-100"
+                                        (onChange)="resetOnBehalfOfControls()"
+                                        inputId="onBehalfOf">
+                                        <ng-template pTemplate="dropdownicon">
+                                            <i
+                                                *ngIf="onBehalfOfLoading"
+                                                class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                                style="font-size: 1rem"></i>
+                                            <i
+                                                *ngIf="!onBehalfOfLoading"
+                                                class="pi pi-chevron-down p-dropdown-trigger"
+                                                style="font-size: 1rem"></i>
+                                        </ng-template>
+                                    </p-dropdown>
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.onBehalfOf.invalid &&
+                                                form.controls.onBehalfOf.dirty
+                                            ">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t(
+                                                        'modules.authorizationStatement.statementForm.txtStatementFrom'
+                                                    )
+                                                })
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="form.controls.onBehalfOf.valid">
+                                <div
+                                    class="col-lg-6 col-xl-2"
+                                    *ngIf="form.controls.onBehalfOf.value === onBehalfOf.Individual">
+                                    <label for="authorizerPersonalIdentifier" class="form-label">
+                                        {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                    </label>
+                                    <input
+                                        pInputText
+                                        id="authorizerPersonalIdentifier"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="authorizerPersonalIdentifier" />
+                                </div>
+                                <div
+                                    class="col-lg-6 col-xl-4"
+                                    *ngIf="form.controls.onBehalfOf.value === onBehalfOf.Individual">
+                                    <label for="authorizerPersonalNumber" class="form-label"
+                                        >{{
+                                            t(
+                                                'modules.authorizationStatement.statementForm.txtAuthorizerPersonalNumber'
+                                            )
+                                        }}
+                                    </label>
+                                    <input
+                                        pInputText
+                                        id="authorizerPersonalNumber"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="authorizerPersonalNumber" />
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.authorizerPersonalNumber.invalid &&
+                                                form.controls.authorizerPersonalNumber.dirty
+                                            ">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t(
+                                                        'modules.authorizationStatement.statementForm.txtAuthorizerPersonalNumber'
+                                                    )
+                                                })
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="row"
+                                *ngIf="
+                                    form.controls.onBehalfOf.valid &&
+                                    form.controls.onBehalfOf.value === onBehalfOf.LegalEntity
+                                ">
+                                <div class="col-lg-6">
+                                    <label for="bulstat" class="form-label"
+                                        >{{ t('modules.authorizationStatement.statementForm.txtBulstat') }}
+                                        <span class="text-danger">*</span></label
+                                    >
+                                    <input
+                                        pInputText
+                                        digitOnly
+                                        id="bulstat"
+                                        formControlName="bulstat"
+                                        type="text"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        aria-autocomplete="both"
+                                        aria-haspopup="false"
+                                        class="w-100" />
+                                    <div class="text-danger validation-text">
+                                        <span *ngIf="form.controls.bulstat.invalid && form.controls.bulstat.dirty">
+                                            <span
+                                                class="d-inline-block"
+                                                *ngIf="form.controls.bulstat.errors?.['bulstatError']">
+                                                {{
+                                                    t('validations.txtInvalidField', {
+                                                        field: t(
+                                                            'modules.authorizationStatement.statementForm.txtBulstat'
+                                                        )
+                                                    })
+                                                }}
+                                            </span>
+                                            <span
+                                                class="d-inline-block"
+                                                *ngIf="form.controls.bulstat.errors?.['required']">
+                                                {{
+                                                    t('validations.txtPleaseEnterField', {
+                                                        field: t(
+                                                            'modules.authorizationStatement.statementForm.txtBulstat'
+                                                        )
+                                                    })
+                                                }}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label for="legalEntityName" class="form-label"
+                                        >{{ t('modules.authorizationStatement.statementForm.txtLegalEntryName') }}
+                                        <span class="text-danger">*</span></label
+                                    >
+                                    <input
+                                        appTrim
+                                        pInputText
+                                        id="legalEntityName"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        aria-autocomplete="both"
+                                        aria-haspopup="false"
+                                        type="text"
+                                        class="w-100"
+                                        formControlName="legalEntityName" />
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.legalEntityName.invalid &&
+                                                form.controls.legalEntityName.dirty
+                                            ">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t(
+                                                        'modules.authorizationStatement.statementForm.txtLegalEntryName'
+                                                    )
+                                                })
+                                            }}
+                                        </span>
+                                        <span
+                                            *ngIf="form.controls.legalEntityName.errors?.['pattern'] && form.controls.legalEntityName.dirty">
+                                            {{ t('global.txtInvalidDataError') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                *ngIf="
+                                    form.controls.onBehalfOf.valid &&
+                                    form.controls.onBehalfOf.value === onBehalfOf.LegalEntity
+                                "
+                                class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtLegalRepresentatives') }}
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div
+                                *ngIf="
+                                    form.controls.onBehalfOf.valid &&
+                                    form.controls.onBehalfOf.value === onBehalfOf.LegalEntity
+                                ">
+                                <div class="row mb-4">
+                                    <div class="col-lg-6 col-xl-6 col-xxl-2 mb-4 mb-xxl-0">
+                                        <label for="currentAuthorizerUidType" class="form-label">
+                                            {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                        </label>
+                                        <input
+                                            [ngModel]="authorizerPersonalIdentifier"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            pInputText
+                                            id="currentAuthorizerUidType"
+                                            type="text"
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                            aria-autocomplete="both"
+                                            aria-haspopup="false"
+                                            disabled
+                                            class="w-100" />
+                                    </div>
+
+                                    <div class="col-lg-6 col-xl-6 col-xxl-4 mb-4 mb-xxl-0">
+                                        <label for="currentAuthorizerUid" class="form-label">
+                                            {{
+                                                t(
+                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentativePersonalNumber'
+                                                )
+                                            }}
+                                        </label>
+                                        <input
+                                            [ngModel]="authorizerPersonalNumber"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            pInputText
+                                            id="currentAuthorizerUid"
+                                            type="text"
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                            aria-autocomplete="both"
+                                            aria-haspopup="false"
+                                            disabled
+                                            class="w-100" />
+                                    </div>
+
+                                    <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                        <label for="currentAuthorizerName" class="form-label">
+                                            {{
+                                                t(
+                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentativeNames'
+                                                )
+                                            }}
+                                        </label>
+                                        <input
+                                            [ngModel]="authorizerNames"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            pInputText
+                                            id="currentAuthorizerName"
+                                            type="text"
+                                            maxlength="200"
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                            aria-autocomplete="both"
+                                            aria-haspopup="false"
+                                            disabled
+                                            class="w-100" />
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="form.controls.onBehalfOf.value === onBehalfOf.LegalEntity">
+                                    <div class="col-xl-12 col-xxl-6">
+                                        <label for="issuerPosition" class="form-label"
+                                            >{{
+                                                t('modules.authorizationStatement.statementForm.txtCreateStatementAs')
+                                            }}
+                                            <span class="text-danger">*</span></label
+                                        >
+                                        <input
+                                            pInputText
+                                            id="issuerPosition"
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                            aria-autocomplete="both"
+                                            aria-haspopup="false"
+                                            type="text"
+                                            class="w-100"
+                                            formControlName="issuerPosition" />
+                                        <div class="text-danger validation-text">
+                                            <span
+                                                *ngIf="
+                                                    submitted &&
+                                                    form.controls.issuerPosition.invalid &&
+                                                    form.controls.issuerPosition.dirty
+                                                ">
+                                                {{
+                                                    t('validations.txtPleaseEnterField', {
+                                                        field: t(
+                                                            'modules.authorizationStatement.statementForm.txtCreateStatementAs'
+                                                        )
+                                                    })
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-container formArrayName="authorizerUids">
+                                    <ng-container
+                                        *ngFor="let authorizerFormGroup of authorizerUids.controls; let i = index">
+                                        <div class="row" [formGroupName]="i">
+                                            <div class="col-lg-6 col-xl-6 col-xxl-2 mb-4 mb-lg-0">
+                                                <label [for]="'authorizerUidType' + i" class="form-label">
+                                                    {{
+                                                        t('modules.authorizationStatement.statementForm.txtIdentifier')
+                                                    }}
+                                                </label>
+                                                <p-dropdown
+                                                    formControlName="uidType"
+                                                    [options]="identifierTypes"
+                                                    optionLabel="name"
+                                                    optionValue="id"
+                                                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                                                    styleClass="w-100"
+                                                    [inputId]="'authorizerUidType' + i"
+                                                    (onChange)="onIdentifierChange($event, authorizerFormGroup)">
+                                                </p-dropdown>
+                                            </div>
+
+                                            <div class="col-lg-6 col-xl-6 col-xxl-4">
+                                                <label [for]="'authorizerUid' + i" class="form-label">
+                                                    {{
+                                                        t(
+                                                            'modules.authorizationStatement.statementForm.txtLegalRepresentativePersonalNumber'
+                                                        )
+                                                    }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="p-inputgroup col-12">
+                                                    <input
+                                                        pInputText
+                                                        digitOnly
+                                                        [id]="'authorizerUid' + i"
+                                                        formControlName="uid"
+                                                        type="text"
+                                                        autocomplete="off"
+                                                        spellcheck="false"
+                                                        aria-autocomplete="both"
+                                                        aria-haspopup="false"
+                                                        class="w-100" />
+                                                </div>
+                                                <div class="text-danger validation-text">
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="authorizerFormGroup.get('uid')?.errors?.['required'] &&
+                                                            authorizerFormGroup.get('uid')?.dirty
+                                                        ">
+                                                        {{
+                                                            t('validations.txtPleaseEnterField', {
+                                                                field: t(
+                                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentativePersonalNumber'
+                                                                )
+                                                            })
+                                                        }}
+                                                    </span>
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="
+                                                            authorizerUids.errors &&
+                                                            (authorizerUids.errors['duplicateValidator'] ||
+                                                                authorizerUids.errors['duplicateToValue'])
+                                                        "
+                                                        >{{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtDuplicateAuthorizer'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-inline-block"
+                                                        *ngIf="!authorizerFormGroup.get('uid')?.errors?.['required']
+                                                        && !authorizerFormGroup.get('uid')?.errors?.['pattern']
+                                                        && !authorizerFormGroup.get('uid')?.errors?.['PinError']
+                                                        && authorizerFormGroup.get('uid')?.errors?.['EgnError']
+                                                        ">
+                                                        {{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtEGNInvalid'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-inline-block"
+                                                        *ngIf="!authorizerFormGroup.get('uid')?.errors?.['required']
+                                                        && !authorizerFormGroup.get('uid')?.errors?.['pattern']
+                                                        && authorizerFormGroup.get('uid')?.errors?.['PinError']">
+                                                        {{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtLNCHInvalid'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                                <label [for]="'authorizerName' + i" class="form-label">
+                                                    {{
+                                                        t(
+                                                            'modules.authorizationStatement.statementForm.txtLegalRepresentativeNames'
+                                                        )
+                                                    }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="p-inputgroup col-12">
+                                                    <input
+                                                        appTrim
+                                                        pInputText
+                                                        [id]="'authorizerName' + i"
+                                                        formControlName="name"
+                                                        type="text"
+                                                        maxlength="200"
+                                                        autocomplete="off"
+                                                        spellcheck="false"
+                                                        aria-autocomplete="both"
+                                                        aria-haspopup="false"
+                                                        class="w-100" />
+                                                    <button
+                                                        type="button"
+                                                        pButton
+                                                        icon="pi pi-times"
+                                                        [attr.aria-label]="t('global.txtDelete')"
+                                                        class="p-button-danger p-button-text border-light border-start-0"
+                                                        (click)="removeAuthorizerUid(i)"></button>
+                                                </div>
+                                                <div class="text-danger validation-text">
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="authorizerFormGroup.get('name')?.errors?.['required'] && authorizerFormGroup.get('name')?.dirty">
+                                                        {{
+                                                            t('validations.txtPleaseEnterField', {
+                                                                field: t(
+                                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentativeNames'
+                                                                )
+                                                            })
+                                                        }}
+                                                    </span>
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="authorizerFormGroup.get('name')?.errors?.['pattern'] && authorizerFormGroup.get('name')?.dirty">
+                                                        {{ t('global.txtInvalidDataError') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container>
+                                        <div class="mb-4 mt-1">
+                                            <button
+                                                pButton
+                                                type="button"
+                                                [attr.aria-label]="t('global.txtAdd')"
+                                                icon="pi pi-plus"
+                                                iconPos="right"
+                                                [label]="
+                                                    t(
+                                                        'modules.authorizationStatement.statementForm.txtAddLegalRepresentative'
+                                                    )
+                                                "
+                                                class="p-button-success"
+                                                (click)="addAuthorizerUid()"></button>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+
+                            <div *ngIf="form.controls.onBehalfOf.valid" class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtEmpoweredPersons') }}
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div *ngIf="form.controls.onBehalfOf.valid">
+                                <ng-container formArrayName="proxyPersonalNumbers">
+                                    <ng-container
+                                        *ngFor="let identifierForm of proxyPersonalNumbers.controls; let i = index">
+                                        <div class="row" [formGroupName]="i">
+                                            <div class="col-lg-6 col-xl-6 col-xxl-2 mb-4 mb-lg-0">
+                                                <label [for]="'uidType' + i" class="form-label">
+                                                    {{
+                                                        t('modules.authorizationStatement.statementForm.txtIdentifier')
+                                                    }}
+                                                </label>
+                                                <p-dropdown
+                                                    formControlName="uidType"
+                                                    [options]="identifierTypes"
+                                                    optionLabel="name"
+                                                    optionValue="id"
+                                                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                                                    styleClass="w-100"
+                                                    [inputId]="'uidType' + i"
+                                                    (onChange)="onIdentifierChange($event, identifierForm)">
+                                                </p-dropdown>
+                                            </div>
+
+                                            <div class="col-lg-6 col-xl-6 col-xxl-4">
+                                                <label [for]="'uid' + i" class="form-label"
+                                                    >{{
+                                                        t(
+                                                            'modules.authorizationStatement.statementForm.txtProxyPersonalNumber'
+                                                        )
+                                                    }}
+                                                    <span class="text-danger">*</span></label
+                                                >
+                                                <input
+                                                    pInputText
+                                                    digitOnly
+                                                    [id]="'uid' + i"
+                                                    formControlName="uid"
+                                                    type="text"
+                                                    autocomplete="off"
+                                                    spellcheck="false"
+                                                    aria-autocomplete="both"
+                                                    aria-haspopup="false"
+                                                    class="w-100" />
+                                                <div class="text-danger validation-text">
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="identifierForm.get('uid')?.errors?.['required'] &&
+                                                            identifierForm.get('uid')?.dirty
+                                                        "
+                                                        >{{
+                                                            computeRequiredTranslation(
+                                                                identifierForm.get('uidType')?.value
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="
+                                                            proxyPersonalNumbers.errors &&
+                                                            proxyPersonalNumbers.errors['duplicateValidator']
+                                                        "
+                                                        >{{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtDuplicateEGN'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="
+                                                            proxyPersonalNumbers.errors &&
+                                                            proxyPersonalNumbers.errors['duplicateToValue']
+                                                        "
+                                                        >{{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtSelfEmpowermentError'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-inline-block"
+                                                        *ngIf="!identifierForm.get('uid')?.errors?.['required']
+                                                        && !identifierForm.get('uid')?.errors?.['pattern']
+                                                        && !identifierForm.get('uid')?.errors?.['PinError']
+                                                        && !identifierForm.get('uid')?.errors?.['EgnError']
+                                                        && identifierForm.get('uid')?.errors?.['EgnAdultError']">
+                                                        {{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtEGNAdultError'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-inline-block"
+                                                        *ngIf="!identifierForm.get('uid')?.errors?.['required']
+                                                        && !identifierForm.get('uid')?.errors?.['pattern']
+                                                        && !identifierForm.get('uid')?.errors?.['PinError']
+                                                        && identifierForm.get('uid')?.errors?.['EgnError']
+                                                        ">
+                                                        {{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtEGNInvalid'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        class="d-inline-block"
+                                                        *ngIf="!identifierForm.get('uid')?.errors?.['required']
+                                                        && !identifierForm.get('uid')?.errors?.['pattern']
+                                                        && identifierForm.get('uid')?.errors?.['PinError']">
+                                                        {{
+                                                            t(
+                                                                'modules.authorizationStatement.statementForm.txtLNCHInvalid'
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                                <label [for]="'names' + i" class="form-label"
+                                                    >{{
+                                                        t('modules.authorizationStatement.statementForm.txtProxyNames')
+                                                    }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="p-inputgroup col-12">
+                                                    <input
+                                                        appTrim
+                                                        pInputText
+                                                        [id]="'names' + i"
+                                                        formControlName="name"
+                                                        type="text"
+                                                        autocomplete="off"
+                                                        spellcheck="false"
+                                                        aria-autocomplete="both"
+                                                        aria-haspopup="false"
+                                                        class="w-100" />
+                                                    <button
+                                                        *ngIf="proxyPersonalNumbers.controls.length > 1"
+                                                        type="button"
+                                                        pButton
+                                                        icon="pi pi-times"
+                                                        [attr.aria-label]="t('global.txtDelete')"
+                                                        class="p-button-danger p-button-text border-light border-start-0"
+                                                        (click)="removeProxyPersonalNumber(i)"></button>
+                                                </div>
+                                                <div class="text-danger validation-text">
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="identifierForm.get('name')?.errors?.['required'] &&
+                                                            identifierForm.get('name')?.dirty
+                                                        ">
+                                                        {{
+                                                            t('validations.txtPleaseEnterField', {
+                                                                field: t(
+                                                                    'modules.authorizationStatement.statementForm.txtProxyNames'
+                                                                )
+                                                            })
+                                                        }}
+                                                    </span>
+                                                    <span
+                                                        class="d-block"
+                                                        *ngIf="identifierForm.get('name')?.errors?.['pattern'] && identifierForm.get('name')?.dirty">
+                                                        {{ t('global.txtInvalidDataError') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            *ngIf="
+                                                i === proxyPersonalNumbers.controls.length - 1 &&
+                                                proxyPersonalNumbers.controls.length < maxProxyPersonalNumbers
+                                            "
+                                            class="mb-4">
+                                            <button
+                                                pButton
+                                                type="button"
+                                                [attr.aria-label]="
+                                                    t(
+                                                        'modules.authorizationStatement.statementForm.txtAddEmpoweredPerson'
+                                                    )
+                                                "
+                                                [label]="
+                                                    t(
+                                                        'modules.authorizationStatement.statementForm.txtAddEmpoweredPerson'
+                                                    )
+                                                "
+                                                icon="pi pi-plus"
+                                                iconPos="right"
+                                                class="p-button-success"
+                                                (click)="addProxy()"></button>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+
+                            <div *ngIf="form.controls.onBehalfOf.valid" class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtEmpowerment') }}
+                                    </h5>
+                                </div>
+                            </div>
+                            <div
+                                class="row"
+                                *ngIf="form.controls.onBehalfOf.valid && proxyPersonalNumbers.controls.length > 1">
+                                <div class="col-xl-6">
+                                    <label for="typeOfEmpowerment" class="form-label"
+                                        >{{ t('modules.authorizationStatement.statementForm.txtTypeOfEmpowerment') }}
+                                        <span *ngIf="form.controls.typeOfEmpowerment.enabled" class="text-danger"
+                                            >*</span
+                                        ></label
+                                    >
+                                    <p-dropdown
+                                        formControlName="typeOfEmpowerment"
+                                        [options]="typesOfEmpowerment"
+                                        optionLabel="name"
+                                        optionValue="id"
+                                        styleClass="w-100"
+                                        [placeholder]="t('global.txtDropdownPlaceholder')"
+                                        inputId="typeOfEmpowerment"></p-dropdown>
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.typeOfEmpowerment.invalid &&
+                                                form.controls.typeOfEmpowerment.dirty
+                                            ">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t(
+                                                        'modules.authorizationStatement.statementForm.txtTypeOfEmpowerment'
+                                                    )
+                                                })
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column" *ngIf="form.controls.onBehalfOf.valid">
+                                <label for="provider" class="form-label"
+                                    >{{ t('modules.authorizationStatement.statementForm.txtProvider') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <p-dropdown
+                                    [options]="providers"
+                                    formControlName="provider"
+                                    optionLabel="name"
+                                    [filter]="true"
+                                    (onChange)="enableService()"
+                                    styleClass="w-100"
+                                    filterBy="name"
+                                    inputId="provider"
+                                    dataKey="id"
+                                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                                    [virtualScroll]="true"
+                                    [virtualScrollItemSize]="48"
+                                    [title]="selectedProviderName">
+                                    <ng-template pTemplate="dropdownicon">
+                                        <i
+                                            *ngIf="providersLoading"
+                                            class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                            style="font-size: 1rem"></i>
+                                        <i
+                                            *ngIf="!providersLoading"
+                                            class="pi pi-chevron-down p-dropdown-trigger"
+                                            style="font-size: 1rem"></i>
+                                    </ng-template>
+                                </p-dropdown>
+
+                                <div class="text-danger validation-text">
+                                    <span
+                                        *ngIf="
+                                            submitted && form.controls.provider.invalid && form.controls.provider.dirty
+                                        ">
+                                        {{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.authorizationStatement.statementForm.txtProvider')
+                                            })
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column" *ngIf="form.controls.onBehalfOf.valid">
+                                <label for="service" class="form-label"
+                                    >{{ t('modules.authorizationStatement.statementForm.txtService') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <p-dropdown
+                                    [options]="services"
+                                    formControlName="service"
+                                    optionLabel="name"
+                                    [filter]="true"
+                                    (onChange)="enableVolume()"
+                                    styleClass="w-100"
+                                    filterBy="name"
+                                    inputId="service"
+                                    dataKey="serviceNumber"
+                                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                                    [virtualScroll]="true"
+                                    [virtualScrollItemSize]="48"
+                                    [title]="selectedServiceName">
+                                    <ng-template pTemplate="dropdownicon">
+                                        <i
+                                            *ngIf="servicesLoading"
+                                            class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                            style="font-size: 1rem"></i>
+                                        <i
+                                            *ngIf="!servicesLoading"
+                                            class="pi pi-chevron-down p-dropdown-trigger"
+                                            style="font-size: 1rem"></i>
+                                    </ng-template>
+                                </p-dropdown>
+
+                                <div class="text-danger validation-text">
+                                    <span
+                                        *ngIf="
+                                            submitted && form.controls.service.invalid && form.controls.service.dirty
+                                        ">
+                                        {{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.authorizationStatement.statementForm.txtService')
+                                            })
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column" *ngIf="form.controls.onBehalfOf.valid">
+                                <label for="volume" class="form-label"
+                                    >{{ t('modules.authorizationStatement.statementForm.txtVolume') }}
+                                    <span class="text-danger">*</span></label
+                                >
+                                <p-multiSelect
+                                    [options]="volume"
+                                    formControlName="volume"
+                                    optionLabel="name"
+                                    [placeholder]="t('global.txtDropdownPlaceholder')"
+                                    inputId="volume"
+                                    dataKey="name"
+                                    [virtualScroll]="true"
+                                    [virtualScrollItemSize]="48"
+                                    [title]="selectedScopeNames"
+                                    styleClass="w-100">
+                                    <ng-template pTemplate="dropdownicon">
+                                        <i
+                                            *ngIf="volumeLoading"
+                                            class="pi pi-spin pi-spinner p-dropdown-trigger"
+                                            style="font-size: 1rem"></i>
+                                        <i
+                                            *ngIf="!volumeLoading"
+                                            class="pi pi-chevron-down p-dropdown-trigger"
+                                            style="font-size: 1rem"></i>
+                                    </ng-template>
+                                </p-multiSelect>
+                                <div class="text-danger validation-text">
+                                    <span
+                                        *ngIf="submitted && form.controls.volume.invalid && form.controls.volume.dirty">
+                                        {{
+                                            t('validations.txtPleaseEnterField', {
+                                                field: t('modules.authorizationStatement.statementForm.txtVolume')
+                                            })
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="form.controls.onBehalfOf.valid">
+                                <div class="col">
+                                    <label for="startDate" class="form-label"
+                                        >{{ t('modules.authorizationStatement.statementForm.txtStartDate') }}
+                                        <span class="text-danger">*</span></label
+                                    >
+                                    <p-calendar
+                                        formControlName="startDate"
+                                        [showIcon]="true"
+                                        inputId="startDate"
+                                        [iconAriaLabel]="t('modules.authorizationStatement.statementForm.txtStartDate')"
+                                        styleClass="w-100"
+                                        dateFormat="yy-mm-dd"
+                                        appDate
+                                        [minDate]="minDate"></p-calendar>
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.startDate.errors?.['required'] &&
+                                                form.controls.startDate.dirty
+                                            ">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t(
+                                                        'modules.authorizationStatement.statementForm.txtStartDate'
+                                                    )
+                                                })
+                                            }}
+                                        </span>
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.startDate.errors?.['dateIsMinimumToday'] &&
+                                                form.controls.startDate.dirty
+                                            ">
+                                            {{
+                                                t('modules.authorizationRegister.tableFilter.details.txtPastDateError')
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label for="endDate" class="form-label">{{
+                                        t('modules.authorizationStatement.statementForm.txtEndDate')
+                                    }}</label>
+                                    <p-calendar
+                                        formControlName="endDate"
+                                        inputId="endDate"
+                                        [showIcon]="true"
+                                        [iconAriaLabel]="t('modules.authorizationStatement.statementForm.txtEndDate')"
+                                        styleClass="w-100"
+                                        dateFormat="yy-mm-dd"
+                                        appDate
+                                        [minDate]="endDateMinValue()"></p-calendar>
+                                    <div class="text-danger validation-text">
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.endDate.errors?.['required'] &&
+                                                form.controls.endDate.dirty
+                                            ">
+                                            {{
+                                                t('validations.txtPleaseEnterField', {
+                                                    field: t('modules.authorizationStatement.statementForm.txtEndDate')
+                                                })
+                                            }}
+                                        </span>
+                                        <span
+                                            *ngIf="
+                                                submitted &&
+                                                form.controls.startDate.errors?.['dateIsMinimumToday'] &&
+                                                form.controls.startDate.dirty
+                                            ">
+                                            {{
+                                                t('modules.authorizationRegister.tableFilter.details.txtPastDateError')
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="isPreviewMode">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtApplicantData') }}
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <p class="form-label">
+                                {{ t('modules.authorizationStatement.statementForm.txtStatementFrom') }}
+                            </p>
+                            <div class="preview-input w-100 mb-4">
+                                {{ getSelectedValueLabel(authorizerTypes, form.controls.onBehalfOf.value) }}
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-xl-6 col-xxl-2">
+                                    <p class="form-label">
+                                        {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                    </p>
+                                    <div class="preview-input w-100 mb-4">
+                                        {{ form.controls.authorizerPersonalIdentifier.value }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-xl-6 col-xxl-4">
+                                    <p class="form-label">
+                                        {{
+                                            t(
+                                                'modules.authorizationStatement.statementForm.txtAuthorizerPersonalNumber'
+                                            )
+                                        }}
+                                    </p>
+                                    <div class="preview-input w-100 mb-4">
+                                        {{ form.controls.authorizerPersonalNumber.value }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                    <p class="form-label">
+                                        {{
+                                            t(
+                                                'modules.authorizationStatement.statementForm.txtLegalRepresentativeNames'
+                                            )
+                                        }}
+                                    </p>
+                                    <div class="preview-input w-100 mb-4">
+                                        {{ authorizerNames }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ng-container *ngIf="form.controls.onBehalfOf.value === onBehalfOf.LegalEntity">
+                                <p class="form-label">
+                                    {{ t('modules.authorizationStatement.statementForm.txtCreateStatementAs') }}
+                                </p>
+                                <div class="preview-input w-100 mb-4">
+                                    {{ form.controls.issuerPosition.value }}
+                                </div>
+
+                                <p class="form-label">
+                                    {{ t('modules.authorizationStatement.statementForm.txtBulstat') }}
+                                </p>
+                                <div class="preview-input w-100 mb-4">
+                                    {{ form.controls.bulstat.value }}
+                                </div>
+
+                                <p class="form-label">
+                                    {{ t('modules.authorizationStatement.statementForm.txtLegalEntryName') }}
+                                </p>
+                                <div class="preview-input w-100 mb-4">
+                                    {{ form.controls.legalEntityName.value }}
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="text-text-default fw-bold mb-4">
+                                            {{
+                                                t(
+                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentatives'
+                                                )
+                                            }}
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 col-xl-6 col-xxl-2">
+                                        <p class="form-label">
+                                            {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                        </p>
+                                        <div class="preview-input w-100 mb-4">
+                                            {{ authorizerPersonalIdentifier }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-xl-6 col-xxl-4">
+                                        <p class="form-label">
+                                            {{
+                                                t(
+                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentativePersonalNumber'
+                                                )
+                                            }}
+                                        </p>
+                                        <div class="preview-input w-100 mb-4">
+                                            {{ authorizerPersonalNumber }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                        <p class="form-label">
+                                            {{
+                                                t(
+                                                    'modules.authorizationStatement.statementForm.txtLegalRepresentativeNames'
+                                                )
+                                            }}
+                                        </p>
+                                        <div class="preview-input w-100 mb-4">
+                                            {{ authorizerNames }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="authorizerUids.length > 0">
+                                    <div
+                                        class="row"
+                                        *ngFor="let authorizerUidForm of authorizerUids.controls; let i = index">
+                                        <div class="col-lg-6 col-xl-6 col-xxl-2">
+                                            <p class="form-label">
+                                                {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                            </p>
+                                            <div class="preview-input w-100 mb-4">
+                                                {{ identifierTypeTranslation(authorizerUidForm.value.uidType) }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-xl-6 col-xxl-4">
+                                            <p class="form-label">
+                                                {{
+                                                    t(
+                                                        'modules.authorizationStatement.statementForm.txtLegalRepresentativePersonalNumber'
+                                                    )
+                                                }}
+                                            </p>
+                                            <div class="preview-input w-100 mb-4">
+                                                {{ authorizerUidForm.value.uid }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                            <p class="form-label">
+                                                {{
+                                                    t(
+                                                        'modules.authorizationStatement.statementForm.txtLegalRepresentativeNames'
+                                                    )
+                                                }}
+                                            </p>
+                                            <div class="preview-input w-100 mb-4">
+                                                {{ authorizerUidForm.value.name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+
+                            <div *ngIf="form.controls.onBehalfOf.valid" class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtEmpoweredPersons') }}
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div
+                                class="row"
+                                *ngFor="let identifierForm of proxyPersonalNumbers.controls; let i = index">
+                                <div class="col-lg-6 col-xl-6 col-xxl-2">
+                                    <p class="form-label">
+                                        {{ t('modules.authorizationStatement.statementForm.txtIdentifier') }}
+                                    </p>
+                                    <div class="preview-input w-100 mb-4">
+                                        {{ identifierTypeTranslation(identifierForm.value.uidType) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-xl-6 col-xxl-4">
+                                    <p class="form-label">
+                                        {{
+                                            t(
+                                                'modules.authorizationStatement.statementForm.txtAuthorizerPersonalNumber'
+                                            )
+                                        }}
+                                    </p>
+                                    <div class="preview-input w-100 mb-4">
+                                        {{ identifierForm.value.uid }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-12 col-xxl-6">
+                                    <p class="form-label">
+                                        {{ t('modules.authorizationStatement.statementForm.txtProxyNames') }}
+                                    </p>
+                                    <div class="preview-input w-100 mb-4">
+                                        {{ identifierForm.value.name }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="form.controls.onBehalfOf.valid" class="row">
+                                <div class="col">
+                                    <h5 class="text-text-default fw-bold mb-4">
+                                        {{ t('modules.authorizationStatement.statementForm.txtEmpowerment') }}
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <p class="form-label" *ngIf="form.controls.typeOfEmpowerment.valid">
+                                {{ t('modules.authorizationStatement.statementForm.txtTypeOfEmpowerment') }}
+                            </p>
+                            <div class="preview-input w-100 mb-4" *ngIf="form.controls.typeOfEmpowerment.valid">
+                                {{ getSelectedValueLabel(typesOfEmpowerment, form.controls.typeOfEmpowerment.value) }}
+                            </div>
+
+                            <p class="form-label">
+                                {{ t('modules.authorizationStatement.statementForm.txtProvider') }}
+                            </p>
+                            <div class="preview-input w-100 mb-4">
+                                {{ form.controls.provider.value?.name }}
+                            </div>
+
+                            <p class="form-label">{{ t('modules.authorizationStatement.statementForm.txtService') }}</p>
+                            <div class="preview-input w-100 mb-4">
+                                {{ form.controls.service.value?.name }}
+                            </div>
+
+                            <p class="form-label">{{ t('modules.authorizationStatement.statementForm.txtVolume') }}</p>
+                            <div
+                                class="preview-input w-100 mb-4"
+                                *ngFor="let volume of form.controls.volume.value; let i = index">
+                                {{ volume.name }}
+                            </div>
+
+                            <p class="form-label">
+                                {{ t('modules.authorizationStatement.statementForm.txtStatementPeriod') }}
+                            </p>
+                            <div class="preview-input w-100">
+                                <ng-container *ngIf="form.controls.endDate.value">
+                                    {{ form.controls.startDate.value | translocoDate : { dateStyle: 'medium' } }} -
+                                    {{ form.controls.endDate.value | translocoDate : { dateStyle: 'medium' } }}
+                                </ng-container>
+                                <ng-container *ngIf="!form.controls.endDate.value">
+                                    {{ t('modules.authorizationStatement.statementForm.txtPeriodIndefinitely') }}
+                                </ng-container>
+                            </div>
+                        </ng-container>
+
+                        <div class="d-flex gap-4 mt-4">
+                            <button
+                                pButton
+                                type="button"
+                                *ngIf="!isPreviewMode"
+                                (click)="cancel()"
+                                [label]="t('global.txtCancel')"
+                                [disabled]="requestInProgress"
+                                class="p-button p-button-danger"></button>
+
+                            <button
+                                pButton
+                                type="button"
+                                *ngIf="!isPreviewMode && form.controls.onBehalfOf.valid"
+                                [label]="t('modules.authorizationStatement.statementForm.txtPreviewAndSend')"
+                                (click)="validateAndPreview()"
+                                [disabled]="requestInProgress"
+                                class="p-button p-button-primary"></button>
+
+                            <button
+                                pButton
+                                type="button"
+                                *ngIf="isPreviewMode"
+                                [label]="t('global.txtEdit')"
+                                (click)="cancelPreview()"
+                                [loading]="requestInProgress"
+                                [disabled]="requestInProgress"
+                                class="p-button p-button-outlined"></button>
+
+                            <button
+                                pButton
+                                *ngIf="isPreviewMode"
+                                [label]="t('modules.authorizationStatement.statementForm.txtSendStatement')"
+                                type="submit"
+                                [loading]="requestInProgress"
+                                [disabled]="requestInProgress"
+                                class="p-button p-button-primary"></button>
+                        </div>
+                    </form>
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+                        <div
+                            #helpSection
+                            class="h-100 p-3 bg-background-light-grey text-theme-primary-medium rounded-4 help-section"
+                            [innerHTML]="helpPanelContent()"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</section>
